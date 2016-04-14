@@ -1,0 +1,316 @@
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.border.TitledBorder;
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+
+import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
+import ome.units.unit.Unit;
+import ome.xml.model.DetectorSettings;
+import ome.xml.model.Laser;
+import ome.xml.model.LightSourceSettings;
+import ome.xml.model.primitives.PercentFraction;
+
+
+public class LightSourceSettingsCompUI extends ElementsCompUI 
+{
+	private final String L_WAVELENGTH="Set Wavelength";
+	private final String L_ATTENUATION="Attenuation";
+
+	private TagData waveLength;
+	private Unit<Length> waveLengthUnit;
+	/**==Absorptionskoefizient a fraction, as a value from 0.0 to 1.0*/
+	private TagData attenuation;
+	//??
+//	private TagData intensity;
+
+	private List<TagData> tagList;
+	
+	//reference to lightSrc
+	private String lightSrcId;
+	
+	private TitledBorder tb;
+	
+	private LightSourceSettings lightSrc;
+	
+	private void initTagList()
+	{
+		tagList=new ArrayList<TagData>();
+		tagList.add(waveLength);
+		tagList.add(attenuation);
+		
+	}
+	
+	public boolean userInput()
+	{
+		boolean result=false;
+		if(tagList!=null){
+			for(int i=0; i<tagList.size();i++){
+				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
+				result= result || val;
+			}
+		}
+		return result;
+	}
+
+	
+	public LightSourceSettingsCompUI(ModuleConfiguration objConf)
+	{
+		waveLengthUnit=UNITS.NM;
+	
+		initGUI();
+		if(objConf==null)
+			createDummyPane(false);
+		else
+			createDummyPane(objConf.getList(),false);
+	}
+	
+	public LightSourceSettingsCompUI(LightSourceSettings _ls, String id)
+	{
+		lightSrc=_ls;
+		waveLengthUnit=UNITS.NM;
+		initGUI();
+		if(lightSrc!=null)
+			setGUIData();
+		else{
+			//TODO
+//			if(id==null){
+//				id=MetadataTools.createLSID("LightSource", 0,0);
+//			}
+			lightSrc=new LightSourceSettings();
+			lightSrc.setID("");
+			createDummyPane(false);
+		}
+	}
+	
+	private void initGUI()
+	{
+		buildComp=false;
+		labels= new ArrayList<JLabel>();
+		comp = new ArrayList<JComponent>();
+		
+		gridbag = new GridBagLayout();
+		c = new GridBagConstraints();
+		setLayout(gridbag);
+		tb=new TitledBorder("");
+//		setBorder(
+//				BorderFactory.createCompoundBorder(	tb,
+//						BorderFactory.createEmptyBorder(5,5,5,5)));
+	}
+	
+	public void addData(LightSourceSettings ls,boolean overwrite)
+	{
+		if(lightSrc!=null){
+			if(ls!=null){
+				Length w=ls.getWavelength();
+				PercentFraction p=ls.getAttenuation();
+				if(overwrite){
+					if(w!=null) lightSrc.setWavelength(w);
+					if(p!=null) lightSrc.setAttenuation(p);
+					LOGGER.info("[DATA] overwrite LIGHTSRC_SETTINGS data");
+				}else{
+					if(lightSrc.getWavelength()==null)
+						lightSrc.setWavelength(w);
+					if(lightSrc.getAttenuation()==null)
+						lightSrc.setAttenuation(p);
+					LOGGER.info("[DATA] complete LIGHTSRC_SETTINGS data");
+				}
+			}
+			
+		}else if(ls!=null){
+			lightSrc=ls;
+			LOGGER.info("[DATA] add LIGHTSRC_SETTINGS data");
+		}
+		
+		setGUIData();
+	}
+
+	
+	private void setGUIData()
+	{
+		if(lightSrc!=null){
+			try{setWavelength(lightSrc.getWavelength(), ElementsCompUI.REQUIRED);
+			} catch (NullPointerException e) { }
+			try{setAttenuation(lightSrc.getAttenuation(), ElementsCompUI.REQUIRED);
+			}catch (NullPointerException e){}
+		}
+	}
+	
+	private void readGUIInput() throws Exception
+	{
+		if(lightSrc==null){
+			createNewElement();
+		}
+		lightSrc.setWavelength(parseToLength(waveLength.getTagValue(),waveLengthUnit));
+		//TODO input format hint: percentvalue elem of [0,100] or [0,1]
+		lightSrc.setAttenuation(parseAttenuation(attenuation.getTagValue()));
+	}
+	
+	private PercentFraction parseAttenuation(String c)
+	{
+		if(c==null || c.equals(""))
+			return null;
+		
+		return new PercentFraction(Float.valueOf(c));
+	}
+	
+	private void createNewElement() {
+		lightSrc=new LightSourceSettings();
+	}
+
+	public LightSourceSettings getData() throws Exception
+	{
+		if(userInput())
+			readGUIInput();
+		return lightSrc;
+	}
+	
+	public void setTitledBorder(String s)
+	{
+		if(s== null || s.equals(null)) return;
+		tb.setTitle(s);
+	}
+	
+	public void buildComponents() 
+	{
+		labels.clear();
+		comp.clear();
+		
+		addLabelToGUI(new JLabel("Settings:"));
+//		addTagToGUI(intensity);
+		addTagToGUI(waveLength);
+		addTagToGUI(attenuation);
+				
+		addLabelTextRows(labels, comp, gridbag, this);
+		
+		c.gridwidth = GridBagConstraints.REMAINDER; //last
+		c.anchor = GridBagConstraints.WEST;
+		c.weightx = 1.0;
+		
+		buildComp=true;
+		initTagList();
+	}
+
+	public void buildExtendedComponents() 
+	{
+
+	}
+	
+	@Override
+	public void createDummyPane(boolean inactive) {
+		
+//		setIntensity(null, ElementsCompUI.OPTIONAL);
+		setWavelength(null, ElementsCompUI.OPTIONAL);
+		setAttenuation(null, ElementsCompUI.OPTIONAL);
+		
+		if(inactive){
+//			intensity.setInactiv();
+			waveLength.setEnable(false);
+			attenuation.setEnable(false);
+		}
+	}
+	
+	public void createDummyPane(List<TagConfiguration> list,boolean inactive) 
+	{
+		if(list==null)
+			createDummyPane(inactive);
+		else{
+		clearDataValues();
+		if(lightSrc==null && list!=null && list.size()>0)
+			createNewElement();
+		for(int i=0; i<list.size();i++){
+			TagConfiguration t=list.get(i);
+			String name=t.getName();
+			String val=t.getValue();
+			boolean prop=t.getProperty()!= null ? Boolean.parseBoolean(t.getProperty()):
+				OPTIONAL;
+			if(name!=null){
+				switch (name) {
+				case L_WAVELENGTH:
+					try {
+						Length value = parseToLength(val, waveLengthUnit);
+						setWavelength(value, prop);
+						lightSrc.setWavelength(value);
+					} catch (Exception e) {
+						setWavelength(null, prop);
+					}
+					waveLength.setVisible(true);
+					break;
+				case L_ATTENUATION:
+					try{
+						PercentFraction value=parseAttenuation(val);
+					setAttenuation(value, prop);
+					lightSrc.setAttenuation(value);
+					}catch(Exception e){
+						setAttenuation(null, prop);
+					}
+					attenuation.setVisible(true);
+					break;
+				default: LOGGER.warning("[CONF] LIGHTSRC SETT unknown tag: "+name );break;
+				}
+			}
+		}
+		}
+	}
+
+	public void clearDataValues() 
+	{
+//		clearTagValue(intensity);
+		clearTagValue(waveLength);
+		clearTagValue(attenuation);
+		lightSrcId=null;
+	}
+	
+	public void setID(String value)
+	{
+		String val= (value != null) ? String.valueOf(value):"";
+		lightSrcId=val;
+	}
+	
+	public String getID()
+	{
+		return lightSrc.getID();
+	}
+	
+
+	public void setWavelength(Length value, boolean prop)
+	{
+		String val=(value!=null) ? String.valueOf(value.value()) :"";
+		waveLengthUnit=(value!=null) ? value.unit():waveLengthUnit;
+		if(waveLength == null) 
+			waveLength = new TagData("Wavelength ["+waveLengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+		else 
+			waveLength.setTagValue(val,prop);
+		
+	}
+	public void setAttenuation(PercentFraction value, boolean prop)
+	{
+		String val= (value != null) ? String.valueOf(value.getNumberValue()):"";
+		if(attenuation == null) 
+			attenuation = new TagData("Attenuation: ",val,prop,TagData.TEXTFIELD);
+		else 
+			attenuation.setTagValue(val,prop);
+	}
+
+	@Override
+	public List<TagData> getActiveTags() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+
+}

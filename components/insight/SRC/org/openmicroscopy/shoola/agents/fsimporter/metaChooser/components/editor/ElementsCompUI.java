@@ -1,0 +1,195 @@
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.swing.Box;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import ome.units.quantity.Length;
+import ome.units.unit.Unit;
+import ome.xml.model.primitives.PositiveInteger;
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+
+public abstract class ElementsCompUI extends JPanel
+{
+//	protected MetaDataControl controller;
+	
+	/** Logger for this class. */
+    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	
+	// input required?
+	public static final boolean REQUIRED=true;
+	public static final boolean OPTIONAL =false;
+	
+	
+	protected GridBagConstraints c;
+	protected GridBagLayout gridbag;
+	protected boolean buildComp;
+	protected List<JLabel> labels;
+	protected List<JComponent> comp;
+	
+	protected JPanel globalPane;
+	
+	public ElementsCompUI(){
+		
+	}
+	
+	public abstract void buildComponents();
+	public abstract void buildExtendedComponents();
+	public abstract void createDummyPane(boolean inactive);
+	public abstract void clearDataValues();
+	public abstract List<TagData> getActiveTags();
+	public abstract boolean userInput();
+	
+	
+//	public void initController(MetaDataControl _controller){
+//		controller=_controller;
+//	}
+	
+	/**
+	 * Get enum values as string[]
+	 * @param e Enum.class
+	 * @return 
+	 */
+	static String[] getNames(Class<? extends Enum<?>> e) {
+		 return Arrays.toString(e.getEnumConstants()).replaceAll("^.|.$", "").split(", ");
+//	    return Arrays.stream(e.getEnumConstants()).map(Enum::name).toArray(String[]::new);
+	}
+	
+//	protected void setTag(TagData field, String title,String val,boolean prop,int type)
+//	{
+//		if(field == null) 
+//			field = new TagData(title,val,prop,type);
+//		else 
+//			field.setTagValue(val,prop);
+//	}
+	
+	protected PositiveInteger parseToPositiveInt(String c)
+	{
+		if(c==null || c.equals(""))
+			return null;
+		
+		return new PositiveInteger(Integer.parseInt(c));
+	}
+	
+	protected Length parseToLength(String c, Unit<Length> unit)
+	{
+		if(c==null || c.equals(""))
+			return null;
+		
+		return new Length(Double.valueOf(c), unit);
+	}
+	
+	protected Double parseToDouble(String c) throws NumberFormatException
+	{
+		if(c==null || c.equals(""))
+			return null;
+		
+		return Double.parseDouble(c);
+	}
+	
+	protected void addTagToGUI(TagData tag)
+	{
+		if(tag != null && tag.isVisible()){
+			labels.add(tag.getTagLabel());
+			comp.add(tag.getInputField());
+		}
+	}
+	
+	protected void addLabelToGUI(JLabel l)
+	{
+		if(l!=null){
+			Font font = l.getFont();
+			// same font but bold
+			Font boldFont = new Font(font.getFontName(), Font.BOLD, font.getSize());
+			l.setFont(boldFont);
+			labels.add(l);
+			comp.add((JComponent) Box.createVerticalStrut(5));
+		}
+	}
+	
+	protected void addVSpaceToGui(int height)
+	{
+		labels.add(new JLabel(""));
+		comp.add((JComponent) Box.createVerticalStrut(height));
+	}
+	
+	protected void clearTagValue(TagData tag)
+	{
+		if(tag != null){
+			tag.setTagValue("");
+		}
+	}
+	
+	protected boolean isActive(TagData tag)
+	{
+		if(tag != null && tag.getTagStatus()!=TagData.INACTIVE){
+			return true;
+		}
+		return false;
+	}
+	
+	//TODO: equal vertical space between components
+	void addLabelTextRows(List<JLabel> labels,List<JComponent> fields,GridBagLayout gridbag,Container container) {
+		GridBagConstraints c = new GridBagConstraints();
+		c.anchor = GridBagConstraints.NORTHWEST;
+		int numLabels = labels.size();
+
+		for (int i = 0; i < numLabels; i++) {
+			c.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
+			c.fill = GridBagConstraints.NONE;      //reset to default
+			c.weightx = 0.0;                       //reset to default
+			container.add(labels.get(i), c);
+
+			c.gridwidth = GridBagConstraints.REMAINDER;     //end row
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.weightx = 1.0;
+			container.add(fields.get(i), c);
+			
+		}
+	}
+
+	
+	
+	class FilterRef{
+		static final String EMISSION="EmissionFilter";
+		static final String EXCITATION="ExcitationFilter";
+		static final String DICHROIC="Dichroic";
+				
+		private String type;
+		private String id;
+		
+		public FilterRef(String t, String id)
+		{
+			type=t;
+			this.id=id;
+		}
+		
+		public String getFilterId()
+		{
+			return this.id;
+		}
+	}
+
+
+
+
+
+
+	
+
+
+	
+}
+
+
