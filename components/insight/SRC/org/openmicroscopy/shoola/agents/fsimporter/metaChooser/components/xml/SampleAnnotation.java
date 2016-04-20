@@ -1,12 +1,14 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import jdk.internal.org.xml.sax.SAXException;
 import loci.common.xml.XMLTools;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
@@ -30,6 +32,9 @@ public class SampleAnnotation extends XMLAnnotation
 	// Base: --Name: SamplePreparation -- Type: OMEXMLSamplePreparation -- modelBaseType: XMLAnnotation -- langBaseType: Object
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2015-01";
 
+	/** Logger for this class. */
+    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+    
 	// StructuredAnnotations_BackReference back reference
 	private StructuredAnnotations structuredAnnotations;
 	
@@ -78,27 +83,32 @@ public class SampleAnnotation extends XMLAnnotation
 		Element obSample=doc.createElement(ObservedSample.OBS_SAMPLE);
 
 		ObservedSample s=sample.getObservedSample(i);
-		//TODO: wo die id setzen?
-		obSample.setAttribute(s.OBS_ID, String.valueOf(i));
+		if(s!=null){
+			//TODO: wo die id setzen?
+			obSample.setAttribute(s.OBS_ID, String.valueOf(i));
 
-		Element grid=doc.createElement(s.GRID);
-		grid.setAttribute(s.GRID_REF, s.getGridboxID());
-		grid.setAttribute(s.GRID_NUMBERX, s.getGridNumberX());
-		grid.setAttribute(s.GRID_NUMBERY, s.getGridNumberY());
-		obSample.appendChild(grid);
+			Element grid=doc.createElement(s.GRID);
+			grid.setAttribute(s.GRID_REF, s.getGridboxID());
+			grid.setAttribute(s.GRID_NUMBERX, s.getGridNumberX());
+			grid.setAttribute(s.GRID_NUMBERY, s.getGridNumberY());
+			obSample.appendChild(grid);
 
-		Element obj=doc.createElement(s.OBJECT);
-		obj.setAttribute(s.OBJECT_TYPE, s.getObjectType());
-		obj.setAttribute(s.OBJECT_NUMBER, s.getObjectNumber());
+			Element obj=doc.createElement(s.OBJECT);
+			obj.setAttribute(s.OBJECT_TYPE, s.getObjectType());
+			obj.setAttribute(s.OBJECT_NUMBER, s.getObjectNumber());
 
-		obSample.appendChild(obj);
-
+			obSample.appendChild(obj);
+		}else{
+			LOGGER.warning("[SAVE] given OBSERVED SAMPLE is null");
+		}
 		xmlAnnotElem.appendChild(obSample);
 	}
 
 	private void createGridBoxElem(Document doc, Element xmlAnnotElem) {
 			Element gridBox=doc.createElement(GridBox.GRID);
 			GridBox box=sample.getGridBox();
+			if(box==null)
+				box=new GridBox("", 0, "");
 			gridBox.setAttribute(GridBox.GRID_ID, box.getId());
 			gridBox.setAttribute(GridBox.GRID_NR, String.valueOf(box.getNr()));
 			gridBox.setAttribute(GridBox.GRID_TYPE, box.getType());
@@ -171,10 +181,6 @@ public class SampleAnnotation extends XMLAnnotation
 				Node gNumberY=attrs.getNamedItem(ObservedSample.GRID_NUMBERY);
 				if(gNumberY!=null)
 					os.setGridNumberY(gNumberY.getNodeValue());
-				
-				if(gNumberX!=null && gNumberY!=null)
-				System.out.println("[DEBUG] read o grid "+os.getGridNumberX()+
-						", "+os.getGridNumberY());
 				
 			}
 			

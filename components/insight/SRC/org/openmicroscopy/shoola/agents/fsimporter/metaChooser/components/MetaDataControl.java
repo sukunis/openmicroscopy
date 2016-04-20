@@ -138,11 +138,9 @@ public class MetaDataControl implements PropertyChangeListener
 	{
 		LightSourceCompUI l=null;
 		if(i<model.getNumberOfLightSrc()){
-			System.out.println("[DEBUG] show pane LIGHTSRC index "+i);
 			l=model.getLightSourceModul(i);
 			
 		}else{
-			System.out.println("[DEBUG] create option pane LIGHTSRC");
 			l=new LightSourceCompUI(conf);
 			model.addLightSrcModul(l);
 //			l.showOptionPane();

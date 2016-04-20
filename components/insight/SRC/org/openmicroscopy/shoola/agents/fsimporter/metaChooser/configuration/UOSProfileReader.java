@@ -3,12 +3,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 import org.w3c.dom.Document;
@@ -34,6 +36,9 @@ import org.xml.sax.SAXException;
  */
 public class UOSProfileReader 
 {
+	/** Logger for this class. */
+    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+    
 	private static final String PROFILE = "Profile";
 	public static final String MICROSCOPE="Microscope";
 	public static final String MIC_NAME="Name";
@@ -78,8 +83,7 @@ public class UOSProfileReader
 			readConfiguration(doc);
 			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.severe("[VIEW_PROP] Can't read property file");
 		} 
 	}
 	

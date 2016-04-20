@@ -39,6 +39,7 @@ import javax.swing.text.JTextComponent;
 import loci.common.DateTools;
 import ome.xml.model.primitives.Timestamp;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.util.ui.UIUtilities;
@@ -67,6 +68,7 @@ public class TagData
 	static final int CHECKBOX=3;
 	static final int ARRAYFIELDS=4;
 	static final int TIMESTAMP=5;
+	static final int LIST=6;
 
 	private JLabel label;
 	private JComponent inputField;
@@ -316,12 +318,7 @@ public class TagData
 		String val="";
 		switch (type) {
 		case TIMESTAMP:
-			//TODO: format test
-			try{
-			val=DateTools.formatDate(((JTextPane)inputField).getText(), DateTools.TIMESTAMP_FORMAT);
-			}catch(Exception e){
-				LOGGER.severe("Wrong string input format timestamp: "+val);
-			}
+			val = readTimestamp(val);
 			break;
 		case TEXTPANE:
 			val=((JTextPane) inputField).getText();
@@ -340,6 +337,8 @@ public class TagData
 		}
 		return val!=null? val : "";
 	}
+
+	
 
 	public String getTagValue(int index) 
 	{
@@ -447,6 +446,17 @@ public class TagData
 		valChanged=false;
 	}
 	
+	private String readTimestamp(String val) 
+	{
+		//TODO: format test
+		try{
+			val=DateTools.formatDate(((JTextField)inputField).getText(), DateTools.TIMESTAMP_FORMAT);
+		}catch(Exception e){
+			LOGGER.severe("Wrong string input format timestamp: "+val);
+			e.printStackTrace();
+		}
+		return val;
+	}
 	
 
 	private void setValTimestamp(String val) 
@@ -517,8 +527,10 @@ public class TagData
 		}
 	}
 
-	private void setValCheckbox(String val) {
-		((JCheckBox) inputField).setSelected(Boolean.parseBoolean(val));
+	private void setValCheckbox(String val) 
+	{
+		boolean bVal=BooleanUtils.toBoolean(val);
+		((JCheckBox) inputField).setSelected(bVal);
 	}
 
 	private void setValTextPane(String val) {

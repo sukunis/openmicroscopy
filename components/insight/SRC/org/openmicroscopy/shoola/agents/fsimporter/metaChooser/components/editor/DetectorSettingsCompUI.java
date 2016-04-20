@@ -114,7 +114,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		if(objConf==null)
 			createDummyPane(false);
 		else
-			createDummyPane(objConf.getList(),false);
+			createDummyPane(objConf.getSettingList(),false);
 	}
 
 	public boolean addData(DetectorSettings ds,boolean overwrite) 
@@ -128,6 +128,8 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 				Double z=ds.getZoom();
 				Binning b=ds.getBinning();
 				if(overwrite){
+					if(ds.getID()!=null && !ds.getID().equals(""))
+						detectorSett.setID(ds.getID());
 					if(g!=null) detectorSett.setGain(g);
 					if(v!=null) detectorSett.setVoltage(v);
 					if(o!=null) detectorSett.setOffset(o);
@@ -135,6 +137,8 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					if(b!=null) detectorSett.setBinning(b);
 					LOGGER.info("[DATA] overwrite DETECTOR_SETTINGS data");
 				}else{
+					if(detectorSett.getID()==null || detectorSett.getID().equals(""))
+						detectorSett.setID(ds.getID());
 					if(detectorSett.getGain()==null)
 						detectorSett.setGain(g);
 					if(detectorSett.getVoltage()==null)
@@ -199,14 +203,32 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 			createNewElement();
 		}
 		//TODO input checker
+		try{
 		detectorSett.setGain(parseToDouble(gain.getTagValue()));
-		System.out.println("[DEBUG] read gain = "+detectorSett.getGain());
-		
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read DETECTOR SETT gain input");
+		}
+		try{
 		detectorSett.setVoltage(voltage.getTagValue().equals("") ? 
 				null : new ElectricPotential(Double.valueOf(voltage.getTagValue()), voltageUnit) );
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read DETECTOR SETT voltage input");
+		}
+		try{
 		detectorSett.setOffset(parseToDouble(offset.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read DETECTOR SETT offset input");
+		}
+		try{
 		detectorSett.setZoom(parseToDouble(confocalZoom.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read DETECTOR SETT zoom input");
+		}
+		try{
 		detectorSett.setBinning(parseBinning(binning.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read DETECTOR SETT binning input");
+		}
 		//TODO set subarray
 //		detectorSett.setSubarray
 	}

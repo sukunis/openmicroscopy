@@ -83,6 +83,7 @@ public class ChannelCompUI extends ElementsCompUI
 	
 	
 	private Channel channel;
+	private boolean setFields;
 	
 	
 	private void initTagList()
@@ -111,7 +112,7 @@ public class ChannelCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return (result );
+		return (result || setFields);
 	}
 	
 	/** 
@@ -139,11 +140,12 @@ public class ChannelCompUI extends ElementsCompUI
 		if(objConf==null)
 			createDummyPane(false);
 		else
-			createDummyPane(objConf.getList(),false);
+			createDummyPane(objConf.getTagList(),false);
 	}
 	
 	private void createNewElement()
 	{
+		LOGGER.info("[DATA] create new CHANNEL");
 		channel=new Channel();
 	}
 
@@ -216,6 +218,8 @@ public class ChannelCompUI extends ElementsCompUI
 				
 				
 				if(overwrite){
+					if(c.getID()!=null && !c.getID().equals(""))
+						channel.setID(c.getID());
 					if(name!=null && !name.equals("")) channel.setName(name);
 					if(color!=null) channel.setColor(color);
 					if(fluor!=null && !fluor.equals("")) channel.setFluor(fluor);
@@ -227,6 +231,8 @@ public class ChannelCompUI extends ElementsCompUI
 					
 					LOGGER.info("[DATA] overwrite CHANNEL data");
 				}else{
+					if(channel.getID()==null || channel.getID().equals(""))
+						channel.setID(c.getID());
 					if(channel.getName()==null || channel.getName().equals(""))
 						channel.setName(name);
 					if(channel.getColor()==null)
@@ -257,34 +263,105 @@ public class ChannelCompUI extends ElementsCompUI
 		return conflicts;
 	}
 	
-	private void readGUIInput() throws Exception
+	private void readGUIInput() 
 	{
 		if(channel==null)
 			createNewElement();
 		//TODO format check
-		channel.setName(name.getTagValue());
-		channel.setColor(parseColor(color.getTagValue()));
-		channel.setFluor(fluorophore.getTagValue());
-		channel.setIlluminationType(parseIllumType(illumType.getTagValue()));
-//		TODO channel.setExpTime;
-		channel.setExcitationWavelength(parseToLength(excitWavelength.getTagValue(), excitWavelengthUnit));
-		channel.setEmissionWavelength(parseToLength(emissionWavelength.getTagValue(),emissionWavelengthUnit));
-//		channel.setAcquisitionMode(imagingMode.getTagValue().equals("")? 
-//				null :AcquisitionMode.valueOf(imagingMode.getTagValue()));
+		try{
+			channel.setName(name.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read CHANNEL name input");
+		}
+		try{
+			channel.setColor(parseColor(color.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read CHANNEL color input");
+		}
+		try{
+			channel.setFluor(fluorophore.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read CHANNEL fluorophore input");
+		}
+		try{
+			channel.setIlluminationType(parseIllumType(illumType.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read CHANNEL illumination type input");
+		}
+		//		TODO channel.setExpTime;
+		try{
+			channel.setExcitationWavelength(parseToLength(excitWavelength.getTagValue(), excitWavelengthUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read CHANNEL excitation wavelength input");
+		}
+		try{
+			channel.setEmissionWavelength(parseToLength(emissionWavelength.getTagValue(),emissionWavelengthUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read CHANNEL emission wavelength input");
+		}
+		try{
+			channel.setAcquisitionMode(parseAcqMode(imagingMode.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read CHANNEL acquisition mode input");
+		}
+
 		//TODO: imagingmode und illuminationmode abspeichern
-		channel.setContrastMethod(parseContrastMethod(contrastMethod.getTagValue()));
-		channel.setNDFilter(parseToDouble(ndFilter.getTagValue()));
-		
+
+		try{
+			channel.setContrastMethod(parseContrastMethod(contrastMethod.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read CHANNEL contrast method input");
+		}
+		try{
+			channel.setNDFilter(parseToDouble(ndFilter.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read CHANNEL ndfilter input");
+		}
+
 		//TODO: new one?
+		try{
 		if(lightPath!=null) channel.setLightPath(lightPath.getData());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read CHANNEL lightPath input");
+		}
 	}
-	
+
 	public Channel getData() throws Exception
 	{
 		if(userInput())
 			readGUIInput();
 		return channel;
 	}
+	
+	public static void mergeData(Channel in, Channel channelOME)
+	{
+		if(channelOME==null ){
+			if(in==null){
+				LOGGER.severe("failed to merge CHANNEL data");
+			}else{
+				channelOME=in;
+			}
+			return;
+		}else if(in==null){
+			LOGGER.info("nothing to merge CHANNEL data");
+			return;
+		}
+		
+		channelOME.setName(in.getName());
+		channelOME.setColor(in.getColor());
+		channelOME.setFluor(in.getFluor());
+		channelOME.setIlluminationType(in.getIlluminationType());
+		channelOME.setExcitationWavelength(in.getExcitationWavelength());
+		channelOME.setEmissionWavelength(in.getEmissionWavelength());
+		channelOME.setAcquisitionMode(in.getAcquisitionMode());
+		channelOME.setContrastMethod(in.getContrastMethod());
+		channelOME.setNDFilter(in.getNDFilter());
+		
+		channelOME.setDetectorSettings(in.getDetectorSettings());
+		channelOME.setLightSourceSettings(in.getLightSourceSettings());
+		channelOME.setLightPath(in.getLightPath());
+	}
+	
 	
 	private ContrastMethod parseContrastMethod(String c) throws EnumerationException
 	{
@@ -332,7 +409,6 @@ public class ChannelCompUI extends ElementsCompUI
 //		addTag(acquisitionMode);
 		addTagToGUI(imagingMode);
 		addTagToGUI(illuminationMode);
-		if(imagingMode!=null)imagingMode.setEnable(false);
 		if(illuminationMode!=null)illuminationMode.setEnable(false);
 		
 		addTagToGUI(contrastMethod);
@@ -346,6 +422,7 @@ public class ChannelCompUI extends ElementsCompUI
 		
 		buildComp=true;
 		initTagList();
+		setFields=false;
 	}
 
 	public void buildExtendedComponents() 
@@ -390,8 +467,8 @@ public class ChannelCompUI extends ElementsCompUI
 			createDummyPane(inactive);
 		else{
 		clearDataValues();
-		if(channel==null && list!=null && list.size()>0)
-			createNewElement();
+//		if(channel==null && list!=null && list.size()>0)
+//			createNewElement();
 		for(int i=0; i<list.size();i++){
 			TagConfiguration t=list.get(i);
 			String name=t.getName();
@@ -403,7 +480,7 @@ public class ChannelCompUI extends ElementsCompUI
 				case L_NAME:
 					try{
 						setName(val,prop);
-						channel.setName(val);
+//						channel.setName(val);
 					}catch(Exception e){
 						setName(null,prop);
 					}
@@ -413,7 +490,7 @@ public class ChannelCompUI extends ElementsCompUI
 					try{
 						Color value=parseColor(val);
 						setColor(value, prop);
-						channel.setColor(value);
+//						channel.setColor(value);
 					}catch(Exception e){
 						setColor(null,prop);
 					}
@@ -422,7 +499,7 @@ public class ChannelCompUI extends ElementsCompUI
 				case L_FLUOROPHORE:
 					try{
 						setFluorophore(val, prop);
-						channel.setFluor(val);
+//						channel.setFluor(val);
 					}catch(Exception e){
 						setFluorophore(null, prop);
 					}
@@ -432,7 +509,7 @@ public class ChannelCompUI extends ElementsCompUI
 					try{
 						IlluminationType value=parseIllumType(val);
 						setIllumType(value, prop);
-						channel.setIlluminationType(value);
+//						channel.setIlluminationType(value);
 					}catch(Exception e){
 						setIllumType(null, prop);
 					}
@@ -451,7 +528,7 @@ public class ChannelCompUI extends ElementsCompUI
 					try{
 						Length value=parseToLength(val, excitWavelengthUnit);
 						setExcitWavelength(value, prop);
-						channel.setExcitationWavelength(value);
+//						channel.setExcitationWavelength(value);
 					}catch(Exception e){
 						setExcitWavelength(null, prop);
 					}
@@ -461,7 +538,7 @@ public class ChannelCompUI extends ElementsCompUI
 					try{
 						Length value=parseToLength(val, emissionWavelengthUnit);
 						setEmissionWavelength(value, prop);
-						channel.setEmissionWavelength(value);
+//						channel.setEmissionWavelength(value);
 					}catch(Exception e){
 						setEmissionWavelength(null, prop);
 					}
@@ -491,7 +568,7 @@ public class ChannelCompUI extends ElementsCompUI
 					try{
 						ContrastMethod value=parseContrastMethod(val);
 						setContrastMethod(value, prop);
-						channel.setContrastMethod(value);
+//						channel.setContrastMethod(value);
 					}catch(Exception e){
 						setContrastMethod(null, prop);
 					}
@@ -501,7 +578,7 @@ public class ChannelCompUI extends ElementsCompUI
 					try{
 						Double value=parseToDouble(val);
 						setNDFilter(value, prop);
-						channel.setNDFilter(value);
+//						channel.setNDFilter(value);
 					}catch(Exception e){
 						setNDFilter(null, prop);
 					}
@@ -692,6 +769,10 @@ public class ChannelCompUI extends ElementsCompUI
 		if(isActive(ndFilter)) list.add(ndFilter);
 		
 		return list;
+	}
+
+	public void setFieldsExtern(boolean b) {
+		setFields= setFields || b;		
 	}
 
 	

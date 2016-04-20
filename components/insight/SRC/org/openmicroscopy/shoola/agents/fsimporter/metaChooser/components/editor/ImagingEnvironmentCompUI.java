@@ -40,6 +40,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 	private Unit<Pressure> airPressureUnit;
 	
 	private ImagingEnvironment env;
+	private boolean setFields;
 	
 	private void initTagList()
 	{
@@ -55,7 +56,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		boolean result=false;
 		if(tagList!=null)
 		for(int i=0; i<tagList.size();i++) result= result || tagList.get(i).valueChanged();
-		return result;
+		return result || setFields;
 	}
 	
 	public ImagingEnvironmentCompUI(ImagingEnvironment _env,int i)
@@ -81,7 +82,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		if(objConf==null)
 			createDummyPane(false);
 		else
-			createDummyPane(objConf.getList(),false);
+			createDummyPane(objConf.getTagList(),false);
 	}
 
 	private void initGUI()
@@ -97,6 +98,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		setBorder(
 //				BorderFactory.createCompoundBorder(	tb,
 						BorderFactory.createEmptyBorder(5,5,5,5));
+		
 	}
 	
 	private void setGUIData()
@@ -117,15 +119,32 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 	{
 		if(env==null)
 			createNewElement();
+		
+		try{
 		env.setTemperature(temperature.getTagValue().equals("") ?
 				null : new Temperature(Double.valueOf(temperature.getTagValue()), temperatureUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read IMAGE ENV temperature input");
+		}
+		try{
 		env.setAirPressure(airPressure.getTagValue().equals("") ? 
 				null : new Pressure(Double.valueOf(airPressure.getTagValue()),airPressureUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read IMAGE ENV air pressure input");
+		}
+		try{
 		//TODO input format hint: percentvalue elem of [0,100] or [0,1]
 		env.setHumidity(humidity.getTagValue().equals("")? 
 				null : new PercentFraction(Float.valueOf(humidity.getTagValue())/100));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read IMAGE ENV humidity input");
+		}
+		try{
 		env.setCO2Percent(co2Percent.getTagValue().equals("")?
 				null : new PercentFraction(Float.valueOf(co2Percent.getTagValue())/100));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read IMAGE ENV co2 percent input");
+		}
 	}
 	
 	private void createNewElement() {
@@ -157,6 +176,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		
 		buildComp=true;		
 		initTagList();
+		setFields=false;
 	}
 	@Override
 	public void buildExtendedComponents() {
@@ -282,6 +302,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 			PercentFraction co=i.getCO2Percent();
 			if(i!=null){
 				if(overwrite){
+				
 					if(t!=null) env.setTemperature(t);
 					if(p!=null) env.setAirPressure(p);
 					if(h!=null) env.setHumidity(h);
@@ -305,6 +326,10 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		}
 		
 		setGUIData();
+	}
+
+	public void setFieldsExtern(boolean b) {
+		setFields= setFields || b;
 	}
 
 

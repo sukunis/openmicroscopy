@@ -35,6 +35,7 @@ import ome.xml.model.Filter;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Instrument;
+import ome.xml.model.Laser;
 import ome.xml.model.LightPath;
 import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
@@ -168,7 +169,7 @@ public class MetaDataUI extends JPanel
 	/** init modul components respective to settings*/ 
 	private void initModelComponents(List<Submodule> list) 
 	{
-		
+		if(!componentsInit){
 		LOGGER.info("[GUI] init model components "+list.size()+"####");
 		for(Submodule subm:list){
 			switch (subm.getModule()) { 
@@ -244,6 +245,7 @@ public class MetaDataUI extends JPanel
 			}
 			componentsInit=true;
 		}
+		}
 		LOGGER.info("[GUI] ### FINISHED init modules ");
 	}
 
@@ -288,6 +290,7 @@ public class MetaDataUI extends JPanel
 		ImagingEnvironmentCompUI iUI=model.getImgEnvModel();
 		if(iUI!=null && i!=null){
 			iUI.addData(i, overwrite);
+			iUI.setFieldsExtern(true);
 		}
 	}
 	private void addSampleData(Sample s, boolean overwrite) 
@@ -295,6 +298,7 @@ public class MetaDataUI extends JPanel
 		SampleCompUI sUI=model.getSampleModul();
 		if(sUI!=null && s!=null){
 			sUI.addData(s,overwrite);
+			sUI.setFieldsExtern(true);
 		}
 	}
 
@@ -304,6 +308,7 @@ public class MetaDataUI extends JPanel
 		if(oUI!=null){
 			if(o!=null) oUI.addData(o,overwrite);
 			if(os!=null) oUI.addData(os, overwrite);
+			oUI.setFieldsExtern(true);
 		}
 	}
 
@@ -313,6 +318,7 @@ public class MetaDataUI extends JPanel
 		if(lsUI!=null){
 			if(ls!=null) lsUI.addData(ls, overwrite); 
 			if(lss!=null) lsUI.addData(lss,overwrite);
+			lsUI.setFieldsExtern(true);
 		}
 	}
 
@@ -321,6 +327,7 @@ public class MetaDataUI extends JPanel
 		ChannelCompUI cUI=model.getChannelModul(index);
 		if(cUI!=null && c!=null){
 			cUI.addData(c,overwrite);
+			cUI.setFieldsExtern(true);
 		}
 	}
 
@@ -328,8 +335,13 @@ public class MetaDataUI extends JPanel
 	{
 		DetectorCompUI dUI=model.getDetectorModul(index);
 		if(dUI!=null){
-			if(d!=null)dUI.addData(d,overwrite);
-			if(ds!=null)dUI.addData(ds, overwrite);
+			if(d!=null){
+				dUI.addData(d,overwrite);
+				dUI.setFieldsExtern(true);
+			}
+			if(ds!=null){
+				dUI.addData(ds, overwrite);
+			}
 		}
 	}
 
@@ -338,14 +350,17 @@ public class MetaDataUI extends JPanel
 		ImageCompUI iUI=model.getImageModul();
 		if(iUI!=null && i!=null){
 			iUI.addData(i,overwrite);
+			iUI.setFieldsExtern(true);
 		}
 	}
 	
 	private void addExperimentData(Experiment e,boolean overwrite)
 	{
 		ExperimentCompUI eUI=model.getExpModul();
-		if(eUI!=null && e!=null)
+		if(eUI!=null && e!=null){
 			eUI.addData(e, overwrite);
+			eUI.setFieldsExtern(true);
+		}
 	}
 	
 	/** linke image file */
@@ -420,11 +435,12 @@ public class MetaDataUI extends JPanel
 					}
 				}else{
 					LOGGER.warning("[DATA] NO IMAGE object available");
+					
 				}
 
 			}catch(Exception e){
 				LOGGER.severe("[DATA] CAN'T read METADATA");
-				
+				e.printStackTrace();
 			}
 		}else{
 			LOGGER.warning("[DATA] NOT available METADATA ");
@@ -493,13 +509,17 @@ public class MetaDataUI extends JPanel
 				ChannelCompUI cUI=null;
 				if(channels.get(i)!=null)
 				{
+					
 					if(i<model.getNumberOfChannels()){
 						cUI = model.getChannelModul(i); 
 						cUI.addData(channels.get(i), false);
 					}else{
 						cUI = new ChannelCompUI(channels.get(i),customSett.getChannelConf()); 
+						cUI.addData(channels.get(i), false);
 						model.addChannelData(cUI);
 					}
+					
+					
 					LOGGER.info("[DATA] load CHANNEL data "+cUI.getName());
 
 					readLightPathData(channels.get(i),i);
@@ -557,16 +577,7 @@ public class MetaDataUI extends JPanel
 			{
 				boolean dataAvailable=false;
 				String linkedObj=null;
-
-				LightSourceCompUI lUI=null;
-				if(i<model.getNumberOfLightSrc()){
-					lUI =model.getLightSourceModul(i);
-
-				}else{
-					lUI = new LightSourceCompUI(customSett.getLightSrcConf());
-					model.addLightSrcModul(lUI);
-				}
-
+				
 				LightSourceSettings ls=channel.getLightSourceSettings();
 				LightSource l=null;
 
@@ -580,14 +591,28 @@ public class MetaDataUI extends JPanel
 					}
 				}
 
-				if(!dataAvailable){
-					model.addLightSrcModul(new LightSourceCompUI(customSett.getLightSrcConf()));
-					//					model.getLightSourceModul(i).showOptionPane();
-					LOGGER.info("[DATA] LIGHTSOURCE  data not available");
+				LightSourceCompUI lUI=null;
+				if(i<model.getNumberOfLightSrc()){
+					lUI =model.getLightSourceModul(i);
+					if(!dataAvailable){
+						LOGGER.info("[DATA] LIGHTSOURCE  data not available");
+					}else{
+						lUI.addData(l,false);
+						System.out.println("[DEBUG] orig data tunable : "+((Laser) l).getTuneable());
+						lUI.addData(ls,false);
+					}
+
 				}else{
-					lUI.addData(l,false);
-					lUI.addData(ls,false);
+					lUI = new LightSourceCompUI(customSett.getLightSrcConf());
+					if(!dataAvailable){
+						LOGGER.info("[DATA] LIGHTSOURCE  data not available");
+					}else{
+						lUI.addData(l,false);
+						lUI.addData(ls,false);
+					}
+					model.addLightSrcModul(lUI);
 				}
+				
 				lUI.setList(lightSources);
 
 			}
@@ -606,17 +631,7 @@ public class MetaDataUI extends JPanel
 			{
 				boolean dDataAvailable=false;
 				String linkedDet=null;
-
-				DetectorCompUI dUI=null;
-
-				if(i<model.getNumberOfDetectors()){
-					dUI =model.getDetectorModul(i); 
-
-				}else{
-					dUI = new DetectorCompUI(customSett.getDetectorConf());
-					model.addDetectorData(dUI);
-				}
-
+				
 				DetectorSettings ds=channel.getDetectorSettings();
 				Detector d=null;
 
@@ -630,18 +645,36 @@ public class MetaDataUI extends JPanel
 					}
 				}
 
-				if(!dDataAvailable){
+				DetectorCompUI dUI=null;
 
-					LOGGER.info("[DATA] DETECTOR data not available");
+				if(i<model.getNumberOfDetectors()){
+					dUI =model.getDetectorModul(i); 
+					if(!dDataAvailable){
+
+						LOGGER.info("[DATA] DETECTOR data not available");
+					}else{
+						dUI.addData(d, false);
+						dUI.addData(ds,false);
+					}
+
 				}else{
-					dUI.addData(d, false);
-					dUI.addData(ds,false);
+					dUI = new DetectorCompUI(customSett.getDetectorConf());
+					if(!dDataAvailable){
+
+						LOGGER.info("[DATA] DETECTOR data not available");
+					}else{
+						dUI.addData(d, false);
+						dUI.addData(ds,false);
+					}
+					model.addDetectorData(dUI);
 				}
+				
 				dUI.setList(detectors);
 			}else{
-				if(model.getNumberOfDetectors()<=i){
-					model.addDetectorData(new DetectorCompUI(null));
-				}
+				LOGGER.info("[DATA] DETECTOR data not available");
+//				if(model.getNumberOfDetectors()<=i){
+//					model.addDetectorData(new DetectorCompUI(null));
+//				}
 				//			model.getDetectorModul(i).showOptionPane();
 			}
 		}
@@ -665,8 +698,6 @@ public class MetaDataUI extends JPanel
 			Sample s=getSampleAnnotation(image,annot);
 			if(s!=null){
 				sUI.addData(s, false);
-			}else{
-				System.out.println("[DEBUG] sample is null");
 			}
 		}
 	}
@@ -681,9 +712,7 @@ public class MetaDataUI extends JPanel
 		}
 		if(sampleID!=null){
 			for(int i=0; i<annot.sizeOfXMLAnnotationList();i++){
-				System.out.println("[DEBUG] compare "+sampleID+" : "+annot.getXMLAnnotation(i).getID());
 				if(sampleID.equals(annot.getXMLAnnotation(i).getID())){
-					System.out.println("[DEBUG] --> equal");
 					SampleAnnotation s=new SampleAnnotation();
 					return s.getSample(annot.getXMLAnnotation(i).getValue());
 				}
@@ -738,6 +767,7 @@ public class MetaDataUI extends JPanel
 				e.setName(importUserData.getUser(), ElementsCompUI.OPTIONAL);
 				e.setGroupName(importUserData.getGroup(), ElementsCompUI.OPTIONAL);
 				e.setProjectName(importUserData.getProject(), ElementsCompUI.OPTIONAL);
+				e.setFieldsExtern(true);
 			}
 		}
 	}
@@ -932,7 +962,6 @@ public class MetaDataUI extends JPanel
 	
 	
 	
-	
 	private void initLayout()
 	{
 		//layout
@@ -956,21 +985,26 @@ public class MetaDataUI extends JPanel
 				if(ome!=null && model!=null){
 //					SaveMetadataUserDefinedUI pane = new SaveMetadataUserDefinedUI(ome,model,null,file);
 //					JDialog diag=createSaveDialog(pane,"Save MetaData", 600,600);
-					SaveMetadata saver=new SaveMetadata(ome, model, null, file);
-					saver.save();
+					if(file!=null){
+						LOGGER.info("[SAVE] save to "+file.getAbsolutePath());
+						SaveMetadata saver=new SaveMetadata(ome, model, null, file);
+						saver.save();
+					}else{
+						LOGGER.severe("[SAVE] no destination file is given");
+					}
 				}
 			}
 		});
 
-		resetBtn=new JButton("Reset"); 
-		resetBtn.setSize(30, 7);
-		
-		resetBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//TODO reloadMetaData();
-			}
-		});
+//		resetBtn=new JButton("Reset"); 
+//		resetBtn.setSize(30, 7);
+//		
+//		resetBtn.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				reloadMetaData();
+//			}
+//		});
 	}
 	
 	protected JPanel getButtonPane()
@@ -979,8 +1013,8 @@ public class MetaDataUI extends JPanel
 		GridBagLayout layout=new GridBagLayout();
 		buttonPane.setLayout(layout);
 		Box buttonBox = Box.createHorizontalBox();
-		buttonBox.add(resetBtn);
-		buttonBox.add(Box.createHorizontalStrut(20));
+//		buttonBox.add(resetBtn);
+//		buttonBox.add(Box.createHorizontalStrut(20));
 		buttonBox.add(loadBtn);
 		buttonBox.add(Box.createHorizontalStrut(20));
 		buttonBox.add(saveBtn);

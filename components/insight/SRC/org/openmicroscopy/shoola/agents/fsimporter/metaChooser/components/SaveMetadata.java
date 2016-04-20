@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 
 import loci.formats.meta.IMetadata;
@@ -40,6 +41,7 @@ public class SaveMetadata
 	
 	public SaveMetadata(OME _ome,MetaDataModel _model, IMetadata _store, File srcImage)
 	{
+		try{
 		ome=_ome;
 		model=_model;
 		omexmlMeta=_store;
@@ -53,6 +55,10 @@ public class SaveMetadata
 		// save xml in *.ome under same name and path like srcImage
 		srcImageFName=FilenameUtils.removeExtension(srcImage.getAbsolutePath());
 		linkFile=srcImage.getName();
+		}catch (Exception err){
+			LOGGER.severe("[SAVE] corrupted save data: ");
+			err.printStackTrace();
+		}
 		
 	}
 	
@@ -75,32 +81,37 @@ public class SaveMetadata
 	{
 		//experiment
 		try {
-			saveExperiment();
+			Image i=model.getImageOMEData();
 			
-			saveObjective();
+			if(i!=null){
+				saveExperiment(i);
+
+
+				saveObjective(i);
+
+				saveImageEnv(i); 	
+
+				//TODO save stagelabel
+
+				//TODO save planes, moechte man ueberhaupt hier aenderungen zulassen???
+
+				//TODO extra store of detector and lightSrc necessary?? see bottum
+							saveDetector(i);
+
+				//--- LightSources
+				//TODO update two lists
+							saveLightSource(i);
+
+				saveChannel(i);
+				saveSample(i);
+
+				saveImage(i);
+
+				//			saveFilter(i); 
+				//			
+				//			saveDichroic(i); 
+			}
 			
-			saveImageEnv();	
-			
-			//TODO save stagelabel
-			
-			//TODO save planes, moechte man ueberhaupt hier aenderungen zulassen???
-			
-			//TODO extra store of detector and lightSrc necessary?? see bottum
-			saveDetector();
-			
-			//--- LightSources
-			//TODO update two lists
-			saveLightSource();
-			
-			saveChannel();
-			
-			saveImage();
-			
-			saveFilter(); 
-			
-			saveDichroic(); 
-			
-			saveSample();
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -109,137 +120,161 @@ public class SaveMetadata
 	}
 
 	
-	private void saveSample() throws Exception 
+	private void saveSample(Image i) throws Exception 
 	{
 		Sample s = model.getSample(); 
 		if(s!=null)
-			omeStore.storeSample(s,model.getImageIndex());
+			omeStore.storeSample(s,i);
 		else
 			LOGGER.info("SAMPLE is empty");
 		
 	}
 	
 	
-	private void saveDichroic() {
+	private void saveDichroic(Image img) {
 		//--Dichroics
 		List<Dichroic> dList=model.getDichroicList();
 		if(dList!=null)
-			omeStore.storeDichroicList(dList,model.getImageIndex());
+			omeStore.storeDichroicList(dList,img,model.getImageIndex());
 	}
 
-	private void saveFilter() {
+	private void saveFilter(Image img) {
 		List<Filter> fList=model.getFilterList();
 		if(fList!=null)
-			omeStore.storeFilterList(fList,model.getImageIndex());
+			omeStore.storeFilterList(fList,img,model.getImageIndex());
 	}
 
-	private void saveImage() throws Exception {
+	private void saveImage(Image image) throws Exception {
 		//--- Image
-		Image image=model.getImageData();
 		if(image!=null)
 			omeStore.storeImage(image,model.getImageIndex());
 	}
 
-	private void saveChannel() throws Exception {
+	private void saveChannel(Image i) throws Exception 
+	{
 		//--- Channels
 		int numChannels=model.getNumberOfChannels();
 		for(int cNr=0; cNr<numChannels; cNr++){
 			Channel thisChannel=model.getChannel(cNr);
-			
 			LightSource thisLightSrc=model.getLightSourceData(cNr);
-			
-			if(thisLightSrc==null){
-				LOGGER.warning("[SAVE] could not save LIGHTSOURCE - not specified for CHANNEL "+thisChannel.getName());
-			}else{
-				System.out.println("DEBUG: save: thisLightSrc: "+thisLightSrc.getID());
-				LightSourceSettings lSett=thisChannel.getLightSourceSettings();
-				System.out.println("DEBUG: save: chLightSrc: "+lSett.getID());
-				if(lSett.getID().equals("")){
-					// lightSrcSettings not yet linked to created lightSrc
-					lSett.setID(thisLightSrc.getID());
-				}else if(!thisChannel.getLightSourceSettings().getID().equals(thisLightSrc.getID())){
-					LOGGER.severe("[SAVE] wrong LIGHTSOURCE reference at CHANNEL "+thisChannel.getName());
-				}
-			}
-			
 			Detector thisDetector=model.getDetector(cNr);
-			if(thisDetector==null){
-				LOGGER.warning("could not save DETECTOR - not specified for CHANNEL "+thisChannel.getName());
-			}else{
-				DetectorSettings dSett = thisChannel.getDetectorSettings();
-				if(dSett.getID().equals("")){
-					//detectorSettings not yet linked to new created detector
-					dSett.setID(thisDetector.getID());
-				}else if(!thisChannel.getDetectorSettings().getID().equals(thisDetector.getID())){
-					LOGGER.severe("[SAVE] wrong DETECTOR reference at CHANNEL "+thisChannel.getName());
+			
+			if(thisChannel!=null){
+				//link
+				if(thisLightSrc==null){
+					LOGGER.warning("[SAVE] could not save LIGHTSOURCE - not specified for CHANNEL "+thisChannel.getName());
+				}else{
+					LightSourceSettings lSett=model.getLightSourceSettings(cNr);
+					if(lSett!=null){
+						if(lSett.getID().equals("")){
+							// lightSrcSettings not yet linked to created lightSrc
+							LOGGER.info("[SAVE] link LIGHTSRC to channel");
+							lSett.setID(thisLightSrc.getID());
+						}else if(!lSett.getID().equals(thisLightSrc.getID())){
+							LOGGER.severe("[SAVE] wrong LIGHTSOURCE reference at CHANNEL "+thisChannel.getName()+": "+
+									lSett.getID()+" - "+thisLightSrc.getID());
+						}else{
+							omeStore.storeLightSrcSettings(lSett,thisChannel);
+						}
+					}
+				}
+
+				if(thisDetector==null ){
+					LOGGER.warning("[SAVE] could not save DETECTOR - not specified for CHANNEL "+thisChannel.getName());
+				}else{
+					DetectorSettings dSett = model.getDetectorSettings(cNr);
+					if(dSett!=null){
+						if(dSett.getID().equals("")){
+							//detectorSettings not yet linked to new created detector
+							LOGGER.info("[SAVE] link DETECTOR to channel");
+							dSett.setID(thisDetector.getID());
+						}else if(!dSett.getID().equals(thisDetector.getID())){
+							LOGGER.severe("[SAVE] wrong DETECTOR reference at CHANNEL "+thisChannel.getName()+": "+
+									dSett.getID()+" - "+thisDetector.getID());
+						}else{
+							omeStore.storeDetectorSettings(dSett,thisChannel);
+						}
+					}
+				}
+
+				LightPath thisLightPath=thisChannel.getLightPath();
+				if(thisLightPath==null){
+					LOGGER.warning("[SAVE] could not save LIGHTPATH- not specified for CHANNEL "+thisChannel.getName());
 				}
 			}
-			
-			LightPath thisLightPath=thisChannel.getLightPath();
-			if(thisLightPath==null){
-				LOGGER.warning("[SAVE] could not save LIGHTPATH- not specified for CHANNEL "+thisChannel.getName());
+
+			if(thisChannel!=null){
+				omeStore.storeChannel(thisChannel,i);
 			}
-			
-			if(thisChannel!=null)
-				omeStore.storeChannel(thisChannel,model.getImageIndex());
 			// store reference objects
-			if(thisLightSrc!=null)
-				omeStore.storeLightSrc(thisLightSrc, model.getImageIndex());
-			if(thisDetector!=null)
-				omeStore.storeDetector(thisDetector, model.getImageIndex());
-			
-//				if(thisLightPath!=null){
-//					omeStore.storeLightPath(thisLightPath,model.getIm)
-//				}
+//			if(thisLightSrc!=null)
+//				omeStore.storeLightSrc(thisLightSrc, i,model.getImageIndex());
+//			if(thisDetector!=null)
+//				omeStore.storeDetector(thisDetector, i,model.getImageIndex());
+
+			//				if(thisLightPath!=null){
+			//					omeStore.storeLightPath(thisLightPath,model.getIm)
+			//				}
 		}
 	}
 
-	private void saveLightSource() throws Exception {
+	private void saveLightSource(Image i) throws Exception 
+	{
 		int numLightSrc=model.getNumberOfLightSrc();
 		for(int lNr=0; lNr<numLightSrc; lNr++)
 		{
 			LightSource l=model.getLightSourceData(lNr);
 			if(l!=null)
-				omeStore.storeLightSrc(l,model.getImageIndex());
+				omeStore.storeLightSrc(l,i,model.getImageIndex());
 		}
 	}
 
 	//TODO id test
-	private void saveDetector() throws Exception {
-		//--- Detectors
+	private void saveDetector(Image i) throws Exception 
+	{
 		int numDetectors=model.getNumberOfDetectors();
 		for(int dNr=0; dNr<numDetectors; dNr++)
 		{
 			Detector d = model.getDetector(dNr);
 			if(d!=null)
-				omeStore.storeDetector(d,model.getImageIndex());
+				omeStore.storeDetector(d,i,model.getImageIndex());
 		}
 	}
 
-	private void saveImageEnv() throws Exception {
+	private void saveImageEnv(Image i) throws Exception {
 		ImagingEnvironment iEnv=model.getImgagingEnv();
 		if(iEnv!=null)
-			omeStore.storeImagingEnv(iEnv,model.getImageIndex());
+			omeStore.storeImagingEnv(iEnv,i);
 	}
 
-	private void saveObjective() throws Exception {
+	/**
+	 * Write objective to ome::instrument.
+	 * Set objective settings in model::image
+	 * @throws Exception
+	 */
+	private void saveObjective(Image i) throws Exception {
 		//--- save ObjectiveSettings and Objective
 		ObjectiveSettings os=model.getObjectiveSettings();
 		if(os!=null)
-			omeStore.storeObjectiveSettings(os,model.getImageIndex());
+			omeStore.storeObjectiveSettings(os,i);
 		
 		Objective o=model.getObjective();
 		if(o!=null)
-			omeStore.storeObjective(o,model.getImageIndex());
+			omeStore.storeObjective(o,i,model.getImageIndex());
 	}
 
-	private void saveExperiment() throws Exception {
+	/**
+	 * Write Experiment and Experimenter to ome file . 
+	 * Set link to experiment in model::image. 
+	 * @throws Exception
+	 */
+	private void saveExperiment(Image i) throws Exception {
 		//--- save Experiment and Experimenter data
 		Experiment e = model.getExperiment();
 		
-		Image i=model.getImageOMEData();
 		if(e!=null){
 			omeStore.storeExperiment(e);
+			omeStore.storeProjectPartner(((ExperimentCompUI)model.getExpModul()).getProjectPartnerAsExp()); 
 			// update refs
 			i.linkExperiment(e);
 			i.linkExperimenter(e.getLinkedExperimenter());

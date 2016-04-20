@@ -72,6 +72,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	private Box box;
 	
 	private List<Objective> availableObj;
+	private boolean setFields;
 	
 
 	
@@ -99,7 +100,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return (result || objectiveSettUI.userInput());
+		return (result || objectiveSettUI.userInput() || setFields);
 	}
 	
 
@@ -125,7 +126,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 		if(objConf==null)
 			createDummyPane(false);
 		else
-			createDummyPane(objConf.getList(),false);
+			createDummyPane(objConf.getTagList(),false);
 	}
 
 	
@@ -145,6 +146,8 @@ public class ObjectiveCompUI extends ElementsCompUI
 				Length wD=obj.getWorkingDistance();
 				Boolean ir=obj.getIris();
 				if(overwrite){
+					if(obj.getID()!=null && !obj.getID().equals(""))
+						objective.setID(obj.getID());
 					if(mo!=null && !mo.equals("")) objective.setModel(mo);
 					if(ma!=null && !ma.equals("")) objective.setManufacturer(ma);
 					if(nm!=null) objective.setNominalMagnification(nm);
@@ -156,6 +159,8 @@ public class ObjectiveCompUI extends ElementsCompUI
 					if(ir!=null) objective.setIris(ir);
 					LOGGER.info("[DATA] overwrite OBJECTIVE data");
 				}else{
+					if(objective.getID()==null || objective.getID().equals(""))
+						objective.setID(obj.getID());
 					if(objective.getModel()==null || objective.getModel().equals("") )
 						objective.setModel(mo);
 					if(objective.getManufacturer()==null || objective.getManufacturer().equals("") )
@@ -275,25 +280,52 @@ public class ObjectiveCompUI extends ElementsCompUI
 			createNewElement();
 
 		//TODO input checker
-		objective.setModel(model.getTagValue());
-		objective.setManufacturer(manufact.getTagValue());
+		try{
+			objective.setModel(model.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read OBJECTIVE model input");
+		}
+		try{
+			objective.setManufacturer(manufact.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read OBJECTIVE manufacturer input");
+		}
 		try{objective.setNominalMagnification(nomMagn.getTagValue().equals("")? 
-				null : Double.valueOf(nomMagn.getTagValue()));}
-		catch(Exception e){LOGGER.severe("wrong input format: Objective:NominalMagnification");}
-		objective.setCalibratedMagnification(calMagn.getTagValue().equals("")? 
-				null : Double.valueOf(calMagn.getTagValue()));
-		objective.setLensNA(lensNA.getTagValue().equals("")? 
-				null : Double.valueOf(lensNA.getTagValue()));
-		
-		objective.setImmersion(immersion.getTagValue().equals("")?
-				null : Immersion.fromString(immersion.getTagValue()));
-		
-		
-		objective.setCorrection(correction.getTagValue().equals("") ?
-				null : Correction.fromString(correction.getTagValue()));
-		
-		objective.setWorkingDistance(workDist.getTagValue().equals("")?
-				null : new Length(new Double(workDist.getTagValue()), workDistUnit));
+				null : Double.valueOf(nomMagn.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read OBJECTIVE nominal magnification input");
+		}
+		try{
+			objective.setCalibratedMagnification(calMagn.getTagValue().equals("")? 
+					null : Double.valueOf(calMagn.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read OBJECTIVE calibrated magnification input");
+		}
+		try{
+			objective.setLensNA(lensNA.getTagValue().equals("")? 
+					null : Double.valueOf(lensNA.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read OBJECTIVE lensNa input");
+		}
+		try{
+			objective.setImmersion(immersion.getTagValue().equals("")?
+					null : Immersion.fromString(immersion.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read OBJECTIVE immersion input");
+		}
+		try{
+
+			objective.setCorrection(correction.getTagValue().equals("") ?
+					null : Correction.fromString(correction.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read OBJECTIVE correction input");
+		}
+		try{
+			objective.setWorkingDistance(workDist.getTagValue().equals("")?
+					null : new Length(new Double(workDist.getTagValue()), workDistUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read OBJECTIVE working distance input");
+		}
 	}
 	
 	private void createNewElement() {
@@ -335,6 +367,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 		
 		buildComp=true;
 		initTagList();
+		setFields=false;
 	}
 	
 	//TODO: advanced properties shows by touch a button
@@ -428,7 +461,6 @@ public class ObjectiveCompUI extends ElementsCompUI
 				if(name!=null){
 					switch (name) {
 					case L_MODEL:
-						System.out.println("[DEBUG] objective: set model="+val);
 						setModel(val,prop);
 						model.setVisible(true);
 						objective.setModel(val);
@@ -681,6 +713,10 @@ public class ObjectiveCompUI extends ElementsCompUI
 		
 		
 	
+	}
+
+	public void setFieldsExtern(boolean b) {
+		setFields= setFields || b;		
 	}
 
 	

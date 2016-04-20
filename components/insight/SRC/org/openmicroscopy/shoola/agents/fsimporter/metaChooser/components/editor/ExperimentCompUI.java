@@ -57,15 +57,18 @@ public class ExperimentCompUI extends ElementsCompUI
 	
 	private Experiment experiment;
 	
+	private boolean setFields;
+	
 
 	
 	public ExperimentCompUI(ModuleConfiguration objConf)
 	{
+		
 		initGUI();
 		if(objConf==null)
 			createDummyPane(false);
 		else
-			createDummyPane(objConf.getList(),false);
+			createDummyPane(objConf.getTagList(),false);
 		
 	}
 	
@@ -152,6 +155,8 @@ public class ExperimentCompUI extends ElementsCompUI
 		setBorder(
 //				BorderFactory.createCompoundBorder(	new MyTitledBorder("Objective"),
 						BorderFactory.createEmptyBorder(10,10,10,10));
+		
+		
 	}
 
 	/**
@@ -173,6 +178,8 @@ public class ExperimentCompUI extends ElementsCompUI
 				//TODO: save Partner
 				//				String partner=
 				if(overwrite){
+					if(exp.getID()!=null && !exp.getID().equals(""))
+						experiment.setID(exp.getID());
 					if(!desc.equals("")) experiment.setDescription(desc);
 					if(!type.equals("")) experiment.setType(type);
 					
@@ -184,6 +191,8 @@ public class ExperimentCompUI extends ElementsCompUI
 //					}
 					LOGGER.info("[DATA] overwrite EXPERIMENT data");
 				}else{
+					if(experiment.getID()==null || experiment.getID().equals(""))
+						experiment.setID(exp.getID());
 					if(experiment.getDescription()==null || experiment.getDescription().equals("")) 
 						experiment.setDescription(desc);
 					if(experiment.getType()==null ) 
@@ -214,9 +223,13 @@ public class ExperimentCompUI extends ElementsCompUI
 			if(exper!=null){
 				String name=exper.getLastName();
 				if(overwrite){
+					if(exper.getID()!=null && !exper.getID().equals(""))
+						experiment.getLinkedExperimenter().setID(exper.getID());
 					if(!name.equals("")) experiment.getLinkedExperimenter().setLastName(name);
 					LOGGER.info("[DATA] overwrite EXPERIMENTER data");
 				}else{
+					if(experiment.getLinkedExperimenter().getID()==null || experiment.getLinkedExperimenter().getID().equals(""))
+						experiment.getLinkedExperimenter().setID(exper.getID());
 					if(experiment.getLinkedExperimenter().getLastName()==null || experiment.getLinkedExperimenter().getLastName().equals(""))
 						experiment.getLinkedExperimenter().setLastName(name);
 					LOGGER.info("[DATA] complete EXPERIMENTER data");
@@ -236,13 +249,24 @@ public class ExperimentCompUI extends ElementsCompUI
 	private void readGUIInput() throws Exception
 	{
 		if(experiment==null){
-				createNewExperiment("", "");
+			createNewExperiment("", "");
 		}
 		//TODO input checker
-	
-		experiment.setDescription(description.getTagValue());
-		experiment.setType(getExperimentType(type.getTagValue()));
-		experiment.getLinkedExperimenter().setLastName(name.getTagValue());
+		try{
+			experiment.setDescription(description.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read EXPERIMENT description input");
+		}
+		try{
+			experiment.setType(getExperimentType(type.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read EXPERIMENT type input");
+		}
+		try{
+			experiment.getLinkedExperimenter().setLastName(name.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read EXPERIMENT experimenter input");
+		}
 	}
 	
 	public boolean userInput()
@@ -254,7 +278,12 @@ public class ExperimentCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return (result);
+		return (result || setFields);
+	}
+	
+	public void setFieldsExtern(boolean val)
+	{
+		setFields= setFields || val;
 	}
 	
 //	private void updateDataFromXML(int idxExperiment, int idxExperimenter,	IMetadata data) throws Exception 
@@ -289,6 +318,7 @@ public class ExperimentCompUI extends ElementsCompUI
 		
 		buildComp=true;	
 		initTagList();
+		setFields=false;
 		
 //		globalPane.setMinimumSize(globalPane.getMinimumSize());
 //		setMinimumSize(getMinimumSize());
@@ -317,10 +347,10 @@ public class ExperimentCompUI extends ElementsCompUI
 	
 	public Experiment getData() throws Exception
 	{
-		if(userInput()){
-			LOGGER.info("[DEBUG] read GUI input (EXPERIMENT)");
+//		if(userInput()){
+//			LOGGER.info("[DEBUG] read GUI input (EXPERIMENT)");
 			readGUIInput();
-		}
+//		}
 		return experiment;
 	}
 	
@@ -385,6 +415,13 @@ public class ExperimentCompUI extends ElementsCompUI
 			projectPartner = new TagData("Project Partner: ",value,prop,TagData.TEXTFIELD);
 		else 
 			projectPartner.setTagValue(value,prop);
+	}
+	
+	public Experimenter getProjectPartnerAsExp()
+	{
+		Experimenter e=new Experimenter();
+		e.setLastName(projectPartner.getTagValue());
+		return e;
 	}
 	
 	

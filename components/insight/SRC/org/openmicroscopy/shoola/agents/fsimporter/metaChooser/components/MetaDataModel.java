@@ -215,8 +215,21 @@ public class MetaDataModel
 		imageOME=i;
 	}
 	
+	/**
+	 * Get image ome data merged with image modul input
+	 * @return
+	 */
 	public Image getImageOMEData()
 	{
+		//merge GUI and ome data
+		try {
+			Image in=getImageData();
+			ImageCompUI.mergeData(in,imageOME); 
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 		return imageOME;
 	}
 	
@@ -284,6 +297,11 @@ public class MetaDataModel
 		return (ImageCompUI) image;
 	}
 
+	/**
+	 * Get image modul gui input data
+	 * @return
+	 * @throws Exception
+	 */
 	public Image getImageData() throws Exception
 	{
 		if(image==null)
@@ -306,7 +324,15 @@ public class MetaDataModel
 	{
 		if(channelList==null)
 			channelList=new ArrayList<ElementsCompUI>();
+		
+		int size=channelList.size();
 		channelList.add(c);
+		try {
+			c.getData();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public int getNumberOfChannels()
@@ -340,6 +366,13 @@ public class MetaDataModel
 	{
 		if(detectorList!=null){
 			detectorList.add(d);
+			int size=lightSrcList.size();
+			try {
+				Detector l=((DetectorCompUI) d).getData();
+			} catch (Exception err) {
+				// TODO Auto-generated catch block
+				err.printStackTrace();
+			}
 		}
 		else
 			LOGGER.warning("[Model] detector list not available");
@@ -482,8 +515,16 @@ public class MetaDataModel
 	
 	public void addLightSrcModul(ElementsCompUI e)
 	{
-		if(lightSrcList!=null)
+		if(lightSrcList!=null){
 			lightSrcList.add(e);
+			int size=lightSrcList.size();
+			try {
+				LightSource l=((LightSourceCompUI) e).getData();
+			} catch (Exception err) {
+				// TODO Auto-generated catch block
+				err.printStackTrace();
+			}
+		}
 		else
 			LOGGER.warning("[MODEL] light source list not available");
 	}

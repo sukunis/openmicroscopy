@@ -60,7 +60,7 @@ import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
 import ome.xml.model.Project;
-import pojos.ExperimenterData;
+import omero.gateway.model.ExperimenterData;
 
 import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
@@ -123,8 +123,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	public JTextArea textArea; 
 	
 	private JTree fileTree;
-	private JComboBox<String> micList;
-
+//	private JComboBox<String> micList;
+	private JLabel micName;
+	
 //	private JPanel metaPanelAcq;
 	private JPanel metaPanelMic;
 	private JTabbedPane metaPanel;
@@ -209,15 +210,18 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		FNode file = null;
 		String prop=null;
 		ImportUserData data=null;
+		
+		if(fileObj!=null){
+			createParentOME(fileObj);
+			prop="[Group: "+fileObj.getGroup().getName()+", Project: "+
+			fileObj.getParent().asProject().getName().getValue()+"]";
+			data = new ImportUserData(fileObj.getGroup(), fileObj.getParent().asProject(), fileObj.getUser());
+		}else{
+//			copyParentOME(f.getParentName());
+		}
+		
 		if(f.isDirectory()){
-			if(fileObj!=null){
-				createParentOME(fileObj);
-				prop="[Group: "+fileObj.getGroup().getName()+", Project: "+
-				fileObj.getParent().asProject().getName().getValue()+"]";
-				data = new ImportUserData(fileObj.getGroup(), fileObj.getParent().asProject(), fileObj.getUser());
-			}else{
-//				copyParentOME(f.getParentName());
-			}
+
 			dir=new FNode(new File(f.getAbsolutePath()),data);
 			parent.add(dir);
 			LOGGER.info("[TREE] Append Dir "+f.getAbsolutePath());
@@ -232,7 +236,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			//add files, attention: only image files?
 		}else{
 			try {
-				file=new FNode(new File(f.getAbsolutePath()));
+				file=new FNode(new File(f.getAbsolutePath()),data);
 				LOGGER.info("[TREE] Append File "+f.getAbsolutePath());
 				parent.add(file);
 			} catch (Exception e) {
@@ -319,6 +323,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    UOSProfileReader propReader=new UOSProfileReader(new File("profileUOSImporter.xml"));
 //	    dataView=new MicroscopeDataView(propReader.getViewProperties());
 	    customSettings=propReader.getViewProperties();
+	    micName=new JLabel(customSettings.getMicName());
 	    dataView=new MetaDataUI(customSettings);
 	    
 	    metaPanelMic= new JPanel(new BorderLayout(5,5));
@@ -326,10 +331,10 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 		metaPanel=new JTabbedPane();
 	  
-	    micList= new JComboBox<String>(CustomViewProperties.MICLIST);
-		micList.addActionListener(this);
-		micList.setActionCommand("" + LOAD_MIC_SETTINGS);
-		micList.setVisible(false);
+//	    micList= new JComboBox<String>(CustomViewProperties.MICLIST);
+//		micList.addActionListener(this);
+//		micList.setActionCommand("" + LOAD_MIC_SETTINGS);
+//		micList.setVisible(false);
 	
 		
 		File root=new File(System.getProperty("user.home"));
@@ -447,9 +452,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 		JPanel micP = new JPanel(new BorderLayout());
 		JLabel miclabel=new JLabel("Microscope:");
-		miclabel.setLabelFor(micList);
+		miclabel.setLabelFor(micName);
 		micP.add(miclabel,BorderLayout.WEST);
-		micP.add(micList,BorderLayout.CENTER);
+		micP.add(micName,BorderLayout.CENTER);
 		micP.setBorder(BorderFactory.createEmptyBorder(10,5,10,5));
 		
 		JPanel mainPanel= new JPanel(new BorderLayout());
@@ -548,7 +553,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		controls.add(bar);
 		add(controls, BorderLayout.SOUTH);
 		
-		micList.setSelectedIndex(0);
+//		micList.setSelectedIndex(0);
 	}
 	private void clearDataView()
 	{
@@ -710,6 +715,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			}
 		} catch (Exception e) {
 			LOGGER.warning("Can't add metadata from parent");
+			e.printStackTrace();
 		}
 	}
 
@@ -745,11 +751,12 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			reader.setId(file);
 			}catch(Exception e){
 				LOGGER.severe("Error read file");
+				setCursor(cursor);
 				return;
 			}
 			
 			LOGGER.info("use READER: "+reader.getReader().getClass().getName());
-			
+			LOGGER.info("[DEBUG] Link data to file "+file);
 			metaUI.linkToFile(new File(file));
 			
 			//TODO: automatische auswahl mic bzgl format
@@ -765,6 +772,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 					reader.setSeries(j);
 					//new metaUI tab
 					metaUI=new MetaDataUI(customSettings);
+					metaUI.linkToFile(new File(file));
 					metaUI.readData(userdata);
 					addParentModel(parent, metaUI);
 					metaUI.readData(metadata, j);
@@ -776,6 +784,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		} catch (Exception e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			setCursor(cursor);
 		}
 		
 		setCursor(cursor);
@@ -798,15 +807,19 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	private ImportUserData getImportData()
 	{
 		ImportUserData data=null;
-		FNode node = (FNode)fileTree.getLastSelectedPathComponent();
-		
-		if(node == null) return null;
-		
-		while(!node.hasImportData()){
-			node=(FNode) node.getParent();
+		try{
+			FNode node = (FNode)fileTree.getLastSelectedPathComponent();
+
+			if(node == null) return null;
+
+			while(!node.hasImportData()){
+				node=(FNode) node.getParent();
+			}
+			data=node.getImportData();
+		}catch(Exception e){
+			LOGGER.warning("No import data available");
+			return null;
 		}
-		data=node.getImportData();
-		
 		return data;
 	}
 
@@ -904,7 +917,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	@Override
 	public void treeCollapsed(TreeExpansionEvent arg0) 
 	{
-		System.out.println("[DEBUG] tree collapsed");
+//		System.out.println("[DEBUG] tree collapsed");
 		
 	}
 
@@ -912,8 +925,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	@Override
 	public void treeExpanded(TreeExpansionEvent arg0) 
 	{
-		System.out.println("[DEBUG] tree expand"+	
-		fileTree.getLastSelectedPathComponent());
+//		System.out.println("[DEBUG] tree expand"+	
+//		fileTree.getLastSelectedPathComponent());
 	} 
 
 

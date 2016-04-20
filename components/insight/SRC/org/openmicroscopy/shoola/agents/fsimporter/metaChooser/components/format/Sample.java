@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import loci.formats.MetadataTools;
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -300,14 +302,14 @@ public class Sample
 		if(obSampleList==null){
 			obSampleList=new ArrayList<ObservedSample>();
 		}
-		sample.setSampleID(String.valueOf(obSampleList.size()+1));
+		sample.setSampleID(MetadataTools.createLSID("ObservedSample", obSampleList.size()+1));
 		obSampleList.add(sample);
 	}
 	
 	public void setObservedSample(ObservedSample sample)
 	{
 		obSampleList=new ArrayList<ObservedSample>();
-		sample.setSampleID("0");
+//		sample.setSampleID("0");
 		obSampleList.add(sample);
 	}
 	

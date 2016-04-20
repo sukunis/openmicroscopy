@@ -47,7 +47,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 		if(objConf==null)
 			createDummyPane(false);
 		else
-			createDummyPane(objConf.getList(),false);
+			createDummyPane(objConf.getSettingList(),false);
 	}
 	
 //	public ObjectiveSettingsCompUI(ObjectiveSettings _oSett, String id)
@@ -124,11 +124,15 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 				Medium m=os.getMedium();
 				Double cc=os.getCorrectionCollar();
 				if(overwrite){
+					if(os.getID()!=null && !os.getID().equals(""))
+						oSett.setID(os.getID());
 					if(rI!=null)oSett.setRefractiveIndex(rI);
 					if(m!=null)oSett.setMedium(m);
 					if(cc!=null)oSett.setCorrectionCollar(cc);
 					LOGGER.info("[DATA] overwrite OBJECTIVE_SETTINGS data");
 				}else{
+					if(oSett.getID()==null || oSett.getID().equals(""))
+						oSett.setID(os.getID());
 					if(oSett.getRefractiveIndex()==null)
 						oSett.setRefractiveIndex(rI);
 					if(oSett.getMedium()==null)
@@ -152,9 +156,21 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 		if(oSett==null)
 			createNewElement();
 		//TODO input checker
-		oSett.setRefractiveIndex(parseToDouble(refractIndex.getTagValue()));
-		oSett.setMedium(parseMedium(medium.getTagValue()));
-		oSett.setCorrectionCollar(parseToDouble(corCollar.getTagValue()));
+		try{
+			oSett.setRefractiveIndex(parseToDouble(refractIndex.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read OBJECTIVE SETT refraction index input");
+		}
+		try{
+			oSett.setMedium(parseMedium(medium.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read OBJECTIVE SETT medium input");
+		}
+		try{
+			oSett.setCorrectionCollar(parseToDouble(corCollar.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read OBJECTIVE SETT correction collar input");
+		}
 	}
 	
 	private Medium parseMedium(String c) throws EnumerationException

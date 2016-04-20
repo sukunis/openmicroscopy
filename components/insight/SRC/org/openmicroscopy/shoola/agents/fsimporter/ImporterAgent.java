@@ -1,4 +1,6 @@
 /*
+ * org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent 
+ *
  *------------------------------------------------------------------------------
  *  Copyright (C) 2006-2015 University of Dundee. All rights reserved.
  *
@@ -21,6 +23,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter;
 
 
+//Java imports
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -32,8 +35,19 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 
-import org.apache.commons.collections.CollectionUtils;
+//Third-party libraries
 
+
+
+
+
+
+
+import omero.gateway.model.ExperimenterData;
+import omero.gateway.model.GroupData;
+
+import org.apache.commons.collections.CollectionUtils;
+//Application-internal dependencies
 import org.openmicroscopy.shoola.agents.events.importer.LoadImporter;
 import org.openmicroscopy.shoola.agents.events.treeviewer.ActivitiesEvent;
 import org.openmicroscopy.shoola.agents.events.treeviewer.BrowserSelectionEvent;
@@ -56,8 +70,6 @@ import org.openmicroscopy.shoola.env.event.AgentEventListener;
 import org.openmicroscopy.shoola.env.event.EventBus;
 import org.openmicroscopy.shoola.env.ui.TaskBar;
 
-import omero.gateway.model.ExperimenterData;
-import omero.gateway.model.GroupData;
 
 /** 
  * This agent interacts is used to import images.
@@ -311,7 +323,7 @@ public class ImporterAgent
     /** Registers the agent with the tool bar.*/
     private void register()
     {
-        String description = "Open the Importer.";
+        String description = "Open the UOS Importer.";
         TaskBar tb = registry.getTaskBar();
         IconManager icons = IconManager.getInstance();
         JButton b = new JButton(icons.getIcon(IconManager.IMPORT));

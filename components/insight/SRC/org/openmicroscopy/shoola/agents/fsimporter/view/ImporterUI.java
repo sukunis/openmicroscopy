@@ -42,6 +42,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -58,6 +59,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
@@ -65,6 +67,13 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+
+
+
+
+
+
 
 //Third-party libraries
 import info.clearthought.layout.TableLayout;
@@ -78,11 +87,16 @@ import org.openmicroscopy.shoola.agents.fsimporter.IconManager;
 import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.GroupSelectionAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.util.FileImportComponent;
 import org.openmicroscopy.shoola.agents.imviewer.view.ImViewer;
+import org.openmicroscopy.shoola.env.data.model.FileObject;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.env.data.model.ImportableObject;
+//import org.openmicroscopy.shoola.env.data.util.SecurityContext;
 import omero.gateway.SecurityContext;
+
 import org.openmicroscopy.shoola.env.ui.TaskBar;
 import org.openmicroscopy.shoola.env.ui.TopWindow;
 import org.openmicroscopy.shoola.util.ui.ClosableTabbedPane;
@@ -106,6 +120,9 @@ import org.openmicroscopy.shoola.util.ui.UIUtilities;
  */
 class ImporterUI extends TopWindow
 {
+	
+	/** Logger for this class. */
+    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
 
 	/** The text displayed in the header of the dialog.*/
 	private static final String TEXT_TITLE_DESCRIPTION =
@@ -129,6 +146,10 @@ class ImporterUI extends TopWindow
 	
 	/** Reference to the control. */
 	private ImporterControl	controller;
+	
+	private ImportDialog chooser;
+	
+	private MetaDataDialog metaData;
 	
 	/** The total of imports. */
 	private int total;
@@ -313,7 +334,7 @@ class ImporterUI extends TopWindow
 		tabs.addChangeListener(new ChangeListener() {
 			
 			public void stateChanged(ChangeEvent e) {
-				controlsBar.setVisible(tabs.getSelectedIndex() != 0);
+				controlsBar.setVisible(tabs.getSelectedIndex() != 0 && tabs.getSelectedIndex() !=1);
 				controller.getAction(
 						ImporterControl.RETRY_BUTTON).setEnabled(
 							hasFailuresToReupload());
@@ -421,6 +442,7 @@ class ImporterUI extends TopWindow
 	void addComponent(ImportDialog chooser)
 	{
 		if (chooser == null) return;
+		this.chooser=chooser;
 		tabs.insertTab("Select Data to Import", null, chooser, "", 0);
 		//if in debug mode insert the debug section
 		Boolean debugEnabled = (Boolean) 
@@ -439,6 +461,44 @@ class ImporterUI extends TopWindow
 		selectChooser();
 		pack();
 	}
+	
+	/** 
+	 * Adds the chooser to the tab.
+	 * 
+	 * @param chooser The component to add.
+	 */
+	void addMDComponent(MetaDataDialog metaData)
+	{
+		if (metaData == null) return;
+		this.metaData=metaData;
+		tabs.insertTab("Specify MetaData", null, metaData, "", 1);
+		//if in debug mode insert the debug section
+		Boolean debugEnabled = (Boolean) 
+			ImporterAgent.getRegistry().lookup("/options/Debug");
+		if (debugEnabled != null && debugEnabled.booleanValue()) {
+			IconManager icons = IconManager.getInstance();
+			ClosableTabbedPaneComponent c = new ClosableTabbedPaneComponent(1, 
+					"Debug Text", icons.getIcon(IconManager.DEBUG));
+			c.setCloseVisible(false);
+			c.setClosable(false);
+			double[][] tl = {{TableLayout.FILL}, {TableLayout.FILL}};
+			c.setLayout(new TableLayout(tl));
+			c.add(createDebugTab(), "0, 0");
+			tabs.insertClosableComponent(c);
+		}
+//		selectMetaDataChooser();
+		pack();
+	}
+	
+	public void refreshMetaFileView(List<ImportableFile> files){
+		if (files == null)
+			LOGGER.info("No data select");
+		
+		metaData.refreshFileView(files);
+	}
+	
+	/** Indicates to the select the metaData chooser. */
+	void selectMetaDataChooser() { tabs.setSelectedIndex(1); }
 	
 	/** Indicates to the select the import chooser. */
 	void selectChooser() { tabs.setSelectedIndex(0); }
@@ -491,7 +551,7 @@ class ImporterUI extends TopWindow
 	void reset()
 	{
 		int n = tabs.getTabCount();
-		for (int i = 1; i < n; i++) {
+		for (int i = 2; i < n; i++) {
 			tabs.remove(i);
 		}
 		uiElements.clear();
@@ -743,6 +803,10 @@ class ImporterUI extends TopWindow
 	{
 		packWindow();
 		UIUtilities.centerAndShow(this);
+	}
+
+	public void startImport() {
+		chooser.importFiles();
 	}
 
 }

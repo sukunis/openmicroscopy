@@ -291,32 +291,34 @@ public class SaveMetadataUserDefinedUI extends JPanel implements  ListSelectionL
 //		 }
 		//experiment
 		try {
-			//--- save Experiment and Experimenter data
-			Experiment e = model.getExperiment();
-			omeStore.storeExperiment(e);
-			// update refs
-			Image i=model.getImageOMEData();
-			i.linkExperiment(e);
-			i.linkExperimenter(e.getLinkedExperimenter());
-			//TODO: refs update
-			//Refs to experimenter: Dataset, ExperimenterGroup, Image, MicrobeamManipulation, Project
+			Image img=model.getImageOMEData();
+			if(img!=null){
+				//--- save Experiment and Experimenter data
+				Experiment e = model.getExperiment();
+				omeStore.storeExperiment(e);
+				// update refs
 			
-			//--- save ObjectiveSettings and Objective
-			ObjectiveSettings os=model.getObjectiveSettings();
-			omeStore.storeObjectiveSettings(os,model.getImageIndex());
-			
-			Objective o=model.getObjective();
-			omeStore.storeObjective(o,model.getImageIndex());
-			
-			//--- save ImagingEnv
-			ImagingEnvironment iEnv=model.getImgagingEnv();
-			omeStore.storeImagingEnv(iEnv,model.getImageIndex());	
-			
-			//TODO save stagelabel
-			
-			//TODO save planes, moechte man ueberhaupt hier aenderungen zulassen???
-			
-			
+				img.linkExperiment(e);
+				img.linkExperimenter(e.getLinkedExperimenter());
+				//TODO: refs update
+				//Refs to experimenter: Dataset, ExperimenterGroup, Image, MicrobeamManipulation, Project
+
+				//--- save ObjectiveSettings and Objective
+				ObjectiveSettings os=model.getObjectiveSettings();
+				omeStore.storeObjectiveSettings(os,img);
+
+				Objective o=model.getObjective();
+				omeStore.storeObjective(o,img,model.getImageIndex());
+
+				//--- save ImagingEnv
+				ImagingEnvironment iEnv=model.getImgagingEnv();
+				omeStore.storeImagingEnv(iEnv,img);	
+
+				//TODO save stagelabel
+
+				//TODO save planes, moechte man ueberhaupt hier aenderungen zulassen???
+
+			}
 			
 			
 			

@@ -36,6 +36,7 @@ import javax.swing.border.TitledBorder;
 
 
 
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
@@ -86,6 +87,7 @@ public class DetectorCompUI extends ElementsCompUI
 	private int linkChannelIdx;
 	
 	private Box box;
+	private boolean setFields;
 	
 	private void initTagList()
 	{
@@ -110,7 +112,7 @@ public class DetectorCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return (result || detectorSettUI.userInput());
+		return (result || detectorSettUI.userInput()|| setFields);
 	}
 
 
@@ -123,7 +125,7 @@ public class DetectorCompUI extends ElementsCompUI
 		if(objConf==null)
 			createDummyPane(false);
 		else
-			createDummyPane(objConf.getList(),false);
+			createDummyPane(objConf.getTagList(),false);
 	}
 
 	public void setList(List<Detector> _list)
@@ -188,6 +190,8 @@ public class DetectorCompUI extends ElementsCompUI
 				Double a=d.getAmplificationGain();
 				Double g=d.getGain();
 				if(overwrite){
+					if(d.getID()!=null && !d.getID().equals(""))
+						detector.setID(d.getID());
 					if(!mo.equals("")) detector.setModel(mo);
 					if(!ma.equals("")) detector.setManufacturer(ma);
 					if(t!=null) detector.setType(t);
@@ -198,6 +202,8 @@ public class DetectorCompUI extends ElementsCompUI
 					if(g!=null) detector.setGain(g);
 					LOGGER.info("[DATA] overwrite DETECTOR data");
 				}else{
+					if(detector.getID()==null || detector.getID().equals(""))
+						detector.setID(d.getID());
 					if(detector.getModel()==null || detector.getModel().equals("") )
 						detector.setModel(mo);
 					if(detector.getManufacturer()==null || detector.getManufacturer().equals(""))
@@ -255,22 +261,37 @@ public class DetectorCompUI extends ElementsCompUI
 		
 		if(detector==null)
 			createNewElement();
-		
+		try{
 		detector.setModel(model.getTagValue().equals("")?
 				null : model.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read DETECTOR model input");
+		}
+		try{
 	
 		detector.setManufacturer(manufact.getTagValue().equals("")?
 				null : manufact.getTagValue());
-	
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read DETECTOR manufacturer input");
+		}
+		try{
 		detector.setType(type.getTagValue().equals("")?
 				null : DetectorType.fromString(type.getTagValue()));
-	
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read DETECTOR type input");
+		}
+		try{
 		detector.setZoom(zoom.getTagValue().equals("")?
 				null : Double.valueOf(zoom.getTagValue()));
-	
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read DETECTOR zoom input");
+		}
+		try{
 		detector.setAmplificationGain(amplGain.getTagValue().equals("")?
 				null : Double.valueOf(amplGain.getTagValue()));
-	
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read DETECTOR amplification gain input");
+		}
 //		detector.setGain(gain.getTagValue().equals("")?
 //				null : Double.valueOf(gain.getTagValue()));
 //	
@@ -327,6 +348,7 @@ public class DetectorCompUI extends ElementsCompUI
 		
 		buildComp=true;
 		initTagList();
+		setFields=false;
 	}
 
 	//TODO: advanced properties shows by touch a button
@@ -619,6 +641,10 @@ public class DetectorCompUI extends ElementsCompUI
 			zoom = new TagData("Zoom: ",val,prop,TagData.TEXTFIELD);
 		else 
 			zoom.setTagValue(val,prop);
+	}
+
+	public void setFieldsExtern(boolean b) {
+		setFields= setFields || b;		
 	}
 
 

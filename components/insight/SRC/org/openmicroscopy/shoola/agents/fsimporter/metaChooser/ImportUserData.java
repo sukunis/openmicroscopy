@@ -1,8 +1,8 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser;
 
+import omero.gateway.model.ExperimenterData;
+import omero.gateway.model.GroupData;
 import omero.model.Project;
-import pojos.ExperimenterData;
-import pojos.GroupData;
 
 public class ImportUserData 
 {

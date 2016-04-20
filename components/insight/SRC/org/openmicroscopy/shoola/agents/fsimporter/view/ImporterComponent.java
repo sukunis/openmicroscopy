@@ -1,6 +1,6 @@
 /*
  *------------------------------------------------------------------------------
- *  Copyright (C) 2006-2016 University of Dundee. All rights reserved.
+ *  Copyright (C) 2006-2014 University of Dundee. All rights reserved.
  *
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,8 @@ import org.openmicroscopy.shoola.agents.events.importer.ImportStatusEvent;
 import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportLocationSettings;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ImportUserData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.util.FileImportComponent;
 import org.openmicroscopy.shoola.agents.fsimporter.util.ObjectToCreate;
 import org.openmicroscopy.shoola.agents.treeviewer.view.TreeViewer;
@@ -65,6 +67,8 @@ import omero.gateway.model.PixelsData;
 import omero.gateway.model.PlateData;
 import omero.gateway.model.ProjectData;
 import omero.gateway.model.ScreenData;
+
+
 
 /** 
  * Implements the {@link Importer} interface to provide the functionality
@@ -111,9 +115,15 @@ class ImporterComponent
 	
 	/** Reference to the chooser used to select the files to import. */
 	private ImportDialog	chooser;
+	
+	/** Reference to the metadata chooser used to specificate metadata for the files to import. */
+	private MetaDataDialog	metaDataChooser;
 
 	/** Flag indicating that the window has been marked to be closed.*/
 	private boolean 		markToclose;
+	
+	/** holds import information like group, project, importer, dataset**/
+	private ImportUserData importUserData;
 	
 	/**
 	 * Posts event if required indicating the status of the import process.
@@ -183,6 +193,7 @@ class ImporterComponent
 	{
 		if (element == null) return;
 		view.setSelectedPane(element, true);
+		
 		model.fireImportData(element.getData(), element.getID());
 	}
 	
@@ -318,6 +329,7 @@ class ImporterComponent
         if (model.getState() == DISCARDED) return;
         boolean reactivate = chooser != null;
         model.setImportFor(userId);
+        
         if (chooser == null) {
             chooser = new ImportDialog(view, model.getSupportedFormats(),
                     selectedContainer, objects, type,
@@ -331,6 +343,19 @@ class ImporterComponent
             view.selectChooser();
         }
         chooser.setSelectedGroup(getSelectedGroup());
+        
+        //Metadata biology
+        if(metaDataChooser==null){
+        	metaDataChooser = new MetaDataDialog(view,model.getSupportedFormats(),type, 
+        			controller.getAction(ImporterControl.CANCEL_BUTTON),this); 
+        	metaDataChooser.addPropertyChangeListener(controller);
+        	view.addMDComponent(metaDataChooser);
+        }else{
+        	//metaDataChooser.reset();
+        	//metaDataChooser.requestFocusInWindow();
+//        	view.selectMetaDataChooser();
+        }
+        
         if (model.isMaster() || CollectionUtils.isEmpty(objects) || !reactivate)
             refreshContainers(new ImportLocationDetails(type));
         //load available disk space
@@ -627,7 +652,6 @@ class ImporterComponent
 			case DISCARDED:
 				return;
 		}
-		model.setState(Importer.READY);
 		if (chooser == null) return;
 		Set nodes = TreeViewerTranslator.transformHierarchy(result);
 		chooser.reset(nodes, type, model.getGroupId(), userID);
@@ -703,6 +727,8 @@ class ImporterComponent
 	{
 		if (data == null)
 			throw new IllegalArgumentException("No object to create.");
+		
+	
 		model.fireDataCreation(data);
 		fireStateChange();
 	}

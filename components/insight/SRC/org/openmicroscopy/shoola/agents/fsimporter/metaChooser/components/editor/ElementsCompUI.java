@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
+import ome.xml.model.AbstractOMEModelObject;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
@@ -130,6 +131,7 @@ public abstract class ElementsCompUI extends JPanel
 			tag.setTagValue("");
 		}
 	}
+	
 	
 	protected boolean isActive(TagData tag)
 	{

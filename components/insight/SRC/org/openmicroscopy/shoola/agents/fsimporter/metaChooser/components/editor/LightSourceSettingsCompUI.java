@@ -75,7 +75,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 		if(objConf==null)
 			createDummyPane(false);
 		else
-			createDummyPane(objConf.getList(),false);
+			createDummyPane(objConf.getSettingList(),false);
 	}
 	
 	public LightSourceSettingsCompUI(LightSourceSettings _ls, String id)
@@ -118,10 +118,14 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 				Length w=ls.getWavelength();
 				PercentFraction p=ls.getAttenuation();
 				if(overwrite){
+					if(ls.getID()!=null && !ls.getID().equals(""))
+						lightSrc.setID(ls.getID());
 					if(w!=null) lightSrc.setWavelength(w);
 					if(p!=null) lightSrc.setAttenuation(p);
 					LOGGER.info("[DATA] overwrite LIGHTSRC_SETTINGS data");
 				}else{
+					if(lightSrc.getID()==null || lightSrc.getID().equals(""))
+						lightSrc.setID(ls.getID());
 					if(lightSrc.getWavelength()==null)
 						lightSrc.setWavelength(w);
 					if(lightSrc.getAttenuation()==null)
@@ -154,9 +158,17 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 		if(lightSrc==null){
 			createNewElement();
 		}
-		lightSrc.setWavelength(parseToLength(waveLength.getTagValue(),waveLengthUnit));
-		//TODO input format hint: percentvalue elem of [0,100] or [0,1]
-		lightSrc.setAttenuation(parseAttenuation(attenuation.getTagValue()));
+		try{
+			lightSrc.setWavelength(parseToLength(waveLength.getTagValue(),waveLengthUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC SETT wavelength input");
+		}
+		try{
+			//TODO input format hint: percentvalue elem of [0,100] or [0,1]
+			lightSrc.setAttenuation(parseAttenuation(attenuation.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC SETT attenuation input");
+		}
 	}
 	
 	private PercentFraction parseAttenuation(String c)

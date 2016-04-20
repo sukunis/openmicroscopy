@@ -31,7 +31,7 @@ public class ImageCompUI extends ElementsCompUI
 {
 	private final String L_NAME="Name";
 	private final String L_ACQTIME="Acquisition Time";
-	private final String L_DIM="Dimension (XY)";
+	private final String L_DIM="Dim X x Y";
 	private final String L_PIXELTYPE="Pixel Depth";
 	private final String L_PIXELSIZE="Pixel Size (XY)";
 	private final String L_DIMZTC="Dim Z x T x C";
@@ -58,6 +58,7 @@ public class ImageCompUI extends ElementsCompUI
 	
 	
 	private Image image;
+	private boolean setFields;
 	
 	private void initTagList()
 	{
@@ -84,7 +85,7 @@ public class ImageCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return (result );
+		return (result || setFields);
 	}
 	
 
@@ -97,7 +98,7 @@ public class ImageCompUI extends ElementsCompUI
 		if(objConf==null)
 			createDummyPane(false);
 		else
-			createDummyPane(objConf.getList(),false);
+			createDummyPane(objConf.getTagList(),false);
 	}
 	
 	public ImageCompUI(Image _image,int i)
@@ -142,13 +143,15 @@ public class ImageCompUI extends ElementsCompUI
 				Pixels p=image.getPixels();
 				
 				if(overwrite){
-					if(!name.equals("")) image.setName(name);
-					if(!dimX.toString().equals("")) p.setSizeX(dimX);
-					if(!dimY.toString().equals("")) p.setSizeX(dimY);
-					if(!dimZ.toString().equals("")) p.setSizeX(dimZ);
-					if(!dimT.toString().equals("")) p.setSizeX(dimT);
-					if(!dimC.toString().equals("")) p.setSizeX(dimC);
-					if(!type.toString().equals("")) p.setType(type);
+					if(img.getID()!=null && !img.getID().equals(""))
+						image.setID(img.getID());
+					if(name!=null && !name.equals("")) image.setName(name);
+					if(dimX!=null && !dimX.toString().equals("")) p.setSizeX(dimX);
+					if(dimY!=null && !dimY.toString().equals("")) p.setSizeX(dimY);
+					if(dimZ!=null && !dimZ.toString().equals("")) p.setSizeX(dimZ);
+					if(dimT!=null && !dimT.toString().equals("")) p.setSizeX(dimT);
+					if(dimC!=null && !dimC.toString().equals("")) p.setSizeX(dimC);
+					if(type!=null && !type.toString().equals("")) p.setType(type);
 					//TODO test ifEmpty
 					if(timeInc!=null) p.setTimeIncrement(timeInc);
 					if(stamp!=null) image.setAcquisitionDate(stamp);
@@ -157,7 +160,8 @@ public class ImageCompUI extends ElementsCompUI
 					
 					LOGGER.info("[DATA] overwrite IMAGE data");
 				}else{
-					
+					if(image.getID()==null || image.getID().equals(""))
+						image.setID(img.getID());
 					if(image.getName()==null || image.getName().equals(""))
 						image.setName(name);
 					if(p.getSizeX() ==null || p.getSizeX().equals(""))
@@ -256,37 +260,92 @@ public class ImageCompUI extends ElementsCompUI
 			createNewElement();
 		}
 		
-		image.setName(name.getTagValue());
-		image.setAcquisitionDate(acqTime.getTagValue().equals("") ? 
-				null : Timestamp.valueOf(acqTime.getTagValue()));
+		try{
+			image.setName(name.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read IMAGE name input");
+		}
+		try{
+			image.setAcquisitionDate(acqTime.getTagValue().equals("") ? 
+					null : Timestamp.valueOf(acqTime.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read IMAGE acquisition date input");
+		}
+		try{
+			image.getPixels().setSizeX(dimXY.getTagValue(0).equals("") ?
+					null : PositiveInteger.valueOf(dimXY.getTagValue(0)));
 		
-		image.getPixels().setSizeX(dimXY.getTagValue(0).equals("") ?
-				null : PositiveInteger.valueOf(dimXY.getTagValue(0)));
-		image.getPixels().setSizeY(dimXY.getTagValue(1).equals("") ?
-				null : PositiveInteger.valueOf(dimXY.getTagValue(1)));
-		
-		image.getPixels().setType(pixelType.getTagValue().equals("") ?
-				null : PixelType.fromString(pixelType.getTagValue()));
-		
-		image.getPixels().setPhysicalSizeX(pixelSize.getTagValue(0).equals("") ?
-				null : new Length(Double.valueOf(pixelSize.getTagValue(0)),sizeUnit));
-		image.getPixels().setPhysicalSizeY(pixelSize.getTagValue(1).equals("") ?
-				null : new Length(Double.valueOf(pixelSize.getTagValue(1)),sizeUnit));
-		
-		image.getPixels().setSizeZ(dimZTC.getTagValue(0).equals("")?
-				null : PositiveInteger.valueOf(dimZTC.getTagValue(0)));
-		image.getPixels().setSizeT(dimZTC.getTagValue(1).equals("")?
-				null : PositiveInteger.valueOf(dimZTC.getTagValue(1)));
-		image.getPixels().setSizeC(dimZTC.getTagValue(2).equals("")?
-				null : PositiveInteger.valueOf(dimZTC.getTagValue(2)));
-		
-		
-		image.getPixels().setTimeIncrement(timeIncrement.getTagValue().equals("")?
-				null : new Time(Double.valueOf(timeIncrement.getTagValue()),timeUnit));
+			image.getPixels().setSizeY(dimXY.getTagValue(1).equals("") ?
+					null : PositiveInteger.valueOf(dimXY.getTagValue(1)));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read IMAGE dimension x,y input");
+		}
+		try{
+			image.getPixels().setType(pixelType.getTagValue().equals("") ?
+					null : PixelType.fromString(pixelType.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read IMAGE pixel type input");
+		}
+		try{
+			image.getPixels().setPhysicalSizeX(pixelSize.getTagValue(0).equals("") ?
+					null : new Length(Double.valueOf(pixelSize.getTagValue(0)),sizeUnit));
+			image.getPixels().setPhysicalSizeY(pixelSize.getTagValue(1).equals("") ?
+					null : new Length(Double.valueOf(pixelSize.getTagValue(1)),sizeUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read IMAGE pixel size input");
+		}
+		try{
+
+			image.getPixels().setSizeZ(dimZTC.getTagValue(0).equals("")?
+					null : PositiveInteger.valueOf(dimZTC.getTagValue(0)));
+			image.getPixels().setSizeT(dimZTC.getTagValue(1).equals("")?
+					null : PositiveInteger.valueOf(dimZTC.getTagValue(1)));
+			image.getPixels().setSizeC(dimZTC.getTagValue(2).equals("")?
+					null : PositiveInteger.valueOf(dimZTC.getTagValue(2)));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read IMAGE dimension z,t,c input");
+		}
+		try{
+			image.getPixels().setTimeIncrement(timeIncrement.getTagValue().equals("")?
+					null : new Time(Double.valueOf(timeIncrement.getTagValue()),timeUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read IMAGE time increment input");
+		}
 		
 		//TODO: stagePos,wellNr,stepSize
 
 //		image.setObjectiveSettings(objectiveSett.getData());
+		
+	}
+	public static void mergeData(Image in, Image imageOME) 
+	{
+		if(imageOME==null ){
+			if(in==null){
+				LOGGER.severe("failed to merge IMAGE data");
+			}else{
+				imageOME=in;
+			}
+			return;
+		}else if(in==null){
+			return;
+		}
+		
+		if(in.getName()!=null && !in.getName().equals(""))
+			imageOME.setName(in.getName());
+		imageOME.setAcquisitionDate(in.getAcquisitionDate());
+		
+		Pixels pOME=imageOME.getPixels();
+		Pixels pIN=in.getPixels();
+		
+		pOME.setSizeX(pIN.getSizeX());
+		pOME.setSizeY(pIN.getSizeY());
+		pOME.setType(pIN.getType());
+		pOME.setPhysicalSizeX(pIN.getPhysicalSizeX());
+		pOME.setPhysicalSizeY(pIN.getPhysicalSizeY());
+		pOME.setSizeZ(pIN.getSizeZ());
+		pOME.setSizeT(pIN.getSizeT());
+		pOME.setSizeC(pIN.getSizeC());
+		pOME.setTimeIncrement(pIN.getTimeIncrement());
 		
 	}
 	
@@ -309,9 +368,12 @@ public class ImageCompUI extends ElementsCompUI
 		addTagToGUI(pixelSize);
 		addTagToGUI(dimZTC);
 		addTagToGUI(stepSize);
+		if(stepSize!=null) stepSize.setEnable(false);
 		addTagToGUI(timeIncrement);
 		addTagToGUI(stagePos);
+		if(stagePos!=null) stagePos.setEnable(false);
 		addTagToGUI(wellNr);
+		if(wellNr!=null) wellNr.setEnable(false);
 		
 		addLabelTextRows(labels, comp, gridbag, globalPane);
 		
@@ -321,7 +383,7 @@ public class ImageCompUI extends ElementsCompUI
 		
 		buildComp=true;
 		initTagList();
-		
+		setFields=false;
 	}
 
 	@Override
@@ -559,6 +621,12 @@ For example in a video stream.
 		
 		return list;
 	}
+
+	public void setFieldsExtern(boolean b) {
+		setFields= setFields || b;		
+	}
+
+	
 
 	
 

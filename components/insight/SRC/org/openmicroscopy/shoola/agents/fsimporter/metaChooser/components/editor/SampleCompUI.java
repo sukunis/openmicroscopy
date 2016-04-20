@@ -31,6 +31,7 @@ import javax.swing.border.TitledBorder;
 
 
 
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
@@ -38,6 +39,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Mod
 
 import ome.xml.model.XMLAnnotation;
 import ome.xml.model.primitives.Timestamp;
+import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 
 public class SampleCompUI extends ElementsCompUI
@@ -69,6 +71,7 @@ public class SampleCompUI extends ElementsCompUI
 	
 	
 	private Sample sample;
+	private boolean setFields;
 	
 	private void initTagList()
 	{
@@ -95,7 +98,7 @@ public class SampleCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return result;
+		return result || setFields;
 	}
 	
 	public SampleCompUI(Sample _sample,int i)
@@ -116,7 +119,7 @@ public class SampleCompUI extends ElementsCompUI
 		if(objConf==null)
 			createDummyPane(false);
 		else
-			createDummyPane(objConf.getList(),false);
+			createDummyPane(objConf.getTagList(),false);
 	}
 
 
@@ -144,9 +147,6 @@ public class SampleCompUI extends ElementsCompUI
 			try{
 				String[] n={sample.getObservedSample(0).getGridNumberX(),
 					sample.getObservedSample(0).getGridNumberY()};
-			
-				System.out.println("[DEBUG] set o grid "+sample.getObservedSample(0).getGridNumberX()+
-					", "+sample.getObservedSample(0).getGridNumberY());
 			
 				setExpGridNumber(n, REQUIRED);
 			
@@ -214,6 +214,7 @@ public class SampleCompUI extends ElementsCompUI
 		
 		buildComp=true;		
 		initTagList();
+		setFields=false;
 	}
 	@Override
 	public void buildExtendedComponents() 
@@ -322,14 +323,24 @@ public class SampleCompUI extends ElementsCompUI
 				String rdesc=s.getRawMaterialDesc();
 				
 				GridBox g=s.getGridBox();
-				Integer gNr=g.getNr();
-				String gT=g.getType();
-				
+				Integer gNr=null;
+				String gT=null;
+				if(g!=null){
+					gNr=g.getNr();
+					gT=g.getType();
+				}
 				ObservedSample os=s.getObservedSample(0);
-				String osgx=os.getGridNumberX();
-				String osgy=os.getGridNumberY();
-				String ost=os.getObjectType();
-				String osNr=os.getObjectNumber();
+				String osgx=null;
+				String osgy=null;
+				String ost=null;
+				String osNr=null;
+				if(os!=null){
+					osgx=os.getGridNumberX();
+					osgy=os.getGridNumberY();
+					ost=os.getObjectType();
+					osNr=os.getObjectNumber();
+				}
+				
 				if(overwrite){
 					if(pdesc!=null && !pdesc.equals("")) sample.setPrepDescription(pdesc);
 					if(pdate!=null) sample.setPrepDate(pdate);
@@ -380,32 +391,67 @@ public class SampleCompUI extends ElementsCompUI
 			LOGGER.info("[DATA] add SAMPLE data");
 		}
 		
-		System.out.println("[DEBUG] set o grid "+s.getObservedSample(0).getGridNumberX()+
-				", "+s.getObservedSample(0).getGridNumberY());
 		setGUIData();
 		return conflict;
 	}
 	
-	private void readGUIInput() throws Exception 
+	private void readGUIInput() 
 	{
 		if(sample==null)
 			createNewElement();
 		//TODO input checker
-//		try{sample.setDate(new Timestamp(preparationDate.getTagValue()));}
-//		catch(Exception e){}
-		sample.setPrepDescription(preparationDescription.getTagValue());
-		sample.setGridBoxData(gridBoxNumber.getTagValue(), gridBoxType.getTagValue());
+		try{sample.setPrepDate(preparationDate.getTagValue().equals("")? 
+				null : Timestamp.valueOf(preparationDate.getTagValue()));}
+		catch(Exception e){}
+		try{
+			sample.setPrepDescription(preparationDescription.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read SAMPLE preparation description input");
+		}
+		try{
+			String g1=gridBoxNumber!=null ? gridBoxNumber.getTagValue() : null;
+			String g2=gridBoxType!=null ? gridBoxType.getTagValue(): null;
+			sample.setGridBoxData(g1, g2);
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read SAMPLE grid box data input");
+			e.printStackTrace();
+		}
+		
 		ObservedSample observedSample=new ObservedSample();
-		observedSample.setObjectNumber(expObjectNr.getTagValue());
-		observedSample.setObjectType(expObjectType.getTagValue());
-		observedSample.setGridNumberX(expGrid.getTagValue(0));
-		observedSample.setGridNumberY(expGrid.getTagValue(1));
-		
-		System.out.println("[DEBUG] read gui grid number "+expGrid.getTagValue(0)+", "+expGrid.getTagValue(1));
-		
+		observedSample.setSampleID(MetadataTools.createLSID("ObservedSample", 0));
+		try{
+			observedSample.setObjectNumber(expObjectNr!=null ? expObjectNr.getTagValue(): null);
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read SAMPLE observed sample object nr input");
+		}
+		try{
+			observedSample.setObjectType(expObjectType!=null ? expObjectType.getTagValue():null);
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read SAMPLE observed sample object type input");
+		}
+		try{
+			observedSample.setGridNumberX(expGrid!=null ? expGrid.getTagValue(0):null);
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read SAMPLE observed sample grid number x input");
+		}
+		try{
+			observedSample.setGridNumberY(expGrid!=null ?expGrid.getTagValue(1):null);
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read SAMPLE observed sample grid number y input");
+		}
 		sample.setObservedSample(observedSample);
-		sample.setRawMaterialDesc(rawMaterialDesc.getTagValue()); 
-		sample.setRawMaterialCode(rawMaterialCode.getTagValue()); 
+		
+		try{
+			sample.setRawMaterialDesc(rawMaterialDesc!=null ? rawMaterialDesc.getTagValue():null); 
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read SAMPLE raw material description input");
+		}
+		try{
+			sample.setRawMaterialCode(rawMaterialCode!=null ? rawMaterialCode.getTagValue():null); 
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read SAMPLE raw material code input");
+		}
+		
 		
 	}
 
@@ -497,6 +543,10 @@ public class SampleCompUI extends ElementsCompUI
 			expObjectType = new TagData("Observed Object Type: ",value,prop,TagData.TEXTPANE);
 		else 
 			expObjectType.setTagValue(value,prop);	
+	}
+
+	public void setFieldsExtern(boolean b) {
+		setFields= setFields || b;		
 	}
 	
 }

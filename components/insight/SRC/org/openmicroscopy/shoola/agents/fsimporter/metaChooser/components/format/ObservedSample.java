@@ -2,6 +2,7 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.forma
 
 import java.util.logging.Logger;
 
+import loci.formats.MetadataTools;
 import ome.xml.model.primitives.Timestamp;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
@@ -13,7 +14,7 @@ import org.w3c.dom.NodeList;
  * Object for observed object metadata like
  * 
  * <ObservedObject namespace="">
- * 		<SampleRef ID="">
+ * 		<SampleRef ID="ObservedSample:0">
  * 		<Grid GridBoxRef="" Number=""/ oder PosX="" PosY="">
  * 		<Object Type="" Number="">
  * </ObservedObject>
@@ -76,6 +77,7 @@ public class ObservedSample
 	//parse string of xmlannotation object to sample object
 	public ObservedSample(Element element)
 	{
+		try{
 		String tagName=element.getTagName();
 		if(!OBS_SAMPLE.equals(tagName)){
 			LOGGER.warning("Expecting node name of ObservedSample - but this is "+tagName);
@@ -89,8 +91,8 @@ public class ObservedSample
 			Node node=list.item(0);
 			if(node.getNodeType()==Node.ELEMENT_NODE){
 				if(((Element) node).hasAttribute("ID")){
-					setSampleID(String.valueOf(
-							((Element) node).getAttribute("ID")));
+					setSampleID(MetadataTools.createLSID("ObservedSample",
+							Integer.valueOf(((Element) node).getAttribute("ID"))));
 				}
 			}
 		}
@@ -126,6 +128,9 @@ public class ObservedSample
 					setObjectType(String.valueOf(((Element)node).getAttribute(OBJECT_TYPE)));
 				}
 			}
+		}
+		}catch(Exception e){
+			LOGGER.severe("Can not parse OBSERVED SAMPLE");
 		}
 	}
 	

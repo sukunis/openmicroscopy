@@ -20,9 +20,7 @@
  */
 package org.openmicroscopy.shoola.agents.fsimporter.chooser;
 
-
 import ij.ImagePlus;
-
 import ij.WindowManager;
 import info.clearthought.layout.TableLayout;
 
@@ -136,9 +134,13 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 	/** Bound property indicating to import the selected files. */
 	public static final String IMPORT_PROPERTY = "import";
+	public static final String STARTIMPORT_PROPERTY = "startImport";
 
 	/** Bound property indicating to refresh the location. */
 	public static final String REFRESH_LOCATION_PROPERTY = "refreshLocation";
+	
+	/** Bound property indicating to add files to the queue-> refresh fileView MetaData. */
+	public static final String REFRESH_FILE_LIST = "refreshMetaList";
 
 	// Command Ids
 	/** Action id indicating to import the selected files. */
@@ -382,6 +384,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		chooser.setSelectedFile(new File("."));
 		
 		table.addFiles(fileList, importSettings);
+		//firePropertyChange(REFRESH_FILE_LIST,null,table.getFilesToImport());
 		importButton.setEnabled(table.hasFilesToImport());
 	}
 
@@ -1650,10 +1653,12 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		
 		if (FileSelectionTable.ADD_PROPERTY.equals(name)) {
 			showLocationDialog();
+			firePropertyChange(REFRESH_FILE_LIST,null,table.getFilesToImport());
 		} else if (FileSelectionTable.REMOVE_PROPERTY.equals(name)) {
 			int n = handleFilesSelection(chooser.getSelectedFiles());
 			table.allowAddition(n > 0);
 			importButton.setEnabled(table.hasFilesToImport());
+			firePropertyChange(REFRESH_FILE_LIST,null,table.getFilesToImport());
 		} else if (JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(name)) {
 			int n = handleFilesSelection(chooser.getSelectedFiles());
 			table.allowAddition(n > 0);
@@ -1700,7 +1705,8 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 		switch (commandId) {
 			case CMD_IMPORT:
-				importFiles();
+//				importFiles();
+				firePropertyChange(STARTIMPORT_PROPERTY,false,true);
 				break;
 			case CMD_CLOSE:
 				firePropertyChange(CANCEL_SELECTION_PROPERTY,

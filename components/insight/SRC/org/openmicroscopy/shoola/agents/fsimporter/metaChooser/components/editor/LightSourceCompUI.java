@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightSourceEditor;
@@ -129,6 +130,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	private ActionListener aListener;
 	
 	private int linkChannelIdx;
+	private boolean setFields;
 	
 	
 	
@@ -141,7 +143,7 @@ public class LightSourceCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return (result || lightSrcSettUI.userInput());
+		return (result || lightSrcSettUI.userInput()|| setFields);
 	}
 	public LightSourceCompUI(LightSource _ls, int _linkChannelIdx)
 	{
@@ -174,7 +176,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		if(objConf==null)
 			createDummyPane(false);
 		else
-			createDummyPane(objConf.getList(),false);
+			createDummyPane(objConf.getTagList(),false);
 	}
 	
 
@@ -275,11 +277,20 @@ public class LightSourceCompUI extends ElementsCompUI
 			return;
 		
 		//TODO
-		if(!l.getClass().equals(lightSrc.getClass())){
+		if(lightSrc!=null && !l.getClass().equals(lightSrc.getClass())){
 			LOGGER.severe("[DATA] add LIGHTSOURCE data: different lightSrc types");
 			return;
 		}
 		
+		if(lightSrc!=null){
+			if(overwrite){
+				if(l.getID()!=null && !l.getID().equals(""))
+					lightSrc.setID(l.getID());
+			}else{
+				if(lightSrc.getID()==null || lightSrc.getID().equals(""))
+					lightSrc.setID(l.getID());
+			}
+		}
 
 		if(l instanceof Laser){
 			addDataLaser(l,overwrite);
@@ -385,6 +396,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		ArcType t=((Arc)l).getType();
 		if(lightSrc!=null){
 			if(overwrite){
+				
 				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
 				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
 				if(p!=null) lightSrc.setPower(p);
@@ -423,6 +435,7 @@ public class LightSourceCompUI extends ElementsCompUI
 
 		if(lightSrc!=null){	
 			if(overwrite){
+				
 				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
 				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
 				if(p!=null) lightSrc.setPower(p);
@@ -430,7 +443,9 @@ public class LightSourceCompUI extends ElementsCompUI
 
 				if(m!=null) ((Laser)lightSrc).setLaserMedium(m);
 				if(fM!=null) ((Laser)lightSrc).setFrequencyMultiplication(fM);
-				if(tu!=null) ((Laser)lightSrc).setTuneable(tu);
+				if(tu!=null){
+					((Laser)lightSrc).setTuneable(tu);
+				}
 				if(po!=null) ((Laser)lightSrc).setPockelCell(po);
 				if(rr!=null) ((Laser)lightSrc).setRepetitionRate(rr);
 				if(w!=null) ((Laser)lightSrc).setWavelength(w);
@@ -438,6 +453,7 @@ public class LightSourceCompUI extends ElementsCompUI
 				if(((Laser)l).getLinkedPump()!=null) ((Laser)lightSrc).linkPump(((Laser)l).getLinkedPump());
 				LOGGER.info("[DATA] overwrite LIGHTSOURCE data");
 			}else{
+				
 				if(lightSrc.getManufacturer()==null)
 					lightSrc.setManufacturer(ma);
 				if(lightSrc.getModel()==null)
@@ -450,10 +466,15 @@ public class LightSourceCompUI extends ElementsCompUI
 					((Laser)lightSrc).setLaserMedium(m);
 				if(((Laser)lightSrc).getFrequencyMultiplication()==null)
 					((Laser)lightSrc).setFrequencyMultiplication(fM);
-				if(((Laser)lightSrc).getTuneable()==null)
+				try{
+//				if(((Laser)lightSrc).getTuneable()==null){
 					((Laser)lightSrc).setTuneable(tu);
-				if(((Laser)lightSrc).getPockelCell()==null)
+//				}
+//				if(((Laser)lightSrc).getPockelCell()==null)
 					((Laser)lightSrc).setPockelCell(po);
+				}catch(Exception e){
+					LOGGER.warning("LIGHTSRC Can't set checkbox values");
+				}
 				if(((Laser)lightSrc).getRepetitionRate()==null)
 					((Laser)lightSrc).setRepetitionRate(rr);
 				if(((Laser)lightSrc).getWavelength()==null)
@@ -468,6 +489,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			lightSrc=l;
 			LOGGER.info("[DATA] add LIGHTSOURCE data");
 		}
+		
 
 	}
 	public void addData(LightSourceSettings ls,boolean overwrite)
@@ -521,15 +543,15 @@ public class LightSourceCompUI extends ElementsCompUI
 			createNewElement();
 		
 		if(lightSrc instanceof Laser){
-			getLaserData();
+			readGUIInputLaserData();
 		}else if(lightSrc instanceof Arc){
-			getArcData();
+			readGUIInputArcData();
 		}else if(lightSrc instanceof Filament){
-			getFilamentData();
+			readGUIInputFilamentData();
 		}else if(lightSrc instanceof GenericExcitationSource){
-			getGenericExcitationSourceData();
+			greadGUIInputGenericExcitationSourceData();
 		}else if(lightSrc instanceof LightEmittingDiode){
-			getLightEmittingDiodeData();
+			readGUIInputLightEmittingDiodeData();
 		}else{
 			LOGGER.severe("unknown LIGHTSOURCE or element is null");
 		}
@@ -559,71 +581,166 @@ public class LightSourceCompUI extends ElementsCompUI
 		}
 		
 	}
-	private void getLightEmittingDiodeData() throws Exception 
+	private void readGUIInputLightEmittingDiodeData() throws Exception 
 	{
-		((LightEmittingDiode)lightSrc).setManufacturer(manufact.getTagValue().equals("")? null : manufact.getTagValue());
-		((LightEmittingDiode)lightSrc).setModel(model.getTagValue().equals("")? null : model.getTagValue());
+		try{
+			((LightEmittingDiode)lightSrc).setManufacturer(manufact.getTagValue().equals("")? null : manufact.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC led manufacturer input");
+		}
+		try{
+			((LightEmittingDiode)lightSrc).setModel(model.getTagValue().equals("")? null : model.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC led model input");
+		}
 		//TODO ((LightEmittingDiode)lightSrc).setLinkedAnnotation(index, o)
 	}
 
-	private void getGenericExcitationSourceData() throws Exception 
+	private void greadGUIInputGenericExcitationSourceData() throws Exception 
 	{
-		((GenericExcitationSource)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
-				null : manufact.getTagValue());
-		((GenericExcitationSource)lightSrc).setModel(model.getTagValue().equals("")? 
-				null : model.getTagValue());
-		((GenericExcitationSource)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
+		try{
+			((GenericExcitationSource)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
+					null : manufact.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC ges manufacturer input");
+		}
+		try{
+			((GenericExcitationSource)lightSrc).setModel(model.getTagValue().equals("")? 
+					null : model.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC ges model input");
+		}
+		try{
+			((GenericExcitationSource)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC ges power input");
+		}
 		//TODO set Map
 //		((GenericExcitationSource)lightSrc).setMap(map.getTagValue().equals("") ? 
 //				null : );
 	}
 
-	private void getFilamentData() throws Exception 
+	private void readGUIInputFilamentData() throws Exception 
 	{
-		((Filament)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
-				null : manufact.getTagValue());
-		((Filament)lightSrc).setModel(model.getTagValue().equals("")? 
-				null : model.getTagValue());
-		((Filament)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
-		((Filament)lightSrc).setType(type.getTagValue().equals("") ? 
-				null : FilamentType.fromString(type.getTagValue()));
+		try{
+			((Filament)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
+					null : manufact.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC fila manufacturer input");
+		}
+		try{
+			((Filament)lightSrc).setModel(model.getTagValue().equals("")? 
+					null : model.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC fila model input");
+		}
+		try{
+			((Filament)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC fila power input");
+		}
+		try{
+			((Filament)lightSrc).setType(type.getTagValue().equals("") ? 
+					null : FilamentType.fromString(type.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC fila type input");
+		}
 		
 	}
 
-	private void getArcData() throws Exception 
+	private void readGUIInputArcData() throws Exception 
 	{
-		((Arc)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
-				null : manufact.getTagValue());
-		((Arc)lightSrc).setModel(model.getTagValue().equals("")? 
-				null : model.getTagValue());
-		((Arc)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
-		((Arc)lightSrc).setType(type.getTagValue().equals("") ? 
-				null : ArcType.fromString(type.getTagValue()));		
+		try{
+			((Arc)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
+					null : manufact.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC arc manufacturer input");
+		}
+		try{
+			((Arc)lightSrc).setModel(model.getTagValue().equals("")? 
+					null : model.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC arc model input");
+		}
+		try{
+			((Arc)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC arc power input");
+		}
+		try{
+			((Arc)lightSrc).setType(type.getTagValue().equals("") ? 
+					null : ArcType.fromString(type.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC arc type input");
+		}
 	}
 
-	private void getLaserData() throws Exception 
+	private void readGUIInputLaserData() throws Exception 
 	{
-		((Laser)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
-				null : manufact.getTagValue());
-		((Laser)lightSrc).setModel(model.getTagValue().equals("")? 
-				null : model.getTagValue());
-		((Laser)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
-		((Laser)lightSrc).setType(parseLaserType(type.getTagValue()));	
-		((Laser)lightSrc).setFrequencyMultiplication(parseToPositiveInt(freqMul.getTagValue()));
-		((Laser)lightSrc).setLaserMedium(parseMedium(medium.getTagValue()));
-		
-		((Laser)lightSrc).setTuneable(Boolean.valueOf(tunable.getTagValue()));
-		
-		((Laser)lightSrc).setPulse(parsePulse(pulse.getTagValue()));
-		
-		((Laser)lightSrc).setPockelCell(Boolean.valueOf(pockelCell.getTagValue()));
-		((Laser)lightSrc).setRepetitionRate(parseFrequency(repRate.getTagValue(), repRateUnit));
-		
+		try{
+			((Laser)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
+					null : manufact.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC maunfacturer input");
+		}
+		try{
+			((Laser)lightSrc).setModel(model.getTagValue().equals("")? 
+					null : model.getTagValue());
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC model input");
+		}
+		try{
+			((Laser)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC power input");
+		}
+		try{
+			((Laser)lightSrc).setType(parseLaserType(type.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC type input");
+		}
+		try{
+			((Laser)lightSrc).setFrequencyMultiplication(parseToPositiveInt(freqMul.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC freq multiplication input");
+		}
+		try{
+			((Laser)lightSrc).setLaserMedium(parseMedium(medium.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC medium input");
+		}
+		try{
+
+			((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(tunable.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC tunable input");
+		}
+		try{
+
+			((Laser)lightSrc).setPulse(parsePulse(pulse.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC pulse input");
+		}
+		try{
+
+			((Laser)lightSrc).setPockelCell(Boolean.valueOf(pockelCell.getTagValue()));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC pockell cell input");
+		}
+		try{
+			((Laser)lightSrc).setRepetitionRate(parseFrequency(repRate.getTagValue(), repRateUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC repetition rate input");
+		}
+
 		//TODO: link pump object
-//		((Laser)lightSrc).linkPump(pump.getTagValue().equals("") ? 
-//				null : pump.getTagValue());
-		
-		((Laser)lightSrc).setWavelength(parseToLength(waveLength.getTagValue(),waveLengthUnit));
+		//		((Laser)lightSrc).linkPump(pump.getTagValue().equals("") ? 
+		//				null : pump.getTagValue());
+		try{
+			((Laser)lightSrc).setWavelength(parseToLength(waveLength.getTagValue(),waveLengthUnit));
+		}catch(Exception e){
+			LOGGER.severe("[DATA] can't read LIGHTSRC wavelength input");
+		}
 		
 	}
 	private Frequency parseFrequency(String c,Unit<Frequency> unit)
@@ -841,6 +958,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			buildComp=true;
 			
 			initTagList(sourceType.getSelectedItem().toString());
+			setFields=false;
 	}
 	
 	private void addTags(String kindOfLightSrc)
@@ -1067,11 +1185,11 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case L_TUNABLE:
 						try {
-							Boolean value=Boolean.valueOf(val);
-							setTunable(value, prop);
-							((Laser)lightSrc).setTuneable(value);
+//							Boolean value=BooleanUtils.toBoolean(val);
+							setTunable(val, prop);
+							((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(val));
 						} catch (Exception e) {
-							setTunable(null, prop);
+							setTunable((String)null, prop);
 						}
 						tunable.setVisible(true);
 						break;
@@ -1254,7 +1372,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		
 		setMedium(null, OPTIONAL);
 		setFreqMultiplication(null, OPTIONAL);
-		setTunable(null, OPTIONAL);
+		setTunable((String)null, OPTIONAL);
 		setPulse(null, OPTIONAL);
 		setPocketCell(null, OPTIONAL);
 		setRepititationRate(null, OPTIONAL);
@@ -1394,6 +1512,15 @@ public class LightSourceCompUI extends ElementsCompUI
 			tunable.setTagValue(val,prop);
 	}
 	
+	public void setTunable(String value, boolean prop)
+	{
+		String val=(value!=null) ? value: "false";
+		if(tunable == null) 
+			tunable = new TagData("Tunable: ",val,prop,TagData.CHECKBOX);
+		else 
+			tunable.setTagValue(val,prop);
+	}
+	
 	public void setPulse(Pulse value, boolean prop)
 	{
 		String val= (value != null)? value.getValue() : "";
@@ -1480,6 +1607,9 @@ public class LightSourceCompUI extends ElementsCompUI
 		return list;
 		
 		
+	}
+	public void setFieldsExtern(boolean b) {
+		setFields= setFields || b;		
 	}
 
 	

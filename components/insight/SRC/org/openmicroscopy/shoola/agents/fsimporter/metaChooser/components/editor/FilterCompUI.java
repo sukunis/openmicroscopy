@@ -101,31 +101,50 @@ public class FilterCompUI extends LightPathElem
 		setBorder(BorderFactory.createCompoundBorder(tb,
 						BorderFactory.createEmptyBorder(5,5,5,5)));
 	}
-	
+
 	private void readGUIInput() throws Exception
 	{
 		if(filter==null){
 			filter=new Filter();
 		}
 		if(filter instanceof Filter){
-			((Filter) filter).setManufacturer(manufact.getTagValue().equals("")?
-				null : manufact.getTagValue());
-		
-			((Filter) filter).setModel(model.getTagValue().equals("")?
-				null : model.getTagValue());
-		
-			((Filter) filter).setFilterWheel(filterwheel.getTagValue().equals("")?
-				null : filterwheel.getTagValue());
-		
-			((Filter) filter).setType(type.getTagValue().equals("")?
-				null : FilterType.fromString(type.getTagValue()));
+			try{
+				((Filter) filter).setManufacturer(manufact.getTagValue().equals("")?
+						null : manufact.getTagValue());
+			}catch(Exception e){
+				LOGGER.severe("[DATA] can't read FILTER manufacturer input");
+			}
+			try{
+				((Filter) filter).setModel(model.getTagValue().equals("")?
+						null : model.getTagValue());
+			}catch(Exception e){
+				LOGGER.severe("[DATA] can't read FILTER model input");
+			}
+			try{
+				((Filter) filter).setFilterWheel(filterwheel.getTagValue().equals("")?
+						null : filterwheel.getTagValue());
+			}catch(Exception e){
+				LOGGER.severe("[DATA] can't read FILTER filter wheel input");
+			}
+			try{
+				((Filter) filter).setType(type.getTagValue().equals("")?
+						null : FilterType.fromString(type.getTagValue()));
+			}catch(Exception e){
+				LOGGER.severe("[DATA] can't read FILTER type input");
+			}
 		}else{
-			((Dichroic) filter).setManufacturer(manufact.getTagValue().equals("")?
-					null : manufact.getTagValue());
-			
+			try{
+				((Dichroic) filter).setManufacturer(manufact.getTagValue().equals("")?
+						null : manufact.getTagValue());
+			}catch(Exception e){
+				LOGGER.severe("[DATA] can't read DICHROIC manufacturer input");
+			}
+			try{
 				((Dichroic) filter).setModel(model.getTagValue().equals("")?
-					null : model.getTagValue());
-			
+						null : model.getTagValue());
+			}catch(Exception e){
+				LOGGER.severe("[DATA] can't read DICHROIC model input");
+			}
 		}
 		
 		
