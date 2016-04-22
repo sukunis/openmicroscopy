@@ -32,10 +32,12 @@ import javax.swing.border.TitledBorder;
 
 
 
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import ome.xml.model.XMLAnnotation;
 import ome.xml.model.primitives.Timestamp;
@@ -44,16 +46,7 @@ import loci.formats.meta.IMetadata;
 
 public class SampleCompUI extends ElementsCompUI
 {
-	private final String L_PREPDATE="Prep Date";
-	private final String L_PREPDESC="Prep Description";
-	private final String L_RAWCODE="Code";
-	private final String L_RAWDESC="Description";
-	private final String L_GRIDBOXNR="Gridbox Nr";
-	private final String L_GRIDBOXTYPE="Gridbox Type";
-	private final String L_EXPGRID="Grid (XY)";
-	private final String L_EXPOBJNR="Observed Object Nr";
-	private final String L_EXPOBJTYPE="Observed Object Type";
-	
+		
 	private TagData preparationDate;
 	private TagData preparationDescription;
 	
@@ -251,39 +244,39 @@ public class SampleCompUI extends ElementsCompUI
 					OPTIONAL;
 				if(name!=null){
 					switch (name) {
-					case L_PREPDATE:// no pre value possible
+					case TagNames.PREPDATE:// no pre value possible
 						setPreparationDate(null, prop);
 						preparationDate.setVisible(true);
 						break;
-					case L_PREPDESC:// no pre value possible
+					case TagNames.PREPDESC:// no pre value possible
 						setPreparationDescription(null, prop);
 						preparationDescription.setVisible(true);
 						break;
-					case L_RAWCODE:// no pre value possible
+					case TagNames.RAWCODE:// no pre value possible
 						setRawMaterialCode(null, prop); 
 						rawMaterialCode.setVisible(true);
 						break;
-					case L_RAWDESC:// no pre value possible
+					case TagNames.RAWDESC:// no pre value possible
 						setRawMaterialDesc(val, prop);
 						rawMaterialDesc.setVisible(true);
 						break;
-					case L_GRIDBOXNR:// no pre value possible
+					case TagNames.GRIDBOXNR:// no pre value possible
 						setGridBoxNumber(null, prop);
 						gridBoxNumber.setVisible(true);
 						break;
-					case L_GRIDBOXTYPE:// no pre value possible
+					case TagNames.GRIDBOXTYPE:// no pre value possible
 						setGridType(null, prop);
 						gridBoxType.setVisible(true);
 						break;
-					case L_EXPGRID:// no pre value possible
+					case TagNames.EXPGRID:// no pre value possible
 						setExpGridNumber(new String[2], prop);
 						expGrid.setVisible(true);
 						break;
-					case L_EXPOBJNR:// no pre value possible
+					case TagNames.EXPOBJNR:// no pre value possible
 						setExpObjectNr(null, prop);
 						expObjectNr.setVisible(true);
 						break;
-					case L_EXPOBJTYPE: // no pre value possible
+					case TagNames.EXPOBJTYPE: // no pre value possible
 						setExpObjectType(null, prop);
 						expObjectType.setVisible(true);
 						break;
@@ -470,7 +463,7 @@ public class SampleCompUI extends ElementsCompUI
 	private void setRawMaterialDesc(String value, boolean prop) 
 	{
 		if(rawMaterialDesc == null) 
-			rawMaterialDesc = new TagData("Description: ",value,prop,TagData.TEXTPANE);
+			rawMaterialDesc = new TagData(TagNames.RAWDESC+": ",value,prop,TagData.TEXTPANE);
 		else 
 			rawMaterialDesc.setTagValue(value,prop);
 	}
@@ -478,7 +471,7 @@ public class SampleCompUI extends ElementsCompUI
 	private void setRawMaterialCode(String value, boolean prop) 
 	{
 		if(rawMaterialCode == null) 
-			rawMaterialCode = new TagData("Code: ",value,prop,TagData.TEXTFIELD);
+			rawMaterialCode = new TagData(TagNames.RAWCODE+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			rawMaterialCode.setTagValue(value,prop);
 	}
@@ -488,7 +481,7 @@ public class SampleCompUI extends ElementsCompUI
 		
 		String val= (value != null) ? value.getValue():"";
 		if(preparationDate == null) 
-			preparationDate = new TagData("Date: ",val,prop,TagData.TIMESTAMP);
+			preparationDate = new TagData(TagNames.PREPDATE+": ",val,prop,TagData.TIMESTAMP);
 		else 
 			preparationDate.setTagValue(val,prop);
 	}
@@ -496,7 +489,7 @@ public class SampleCompUI extends ElementsCompUI
 	public void setPreparationDescription(String value, boolean prop)
 	{
 		if(preparationDescription == null) 
-			preparationDescription = new TagData("Description: ",value,prop,TagData.TEXTPANE);
+			preparationDescription = new TagData(TagNames.PREPDESC+": ",value,prop,TagData.TEXTPANE);
 		else 
 			preparationDescription.setTagValue(value,prop);	
 	}
@@ -505,7 +498,7 @@ public class SampleCompUI extends ElementsCompUI
 	{
 		String val=(value!=null) ? String.valueOf(value):"";
 		if(gridBoxNumber == null) 
-			gridBoxNumber = new TagData("Gridbox Nr: ",val,prop,TagData.TEXTFIELD);
+			gridBoxNumber = new TagData(TagNames.GRIDBOXNR+": ",val,prop,TagData.TEXTFIELD);
 		else {
 			gridBoxNumber.setTagValue(val,0,prop);
 		}
@@ -514,7 +507,7 @@ public class SampleCompUI extends ElementsCompUI
 	public void setGridType(String value, boolean prop)
 	{
 		if(gridBoxType == null) 
-			gridBoxType = new TagData("Gridbox Type: ",value,prop,TagData.TEXTPANE);
+			gridBoxType = new TagData(TagNames.GRIDBOXTYPE+": ",value,prop,TagData.TEXTPANE);
 		else 
 			gridBoxType.setTagValue(value,prop);	
 	}
@@ -522,7 +515,7 @@ public class SampleCompUI extends ElementsCompUI
 	public void setExpGridNumber(String[] value, boolean prop)
 	{
 		if(expGrid == null) 
-			expGrid = new TagData("Grid (X,Y): ",value,prop,TagData.ARRAYFIELDS);
+			expGrid = new TagData(TagNames.EXPGRID+": ",value,prop,TagData.ARRAYFIELDS);
 		else{ 
 			expGrid.setTagValue(value[0],0,prop);
 			expGrid.setTagValue(value[1],1,prop);
@@ -532,7 +525,7 @@ public class SampleCompUI extends ElementsCompUI
 	public void setExpObjectNr(String value, boolean prop)
 	{
 		if(expObjectNr == null) 
-			expObjectNr = new TagData("Observed Object Nr: ",value,prop,TagData.TEXTPANE);
+			expObjectNr = new TagData(TagNames.EXPOBJNR+": ",value,prop,TagData.TEXTPANE);
 		else 
 			expObjectNr.setTagValue(value,prop);	
 	}
@@ -540,7 +533,7 @@ public class SampleCompUI extends ElementsCompUI
 	public void setExpObjectType(String value, boolean prop)
 	{
 		if(expObjectType == null) 
-			expObjectType = new TagData("Observed Object Type: ",value,prop,TagData.TEXTPANE);
+			expObjectType = new TagData(TagNames.EXPOBJTYPE+": ",value,prop,TagData.TEXTPANE);
 		else 
 			expObjectType.setTagValue(value,prop);	
 	}

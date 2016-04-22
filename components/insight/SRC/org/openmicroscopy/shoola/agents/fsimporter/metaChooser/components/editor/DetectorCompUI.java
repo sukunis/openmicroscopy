@@ -37,9 +37,11 @@ import javax.swing.border.TitledBorder;
 
 
 
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import ome.units.UNITS;
 import ome.units.quantity.ElectricPotential;
@@ -54,11 +56,7 @@ import loci.formats.meta.IMetadata;
 
 public class DetectorCompUI extends ElementsCompUI
 {
-	private final String L_MODEL="Model";
-	private final String L_MANUFAC="Manufacturer";
-	private final String L_TYPE="Type";
-	private final String L_ZOOM="Zoom";
-	private final String L_AMPLGAIN="AmplificationGain";
+	
 //	private final String L_GAIN="Gain";
 //	private final String L_VOLTAGE="Voltage";
 //	private final String L_OFFSET="Offset";
@@ -128,9 +126,30 @@ public class DetectorCompUI extends ElementsCompUI
 			createDummyPane(objConf.getTagList(),false);
 	}
 
-	public void setList(List<Detector> _list)
+//	public void setList(List<Detector> _list)
+//	{
+//		availableDetectors=_list;
+//	}
+	
+	public void clearList()
 	{
-		availableDetectors=_list;
+		availableDetectors=null;
+		LOGGER.info("[LIST] delete detector elements");
+	}
+	
+	public void addToList(List<Detector> list)
+	{
+		if(list==null || list.size()==0)
+			return;
+		
+		LOGGER.info("[LIST-DEBUG] ADD DETECTOR TO LIST anzahl: "+ list.size());
+		if(availableDetectors==null){
+			availableDetectors=new ArrayList<Detector>();
+		}
+		
+		for(int i=0; i<list.size(); i++){
+			availableDetectors.add(list.get(i));
+		}
 	}
 	
 	private void initGUI()
@@ -161,6 +180,7 @@ public class DetectorCompUI extends ElementsCompUI
 						availableDetectors);
 				Detector selected=creator.getDetector();  
 				if(selected!=null ){
+					setFields=true;
 					detector=selected;
 					setGUIData();
 //					buildComponents();   
@@ -192,8 +212,8 @@ public class DetectorCompUI extends ElementsCompUI
 				if(overwrite){
 					if(d.getID()!=null && !d.getID().equals(""))
 						detector.setID(d.getID());
-					if(!mo.equals("")) detector.setModel(mo);
-					if(!ma.equals("")) detector.setManufacturer(ma);
+					if(mo!=null && !mo.equals("")) detector.setModel(mo);
+					if(ma!=null && !ma.equals("")) detector.setManufacturer(ma);
 					if(t!=null) detector.setType(t);
 					if(v!=null) detector.setVoltage(v);
 					if(o!=null) detector.setOffset(o);
@@ -438,7 +458,7 @@ public class DetectorCompUI extends ElementsCompUI
 					OPTIONAL;
 				if(name!=null){
 					switch (name) {
-					case L_MODEL: 
+					case TagNames.MODEL: 
 						try{
 							setModel(val,prop);
 							detector.setModel(val);
@@ -448,7 +468,7 @@ public class DetectorCompUI extends ElementsCompUI
 						}
 						model.setVisible(true);
 						break;
-					case L_MANUFAC: 
+					case TagNames.MANUFAC: 
 						try{
 							setManufact(val, prop);
 							detector.setManufacturer(val);
@@ -458,7 +478,7 @@ public class DetectorCompUI extends ElementsCompUI
 						}
 						manufact.setVisible(true);
 						break;
-					case L_TYPE:
+					case TagNames.TYPE:
 						try{
 							DetectorType value= DetectorType.fromString(val);
 							setType(value, prop);
@@ -469,7 +489,7 @@ public class DetectorCompUI extends ElementsCompUI
 						}
 						type.setVisible(true);
 						break;
-					case L_ZOOM:
+					case TagNames.ZOOM:
 						try{
 							setZoom(Double.valueOf(val), prop);
 							detector.setZoom(Double.valueOf(val));
@@ -479,7 +499,7 @@ public class DetectorCompUI extends ElementsCompUI
 						}
 						zoom.setVisible(true);
 						break;
-					case L_AMPLGAIN:
+					case TagNames.AMPLGAIN:
 						try{
 							setAmplGain(Double.valueOf(val), prop);
 							detector.setZoom(Double.valueOf(val));
@@ -537,6 +557,7 @@ public class DetectorCompUI extends ElementsCompUI
 //		clearTagValue(offset);
 		clearTagValue(zoom);
 		if(detectorSettUI!=null) detectorSettUI.clearDataValues();
+		if(availableDetectors!=null) availableDetectors.clear();
 	}
 	
 	public List<TagData> getActiveTags()
@@ -572,7 +593,7 @@ public class DetectorCompUI extends ElementsCompUI
 	public void setModel(String value, boolean prop)
 	{
 		if(model == null) 
-			model = new TagData("Model: ",value,prop,TagData.TEXTFIELD);
+			model = new TagData(TagNames.MODEL+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			model.setTagValue(value,prop);
 	}
@@ -580,7 +601,7 @@ public class DetectorCompUI extends ElementsCompUI
 	public void setManufact(String value, boolean prop)
 	{
 		if(manufact == null) 
-			manufact = new TagData("Manufacturer: ",value,prop,TagData.TEXTFIELD);
+			manufact = new TagData(TagNames.MANUFAC+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			manufact.setTagValue(value,prop);
 	}
@@ -589,7 +610,7 @@ public class DetectorCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(type == null) 
-			type = new TagData("Type: ",val,prop,TagData.COMBOBOX,getNames(DetectorType.class));
+			type = new TagData(TagNames.TYPE+": ",val,prop,TagData.COMBOBOX,getNames(DetectorType.class));
 		else 
 			type.setTagValue(val,prop);
 	}
@@ -599,7 +620,7 @@ public class DetectorCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(amplGain == null) 
-			amplGain = new TagData("Amplification Gain: ",val,prop,TagData.TEXTFIELD);
+			amplGain = new TagData(TagNames.AMPLGAIN+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			amplGain.setTagValue(val,prop);
 	}
@@ -638,7 +659,7 @@ public class DetectorCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(zoom == null) 
-			zoom = new TagData("Zoom: ",val,prop,TagData.TEXTFIELD);
+			zoom = new TagData(TagNames.ZOOM+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			zoom.setTagValue(val,prop);
 	}

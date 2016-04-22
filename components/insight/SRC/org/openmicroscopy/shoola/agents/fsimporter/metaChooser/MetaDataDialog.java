@@ -67,6 +67,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ExperimentCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
@@ -321,8 +322,15 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    refreshFilesButton.addActionListener(this);
 	    
 	    UOSProfileReader propReader=new UOSProfileReader(new File("profileUOSImporter.xml"));
+	    UOSHardwareReader hardwareDef=new UOSHardwareReader(new File("hardwareDefinitionUOSImporter.xml"));
 //	    dataView=new MicroscopeDataView(propReader.getViewProperties());
 	    customSettings=propReader.getViewProperties();
+	    
+	    customSettings.setMicObjList(hardwareDef.getObjectives());
+	    customSettings.setMicDetectorList(hardwareDef.getDetectors());
+	    customSettings.setMicLightSrcList(hardwareDef.getLightSources());
+	    
+	    
 	    micName=new JLabel(customSettings.getMicName());
 	    dataView=new MetaDataUI(customSettings);
 	    
@@ -627,6 +635,75 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	
 	private void loadAndShowDataForSelection()
 	{
+		saveModel();
+
+		clearDataView();
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		
+		String file = getSelectedFile(); 
+		
+		//import user data
+		ImportUserData importData = getImportData();
+		
+		//set parent dir data
+		MetaDataModel parentModel=getParentMetaDataModel();
+		if(lastNode!=null && parentModel!=null){
+			LOGGER.info("[DEBUG] READ MODEL OF "+lastNode.getAbsolutePath());
+			try {
+				parentModel.noticUserInput();
+				
+			} catch (Exception e) {
+				LOGGER.severe("can't read model of "+lastNode.getAbsolutePath());
+				e.printStackTrace();
+			}
+		}
+		//set current dir data
+		MetaDataModel dirModel=getCurrentSelectionMetaDataModel();
+		
+		// is selection a file or directory
+		if(file.equals("")){
+			lastSelectionType=DIR;
+			LOGGER.info("[GUI] select directory");
+			//show dataview
+			dataView=new MetaDataUI(customSettings);
+			dataView.readData(importData);
+			addParentModel(parentModel,dataView);
+			try {
+				dataView.addData(dirModel);
+				dataView.showData();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			metaPanel.addTab("",dataView);
+			
+			return;
+		}else{
+			lastSelectionType=FILE;
+			dataView=new MetaDataUI(customSettings);
+			dataView.readData(importData);
+			
+			addParentModel(parentModel,dataView);
+			
+			System.out.println("[DEBUG]--- ADD METADATA FROM FILE");
+		
+			try {
+				loadFileMetaData(file, dataView,parentModel,importData);
+			} catch (FormatException e) {
+				LOGGER.warning("MY Unknown file format "+file);
+			}catch(IOException e){
+				LOGGER.warning("Can't read/access "+file);
+			}
+		}
+		
+	}
+
+
+	private void saveModel() 
+	{
 		if(lastNode!=null){
 			System.out.println("[DEBUG] LAST selection: "+lastNode.getAbsolutePath());
 			lastNode.setModel(dataView.getModel());
@@ -645,76 +722,20 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 //				System.out.println("DIRECTORY USER INPUT");
 //			}
 //		}
-		clearDataView();
-		
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		
-		String file = getSelectedFile(); 
-		
-		//import user data
-		ImportUserData importData = getImportData();
-		
-		//TODO parent dir data
-		MetaDataModel parentModel=getParentMetaDataModel();
-		if(lastNode!=null && parentModel!=null){
-			System.out.println("[DEBUG] READ MODEL OF "+lastNode.getAbsolutePath());
-			try {
-				parentModel.noticUserInput();
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		// is selection a file or directory
-		if(file.equals("")){
-			LOGGER.info("[GUI] select directory");
-			//show dataview
-			dataView=new MetaDataUI(customSettings);
-			dataView.readData(importData);
-			try {
-				dataView.showData();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-			metaPanel.addTab("",dataView);
-			lastSelectionType=DIR;
-			return;
-		}else{
-			lastSelectionType=FILE;
-			dataView=new MetaDataUI(customSettings);
-			dataView.readData(importData);
-			
-			addParentModel(parentModel,dataView);
-			System.out.println("[DEBUG]--- ADD METADATA FROM FILE");
-		
-			try {
-				loadFileMetaData(file, dataView,parentModel,importData);
-			} catch (FormatException e) {
-				LOGGER.warning("MY Unknown file format "+file);
-			}catch(IOException e){
-				LOGGER.warning("Can't read/access "+file);
-			}
-		}
-		
 	}
 
 
-	private void addParentModel(MetaDataModel parentModel,MetaDataUI view) 
+	private void addParentModel(MetaDataModel myModel,MetaDataUI view) 
 	{
 		try {
-			if(parentModel!=null && parentModel.noticUserInput()){ 
+			if(myModel!=null && myModel.noticUserInput()){ 
 				System.out.println("[DEBUG]--- ADD MODEL OF "+lastNode.getAbsolutePath());
-				view.addData(parentModel);
+				view.addData(myModel);
 			}else{
 				System.out.println("[DEBUG]--- NO PARENT MODEL");
 			}
 		} catch (Exception e) {
-			LOGGER.warning("Can't add metadata from parent");
+			LOGGER.warning("[DATA] Can't add metadata from parent");
 			e.printStackTrace();
 		}
 	}
@@ -728,6 +749,19 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			if(parent!=null){
 				return parent.getModel();
 			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @return model of current selected directory, if exist's. If selection is a file, return null.
+	 */
+	private MetaDataModel getCurrentSelectionMetaDataModel()
+	{
+		FNode node = (FNode)fileTree.getLastSelectedPathComponent();
+		if(node!=null && !node.isLeaf()){
+			return node.getModel();
 		}
 		return null;
 	}

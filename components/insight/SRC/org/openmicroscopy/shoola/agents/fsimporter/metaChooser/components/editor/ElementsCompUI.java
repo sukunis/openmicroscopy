@@ -75,7 +75,7 @@ public abstract class ElementsCompUI extends JPanel
 //			field.setTagValue(val,prop);
 //	}
 	
-	protected PositiveInteger parseToPositiveInt(String c)
+	public static PositiveInteger parseToPositiveInt(String c)
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -83,7 +83,7 @@ public abstract class ElementsCompUI extends JPanel
 		return new PositiveInteger(Integer.parseInt(c));
 	}
 	
-	protected Length parseToLength(String c, Unit<Length> unit)
+	public static Length parseToLength(String c, Unit<Length> unit)
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -91,7 +91,7 @@ public abstract class ElementsCompUI extends JPanel
 		return new Length(Double.valueOf(c), unit);
 	}
 	
-	protected Double parseToDouble(String c) throws NumberFormatException
+	public static Double parseToDouble(String c) throws NumberFormatException
 	{
 		if(c==null || c.equals(""))
 			return null;

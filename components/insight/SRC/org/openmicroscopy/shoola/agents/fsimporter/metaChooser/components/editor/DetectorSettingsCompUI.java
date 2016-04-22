@@ -14,6 +14,7 @@ import javax.swing.border.TitledBorder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
@@ -29,12 +30,7 @@ import omero.model.enums.DetectorTypeUnknown;
 
 public class DetectorSettingsCompUI extends ElementsCompUI
 {
-	private final String L_GAIN="Set Gain";
-	private final String L_VOLTAGE="Set Voltage";
-	private final String L_OFFSET="Set Offset";
-	private final String L_CONFZOOM="Confocal Zoom";
-	private final String L_BINNING="Binning";
-	private final String L_SUBARRAY="Subarray";
+	
 	
 	/** variable value, that also can change during the acq.
 	 * See also DetectorSettings*/
@@ -324,7 +320,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 				OPTIONAL;
 			if(name!=null){
 				switch (name) {
-				case L_GAIN:
+				case TagNames.GAIN:
 					try{
 						Double value=parseToDouble(val);
 						setGain(value, prop);
@@ -335,7 +331,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					}
 					gain.setVisible(true);
 					break;
-				case L_VOLTAGE:
+				case TagNames.VOLTAGE:
 					try{
 						ElectricPotential value=new ElectricPotential(Double.valueOf(val), voltageUnit);
 						detectorSett.setVoltage(value);
@@ -345,7 +341,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					}
 					voltage.setVisible(true);
 					break;
-				case L_OFFSET:
+				case TagNames.OFFSET:
 					try{
 						setOffset(Double.valueOf(val), prop);
 						detectorSett.setOffset(Double.valueOf(val));
@@ -355,7 +351,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					}
 					offset.setVisible(true);
 					break;
-				case L_CONFZOOM:
+				case TagNames.CONFZOOM:
 					try{
 						Double value=parseToDouble(val);
 					setConfocalZoom(value, prop);
@@ -365,7 +361,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					}
 					confocalZoom.setVisible(true);
 					break;
-				case L_BINNING:
+				case TagNames.BINNING:
 					try{
 						Binning value=parseBinning(val);
 						setBinning(value, prop);
@@ -375,7 +371,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					}
 					binning.setVisible(true);
 					break;
-				case L_SUBARRAY:
+				case TagNames.SUBARRAY:
 					//TODO
 					setSubarray(null, prop);
 					subarray.setVisible(true);
@@ -415,7 +411,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		{
 			String val= (value != null)? value.getValue() : "";
 			if(binning == null) 
-				binning = new TagData("Binning: ",val,prop,TagData.COMBOBOX,getNames(Binning.class));
+				binning = new TagData(TagNames.BINNING+": ",val,prop,TagData.COMBOBOX,getNames(Binning.class));
 			else 
 				binning.setTagValue(val,prop);
 		}
@@ -424,7 +420,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 			String val= (value != null)? String.valueOf(value.value()) : "";
 			voltageUnit=(value!=null) ? value.unit() :voltageUnit;
 			if(voltage == null) 
-				voltage = new TagData("Voltage ["+voltageUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+				voltage = new TagData(TagNames.VOLTAGE+" ["+voltageUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 			else 
 				voltage.setTagValue(val,prop);
 		}
@@ -432,7 +428,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		{
 			String val= (value != null) ? String.valueOf(value):"";
 			if(offset == null) 
-				offset = new TagData("Offset: ",val,prop,TagData.TEXTFIELD);
+				offset = new TagData(TagNames.OFFSET+": ",val,prop,TagData.TEXTFIELD);
 			else 
 				offset.setTagValue(val,prop);
 		}
@@ -440,14 +436,14 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		{
 			String val= (value != null) ? String.valueOf(value):"";
 			if(confocalZoom == null) 
-				confocalZoom = new TagData("Confocal Zoom: ",val,prop,TagData.TEXTFIELD);
+				confocalZoom = new TagData(TagNames.CONFZOOM+": ",val,prop,TagData.TEXTFIELD);
 			else 
 				confocalZoom.setTagValue(val,prop);
 		}
 		public void setSubarray(String value, boolean prop)
 		{
 			if(subarray == null) 
-				subarray = new TagData("Subarray: ",value,prop,TagData.TEXTFIELD);
+				subarray = new TagData(TagNames.SUBARRAY+": ",value,prop,TagData.TEXTFIELD);
 			else 
 				subarray.setTagValue(value,prop);
 		}

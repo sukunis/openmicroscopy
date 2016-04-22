@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import ome.xml.model.Detector;
+import ome.xml.model.LightSource;
+import ome.xml.model.Objective;
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
@@ -46,6 +50,10 @@ public class CustomViewProperties
 	private ModuleConfiguration expConf;
 	private ModuleConfiguration imgEnvConf;
 	private ModuleConfiguration planeConf;
+	
+	private List<Objective> micObjList;
+	private List<Detector> micDetectorList;
+	private List<LightSource> micLightSrcList;
 	
 	public CustomViewProperties()
 	{
@@ -282,6 +290,32 @@ public class CustomViewProperties
 
 	public void setMicName(String micName) {
 		this.micName = micName;
+	}
+
+	public List<Objective> getMicObjList() {
+		LOGGER.info("[DEBUG] return mic object list of "+micObjList.size());
+		return micObjList;
+	}
+
+	public void setMicObjList(List<Objective> micObjList) {
+		this.micObjList = micObjList;
+		LOGGER.info("[DEBUG] set mic object list of "+micObjList.size());
+	}
+
+	public List<Detector> getMicDetectorList() {
+		return micDetectorList;
+	}
+
+	public void setMicDetectorList(List<Detector> micDetectorList) {
+		this.micDetectorList = micDetectorList;
+	}
+
+	public List<LightSource> getMicLightSrcList() {
+		return micLightSrcList;
+	}
+
+	public void setMicLightSrcList(List<LightSource> micLightSrcList) {
+		this.micLightSrcList = micLightSrcList;
 	}
 
 

@@ -21,6 +21,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightPathCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
@@ -35,17 +36,7 @@ import ome.xml.model.Channel;
 
 public class ChannelCompUI extends ElementsCompUI 
 {
-	private final String L_NAME="Name";
-	private final String L_COLOR="Color";
-	private final String L_FLUOROPHORE="Fluorophore";
-	private final String L_IILUMTYPE="Illumination Type";
-	private final String L_EXPOSURETIME="Exposure Time";
-	private final String L_EXCITWAVELENGTH="Excitation Wavelength";
-	private final String L_EMMISIONWAVELENGTH="Emission Wavelength";
-	private final String L_IMAGINGMODE="Imaging Mode";
-	private final String L_ILLUMINATIONMODE="Illumination Mode";
-	private final String L_CONTRASTMETHOD="Contrast Method";
-	private final String L_NDFILTER="ND Filter";
+	
 	
 	private TagData name;
 	/** color used to render this channel*/
@@ -477,7 +468,7 @@ public class ChannelCompUI extends ElementsCompUI
 				OPTIONAL;
 			if(name!=null){
 				switch (name) {
-				case L_NAME:
+				case TagNames.CH_NAME:
 					try{
 						setName(val,prop);
 //						channel.setName(val);
@@ -486,7 +477,7 @@ public class ChannelCompUI extends ElementsCompUI
 					}
 					this.name.setVisible(true);
 					break;
-				case L_COLOR:
+				case TagNames.COLOR:
 					try{
 						Color value=parseColor(val);
 						setColor(value, prop);
@@ -496,7 +487,7 @@ public class ChannelCompUI extends ElementsCompUI
 					}
 					color.setVisible(true);
 					break;
-				case L_FLUOROPHORE:
+				case TagNames.FLUOROPHORE:
 					try{
 						setFluorophore(val, prop);
 //						channel.setFluor(val);
@@ -505,7 +496,7 @@ public class ChannelCompUI extends ElementsCompUI
 					}
 					fluorophore.setVisible(true);
 					break;
-				case L_IILUMTYPE:
+				case TagNames.IILUMTYPE:
 					try{
 						IlluminationType value=parseIllumType(val);
 						setIllumType(value, prop);
@@ -515,7 +506,7 @@ public class ChannelCompUI extends ElementsCompUI
 					}
 					illumType.setVisible(true);
 					break;
-				case L_EXPOSURETIME:
+				case TagNames.EXPOSURETIME:
 					try{
 						setExposureTime(val, prop);
 						//TODO: channel.set;
@@ -524,7 +515,7 @@ public class ChannelCompUI extends ElementsCompUI
 					}
 					exposureTime.setVisible(true);
 					break;
-				case L_EXCITWAVELENGTH:
+				case TagNames.EXCITWAVELENGTH:
 					try{
 						Length value=parseToLength(val, excitWavelengthUnit);
 						setExcitWavelength(value, prop);
@@ -534,7 +525,7 @@ public class ChannelCompUI extends ElementsCompUI
 					}
 					excitWavelength.setVisible(true);
 					break;
-				case L_EMMISIONWAVELENGTH:
+				case TagNames.EMMISIONWAVELENGTH:
 					try{
 						Length value=parseToLength(val, emissionWavelengthUnit);
 						setEmissionWavelength(value, prop);
@@ -544,7 +535,7 @@ public class ChannelCompUI extends ElementsCompUI
 					}
 					emissionWavelength.setVisible(true);
 					break;
-				case L_IMAGINGMODE:
+				case TagNames.IMAGINGMODE:
 					try{
 						AcquisitionMode value=parseAcqMode(val);
 						setImagingMode(value, prop);
@@ -554,7 +545,7 @@ public class ChannelCompUI extends ElementsCompUI
 					}
 					imagingMode.setVisible(true);
 					break;
-				case L_ILLUMINATIONMODE:
+				case TagNames.ILLUMINATIONMODE:
 					try{
 						AcquisitionMode value=parseAcqMode(val);
 						setIlluminationMode(value, prop);
@@ -564,7 +555,7 @@ public class ChannelCompUI extends ElementsCompUI
 					}
 					illuminationMode.setVisible(true);
 					break;
-				case L_CONTRASTMETHOD:
+				case TagNames.CONTRASTMETHOD:
 					try{
 						ContrastMethod value=parseContrastMethod(val);
 						setContrastMethod(value, prop);
@@ -574,7 +565,7 @@ public class ChannelCompUI extends ElementsCompUI
 					}
 					contrastMethod.setVisible(true);
 					break;
-				case L_NDFILTER:
+				case TagNames.NDFILTER:
 					try{
 						Double value=parseToDouble(val);
 						setNDFilter(value, prop);
@@ -636,7 +627,7 @@ public class ChannelCompUI extends ElementsCompUI
 	public void setName(String value, boolean prop)
 	{
 		if(name == null) 
-			name = new TagData("Name: ",value,prop,TagData.TEXTFIELD);
+			name = new TagData(TagNames.CH_NAME+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			name.setTagValue(value,prop);
 	}
@@ -649,14 +640,14 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? value.toString():"";
 		if(color == null) 
-			color = new TagData("Color: ",val,prop,TagData.TEXTFIELD);
+			color = new TagData(TagNames.COLOR+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			color.setTagValue(val,prop);
 	}
 	public void setFluorophore(String value, boolean prop)
 	{
 		if(fluorophore == null) 
-			fluorophore = new TagData("Fluorophore: ",value,prop,TagData.TEXTFIELD);
+			fluorophore = new TagData(TagNames.FLUOROPHORE+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			fluorophore.setTagValue(value,prop);
 	}
@@ -664,14 +655,14 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(illumType == null) 
-			illumType = new TagData("Illumination Type: ",val,prop,TagData.COMBOBOX,getNames(IlluminationType.class));
+			illumType = new TagData(TagNames.IILUMTYPE+": ",val,prop,TagData.COMBOBOX,getNames(IlluminationType.class));
 		else 
 			illumType.setTagValue(val,prop);
 	}
 	public void setExposureTime(String value, boolean prop)
 	{
 		if(exposureTime == null) 
-			exposureTime = new TagData("Exposure Time: ",value,prop,TagData.TEXTFIELD);
+			exposureTime = new TagData(TagNames.EXPOSURETIME+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			exposureTime.setTagValue(value,prop);
 	}
@@ -680,7 +671,7 @@ public class ChannelCompUI extends ElementsCompUI
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		excitWavelengthUnit= (value!=null) ? value.unit() : excitWavelengthUnit;
 		if(excitWavelength == null) 
-			excitWavelength = new TagData("Excitation Wavelength ["+excitWavelengthUnit.getSymbol()
+			excitWavelength = new TagData(TagNames.EXCITWAVELENGTH+" ["+excitWavelengthUnit.getSymbol()
 					+"]: ",val,prop,TagData.TEXTFIELD);
 		else 
 			excitWavelength.setTagValue(val,prop);
@@ -690,7 +681,7 @@ public class ChannelCompUI extends ElementsCompUI
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		emissionWavelengthUnit=(value!=null) ? value.unit() :emissionWavelengthUnit;
 		if(emissionWavelength == null) 
-			emissionWavelength = new TagData("Emission Wavelength ["+emissionWavelengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			emissionWavelength = new TagData(TagNames.EMMISIONWAVELENGTH+" ["+emissionWavelengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 		else 
 			emissionWavelength.setTagValue(val,prop);
 	}
@@ -706,7 +697,7 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(imagingMode == null) 
-			imagingMode = new TagData("Imaging Mode: ",val,prop,TagData.COMBOBOX,getNames(AcquisitionMode.class));
+			imagingMode = new TagData(TagNames.IMAGINGMODE+": ",val,prop,TagData.COMBOBOX,getNames(AcquisitionMode.class));
 		else 
 			imagingMode.setTagValue(val,prop);
 	}
@@ -714,7 +705,7 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(illuminationMode == null) 
-			illuminationMode = new TagData("Illumination Mode: ",val,prop,TagData.COMBOBOX,getNames(AcquisitionMode.class));
+			illuminationMode = new TagData(TagNames.ILLUMINATIONMODE+": ",val,prop,TagData.COMBOBOX,getNames(AcquisitionMode.class));
 		else 
 			illuminationMode.setTagValue(val,prop);
 	}
@@ -722,7 +713,7 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(contrastMethod == null) 
-			contrastMethod = new TagData("Contrast Method: ",val,prop,TagData.COMBOBOX,getNames(ContrastMethod.class));
+			contrastMethod = new TagData(TagNames.CONTRASTMETHOD+": ",val,prop,TagData.COMBOBOX,getNames(ContrastMethod.class));
 		else 
 			contrastMethod.setTagValue(val,prop);
 	}
@@ -730,7 +721,7 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(ndFilter == null) 
-			ndFilter = new TagData("NDFilter: ",val,prop,TagData.TEXTFIELD);
+			ndFilter = new TagData(TagNames.NDFILTER+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			ndFilter.setTagValue(val,prop);
 	}

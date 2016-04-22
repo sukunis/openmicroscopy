@@ -26,8 +26,8 @@ import org.xml.sax.SAXException;
  * 	<Microscope Name=""/>
  * 	<Submodules>
  * 		<ImageData Pos="" Width="" Visible="">
- * 			<Tag1 Name="" Visible="" Value="" Optional=""/>
- * 			<Tag2>
+ * 			<Tag Name="" Visible="" Value="" Optional=""/>
+ * 			<Tag>
  *  	<\ImageData>
  *	 <\Submodules>
  * <\Profile>
@@ -92,16 +92,16 @@ public class UOSProfileReader
 		return view;
 	}
 	
-	private void readMicName(Element node)
+	public static String readMicName(Element node)
 	{
+		String name="Unspecified";
 		if(node!=null){
 			NamedNodeMap attr =node.getAttributes();
-			String name="Unspecified";
+			
 			if(attr!=null && attr.getLength()>0 && attr.getNamedItem(MIC_NAME)!=null)
 				name=attr.getNamedItem(MIC_NAME).getNodeValue();
-			
-			view.setMicName(name);
 		}
+		return name;
 	}
 	
 	private void readConfiguration(Document doc) 
@@ -111,7 +111,7 @@ public class UOSProfileReader
 			Element node=(Element) root.item(0);
 			
 			try{
-				readMicName((Element)(node.getElementsByTagName(MICROSCOPE)).item(0));
+				view.setMicName(readMicName((Element)(node.getElementsByTagName(MICROSCOPE)).item(0)));
 			}catch(Exception e){
 //				LOGGER.info("No MICROSCOPE NAME given");
 			}
@@ -152,16 +152,20 @@ public class UOSProfileReader
 				if(imgProp.getNamedItem(M_VIS)!=null)
 					vis=BooleanUtils.toBoolean(imgProp.getNamedItem(M_VIS).getNodeValue());
 				
-				if(vis && pos!=null && width!=null && !pos.equals("") && !width.equals("")){
-					addProperty(moduleName, pos, width);
-					loaded=true;
+				if(vis){
+					if( pos!=null && width!=null && !pos.equals("") && !width.equals("")){
+						addProperty(moduleName, pos, width);
+						loaded=true;
+					}else{
+						LOGGER.warning("[GUI] module property not complete: "+moduleName);
+					}
 				}else{
-					System.err.println("Wrong properties : "+moduleName);
+					LOGGER.info("[GUI] hide "+moduleName);
 					return false;
 				}
 				
 			}else{
-				System.err.println("Module property not complete: "+moduleName);
+				LOGGER.warning("[GUI] module property not complete: "+moduleName);
 				return false;
 			}
 			
@@ -169,7 +173,7 @@ public class UOSProfileReader
 			loaded=true;
 			
 		}else{
-			System.out.println("Module not loaded: "+moduleName);
+			LOGGER.info("[GUI] module not specified: "+moduleName);
 		}
 		
 		return loaded;
@@ -263,10 +267,11 @@ view.setDetectorConf(conf);
 view.setExperimenterConf(conf);		
 	}
 
-	private void loadChannelTags(Element node) {
+	private void loadChannelTags(Element node) 
+	{
 		ModuleConfiguration conf=new ModuleConfiguration();
 		conf.loadTags(node);
-view.setChannelConf(conf);		
+		view.setChannelConf(conf);		
 	}
 
 	private void loadImageTags(Element node) 

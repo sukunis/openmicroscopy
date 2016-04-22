@@ -69,12 +69,6 @@ public class DetectorEditor extends JDialog implements ActionListener
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		
-		JButton loadBtn= new JButton("Load Workstation List");
-		loadBtn.setActionCommand("Load");
-		loadBtn.setEnabled(false);
-		buttonPane.add(loadBtn);
-		buttonPane.add(Box.createHorizontalGlue());
-
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

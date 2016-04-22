@@ -23,6 +23,7 @@ import javax.swing.border.TitledBorder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
@@ -41,15 +42,6 @@ import ome.xml.model.enums.Immersion;
  */
 public class ObjectiveCompUI extends ElementsCompUI
 {
-	
-	private final String L_MODEL="Model";
-	private final String L_MANUFAC="Manufacturer";
-	private final String L_NOMMAGN="Nominal Magnification";
-	private final String L_CALMAGN="Calibration Magnification";
-	private final String L_LENSNA="Lens NA";
-	private final String L_IMMERSION="Immersion";
-	private final String L_CORRECTION="Correction";
-	private final String L_WORKDIST="Working Distance";
 	
 	private TagData model;
 	private TagData manufact;
@@ -199,9 +191,24 @@ public class ObjectiveCompUI extends ElementsCompUI
 			objectiveSettUI.addData(os,overwrite);
 	}
 
-	public void setList(List<Objective> _list)
+//	public void setList(List<Objective> _list)
+//	{
+//		availableObj=_list;
+//	}
+	
+	public void addToList(List<Objective> list)
 	{
-		availableObj=_list;
+		if(list==null || list.size()==0)
+			return;
+
+		LOGGER.info("[LIST] ADD OBJECTIVE TO LIST anzahl: "+ list.size());
+		if(availableObj==null){
+			availableObj=new ArrayList<Objective>();
+		}
+		for(int i=0; i<list.size(); i++){
+			availableObj.add(list.get(i));
+		}
+
 	}
 	
 	/**
@@ -259,6 +266,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 						availableObj);
 				Objective selectedObj=creator.getObjective();  
 				if(selectedObj!=null ){
+					setFields=true;
 					objective=selectedObj;
 					setGUIData();
 					revalidate();
@@ -460,17 +468,17 @@ public class ObjectiveCompUI extends ElementsCompUI
 					OPTIONAL;
 				if(name!=null){
 					switch (name) {
-					case L_MODEL:
+					case TagNames.MODEL:
 						setModel(val,prop);
 						model.setVisible(true);
 						objective.setModel(val);
 						break;
-					case L_MANUFAC:
+					case TagNames.MANUFAC:
 						setManufact(val,prop);
 						manufact.setVisible(true);
 						objective.setManufacturer(val);
 						break;
-					case L_NOMMAGN:
+					case TagNames.NOMMAGN:
 						try{
 							setNomMagnification(Double.valueOf(val), prop);
 							
@@ -480,7 +488,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 						}
 						nomMagn.setVisible(true);
 						break;
-					case L_CALMAGN:
+					case TagNames.CALMAGN:
 						try{
 							setCalMagnification(Double.valueOf(val), prop);
 							
@@ -490,7 +498,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 						}
 						calMagn.setVisible(true);
 						break;
-					case L_LENSNA:
+					case TagNames.LENSNA:
 						try{
 							setLensNA(Double.valueOf(val), prop);
 							
@@ -500,7 +508,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 						}
 						lensNA.setVisible(true);
 						break;
-					case L_IMMERSION:
+					case TagNames.IMMERSION:
 						try {
 							Immersion im=Immersion.fromString(val);
 							setImmersion(im, prop);
@@ -511,7 +519,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 						}
 						immersion.setVisible(true);
 						break;
-					case L_CORRECTION:
+					case TagNames.CORRECTION:
 						try {
 							Correction co = Correction.fromString(val);
 							setCorrection(co, prop);
@@ -521,7 +529,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 						}
 						correction.setVisible(true);
 						break;
-					case L_WORKDIST:
+					case TagNames.WORKDIST:
 						try{
 							Length l= new Length(new Double(val), workDistUnit);
 							setWorkingDist(l, prop);
@@ -577,7 +585,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	public void setModel(String value,boolean prop)
 	{
 		if(model == null) 
-			model = new TagData(L_MODEL+": ",value,prop,TagData.TEXTFIELD);
+			model = new TagData(TagNames.MODEL+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			model.setTagValue(value,prop);
 	}
@@ -589,7 +597,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	public void setManufact(String value,boolean prop)
 	{
 		if(manufact == null) 
-			manufact = new TagData(L_MANUFAC+": ",value,prop,TagData.TEXTFIELD);
+			manufact = new TagData(TagNames.MANUFAC+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			manufact.setTagValue(value,prop);
 	}
@@ -602,7 +610,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(nomMagn == null) 
-			nomMagn = new TagData(L_NOMMAGN+": ",val,prop,TagData.TEXTFIELD);
+			nomMagn = new TagData(TagNames.NOMMAGN+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			nomMagn.setTagValue(val,prop);
 	}
@@ -618,7 +626,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(calMagn == null) 
-			calMagn = new TagData(L_CALMAGN+": ",val,prop,TagData.TEXTFIELD);
+			calMagn = new TagData(TagNames.CALMAGN+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			calMagn.setTagValue(val,prop);
 	}
@@ -631,7 +639,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(lensNA == null) 
-			lensNA = new TagData(L_LENSNA+": ",val,prop,TagData.TEXTFIELD);
+			lensNA = new TagData(TagNames.LENSNA+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			lensNA.setTagValue(val,prop);
 	}
@@ -644,7 +652,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(immersion == null) 
-			immersion = new TagData(L_IMMERSION+": ",val,prop,TagData.COMBOBOX,getNames(Immersion.class));
+			immersion = new TagData(TagNames.IMMERSION+": ",val,prop,TagData.COMBOBOX,getNames(Immersion.class));
 		else 
 			immersion.setTagValue(val,prop);
 	}
@@ -657,7 +665,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(correction == null) 
-			correction = new TagData(L_CORRECTION+": ",val,prop,TagData.COMBOBOX,getNames(Correction.class));
+			correction = new TagData(TagNames.CORRECTION+": ",val,prop,TagData.COMBOBOX,getNames(Correction.class));
 		else 
 			correction.setTagValue(val,prop);
 	}
@@ -671,7 +679,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		workDistUnit=(value!=null) ? value.unit() : workDistUnit;
 		if(workDist == null) 
-			workDist = new TagData(L_WORKDIST+" ["+workDistUnit.getSymbol()
+			workDist = new TagData(TagNames.WORKDIST+" ["+workDistUnit.getSymbol()
 					+"]: ",val,prop,TagData.TEXTFIELD);
 		else 
 			workDist.setTagValue(val,prop);

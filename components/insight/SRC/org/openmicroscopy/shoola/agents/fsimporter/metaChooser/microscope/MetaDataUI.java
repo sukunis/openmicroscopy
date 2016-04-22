@@ -106,6 +106,8 @@ public class MetaDataUI extends JPanel
 	
 	private JButton loadBtn;
 	private JButton saveBtn;
+	private JButton saveAllBtn;
+	private JButton loadProfileBtn;
 	private JButton resetBtn;
 	
 	GridBagLayout gbl;
@@ -175,19 +177,25 @@ public class MetaDataUI extends JPanel
 			switch (subm.getModule()) { 
 			case OBJECTIVE_DATA:
 				LOGGER.info("[GUI] init OBJECTIVE modul");
-				model.setObjectiveData(new ObjectiveCompUI(customSett.getObjConf())); 
+				ObjectiveCompUI oUI=new ObjectiveCompUI(customSett.getObjConf());
+				oUI.addToList(customSett.getMicObjList());
+				model.setObjectiveData(oUI); 
 				initObjectiveUI=true;
 				objModul=subm;
 				break;
 			case DETECTOR_DATA:
 				LOGGER.info("[GUI] init DETECTOR modul");
-				model.addDetectorData(new DetectorCompUI(customSett.getDetectorConf()));
+				DetectorCompUI dUI=new DetectorCompUI(customSett.getDetectorConf());
+				dUI.addToList(customSett.getMicDetectorList());
+				model.addDetectorData(dUI);
 				initDetectorUI=true;
 				detModul=subm;
 				break;
 			case LIGHTSOURCE_DATA:
 				LOGGER.info("[GUI] init LIGHTSRC modul");
-				model.addLightSrcModul(new LightSourceCompUI(customSett.getLightSrcConf()));
+				LightSourceCompUI lUI=new LightSourceCompUI(customSett.getLightSrcConf());
+				lUI.addToList(customSett.getMicLightSrcList());
+				model.addLightSrcModul(lUI);
 				initLightSrcUI=true;
 				lightSModul=subm;
 				break;
@@ -273,11 +281,13 @@ public class MetaDataUI extends JPanel
 			for(int i=0; i<model.getNumberOfChannels();i++){
 				addChannelData(i,m.getChannel(i),true);
 //				addLightPathData(i,m.getLightPath(i),true);
-				if(i<model.getNumberOfLightSrc())
-					addLightSrcData(i,m.getLightSourceData(i),m.getLightSourceSettings(i),true); 
-				
-				if(i<model.getNumberOfDetectors())
-					addDetectorData(i, m.getDetector(i),m.getDetectorSettings(i), true);
+			}
+			for(int i=0; i<model.getNumberOfDetectors();i++){
+				addDetectorData(i, m.getDetector(i),m.getDetectorSettings(i), true);
+			}
+			
+			for(int i=0; i<model.getNumberOfLightSrc(); i++){
+				addLightSrcData(i,m.getLightSourceData(i),m.getLightSourceSettings(i),true); 
 			}
 			
 			addSampleData(m.getSample(),true);
@@ -613,7 +623,7 @@ public class MetaDataUI extends JPanel
 					model.addLightSrcModul(lUI);
 				}
 				
-				lUI.setList(lightSources);
+				lUI.addToList(lightSources);
 
 			}
 			else{
@@ -668,14 +678,11 @@ public class MetaDataUI extends JPanel
 					}
 					model.addDetectorData(dUI);
 				}
-				
-				dUI.setList(detectors);
+				dUI.clearList();
+				dUI.addToList(customSett.getMicDetectorList());
+				dUI.addToList(detectors);
 			}else{
 				LOGGER.info("[DATA] DETECTOR data not available");
-//				if(model.getNumberOfDetectors()<=i){
-//					model.addDetectorData(new DetectorCompUI(null));
-//				}
-				//			model.getDetectorModul(i).showOptionPane();
 			}
 		}
 	}
@@ -723,12 +730,14 @@ public class MetaDataUI extends JPanel
 
 	private void readObjectiveData(Image image, List<Objective> objList) 
 	{
+		
 		if(initObjectiveUI && objList!=null && !objList.isEmpty())
 		{
+			ObjectiveCompUI oUI=model.getObjectiveModul();
 			boolean oDataAvailable=false;
 			String linkedObj=null;
 			
-			ObjectiveCompUI oUI=model.getObjectiveModul();
+			
 			ObjectiveSettings os=image.getObjectiveSettings();
 			Objective o=null;
 			
@@ -749,11 +758,12 @@ public class MetaDataUI extends JPanel
 				oUI.addData(o, false); 
 				oUI.addData(os,false); 
 			}
-			oUI.setList(objList);
+			oUI.addToList(objList);
 			
 			// link object 
 //			model.getImageModul().setObjectiveSettings(osUI);
 		}
+		
 	}
 
 	/** set ImportUserData */
@@ -995,6 +1005,14 @@ public class MetaDataUI extends JPanel
 				}
 			}
 		});
+		
+		saveAllBtn=new JButton("Save all");
+		saveAllBtn.setSize(30,7);
+		saveAllBtn.setEnabled(false);
+		
+		loadProfileBtn=new JButton("Load Profile File");
+		loadProfileBtn.setSize(30,7);
+		loadProfileBtn.setEnabled(false);
 
 //		resetBtn=new JButton("Reset"); 
 //		resetBtn.setSize(30, 7);
@@ -1014,10 +1032,12 @@ public class MetaDataUI extends JPanel
 		buttonPane.setLayout(layout);
 		Box buttonBox = Box.createHorizontalBox();
 //		buttonBox.add(resetBtn);
-//		buttonBox.add(Box.createHorizontalStrut(20));
+		buttonBox.add(loadProfileBtn);
+		buttonBox.add(Box.createHorizontalStrut(40));
 		buttonBox.add(loadBtn);
 		buttonBox.add(Box.createHorizontalStrut(20));
 		buttonBox.add(saveBtn);
+		buttonBox.add(saveAllBtn);
 		addComponent(buttonPane, layout, buttonBox, 2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NONE);
 
 		return buttonPane;

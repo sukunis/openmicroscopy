@@ -29,6 +29,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightSourceEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
@@ -60,25 +61,7 @@ import sun.net.www.content.audio.wav;
 
 public class LightSourceCompUI extends ElementsCompUI 
 {
-	private final String L_MODEL ="Model";
-	private final String L_MANUFAC="Manufacturer";
-	private final String L_POWER="Power";
 	
-	private final String L_L_TYPE="L Type";
-	private final String L_A_TYPE="A Type";
-	private final String L_F_TYPE="F Type";
-	
-	private final String L_MEDIUM="Medium";
-	private final String L_FREQMUL="Frequency Multiplication";
-	private final String L_TUNABLE="Tunable";
-	private final String L_PULSE="Pulse";
-	private final String L_POCKELCELL="Pockel Cell";
-	private final String L_REPRATE="Repititation Rate";
-	private final String L_PUMP="Pump";
-	private final String L_WAVELENGTH="Wavelength";
-	
-	private final String L_DESC="Description";
-	private final String L_MAP="Map";
 	
 	//TODO private List<LaserCompUI> laserList ??;
 	private TagData manufact;
@@ -105,7 +88,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	private Unit<Power> powerUnit;
 	private Unit<Length> waveLengthUnit;
-	private Unit<Frequency> repRateUnit;
+	private static Unit<Frequency> repRateUnit;
 	
 //	private JPanel globalPane;
 	private Box box;
@@ -181,9 +164,25 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 
 
-	public void setList(List<LightSource> _list)
+//	public void setList(List<LightSource> _list)
+//	{
+//		availableLightSrcList=_list;
+//	}
+	
+	public void addToList(List<LightSource> list)
 	{
-		availableLightSrcList=_list;
+		if(list==null || list.size()==0)
+			return;
+		
+		LOGGER.info("[LIST] ADD LIGHTSRC TO LIST anzahl: "+ list.size());
+		if(availableLightSrcList==null){
+
+			availableLightSrcList=new ArrayList<LightSource>();
+		}
+		for(int i=0; i<list.size(); i++){
+			availableLightSrcList.add(list.get(i));
+		}
+
 	}
 
 	private void initGUI()
@@ -228,6 +227,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						"Select From Available LightSource", availableLightSrcList); 
 				LightSource l=editor.getSelectedLightSource();
 				if(l!=null){
+					setFields=true;
 					lightSrc=l;
 					setGUIData();
 					revalidate();
@@ -728,7 +728,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			LOGGER.severe("[DATA] can't read LIGHTSRC pockell cell input");
 		}
 		try{
-			((Laser)lightSrc).setRepetitionRate(parseFrequency(repRate.getTagValue(), repRateUnit));
+			((Laser)lightSrc).setRepetitionRate(parseFrequency(repRate.getTagValue(), repRate.getTagUnit().getSymbol()));
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read LIGHTSRC repetition rate input");
 		}
@@ -743,15 +743,32 @@ public class LightSourceCompUI extends ElementsCompUI
 		}
 		
 	}
-	private Frequency parseFrequency(String c,Unit<Frequency> unit)
+	public static Frequency parseFrequency(String c,String unit)
 	{
 		if(c==null || c.equals(""))
 			return null;
 		
-		return new Frequency(parseToDouble(c), unit);
+		if(unit==null || unit.equals("")){
+			LOGGER.warning("unknown unit for frequency of lightSrc, set to "+repRateUnit);
+			return new Frequency(parseToDouble(c), repRateUnit);
+		}else{
+			Unit u=repRateUnit;
+			switch(unit){
+			case "HZ":
+				u=UNITS.HZ;
+			break;
+			case "MHZ":
+				u=UNITS.MHZ;
+			break;
+			default:break;
+			}
+			
+			return new Frequency(parseToDouble(c),u);
+			
+		}
 	}
 	
-	private Pulse parsePulse(String c) throws EnumerationException
+	public static Pulse parsePulse(String c) throws EnumerationException
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -759,34 +776,34 @@ public class LightSourceCompUI extends ElementsCompUI
 		return Pulse.fromString(c);
 	}
 	
-	private LaserMedium parseMedium(String c) throws EnumerationException
+	public static LaserMedium parseMedium(String c) throws EnumerationException
 	{
 		if(c==null || c.equals(""))
 			return null;
 		
 		return LaserMedium.fromString(c);
 	}
-	private LaserType parseLaserType(String c) throws EnumerationException
+	public static LaserType parseLaserType(String c) throws EnumerationException
 	{
 		if(c==null || c.equals(""))
 			return null;
 		
 		return LaserType.fromString(c);
 	}
-	private FilamentType parseFilamentType(String c) throws EnumerationException {
+	public static FilamentType parseFilamentType(String c) throws EnumerationException {
 		if(c==null || c.equals(""))
 			return null;
 		
 		return FilamentType.fromString(c);
 	}
-	private ArcType parseArcType(String c) throws EnumerationException {
+	public static ArcType parseArcType(String c) throws EnumerationException {
 		if(c==null || c.equals(""))
 			return null;
 		
 		return ArcType.fromString(c);
 	}
 	
-	private Power parsePower(String c,Unit<Power> unit)
+	public static Power parsePower(String c,Unit<Power> unit)
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -1113,17 +1130,17 @@ public class LightSourceCompUI extends ElementsCompUI
 					OPTIONAL;
 				if(name!=null){
 					switch (name) {
-					case L_MODEL:
+					case TagNames.MODEL:
 						setModel(val, prop);
 						lightSrc.setModel(val);
 						model.setVisible(true);
 						break;
-					case L_MANUFAC:
+					case TagNames.MANUFAC:
 						setManufact(val, prop);
 						lightSrc.setManufacturer(val);
 						manufact.setVisible(true);
 						break;
-					case L_L_TYPE:
+					case TagNames.L_TYPE:
 						try{
 							LaserType value=parseLaserType(val);
 							setType(value, prop);
@@ -1133,7 +1150,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						type.setVisible(true);
 						break;
-					case L_A_TYPE:
+					case TagNames.A_TYPE:
 						try{
 							ArcType value=parseArcType(val);
 							setType(value, prop);
@@ -1143,7 +1160,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						type.setVisible(true);
 						break;
-					case L_F_TYPE:
+					case TagNames.F_TYPE:
 						try{
 							FilamentType value=parseFilamentType(val);
 							setType(value, prop);
@@ -1153,7 +1170,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						type.setVisible(true);
 						break;
-					case L_POWER:
+					case TagNames.POWER:
 						try{
 							Power value = parsePower(val, powerUnit);
 						setPower(value, prop);
@@ -1163,7 +1180,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						power.setVisible(true);
 						break;
-					case L_MEDIUM:
+					case TagNames.MEDIUM:
 						try {
 							LaserMedium value=parseMedium(val);
 							setMedium(value,prop);
@@ -1173,7 +1190,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						medium.setVisible(true);
 						break;
-					case L_FREQMUL:
+					case TagNames.FREQMUL:
 						try {
 							PositiveInteger value=parseToPositiveInt(val);
 							setFreqMultiplication(value, prop);
@@ -1183,9 +1200,8 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						freqMul.setVisible(true);
 						break;
-					case L_TUNABLE:
+					case TagNames.TUNABLE:
 						try {
-//							Boolean value=BooleanUtils.toBoolean(val);
 							setTunable(val, prop);
 							((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(val));
 						} catch (Exception e) {
@@ -1193,7 +1209,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						tunable.setVisible(true);
 						break;
-					case L_PULSE:
+					case TagNames.PULSE:
 						try {
 							Pulse value=parsePulse(val);
 							setPulse(value, prop);
@@ -1203,19 +1219,19 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						pulse.setVisible(true);
 						break;
-					case L_POCKELCELL:
+					case TagNames.POCKELCELL:
 						try {
-							Boolean value=Boolean.valueOf(val);
-							setPocketCell(value, prop);
-							((Laser)lightSrc).setPockelCell(value);
+							setPocketCell(BooleanUtils.toBoolean(val), prop);
+							((Laser)lightSrc).setPockelCell(BooleanUtils.toBoolean(val));
 						} catch (Exception e) {
 							setPocketCell(null, prop);
 						}
 						pockelCell.setVisible(true);
 						break;
-					case L_REPRATE:
+					case TagNames.REPRATE:
 						try {
-							Frequency value=parseFrequency(val, repRateUnit);
+							
+							Frequency value=parseFrequency(val, t.getUnit());
 							setRepititationRate(value, prop);
 							((Laser)lightSrc).setRepetitionRate(value);
 						} catch (Exception e) {
@@ -1223,7 +1239,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						repRate.setVisible(true);
 						break;
-					case L_PUMP:
+					case TagNames.PUMP:
 						try {
 							
 							setPump(val, prop);
@@ -1233,7 +1249,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						pump.setVisible(true);
 						break;
-					case L_WAVELENGTH:
+					case TagNames.WAVELENGTH:
 						try {
 							Length value = parseToLength(val, waveLengthUnit);
 							setWavelength(value, prop);
@@ -1243,7 +1259,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						waveLength.setVisible(true);
 						break;
-					case L_MAP:
+					case TagNames.MAP:
 						try {
 							setMap(null, prop);
 //							TODO:((GenericExcitationSource)lightSrc).setMap(value);
@@ -1252,7 +1268,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						}
 						map.setVisible(true);
 						break;
-					case L_DESC:
+					case TagNames.DESC:
 						setDescription(val, prop);
 //						TODO: ((LightEmittingDiode)lightSrc).set
 						description.setVisible(true);
@@ -1418,6 +1434,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		clearTagValue(waveLength);
 		
 		if(lightSrcSettUI!=null) lightSrcSettUI.clearDataValues();
+		availableLightSrcList=null;
 	}
 	
 	public void clear()
@@ -1434,7 +1451,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setManufact(String value, boolean prop)
 	{
 		if(manufact == null) 
-			manufact = new TagData("Manufacturer: ",value,prop,TagData.TEXTFIELD);
+			manufact = new TagData(TagNames.MANUFAC+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			manufact.setTagValue(value,prop);
 	}
@@ -1443,7 +1460,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(type == null) 
-			type = new TagData("Type: ",val,prop,TagData.COMBOBOX,getNames(LaserType.class));
+			type = new TagData(TagNames.TYPE+": ",val,prop,TagData.COMBOBOX,getNames(LaserType.class));
 		else 
 			type.setTagValue(val,prop);
 	}
@@ -1451,7 +1468,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(type == null) 
-			type = new TagData("Type: ",val,prop,TagData.COMBOBOX,getNames(ArcType.class));
+			type = new TagData(TagNames.TYPE+": ",val,prop,TagData.COMBOBOX,getNames(ArcType.class));
 		else 
 			type.setTagValue(val,prop);
 	}
@@ -1459,7 +1476,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(type == null) 
-			type = new TagData("Type: ",val,prop,TagData.COMBOBOX,getNames(FilamentType.class));
+			type = new TagData(TagNames.TYPE+": ",val,prop,TagData.COMBOBOX,getNames(FilamentType.class));
 		else 
 			type.setTagValue(val,prop);
 	}
@@ -1470,14 +1487,14 @@ public class LightSourceCompUI extends ElementsCompUI
 		String val= (value != null)? String.valueOf(value.value()) : "";
 		powerUnit=(value!=null) ? value.unit() :powerUnit;
 		if(power == null) 
-			power = new TagData("Power ["+powerUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			power = new TagData(TagNames.POWER+" ["+powerUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 		else 
 			power.setTagValue(val,prop);
 	}
 	public void setModel(String value, boolean prop)
 	{
 		if(model == null) 
-			model = new TagData("Model: ",value,prop,TagData.TEXTFIELD);
+			model = new TagData(TagNames.MODEL+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			model.setTagValue(value,prop);
 	}
@@ -1489,7 +1506,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(medium == null) 
-			medium = new TagData("Medium: ",val,prop,TagData.COMBOBOX,getNames(LaserMedium.class));
+			medium = new TagData(TagNames.MEDIUM+": ",val,prop,TagData.COMBOBOX,getNames(LaserMedium.class));
 		else 
 			medium.setTagValue(val,prop);
 	}
@@ -1497,7 +1514,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? String.valueOf(value.getNumberValue()) : "";
 		if(freqMul == null) 
-			freqMul = new TagData("Frequency Multiplication: ",val,prop,TagData.TEXTFIELD);
+			freqMul = new TagData(TagNames.FREQMUL+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			freqMul.setTagValue(val,prop);
 	}
@@ -1507,7 +1524,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val=(value!=null) ? String.valueOf(value): "false";
 		if(tunable == null) 
-			tunable = new TagData("Tunable: ",val,prop,TagData.CHECKBOX);
+			tunable = new TagData(TagNames.TUNABLE+": ",val,prop,TagData.CHECKBOX);
 		else 
 			tunable.setTagValue(val,prop);
 	}
@@ -1516,7 +1533,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val=(value!=null) ? value: "false";
 		if(tunable == null) 
-			tunable = new TagData("Tunable: ",val,prop,TagData.CHECKBOX);
+			tunable = new TagData(TagNames.TUNABLE+": ",val,prop,TagData.CHECKBOX);
 		else 
 			tunable.setTagValue(val,prop);
 	}
@@ -1525,7 +1542,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(pulse == null) 
-			pulse = new TagData("Pulse: ",val,prop,TagData.COMBOBOX,getNames(Pulse.class));
+			pulse = new TagData(TagNames.PULSE+": ",val,prop,TagData.COMBOBOX,getNames(Pulse.class));
 		else 
 			pulse.setTagValue(val,prop);
 	}
@@ -1534,24 +1551,28 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val=(value!=null) ? String.valueOf(value): "false";
 		if(pockelCell == null) 
-			pockelCell = new TagData("Pockel Cell: ",val,prop,TagData.CHECKBOX);
+			pockelCell = new TagData(TagNames.POCKELCELL+": ",val,prop,TagData.CHECKBOX);
 		else 
 			pockelCell.setTagValue(val,prop);
 	}
 	public void setRepititationRate(Frequency value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		repRateUnit=(value!=null) ? value.unit() :repRateUnit;
+		Unit unit=(value!=null) ? value.unit():repRateUnit;
+		
 		if(repRate == null) 
-			repRate = new TagData("Repititation Rate ["+repRateUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
-		else 
-			repRate.setTagValue(val,prop);
+//			repRate = new TagData(TagNames.REPRATE+" ["+repRateUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			repRate = new TagData(TagNames.REPRATE,val,unit,prop,TagData.TEXTFIELD);
+		else {
+			repRate.setTagValue(val,unit,prop);
+		}
+			
 	}
 	
 	public void setPump(String value, boolean prop)
 	{
 		if(pump == null) 
-			pump = new TagData("Pump: ",value,prop,TagData.TEXTFIELD);
+			pump = new TagData(TagNames.PUMP+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			pump.setTagValue(value,prop);
 	}
@@ -1560,7 +1581,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		waveLengthUnit=(value!=null) ? value.unit() :waveLengthUnit;
 		if(waveLength == null) 
-			waveLength = new TagData("Wavelenght ["+waveLengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			waveLength = new TagData(TagNames.WAVELENGTH+" ["+waveLengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 		else 
 			waveLength.setTagValue(val,prop);
 	}
@@ -1571,7 +1592,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setDescription(String value, boolean prop)
 	{
 		if(description == null) 
-			description = new TagData("Description: ",value,prop,TagData.TEXTPANE);
+			description = new TagData(TagNames.DESC+": ",value,prop,TagData.TEXTPANE);
 		else 
 			description.setTagValue(value,prop);
 	}
@@ -1581,7 +1602,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val="";
 		if(map == null) 
-			map = new TagData("Map: ",val,prop,TagData.TEXTFIELD);
+			map = new TagData(TagNames.MAP+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			map.setTagValue(val,prop);
 	}

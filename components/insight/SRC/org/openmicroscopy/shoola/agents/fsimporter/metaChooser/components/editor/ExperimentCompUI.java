@@ -29,19 +29,14 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
 
 public class ExperimentCompUI extends ElementsCompUI 
 {
-	private final String L_TYPE="Type";
-	private final String L_DESC="Description";
-	private final String L_NAME="Experimenter Name";
-	
-	private final String L_PROJECTNAME="Project Name";
-	private final String L_GROUP="Group";
-	private final String L_PROJECTPARTNER="Project Partner";
+
 	
 	private TagData type;
 	private TagData description;
@@ -180,8 +175,8 @@ public class ExperimentCompUI extends ElementsCompUI
 				if(overwrite){
 					if(exp.getID()!=null && !exp.getID().equals(""))
 						experiment.setID(exp.getID());
-					if(!desc.equals("")) experiment.setDescription(desc);
-					if(!type.equals("")) experiment.setType(type);
+					if(desc!=null && !desc.equals("")) experiment.setDescription(desc);
+					if(type!=null && !type.equals("")) experiment.setType(type);
 					
 //					if(exper==null){
 //						experiment.linkExperimenter(exper);
@@ -360,7 +355,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? value.getValue():"";
 		if(type == null) 
-			type = new TagData("Type: ",val,prop,TagData.COMBOBOX,getNames(ExperimentType.class));
+			type = new TagData(TagNames.TYPE+": ",val,prop,TagData.COMBOBOX,getNames(ExperimentType.class));
 		else 
 			type.setTagValue(val,prop);	
 	}
@@ -379,7 +374,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	public void setDescription(String value, boolean prop)
 	{
 		if(description == null) 
-			description = new TagData("Description: ",value,prop,TagData.TEXTPANE);
+			description = new TagData(TagNames.DESC+": ",value,prop,TagData.TEXTPANE);
 		else 
 			description.setTagValue(value,prop);	
 	}
@@ -388,7 +383,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	public void setName(String value, boolean prop)
 	{
 		if(name == null) 
-			name = new TagData("Experimenter Name: ",value,prop,TagData.TEXTFIELD);
+			name = new TagData(TagNames.EXPNAME+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			name.setTagValue(value,prop);
 	}
@@ -396,7 +391,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	public void setProjectName(String value, boolean prop)
 	{
 		if(projectName == null) 
-			projectName = new TagData("Project Name: ",value,prop,TagData.TEXTFIELD);
+			projectName = new TagData(TagNames.PROJECTNAME+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			projectName.setTagValue(value,prop);
 	}
@@ -404,7 +399,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	public void setGroupName(String value, boolean prop)
 	{
 		if(group == null) 
-			group = new TagData("Group Name: ",value,prop,TagData.TEXTFIELD);
+			group = new TagData(TagNames.GROUP+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			group.setTagValue(value,prop);
 	}
@@ -412,7 +407,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	public void setProjectPartner(String value, boolean prop)
 	{
 		if(projectPartner == null) 
-			projectPartner = new TagData("Project Partner: ",value,prop,TagData.TEXTFIELD);
+			projectPartner = new TagData(TagNames.PROJECTPARTNER+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			projectPartner.setTagValue(value,prop);
 	}
@@ -475,7 +470,7 @@ public class ExperimentCompUI extends ElementsCompUI
 				OPTIONAL;
 			if(name!=null){
 				switch (name) {
-				case L_TYPE:
+				case TagNames.TYPE:
 					try{
 						ExperimentType value= getExperimentType(val);
 						setType(value, prop);
@@ -485,7 +480,7 @@ public class ExperimentCompUI extends ElementsCompUI
 					}
 					type.setVisible(true);
 					break;
-				case L_DESC:
+				case TagNames.DESC:
 					try{
 						setDescription(val, prop);
 						experiment.setDescription(val);
@@ -494,19 +489,19 @@ public class ExperimentCompUI extends ElementsCompUI
 					}
 					description.setVisible(true);
 					break;
-				case L_GROUP:
+				case TagNames.GROUP:
 					setGroupName(null, prop);
 					group.setVisible(true);
 					break;
-				case L_NAME:
+				case TagNames.EXPNAME:
 					setName(null, prop);
 					this.name.setVisible(true);
 					break;
-				case L_PROJECTNAME:
+				case TagNames.PROJECTNAME:
 					setProjectName(null, prop);
 					projectName.setVisible(true);
 					break;
-				case L_PROJECTPARTNER:
+				case TagNames.PROJECTPARTNER:
 					setProjectPartner(null, prop);
 					projectPartner.setVisible(true);
 					break;

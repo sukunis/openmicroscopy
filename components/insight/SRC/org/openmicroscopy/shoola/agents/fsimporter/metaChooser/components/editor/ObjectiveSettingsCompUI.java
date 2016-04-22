@@ -13,6 +13,7 @@ import javax.swing.border.TitledBorder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
@@ -23,9 +24,7 @@ import ome.xml.model.enums.Medium;
 
 public class ObjectiveSettingsCompUI extends ElementsCompUI
 {
-	private final String L_CORCOLLAR="Correction Collar";
-	private final String L_MEDIUM="Medium";
-	private final String L_REFINDEX="Refraction Index";
+	
 	
 	private TagData corCollar;
 	private TagData medium;
@@ -251,7 +250,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 				OPTIONAL;
 			if(name!=null){
 				switch (name) {
-				case L_CORCOLLAR: 
+				case TagNames.CORCOLLAR: 
 					try{
 						Double value=parseToDouble(val);
 						setCorCollar(value, prop);
@@ -262,7 +261,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 					}
 					corCollar.setVisible(true);
 					break;
-				case L_MEDIUM: 
+				case TagNames.OBJ_MEDIUM: 
 					try{
 						Medium value=parseMedium(val);
 						setMedium(value, prop);
@@ -272,7 +271,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 					}
 					medium.setVisible(true);
 					break;
-				case L_REFINDEX:
+				case TagNames.REFINDEX:
 					try{
 						Double value=parseToDouble(val);
 						setRefractIndex(value, prop);
@@ -301,7 +300,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(corCollar == null) 
-			corCollar = new TagData("Correction Collar: ",val,prop,TagData.TEXTFIELD);
+			corCollar = new TagData(TagNames.CORCOLLAR+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			corCollar.setTagValue(val,prop);
 	}
@@ -309,7 +308,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(medium == null) 
-			medium = new TagData("Medium: ",val,prop,TagData.COMBOBOX,getNames(Medium.class));
+			medium = new TagData(TagNames.OBJ_MEDIUM+": ",val,prop,TagData.COMBOBOX,getNames(Medium.class));
 		else 
 			medium.setTagValue(val,prop);
 	}
@@ -317,7 +316,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(refractIndex == null) 
-			refractIndex = new TagData("Refraction Index: ",val,prop,TagData.TEXTFIELD);
+			refractIndex = new TagData(TagNames.REFINDEX+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			refractIndex.setTagValue(val,prop);
 	}

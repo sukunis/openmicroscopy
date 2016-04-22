@@ -25,8 +25,10 @@ import javax.swing.table.DefaultTableModel;
 
 
 
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 
+import ome.xml.model.Laser;
 import ome.xml.model.LightSource;
 
 public class LightSourceEditor extends JDialog
@@ -62,11 +64,11 @@ public class LightSourceEditor extends JDialog
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		
-		JButton loadBtn= new JButton("Load Workstation List");
-		loadBtn.setActionCommand("Load");
-		loadBtn.setEnabled(false);
-		buttonPane.add(loadBtn);
-		buttonPane.add(Box.createHorizontalGlue());
+//		JButton loadBtn= new JButton("Load Workstation List");
+//		loadBtn.setActionCommand("Load");
+//		loadBtn.setEnabled(false);
+//		buttonPane.add(loadBtn);
+//		buttonPane.add(Box.createHorizontalGlue());
 
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
@@ -156,12 +158,12 @@ public class LightSourceEditor extends JDialog
 	class LightSrcTableModel extends DefaultTableModel
 	{
 		Class[] columnTypes = new Class[] {
-				String.class,String.class, String.class};
+				String.class,String.class, String.class, String.class, String.class, String.class};
 		
 		public LightSrcTableModel()
 		{
 			super(new Object[][] {},
-					new String[] {"ID","Model", "Type"});
+					new String[] {"ID","Model", "Type","Wavelength","Power","Repititation Rate"});
 		}
 		
 		public Class getColumnClass(int columnIndex) {
@@ -175,11 +177,20 @@ public class LightSourceEditor extends JDialog
 
 		private Object[] parseFromLightSrc(LightSource l) 
 		{
-			Object[] o=new Object[3];
+			Object[] o=new Object[6];
 			if(l!=null){
 				o[0]=l.getID()!=null ? l.getID():"";
 				o[1]=l.getModel()!=null ? l.getModel() : "";
 				o[2]=l.getClass().getName();
+				if(l instanceof Laser){
+					o[3]=((Laser)l).getWavelength()!=null ? ((Laser)l).getWavelength() : "";
+					o[4]=((Laser)l).getPower()!=null ? ((Laser)l).getPower() : ""; 
+					o[5]=((Laser)l).getRepetitionRate()!=null ? ((Laser)l).getRepetitionRate() : ""; 
+				}else{
+					o[3]="";
+					o[4]="";
+					o[5]="";
+				}
 			}
 			return o;
 		}

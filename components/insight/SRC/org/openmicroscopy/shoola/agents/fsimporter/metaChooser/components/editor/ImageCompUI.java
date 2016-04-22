@@ -16,6 +16,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TitledSeparator;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
@@ -29,16 +30,7 @@ import ome.xml.model.primitives.Timestamp;
 
 public class ImageCompUI extends ElementsCompUI
 {
-	private final String L_NAME="Name";
-	private final String L_ACQTIME="Acquisition Time";
-	private final String L_DIM="Dim X x Y";
-	private final String L_PIXELTYPE="Pixel Depth";
-	private final String L_PIXELSIZE="Pixel Size (XY)";
-	private final String L_DIMZTC="Dim Z x T x C";
-	private final String L_STAGEPOS="Stage Position (XY)";
-	private final String L_STEPSIZE="Step Size";
-	private final String L_TIMEINC="Time Increment";
-	private final String L_WELLNR="Well #";
+	
 	
 	private TagData name;
 	private TagData acqTime;
@@ -436,43 +428,43 @@ public class ImageCompUI extends ElementsCompUI
 					OPTIONAL;
 				if(name!=null){
 					switch (name) {
-					case L_NAME:
+					case TagNames.IMG_NAME:
 						setName(null,prop);
 						this.name.setVisible(true);
 						break;
-					case L_ACQTIME:
+					case TagNames.ACQTIME:
 						setAcqTime(null, prop);
 						acqTime.setVisible(true);
 						break;
-					case L_DIM:
+					case TagNames.DIMXY:
 						setDimXY(new String[2], prop);
 						dimXY.setVisible(true);
 						break;
-					case L_PIXELTYPE:
+					case TagNames.PIXELTYPE:
 						setPixelType(null, prop);
 						pixelType.setVisible(true);
 						break;
-					case L_PIXELSIZE:
+					case TagNames.PIXELSIZE:
 						setPixelSizeXY(null, null, prop);
 						pixelSize.setVisible(true);
 						break;
-					case L_DIMZTC:
+					case TagNames.DIMZTC:
 						setDimZTC(new String[3], prop);
 						dimZTC.setVisible(true);
 						break;
-					case L_STAGEPOS:
+					case TagNames.STAGEPOS:
 						setStagePos(new String[2], prop);
 						stagePos.setVisible(true);
 						break;
-					case L_STEPSIZE:
+					case TagNames.STEPSIZE:
 						setStepSize(null, prop);
 						stepSize.setVisible(true);
 						break;
-					case L_TIMEINC:
+					case TagNames.TIMEINC:
 						setTimeIncrement(null, prop);
 						timeIncrement.setVisible(true);
 						break;
-					case L_WELLNR:
+					case TagNames.WELLNR:
 						setWellNr(null, prop);
 						wellNr.setVisible(true);
 						break;
@@ -503,7 +495,7 @@ public class ImageCompUI extends ElementsCompUI
 	public void setName(String value, boolean prop)
 	{
 		if(name == null) 
-			name = new TagData("Name: ",value,prop,TagData.TEXTFIELD);
+			name = new TagData(TagNames.IMG_NAME+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			name.setTagValue(value,prop);
 	}
@@ -512,14 +504,14 @@ public class ImageCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? value.getValue():"";
 		if(acqTime == null) 
-			acqTime = new TagData("Acquisition Time: ",val,prop,TagData.TIMESTAMP);
+			acqTime = new TagData(TagNames.ACQTIME+": ",val,prop,TagData.TIMESTAMP);
 		else 
 			acqTime.setTagValue(val,prop);
 	}
 	public void setDimXY(String[] value, boolean prop)
 	{
 		if(dimXY == null) 
-			dimXY = new TagData("Dimension (XY): ",value,prop,TagData.ARRAYFIELDS);
+			dimXY = new TagData(TagNames.DIMXY+": ",value,prop,TagData.ARRAYFIELDS);
 		else{ 
 			dimXY.setTagValue(value[0],0,prop);
 			dimXY.setTagValue(value[1],1,prop);
@@ -529,7 +521,7 @@ public class ImageCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? value.getValue():"";
 		if(pixelType == null) 
-			pixelType = new TagData("Pixel Depth: ",val,prop,TagData.TEXTFIELD);
+			pixelType = new TagData(TagNames.PIXELTYPE+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			pixelType.setTagValue(val,prop);
 	}
@@ -540,7 +532,7 @@ public class ImageCompUI extends ElementsCompUI
 		sizeUnit=(valueX!=null) ? valueX.unit() : sizeUnit;
 		String[] val= {valX,valY};
 		if(pixelSize == null) 
-			pixelSize = new TagData("Pixel Size (XY)["+sizeUnit.getSymbol()+"]: ",val,prop,TagData.ARRAYFIELDS);
+			pixelSize = new TagData(TagNames.PIXELSIZE+"["+sizeUnit.getSymbol()+"]: ",val,prop,TagData.ARRAYFIELDS);
 		else {
 			pixelSize.setTagValue(valX,0,prop);
 			pixelSize.setTagValue(valY,1,prop);
@@ -549,7 +541,7 @@ public class ImageCompUI extends ElementsCompUI
 	public void setDimZTC(String[] value, boolean prop)
 	{
 		if(dimZTC == null) 
-			dimZTC = new TagData("Dim Z x T x C: ",value,prop,TagData.ARRAYFIELDS);
+			dimZTC = new TagData(TagNames.DIMZTC+": ",value,prop,TagData.ARRAYFIELDS);
 		else{ 
 			dimZTC.setTagValue(value[0],0,prop);
 			dimZTC.setTagValue(value[1],1,prop);
@@ -561,7 +553,7 @@ public class ImageCompUI extends ElementsCompUI
 	public void setStagePos(String[] value, boolean prop)
 	{
 		if(stagePos == null) 
-			stagePos = new TagData("Stage Posistion (XY): ",value,prop,TagData.ARRAYFIELDS);
+			stagePos = new TagData(TagNames.STAGEPOS+": ",value,prop,TagData.ARRAYFIELDS);
 		else {
 			stagePos.setTagValue(value[0],0,prop);
 			stagePos.setTagValue(value[1],1,prop);
@@ -573,7 +565,7 @@ public class ImageCompUI extends ElementsCompUI
 		public void setStepSize(String value, boolean prop)
 		{
 			if(stepSize == null) 
-				stepSize = new TagData("Step Size: ",value,prop,TagData.TEXTFIELD);
+				stepSize = new TagData(TagNames.STEPSIZE+": ",value,prop,TagData.TEXTFIELD);
 			else 
 				stepSize.setTagValue(value,prop);
 		}
@@ -590,14 +582,14 @@ For example in a video stream.
 		String val= (value != null) ? String.valueOf(value.value()) :"";
 		timeUnit=(value!=null) ? value.unit() : timeUnit;
 		if(timeIncrement == null) 
-			timeIncrement = new TagData("Time Increment ["+timeUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			timeIncrement = new TagData(TagNames.TIMEINC+" ["+timeUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 		else 
 			timeIncrement.setTagValue(val,prop);
 	}
 	public void setWellNr(String value, boolean prop)
 	{
 		if(wellNr == null) 
-			wellNr = new TagData("Well #: ",value,prop,TagData.TEXTFIELD);
+			wellNr = new TagData(TagNames.WELLNR+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			wellNr.setTagValue(value,prop);
 	}

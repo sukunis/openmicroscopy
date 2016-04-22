@@ -13,6 +13,7 @@ import javax.swing.border.TitledBorder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
@@ -27,8 +28,7 @@ import ome.xml.model.primitives.PercentFraction;
 
 public class LightSourceSettingsCompUI extends ElementsCompUI 
 {
-	private final String L_WAVELENGTH="Set Wavelength";
-	private final String L_ATTENUATION="Attenuation";
+	
 
 	private TagData waveLength;
 	private Unit<Length> waveLengthUnit;
@@ -251,7 +251,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 				OPTIONAL;
 			if(name!=null){
 				switch (name) {
-				case L_WAVELENGTH:
+				case TagNames.SET_WAVELENGTH:
 					try {
 						Length value = parseToLength(val, waveLengthUnit);
 						setWavelength(value, prop);
@@ -261,7 +261,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 					}
 					waveLength.setVisible(true);
 					break;
-				case L_ATTENUATION:
+				case TagNames.ATTENUATION:
 					try{
 						PercentFraction value=parseAttenuation(val);
 					setAttenuation(value, prop);
@@ -303,7 +303,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		waveLengthUnit=(value!=null) ? value.unit():waveLengthUnit;
 		if(waveLength == null) 
-			waveLength = new TagData("Wavelength ["+waveLengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			waveLength = new TagData(TagNames.SET_WAVELENGTH+" ["+waveLengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 		else 
 			waveLength.setTagValue(val,prop);
 		
@@ -312,7 +312,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value.getNumberValue()):"";
 		if(attenuation == null) 
-			attenuation = new TagData("Attenuation: ",val,prop,TagData.TEXTFIELD);
+			attenuation = new TagData(TagNames.ATTENUATION+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			attenuation.setTagValue(val,prop);
 	}

@@ -37,6 +37,7 @@ import javax.swing.JTextPane;
 import javax.swing.text.JTextComponent;
 
 import loci.common.DateTools;
+import ome.units.unit.Unit;
 import ome.xml.model.primitives.Timestamp;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -72,6 +73,7 @@ public class TagData
 
 	private JLabel label;
 	private JComponent inputField;
+	private Unit unit;
 	private int status=INACTIVE;
 	private boolean prop;
 	private int type;
@@ -93,6 +95,7 @@ public class TagData
 		initListener();
 		this.markedToStore=false;
 		this.type=type;
+		this.name=name;
 		label = new JLabel(name);
 		int size=val!=null ? val.length : 1;
 		switch (type) {
@@ -114,14 +117,21 @@ public class TagData
 	{
 		this(name,val,prop,type,null);
 	}
+	
+	public TagData(String name, String val,Unit unit, boolean prop,int type) 
+	{
+		this(name,val,prop,type,null);
+		this.unit=unit;
+		label= new JLabel(name+" ["+unit.getSymbol()+"]:");
+		label.setLabelFor(inputField);
+	}
 
 	public TagData(String name, String val, boolean prop,int type, String[] defaultVal) 
 	{
-		
-		
 		initListener();
 		this.markedToStore=false;
 		this.type=type;
+		this.name=name;
 		label = new JLabel(name);
 		switch (type) {
 		case TEXTFIELD:
@@ -358,7 +368,21 @@ public class TagData
 		return val!=null? val : "";
 	}
 
+	public Unit getTagUnit()
+	{
+		return unit;
+	}
 
+	public void setTagValue(String val,Unit unit, boolean property)
+	{
+		if(!this.unit.equals(unit)){
+			label=new JLabel(this.name+" ["+unit.getSymbol()+"]:");
+			label.setLabelFor(inputField);
+		}
+		setTagValue(val);
+		setTagProp(property);
+		valChanged=false;
+	}
 
 	public void setTagValue(String val, boolean property)
 	{

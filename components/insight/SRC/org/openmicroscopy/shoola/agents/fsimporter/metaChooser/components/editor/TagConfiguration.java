@@ -4,12 +4,14 @@ public class TagConfiguration
 {
 	private String name;
 	private String value;
+	private String unit;
 	private String property;
 	
-	public TagConfiguration(String name, String value, String property)
+	public TagConfiguration(String name, String value, String unit,String property)
 	{
 		this.name=name;
 		this.value=value;
+		this.unit=unit;
 		this.property=property;
 	}
 	
@@ -30,6 +32,14 @@ public class TagConfiguration
 	}
 	public void setProperty(String property) {
 		this.property = property;
+	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
 	
 }

@@ -13,6 +13,7 @@ import javax.swing.border.TitledBorder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import loci.formats.meta.IMetadata;
 import ome.units.UNITS;
@@ -25,11 +26,6 @@ import ome.xml.model.primitives.PercentFraction;
 
 public class ImagingEnvironmentCompUI extends ElementsCompUI 
 {
-	private final String L_TEMP="Temperature";
-	private final String L_AIRPRESS="Air Pressure";
-	private final String L_HUMIDITY="Humidity";
-	private final String L_CO2="CO2 Percent";
-	
 	private TagData temperature;
 	private TagData airPressure;
 	private TagData humidity;
@@ -207,19 +203,19 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 				OPTIONAL;
 			if(name!=null){
 				switch (name) {
-				case L_TEMP:
+				case TagNames.TEMP:
 					setTemperature(null, prop);
 					temperature.setVisible(true);
 					break;
-				case L_AIRPRESS:
+				case TagNames.AIRPRESS:
 					setAirPressure(null, prop);
 					airPressure.setVisible(true);
 					break;
-				case L_HUMIDITY:
+				case TagNames.HUMIDITY:
 					setHumidity(null, prop);
 					humidity.setVisible(true);
 					break;
-				case L_CO2:
+				case TagNames.CO2:
 					setCo2Percent(null, prop);
 					co2Percent.setVisible(true);
 					break;
@@ -245,7 +241,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		temperatureUnit=(value!=null) ? value.unit():temperatureUnit;
 		if(temperature == null) 
-			temperature = new TagData("Temperature ["+temperatureUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			temperature = new TagData(TagNames.TEMP+" ["+temperatureUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 		else 
 			temperature.setTagValue(val,prop);
 	}
@@ -255,7 +251,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		airPressureUnit=(value!=null) ? value.unit() :airPressureUnit;
 		if(airPressure == null) 
-			airPressure = new TagData("Air Pressure ["+airPressureUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			airPressure = new TagData(TagNames.AIRPRESS+" ["+airPressureUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 		else 
 			airPressure.setTagValue(val,prop);
 	}
@@ -264,7 +260,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 	{
 		String val=(value!=null) ? String.valueOf(value.getValue()*100) :"";
 		if(humidity == null) 
-			humidity = new TagData("Humidity [%]: ",val,prop,TagData.TEXTFIELD);
+			humidity = new TagData(TagNames.HUMIDITY+" [%]: ",val,prop,TagData.TEXTFIELD);
 		else 
 			humidity.setTagValue(val,prop);
 	}
@@ -274,7 +270,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		String val=(value!=null) ? String.valueOf(value.getValue()*100) :"";
 		
 		if(co2Percent == null) 
-			co2Percent = new TagData("CO2 Percent [%]: ",val,prop,TagData.TEXTFIELD);
+			co2Percent = new TagData(TagNames.CO2+" [%]: ",val,prop,TagData.TEXTFIELD);
 		else 
 			co2Percent.setTagValue(val,prop);
 	}

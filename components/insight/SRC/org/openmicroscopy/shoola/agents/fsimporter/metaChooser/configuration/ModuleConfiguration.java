@@ -17,6 +17,7 @@ public class ModuleConfiguration
 {
 	public static final String TAG_NAME="Name";
 	public static final String TAG_VALUE="Value";
+	public static final String TAG_UNIT="Unit";
 	public static final String TAG_PROP="Optional";
 	public static final String TAG_VISIBLE="Visible";
 	// for lightSrc types
@@ -41,9 +42,9 @@ public class ModuleConfiguration
 		return settingsTagConfList;
 	}
 	
-	private void setTag(String name, String val, String prop, List<TagConfiguration> thisList) 
+	private void setTag(String name, String val,String unit, String prop, List<TagConfiguration> thisList) 
 	{
-		thisList.add(new TagConfiguration(name, val, prop));
+		thisList.add(new TagConfiguration(name, val,unit, prop));
 //		System.out.println("[DEBUG] add "+name);
 	}
 	
@@ -68,7 +69,7 @@ public class ModuleConfiguration
 
 	private void parseTag(NamedNodeMap attr,List<TagConfiguration> list,String sett) 
 	{
-		String name=null;String value=null; String prop=null;
+		String name=null;String value=null; String prop=null;String unit=null;
 		boolean visible=false;
 
 		if(attr!=null && attr.getLength()>0)
@@ -78,6 +79,9 @@ public class ModuleConfiguration
 			}
 			if(attr.getNamedItem(TAG_VALUE)!=null){
 				value=attr.getNamedItem(TAG_VALUE).getNodeValue();
+			}
+			if(attr.getNamedItem(TAG_UNIT)!=null){
+				unit=attr.getNamedItem(TAG_UNIT).getNodeValue();
 			}
 			if(attr.getNamedItem(TAG_PROP)!=null){
 				prop=attr.getNamedItem(TAG_PROP).getNodeValue();
@@ -91,7 +95,7 @@ public class ModuleConfiguration
 //								": "+value+", "+prop+", "+visible);
 
 		if(visible)
-			setTag(name,value,prop,list);
+			setTag(name,value,unit,prop,list);
 	}
 	
 	
