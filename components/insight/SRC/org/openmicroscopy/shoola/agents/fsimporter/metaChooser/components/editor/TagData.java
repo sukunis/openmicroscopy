@@ -375,9 +375,8 @@ public class TagData
 
 	public void setTagValue(String val,Unit unit, boolean property)
 	{
-		if(!this.unit.equals(unit)){
-			label=new JLabel(this.name+" ["+unit.getSymbol()+"]:");
-			label.setLabelFor(inputField);
+		if(this.unit!=unit){
+			label.setText(this.name+" ["+unit.getSymbol()+"]:");
 		}
 		setTagValue(val);
 		setTagProp(property);

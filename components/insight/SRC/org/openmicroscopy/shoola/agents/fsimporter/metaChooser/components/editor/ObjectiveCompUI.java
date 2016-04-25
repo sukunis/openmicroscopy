@@ -55,7 +55,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	
 	private List<TagData> tagList;
 	
-	private Unit<Length> workDistUnit;
+	private static Unit<Length> workDistUnit=UNITS.MICROM;
 	
 	private JPanel globalPane;
 	
@@ -111,7 +111,6 @@ public class ObjectiveCompUI extends ElementsCompUI
 	
 	public ObjectiveCompUI(ModuleConfiguration objConf) 
 	{
-		workDistUnit=UNITS.MICROM;
 		objectiveSettUI=new ObjectiveSettingsCompUI(objConf);
 		
 		initGUI();
@@ -330,7 +329,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 		}
 		try{
 			objective.setWorkingDistance(workDist.getTagValue().equals("")?
-					null : new Length(new Double(workDist.getTagValue()), workDistUnit));
+					null : new Length(new Double(workDist.getTagValue()), workDist.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read OBJECTIVE working distance input");
 		}
@@ -531,7 +530,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 						break;
 					case TagNames.WORKDIST:
 						try{
-							Length l= new Length(new Double(val), workDistUnit);
+							Length l= new Length(new Double(val), t.getUnit());
 							setWorkingDist(l, prop);
 							
 							objective.setWorkingDistance(l);
@@ -677,12 +676,13 @@ public class ObjectiveCompUI extends ElementsCompUI
 	public void setWorkingDist(Length value,boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		workDistUnit=(value!=null) ? value.unit() : workDistUnit;
+		Unit unit=(value!=null) ? value.unit() : workDistUnit;
 		if(workDist == null) 
-			workDist = new TagData(TagNames.WORKDIST+" ["+workDistUnit.getSymbol()
-					+"]: ",val,prop,TagData.TEXTFIELD);
+//			workDist = new TagData(TagNames.WORKDIST+" ["+workDistUnit.getSymbol()
+//					+"]: ",val,prop,TagData.TEXTFIELD);
+			workDist = new TagData(TagNames.WORKDIST,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			workDist.setTagValue(val,prop);
+			workDist.setTagValue(val,unit,prop);
 	}
 	public void setWorkingDist(Length value)
 	{

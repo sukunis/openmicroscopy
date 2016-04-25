@@ -183,9 +183,12 @@ public class LightSourceEditor extends JDialog
 				o[1]=l.getModel()!=null ? l.getModel() : "";
 				o[2]=l.getClass().getName();
 				if(l instanceof Laser){
-					o[3]=((Laser)l).getWavelength()!=null ? ((Laser)l).getWavelength() : "";
-					o[4]=((Laser)l).getPower()!=null ? ((Laser)l).getPower() : ""; 
-					o[5]=((Laser)l).getRepetitionRate()!=null ? ((Laser)l).getRepetitionRate() : ""; 
+					o[3]=((Laser)l).getWavelength()!=null ? 
+							((Laser)l).getWavelength().value()+((Laser)l).getWavelength().unit().getSymbol() : "";
+					o[4]=((Laser)l).getPower()!=null ? 
+							((Laser)l).getPower().value()+((Laser)l).getPower().unit().getSymbol() : ""; 
+					o[5]=((Laser)l).getRepetitionRate()!=null ? 
+							((Laser)l).getRepetitionRate().value()+((Laser)l).getRepetitionRate().unit().getSymbol() : ""; 
 				}else{
 					o[3]="";
 					o[4]="";

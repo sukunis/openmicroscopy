@@ -1,13 +1,15 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
 
+import ome.units.unit.Unit;
+
 public class TagConfiguration 
 {
 	private String name;
 	private String value;
-	private String unit;
+	private Unit unit;
 	private String property;
 	
-	public TagConfiguration(String name, String value, String unit,String property)
+	public TagConfiguration(String name, String value, Unit unit,String property)
 	{
 		this.name=name;
 		this.value=value;
@@ -34,11 +36,15 @@ public class TagConfiguration
 		this.property = property;
 	}
 
-	public String getUnit() {
+	public String getUnitSymbol() {
+		return unit.getSymbol();
+	}
+	
+	public Unit getUnit() {
 		return unit;
 	}
 
-	public void setUnit(String unit) {
+	public void setUnit(Unit unit) {
 		this.unit = unit;
 	}
 	

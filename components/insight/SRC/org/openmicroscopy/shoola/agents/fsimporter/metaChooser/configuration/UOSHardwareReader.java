@@ -35,12 +35,19 @@ import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.enums.Pulse;
+import ome.xml.model.enums.UnitsFrequency;
+import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.UnitsPower;
+import ome.xml.model.enums.handlers.UnitsFrequencyEnumHandler;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
+import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightSourceCompUI;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -263,7 +270,7 @@ public class UOSHardwareReader
 			for(int i=0; i<tags.getLength(); i++)
 			{
 				NamedNodeMap attr=tags.item(i).getAttributes();
-				String name=null;String value=null; 
+				String name=null;String value=null;
 				if(attr!=null && attr.getLength()>0)
 				{
 					
@@ -272,6 +279,14 @@ public class UOSHardwareReader
 					}
 					if(attr.getNamedItem(ModuleConfiguration.TAG_VALUE)!=null){
 						value=attr.getNamedItem(ModuleConfiguration.TAG_VALUE).getNodeValue();
+					}
+					if(attr.getNamedItem(ModuleConfiguration.TAG_UNIT)!=null){
+						try {
+							unit=parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue(),name);
+						} catch (Exception e) {
+							LOGGER.warning("[HARDWARE] wrong format of parameters of tag "+name);
+							LOGGER.warning("[HARDWARE] "+e.getMessage());
+						}
 					}
 					
 					o=setObjectiveVal(o,name,value);
@@ -340,7 +355,12 @@ public class UOSHardwareReader
 						value=attr.getNamedItem(ModuleConfiguration.TAG_VALUE).getNodeValue();
 					}
 					if(attr.getNamedItem(ModuleConfiguration.TAG_UNIT)!=null){
-						unit=parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue());
+						try {
+							unit=parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue(),name);
+						} catch (Exception e) {
+							LOGGER.warning("[HARDWARE] wrong format of parameters of tag "+name);
+							e.getMessage();
+						}
 					}
 					l=setLightSourceVal(l,name,value);
 				}	
@@ -356,7 +376,7 @@ public class UOSHardwareReader
 	private LightSource setLightSourceVal(LightSource lightSrc, String name, String val) 
 	{
 		if(name!=null && !name.equals("") && val!=null && !val.equals("")){
-			LOGGER.info("[DEBUG] add mic lightSrc tag "+name+" = "+val+" "+unit);
+			LOGGER.info("[DEBUG] add mic lightSrc tag "+name+" = "+val);
 			try{
 				switch (name) {
 				case TagNames.MODEL:
@@ -378,7 +398,7 @@ public class UOSHardwareReader
 					((Filament)lightSrc).setType(value);
 					break;
 				case TagNames.POWER:
-					Power p = LightSourceCompUI.parsePower(val, TagNames.POWER_UNIT);
+					Power p = LightSourceCompUI.parsePower(val, unit);
 					lightSrc.setPower(p);
 					break;
 				case TagNames.MEDIUM:
@@ -400,17 +420,16 @@ public class UOSHardwareReader
 					((Laser)lightSrc).setPockelCell(BooleanUtils.toBoolean(val));
 					break;
 				case TagNames.REPRATE:
-					Frequency f=LightSourceCompUI.parseFrequency(val, TagNames.REPRATE_UNIT_HZ.getSymbol());
-					if(unit!=null && unit==TagNames.REPRATE_UNIT_MHZ)
-						f=LightSourceCompUI.parseFrequency(val, TagNames.REPRATE_UNIT_MHZ.getSymbol());
-					
+					Frequency f=null;
+					if(unit!=null )
+						f=LightSourceCompUI.parseFrequency(val, unit);
 					((Laser)lightSrc).setRepetitionRate(f);
 					break;
 				case TagNames.PUMP:
 					//						TODO: ((Laser)lightSrc).linkPump(o);
 					break;
 				case TagNames.WAVELENGTH:
-					Length le = ElementsCompUI.parseToLength(val, TagNames.WAVELENGTH_UNIT);
+					Length le = ElementsCompUI.parseToLength(val, unit);
 					((Laser)lightSrc).setWavelength(le);
 					break;
 				case TagNames.MAP:
@@ -424,6 +443,7 @@ public class UOSHardwareReader
 				}
 			}catch(Exception e){
 				LOGGER.warning("[HARDWARE] can't parse lightSrc tag "+name);
+				e.printStackTrace();
 			}
 		}
 		return lightSrc;
@@ -502,7 +522,7 @@ public class UOSHardwareReader
 					o.setCorrection(co);
 					break;
 				case TagNames.WORKDIST:
-					Length l= new Length(new Double(value), TagNames.WORKDIST_UNIT);
+					Length l= new Length(new Double(value), unit);
 					o.setWorkingDistance(l);
 					break;
 				default:
@@ -543,25 +563,37 @@ public class UOSHardwareReader
 	}
 	
 	
-	private Unit parseUnit(String nodeValue) 
+	
+	
+	public static Unit parseUnit(String unitSymbol, String name) throws Exception 
 	{
-		if(nodeValue==null || nodeValue.equals("")){
-			LOGGER.warning("[DEBUG] no unit given");
-			return null;
-		}
+		Unit unit=null;
 		
-		switch(nodeValue){
-		case "MHZ":
-			unit=UNITS.MHZ;
-			break;
-		case "HZ":
-			unit=UNITS.HZ;
-			break;
-		default:
-			LOGGER.warning("[DEBUG] unknown unit given");
-			break;
+		if(unitSymbol!=null && !unitSymbol.equals("") ){
+			switch (name) {
+			case TagNames.REPRATE:
+				UnitsFrequency u=UnitsFrequency.fromString(unitSymbol);
+				unit=UnitsFrequencyEnumHandler.getBaseUnit(u);
+				break;
+			case TagNames.POWER:
+				UnitsPower uP=UnitsPower.fromString(unitSymbol);
+				unit=UnitsPowerEnumHandler.getBaseUnit(uP);
+				break;
+			case TagNames.WAVELENGTH:
+				UnitsLength uL=UnitsLength.fromString(unitSymbol);
+				unit = UnitsLengthEnumHandler.getBaseUnit(uL);
+				break;
+			case TagNames.WORKDIST:
+				UnitsLength uL2=UnitsLength.fromString(unitSymbol);
+				unit = UnitsLengthEnumHandler.getBaseUnit(uL2);
+				break;
+			default:
+				LOGGER.warning("[HARDWARE] no unit available for tag "+name);
+				break;
+			}
+				
+			
 		}
-		
 		return unit;
 	}
 

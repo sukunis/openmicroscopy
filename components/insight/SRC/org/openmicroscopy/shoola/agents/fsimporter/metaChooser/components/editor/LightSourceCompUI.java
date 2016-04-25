@@ -86,9 +86,9 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	private String classification;
 	
-	private Unit<Power> powerUnit;
-	private Unit<Length> waveLengthUnit;
-	private static Unit<Frequency> repRateUnit;
+	private static Unit<Power> powerUnit=UNITS.MW;
+	private static Unit<Length> waveLengthUnit=UNITS.NM;
+	private static Unit<Frequency> repRateUnit=UNITS.HZ;
 	
 //	private JPanel globalPane;
 	private Box box;
@@ -133,9 +133,6 @@ public class LightSourceCompUI extends ElementsCompUI
 		lightSrc=_ls;
 		linkChannelIdx=_linkChannelIdx;
 		lightSrcSettUI=null;
-		powerUnit=UNITS.MW;
-		waveLengthUnit=UNITS.NM;
-		repRateUnit=UNITS.HZ;
 		initGUI();
 		if(lightSrc!=null)
 			setGUIData();
@@ -150,9 +147,6 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	public LightSourceCompUI(ModuleConfiguration objConf) 
 	{
-		powerUnit=UNITS.MW;
-		waveLengthUnit=UNITS.NM;
-		repRateUnit=UNITS.HZ;
 		lightSrcSettUI=new LightSourceSettingsCompUI(objConf);
 		lightSrc=null;
 		initGUI();
@@ -611,7 +605,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			LOGGER.severe("[DATA] can't read LIGHTSRC ges model input");
 		}
 		try{
-			((GenericExcitationSource)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
+			((GenericExcitationSource)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read LIGHTSRC ges power input");
 		}
@@ -635,7 +629,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			LOGGER.severe("[DATA] can't read LIGHTSRC fila model input");
 		}
 		try{
-			((Filament)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
+			((Filament)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read LIGHTSRC fila power input");
 		}
@@ -663,7 +657,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			LOGGER.severe("[DATA] can't read LIGHTSRC arc model input");
 		}
 		try{
-			((Arc)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
+			((Arc)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read LIGHTSRC arc power input");
 		}
@@ -690,7 +684,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			LOGGER.severe("[DATA] can't read LIGHTSRC model input");
 		}
 		try{
-			((Laser)lightSrc).setPower(parsePower(power.getTagValue(),powerUnit));
+			((Laser)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read LIGHTSRC power input");
 		}
@@ -728,7 +722,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			LOGGER.severe("[DATA] can't read LIGHTSRC pockell cell input");
 		}
 		try{
-			((Laser)lightSrc).setRepetitionRate(parseFrequency(repRate.getTagValue(), repRate.getTagUnit().getSymbol()));
+			((Laser)lightSrc).setRepetitionRate(parseFrequency(repRate.getTagValue(), repRate.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read LIGHTSRC repetition rate input");
 		}
@@ -737,35 +731,27 @@ public class LightSourceCompUI extends ElementsCompUI
 		//		((Laser)lightSrc).linkPump(pump.getTagValue().equals("") ? 
 		//				null : pump.getTagValue());
 		try{
-			((Laser)lightSrc).setWavelength(parseToLength(waveLength.getTagValue(),waveLengthUnit));
+			((Laser)lightSrc).setWavelength(parseToLength(waveLength.getTagValue(),waveLength.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read LIGHTSRC wavelength input");
 		}
 		
 	}
-	public static Frequency parseFrequency(String c,String unit)
+	
+	public static Frequency parseFrequency(String c,Unit<Frequency> unit) throws Exception
 	{
-		if(c==null || c.equals(""))
-			return null;
-		
-		if(unit==null || unit.equals("")){
-			LOGGER.warning("unknown unit for frequency of lightSrc, set to "+repRateUnit);
-			return new Frequency(parseToDouble(c), repRateUnit);
-		}else{
-			Unit u=repRateUnit;
-			switch(unit){
-			case "HZ":
-				u=UNITS.HZ;
-			break;
-			case "MHZ":
-				u=UNITS.MHZ;
-			break;
-			default:break;
-			}
+//		if(c==null || c.equals(""))
+//			return null;
+//		
+//		LOGGER.info("[DEBUG] parse: unit= "+unit.getSymbol());
+//		
+//		if(unit==null || unit.equals("")){
+//			LOGGER.warning("unknown unit for frequency of lightSrc, set to "+repRateUnit);
+//			return new Frequency(parseToDouble(c), repRateUnit);
+//		}else{
+			return new Frequency(parseToDouble(c),unit);
 			
-			return new Frequency(parseToDouble(c),u);
-			
-		}
+//		}
 	}
 	
 	public static Pulse parsePulse(String c) throws EnumerationException
@@ -803,11 +789,11 @@ public class LightSourceCompUI extends ElementsCompUI
 		return ArcType.fromString(c);
 	}
 	
-	public static Power parsePower(String c,Unit<Power> unit)
+	public static Power parsePower(String c,Unit<Power> unit) throws Exception
 	{
-		if(c==null || c.equals(""))
-			return null;
-		
+//		if(c==null || c.equals(""))
+//			return null;
+//		
 		return new Power(Double.valueOf(c),unit);
 		
 	}
@@ -1172,7 +1158,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.POWER:
 						try{
-							Power value = parsePower(val, powerUnit);
+							Power value = parsePower(val, t.getUnit());
 						setPower(value, prop);
 						lightSrc.setPower(value);
 						}catch(Exception e){
@@ -1251,7 +1237,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.WAVELENGTH:
 						try {
-							Length value = parseToLength(val, waveLengthUnit);
+							Length value = parseToLength(val, t.getUnit());
 							setWavelength(value, prop);
 							((Laser)lightSrc).setWavelength(value);
 						} catch (Exception e) {
@@ -1485,11 +1471,12 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setPower(Power value, boolean prop)
 	{
 		String val= (value != null)? String.valueOf(value.value()) : "";
-		powerUnit=(value!=null) ? value.unit() :powerUnit;
+		Unit unit=(value!=null) ? value.unit() :powerUnit;
 		if(power == null) 
-			power = new TagData(TagNames.POWER+" ["+powerUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+//			power = new TagData(TagNames.POWER+" ["+powerUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			power = new TagData(TagNames.POWER,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			power.setTagValue(val,prop);
+			power.setTagValue(val,unit,prop);
 	}
 	public void setModel(String value, boolean prop)
 	{
@@ -1559,11 +1546,10 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		Unit unit=(value!=null) ? value.unit():repRateUnit;
-		
-		if(repRate == null) 
+		if(repRate == null) {
 //			repRate = new TagData(TagNames.REPRATE+" ["+repRateUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 			repRate = new TagData(TagNames.REPRATE,val,unit,prop,TagData.TEXTFIELD);
-		else {
+		}else {
 			repRate.setTagValue(val,unit,prop);
 		}
 			
@@ -1579,11 +1565,12 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setWavelength(Length value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		waveLengthUnit=(value!=null) ? value.unit() :waveLengthUnit;
+		Unit unit=(value!=null) ? value.unit() :waveLengthUnit;
 		if(waveLength == null) 
-			waveLength = new TagData(TagNames.WAVELENGTH+" ["+waveLengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+//			waveLength = new TagData(TagNames.WAVELENGTH+" ["+waveLengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			waveLength = new TagData(TagNames.WAVELENGTH,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			waveLength.setTagValue(val,prop);
+			waveLength.setTagValue(val,unit,prop);
 	}
 	
 	

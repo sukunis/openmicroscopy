@@ -83,10 +83,10 @@ public abstract class ElementsCompUI extends JPanel
 		return new PositiveInteger(Integer.parseInt(c));
 	}
 	
-	public static Length parseToLength(String c, Unit<Length> unit)
+	public static Length parseToLength(String c, Unit<Length> unit) throws Exception
 	{
-		if(c==null || c.equals(""))
-			return null;
+//		if(c==null || c.equals(""))
+//			return null;
 		
 		return new Length(Double.valueOf(c), unit);
 	}

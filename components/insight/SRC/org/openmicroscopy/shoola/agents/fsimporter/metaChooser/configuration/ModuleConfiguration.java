@@ -2,8 +2,16 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+
+import ome.units.UNITS;
+import ome.units.unit.Unit;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.UnitsFrequency;
+import ome.xml.model.enums.handlers.UnitsFrequencyEnumHandler;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagConfiguration;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -15,6 +23,9 @@ import com.drew.metadata.Tag;
 
 public class ModuleConfiguration 
 {
+	/** Logger for this class. */
+    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	
 	public static final String TAG_NAME="Name";
 	public static final String TAG_VALUE="Value";
 	public static final String TAG_UNIT="Unit";
@@ -44,10 +55,19 @@ public class ModuleConfiguration
 	
 	private void setTag(String name, String val,String unit, String prop, List<TagConfiguration> thisList) 
 	{
-		thisList.add(new TagConfiguration(name, val,unit, prop));
-//		System.out.println("[DEBUG] add "+name);
+		Unit u=null;
+		try {
+			u = UOSHardwareReader.parseUnit(unit,name);
+			thisList.add(new TagConfiguration(name, val,u, prop));
+		} catch (Exception e) {
+			LOGGER.warning("[HARDWARE] can't parse unit of tag "+name);
+		}
+	
+		
 	}
 	
+	
+
 	public void loadTags(Element node)
 	{
 //		NodeList tagList=node.getChildNodes();
@@ -69,7 +89,7 @@ public class ModuleConfiguration
 
 	private void parseTag(NamedNodeMap attr,List<TagConfiguration> list,String sett) 
 	{
-		String name=null;String value=null; String prop=null;String unit=null;
+		String name="";String value=null; String prop=null;String unitStr=null;
 		boolean visible=false;
 
 		if(attr!=null && attr.getLength()>0)
@@ -81,7 +101,7 @@ public class ModuleConfiguration
 				value=attr.getNamedItem(TAG_VALUE).getNodeValue();
 			}
 			if(attr.getNamedItem(TAG_UNIT)!=null){
-				unit=attr.getNamedItem(TAG_UNIT).getNodeValue();
+				unitStr=attr.getNamedItem(TAG_UNIT).getNodeValue();
 			}
 			if(attr.getNamedItem(TAG_PROP)!=null){
 				prop=attr.getNamedItem(TAG_PROP).getNodeValue();
@@ -91,11 +111,10 @@ public class ModuleConfiguration
 			}
 		}
 		
-//		System.out.println("[DEBUG]"+sett+" load tag "+name+
-//								": "+value+", "+prop+", "+visible);
+		
 
 		if(visible)
-			setTag(name,value,unit,prop,list);
+			setTag(name,value,unitStr,prop,list);
 	}
 	
 	
