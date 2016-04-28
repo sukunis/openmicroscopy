@@ -275,7 +275,7 @@ public class DetectorEditor extends JDialog implements ActionListener
 	}
 
 	public Detector getDetector() {
-		return selectDetector;
+		return new Detector(selectDetector);
 	}
 
 }

@@ -668,6 +668,7 @@ public class DetectorCompUI extends ElementsCompUI
 		setFields= setFields || b;		
 	}
 
+	
 
 
 	

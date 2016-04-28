@@ -322,7 +322,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    refreshFilesButton.addActionListener(this);
 	    
 	    UOSProfileReader propReader=new UOSProfileReader(new File("profileUOSImporter.xml"));
-	    UOSHardwareReader hardwareDef=new UOSHardwareReader(new File("hardwareDefinitionUOSImporter.xml"));
+	    UOSHardwareReader hardwareDef=new UOSHardwareReader(new File("hardwareUOSImporter.xml"));
 //	    dataView=new MicroscopeDataView(propReader.getViewProperties());
 	    customSettings=propReader.getViewProperties();
 	    

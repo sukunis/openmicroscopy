@@ -26,9 +26,17 @@ import javax.swing.table.DefaultTableModel;
 
 
 
+
+
+
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 
+import ome.xml.model.Arc;
+import ome.xml.model.Filament;
+import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.Laser;
+import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.LightSource;
 
 public class LightSourceEditor extends JDialog
@@ -76,9 +84,10 @@ public class LightSourceEditor extends JDialog
 				
 					try {
 						int idx=lightSrcTable.getSelectedRow();
-						if(idx!=-1)
+						if(idx!=-1){
 							lightSrc=availableLightSrc.get(idx);
-						else
+							LOGGER.info("[DEBUG] lightSrcEditor load row "+idx+"/"+availableLightSrc.size());
+						}else
 							lightSrc=null;
 					} catch (Exception e1) {
 						LOGGER.severe("can't read LIGHTPATH from table");
@@ -88,6 +97,8 @@ public class LightSourceEditor extends JDialog
 				setVisible(false);
 				dispose();
 			}
+
+			
 
 			
 		});
@@ -151,8 +162,9 @@ public class LightSourceEditor extends JDialog
 	
 	public LightSource getSelectedLightSource()
 	{
-		return lightSrc;
+		return LightSourceCompUI.copyLightSource(lightSrc);
 	}
+	
 	
 	
 	class LightSrcTableModel extends DefaultTableModel
@@ -189,7 +201,23 @@ public class LightSourceEditor extends JDialog
 							((Laser)l).getPower().value()+((Laser)l).getPower().unit().getSymbol() : ""; 
 					o[5]=((Laser)l).getRepetitionRate()!=null ? 
 							((Laser)l).getRepetitionRate().value()+((Laser)l).getRepetitionRate().unit().getSymbol() : ""; 
-				}else{
+				}else if(l instanceof Arc){
+					o[3]="";
+					o[4]=((Arc)l).getPower()!=null ? 
+							((Arc)l).getPower().value()+((Arc)l).getPower().unit().getSymbol() : ""; 
+					o[5]="";
+				}	else if(l instanceof Filament){
+					o[3]="";
+					o[4]=((Filament)l).getPower()!=null ? 
+							((Filament)l).getPower().value()+((Filament)l).getPower().unit().getSymbol() : ""; 
+					o[5]="";
+				}else if(l instanceof GenericExcitationSource){
+					o[3]="";
+					o[4]=((GenericExcitationSource)l).getPower()!=null ? 
+							((GenericExcitationSource)l).getPower().value()+((GenericExcitationSource)l).getPower().unit().getSymbol() : ""; 
+					o[5]="";
+				}
+				else if(l instanceof LightEmittingDiode){
 					o[3]="";
 					o[4]="";
 					o[5]="";

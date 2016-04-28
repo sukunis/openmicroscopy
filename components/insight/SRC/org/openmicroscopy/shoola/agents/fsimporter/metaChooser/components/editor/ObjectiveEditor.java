@@ -288,7 +288,7 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 	}
 
 	public Objective getObjective() {
-		return selectObjective;
+		return new Objective(selectObjective);
 	}
 
 }

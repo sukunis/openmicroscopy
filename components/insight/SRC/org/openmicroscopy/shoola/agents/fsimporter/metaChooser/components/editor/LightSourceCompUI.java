@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -102,15 +104,14 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	private List<LightSource> availableLightSrcList;
 	
-	private final String LASER="Laser";
-	private final String ARC="Arc";
-	private final String FILAMENT="Filament";
-	private final String GENERIC_EXCITATION="GenericExcitationSource";
-	private final String LIGHT_EMITTING_DIODE="LightEmittingDiode";
+	private final static String LASER="Laser";
+	private final static String ARC="Arc";
+	private final static String FILAMENT="Filament";
+	private final static String GENERIC_EXCITATION="GenericExcitationSource";
+	private final static String LIGHT_EMITTING_DIODE="LightEmittingDiode";
 	
 	private final String[] sourceTypeList={LASER,ARC,FILAMENT,GENERIC_EXCITATION,LIGHT_EMITTING_DIODE};
-	private final JComboBox<String> sourceType=new JComboBox<String>(sourceTypeList);
-	private ActionListener aListener;
+	private JComboBox<String> sourceType;
 	
 	private int linkChannelIdx;
 	private boolean setFields;
@@ -134,9 +135,10 @@ public class LightSourceCompUI extends ElementsCompUI
 		linkChannelIdx=_linkChannelIdx;
 		lightSrcSettUI=null;
 		initGUI();
-		if(lightSrc!=null)
+		if(lightSrc!=null){
+			showLightSrcPane(lightSrc);
 			setGUIData();
-		else{
+		}else{
 			//TODO init
 			//createDummyPane(false);
 //			createNewLightSrcPane();
@@ -192,19 +194,35 @@ public class LightSourceCompUI extends ElementsCompUI
 		globalPane=new JPanel();
 		globalPane.setLayout(gridbag);
 		
-		aListener=new ActionListener() {
+		ActionListener aListener=new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
 				try {
-					showSourceTypeView((String) ((JComboBox)e.getSource()).getSelectedItem());
+					showSourceTypeView( ((JComboBox)e.getSource()).getSelectedItem().toString());
+					
 				} catch (Exception e1) {
 					LOGGER.severe("[GUI] can't display selected source type");
 				}
 			}
 		};
-		
+//		ItemListener iListener=new ItemListener() {
+//			@Override
+//			public void itemStateChanged(ItemEvent e) {
+//				if(e.getStateChange()==ItemEvent.SELECTED){
+//					try {
+//						showSourceTypeView(((JComboBox)e.getSource()).getSelectedItem().toString());
+//					} catch (Exception e1) {
+//						LOGGER.severe("[GUI] can't display selected source type");
+//					}
+//					
+//				}
+//				System.out.println("[DEBUG] item action select lightSrc type");
+//			}
+//		};
+		sourceType=new JComboBox<String>(sourceTypeList);
 		sourceType.addActionListener(aListener);
+//		sourceType.addItemListener(iListener);
 		
 		box=Box.createVerticalBox();
 		box.add(sourceType);
@@ -221,11 +239,12 @@ public class LightSourceCompUI extends ElementsCompUI
 						"Select From Available LightSource", availableLightSrcList); 
 				LightSource l=editor.getSelectedLightSource();
 				if(l!=null){
-					setFields=true;
-					lightSrc=l;
-					setGUIData();
-					revalidate();
-					repaint();
+					setPredefineLightSrc(l);
+//					setFields=true;
+//					lightSrc=l;
+//					setGUIData();
+//					revalidate();
+//					repaint();
 				}
 				
 				
@@ -241,12 +260,26 @@ public class LightSourceCompUI extends ElementsCompUI
 		add(editBtn,BorderLayout.SOUTH);
 	}
 	
+	protected void setPredefineLightSrc(LightSource l) 
+	{
+		showLightSrcPane(l);
+		lightSrc=l;
+		setGUIData();
+		setFields=true;
+		revalidate();
+		repaint();
+	}
 	//TODO doesn't work correctly
+	/**
+	 * Show tags for selected lightSrc element. Doesn't save previously define values.
+	 * @param sType
+	 * @throws Exception
+	 */
 	protected void showSourceTypeView(String sType) throws Exception 
 	{
 		//read available data from pane 
-		getData();
-		if(lightSrcSettUI!=null) lightSrcSettUI.getData();
+//		getData();
+//		if(lightSrcSettUI!=null) lightSrcSettUI.getData();
 		
 		globalPane.removeAll();
     	globalPane.setLayout(gridbag);
@@ -257,7 +290,6 @@ public class LightSourceCompUI extends ElementsCompUI
 		rebuildComponents();
 		revalidate();
 		repaint();
-		
 	}
 	
 	public LightSourceSettingsCompUI getSettings()
@@ -297,7 +329,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		}else if(l instanceof LightEmittingDiode){
 			addDataLED(l,overwrite);
 		}
-		
+		showLightSrcPane(lightSrc);
 		setGUIData();
 		
 	}
@@ -497,31 +529,40 @@ public class LightSourceCompUI extends ElementsCompUI
 	private void setGUIData()
 	{
 		if(lightSrc instanceof Laser){
-			sourceType.setSelectedItem(0);
 			setTitledBorder("Laser");
 			setGUIDataLaser();
 		}else if(lightSrc instanceof Arc){
 			setTitledBorder("Arc");
-			sourceType.setSelectedItem(1);
 			setGUIDataArc();
 		}else if(lightSrc instanceof Filament){
 			setTitledBorder("Filament");
-			sourceType.setSelectedItem(3);
 			setGUIDataFilament();
 		}else if(lightSrc instanceof GenericExcitationSource){
-			sourceType.setSelectedItem(4);
 			setTitledBorder("GenericExcitationSource");
 			setGUIDataGenericExcitationSource();
 		}else if(lightSrc instanceof LightEmittingDiode){
-			sourceType.setSelectedItem(5);
 			setTitledBorder("LightEmittingDiode");
 			setGUIDataLightEmittingDiode();
 		}else{
 			LOGGER.severe(" unknown LIGHTSOURCE or element is null ");
 		}
-		
-		
-			
+	}
+	
+	private void showLightSrcPane(LightSource l)
+	{
+		if(l instanceof Laser){
+			sourceType.setSelectedIndex(0);
+		}else if(l instanceof Arc){
+			sourceType.setSelectedIndex(1);
+		}else if(l instanceof Filament){
+			sourceType.setSelectedIndex(2);
+		}else if(l instanceof GenericExcitationSource){
+			sourceType.setSelectedIndex(3);
+		}else if(l instanceof LightEmittingDiode){
+			sourceType.setSelectedIndex(4);
+		}else{
+			LOGGER.severe(" unknown LIGHTSOURCE or element is null ");
+		}
 	}
 	
 	public LightSource getData() throws Exception
@@ -533,6 +574,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	private void readGUIInput() throws Exception
 	{
+		
 		if(lightSrc==null)
 			createNewElement();
 		
@@ -659,7 +701,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		try{
 			((Arc)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC arc power input");
+			LOGGER.severe("[DATA] can't read LIGHTSRC arc power input. "+e.getMessage());
 		}
 		try{
 			((Arc)lightSrc).setType(type.getTagValue().equals("") ? 
@@ -793,7 +835,9 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 //		if(c==null || c.equals(""))
 //			return null;
-//		
+//		if(unit==null)
+//			unit=powerUnit;
+		
 		return new Power(Double.valueOf(c),unit);
 		
 	}
@@ -864,7 +908,6 @@ public class LightSourceCompUI extends ElementsCompUI
 
 	private void setGUIDataArc() 
 	{
-		
 		try{ setManufact(((Arc)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }
 		try{ setModel(((Arc)lightSrc).getModel(), ElementsCompUI.REQUIRED);
@@ -887,7 +930,6 @@ public class LightSourceCompUI extends ElementsCompUI
 
 	private void setGUIDataLaser()
 	{
-		
 		try{setManufact(((Laser)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }
 		try{setModel(((Laser)lightSrc).getModel(), ElementsCompUI.REQUIRED);
@@ -1089,16 +1131,16 @@ public class LightSourceCompUI extends ElementsCompUI
 //        }
 //	}
 	
-	private void createNewElemGUI()
-	{
-		globalPane.removeAll();
-    	globalPane.setLayout(gridbag);
-    	setGUIData();
-    	buildComponents();       
-    	
-    	revalidate();
-    	repaint();
-	}
+//	private void createNewElemGUI()
+//	{
+//		globalPane.removeAll();
+//    	globalPane.setLayout(gridbag);
+//    	setGUIData();
+//    	buildComponents();       
+//    	
+//    	revalidate();
+//    	repaint();
+//	}
 	
 	public void createDummyPane(List<TagConfiguration> list,boolean inactive) 
 	{
@@ -1271,14 +1313,12 @@ public class LightSourceCompUI extends ElementsCompUI
 	//create dummy laser
 	public void createDummyPane(boolean inactive)
 	{
-		clearDataValues();
 		createLaserDummy(inactive);
 		sourceType.setSelectedItem(0);
 	}
 	
 	public void createCustomDummyPane(boolean inactive,String kindOfLightSrc)
 	{
-		clearDataValues();
 		switch(kindOfLightSrc){
 		case LASER: createLaserDummy(inactive);  break;
 		case ARC: createArcDummy(inactive); break;
@@ -1288,7 +1328,12 @@ public class LightSourceCompUI extends ElementsCompUI
 		default: LOGGER.severe("unknown LightSource");
 		break;
 		}
-		setGUIData();
+		
+		if(lightSrc!=null && kindOfLightSrc.equals(lightSrc.getClass().getSimpleName())){
+			showLightSrcPane(lightSrc);
+			setGUIData();
+		}
+		
 		if(lightSrcSettUI!=null) lightSrcSettUI.addData(lightSrcSett,true);
 	}
 	
@@ -1620,7 +1665,32 @@ public class LightSourceCompUI extends ElementsCompUI
 		setFields= setFields || b;		
 	}
 
-	
+	public static LightSource copyLightSource(LightSource l) 
+	{
+		LightSource result=null;
+		if(l!=null){
+			switch (l.getClass().getSimpleName()) {
+			case LASER:
+				result=new Laser((Laser) l);
+				break;
+			case ARC:
+				result=new Arc((Arc) l);
+				break;
+			case FILAMENT:
+				result=new Filament((Filament) l);
+				break;
+			case GENERIC_EXCITATION:
+				result=new GenericExcitationSource((GenericExcitationSource) l);
+				break;
+			case LIGHT_EMITTING_DIODE:
+				result=new LightEmittingDiode((LightEmittingDiode) l);
+				break;
+			default:
+				break;
+			}
+		}
+		return result;
+	}
 
 
 }

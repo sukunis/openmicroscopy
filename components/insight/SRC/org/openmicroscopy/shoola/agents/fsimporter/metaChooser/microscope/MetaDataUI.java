@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
@@ -1063,8 +1064,9 @@ public class MetaDataUI extends JPanel
 	
 	
 	// Placeholder functions
-		private void addToPlaceholder(JComponent comp,GUIPlaceholder place, int width )
+		private void addToPlaceholder(JComponent comp1,GUIPlaceholder place, int width )
 		{
+			JScrollPane comp=new JScrollPane(comp1);
 			switch (place) {
 			case Pos_A:
 				addComponent(this,gbl,comp,0,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
@@ -1091,7 +1093,7 @@ public class MetaDataUI extends JPanel
 				addComponent(this,gbl,comp,3,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
 				break;
 			case Pos_Bottom:
-				addComponent(this,gbl,comp,2,10,width,1,1.0,0,GridBagConstraints.HORIZONTAL);
+				addComponent(this,gbl,comp1,2,10,width,1,1.0,0,GridBagConstraints.HORIZONTAL);
 				break;
 			default:
 				LOGGER.severe("[GUI] Unknown position for element");
