@@ -31,7 +31,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	
 
 	private TagData waveLength;
-	private Unit<Length> waveLengthUnit;
+	private Unit<Length> waveLengthUnit=UNITS.NM;
 	/**==Absorptionskoefizient a fraction, as a value from 0.0 to 1.0*/
 	private TagData attenuation;
 	//??
@@ -69,7 +69,6 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	
 	public LightSourceSettingsCompUI(ModuleConfiguration objConf)
 	{
-		waveLengthUnit=UNITS.NM;
 	
 		initGUI();
 		if(objConf==null)
@@ -81,7 +80,6 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	public LightSourceSettingsCompUI(LightSourceSettings _ls, String id)
 	{
 		lightSrc=_ls;
-		waveLengthUnit=UNITS.NM;
 		initGUI();
 		if(lightSrc!=null)
 			setGUIData();
@@ -159,7 +157,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 			createNewElement();
 		}
 		try{
-			lightSrc.setWavelength(parseToLength(waveLength.getTagValue(),waveLengthUnit));
+			lightSrc.setWavelength(parseToLength(waveLength.getTagValue(),waveLength.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read LIGHTSRC SETT wavelength input");
 		}
@@ -253,7 +251,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 				switch (name) {
 				case TagNames.SET_WAVELENGTH:
 					try {
-						Length value = parseToLength(val, waveLengthUnit);
+						Length value = parseToLength(val, t.getUnit());
 						setWavelength(value, prop);
 						lightSrc.setWavelength(value);
 					} catch (Exception e) {
@@ -301,11 +299,11 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	public void setWavelength(Length value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		waveLengthUnit=(value!=null) ? value.unit():waveLengthUnit;
+		Unit unit=(value!=null) ? value.unit():waveLengthUnit;
 		if(waveLength == null) 
-			waveLength = new TagData(TagNames.SET_WAVELENGTH+" ["+waveLengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			waveLength = new TagData(TagNames.SET_WAVELENGTH,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			waveLength.setTagValue(val,prop);
+			waveLength.setTagValue(val,unit,prop);
 		
 	}
 	public void setAttenuation(PercentFraction value, boolean prop)

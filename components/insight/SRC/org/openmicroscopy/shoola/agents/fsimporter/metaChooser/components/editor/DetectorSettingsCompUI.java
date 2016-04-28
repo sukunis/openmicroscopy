@@ -47,7 +47,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	
 	private List<TagData> tagList;
 	
-	private Unit<ElectricPotential> voltageUnit;
+	private Unit<ElectricPotential> voltageUnit=UNITS.V;
 	
 	private TitledBorder tb;
 	
@@ -81,7 +81,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	{
 		detectorSett=_detectorSett;
 		
-		voltageUnit=UNITS.V;
 		 
 		initGUI();
 		
@@ -98,14 +97,12 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	
 //	public DetectorSettingsCompUI() 
 //	{
-//		voltageUnit=UNITS.V;
 //		initGUI();
 //		createDummyPane(false);
 //	}
 	
 	public DetectorSettingsCompUI(ModuleConfiguration objConf) 
 	{
-		voltageUnit=UNITS.V;
 		initGUI();
 		if(objConf==null)
 			createDummyPane(false);
@@ -206,7 +203,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		}
 		try{
 		detectorSett.setVoltage(voltage.getTagValue().equals("") ? 
-				null : new ElectricPotential(Double.valueOf(voltage.getTagValue()), voltageUnit) );
+				null : new ElectricPotential(Double.valueOf(voltage.getTagValue()), voltage.getTagUnit()) );
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read DETECTOR SETT voltage input");
 		}
@@ -333,7 +330,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					break;
 				case TagNames.VOLTAGE:
 					try{
-						ElectricPotential value=new ElectricPotential(Double.valueOf(val), voltageUnit);
+						ElectricPotential value=new ElectricPotential(Double.valueOf(val), t.getUnit());
 						detectorSett.setVoltage(value);
 					}
 					catch(Exception e){
@@ -418,11 +415,11 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		public void setVoltage(ElectricPotential value, boolean prop)
 		{
 			String val= (value != null)? String.valueOf(value.value()) : "";
-			voltageUnit=(value!=null) ? value.unit() :voltageUnit;
+			Unit unit=(value!=null) ? value.unit() :voltageUnit;
 			if(voltage == null) 
-				voltage = new TagData(TagNames.VOLTAGE+" ["+voltageUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+				voltage = new TagData(TagNames.VOLTAGE,val,unit,prop,TagData.TEXTFIELD);
 			else 
-				voltage.setTagValue(val,prop);
+				voltage.setTagValue(val,unit,prop);
 		}
 		public void setOffset(Double value, boolean prop)
 		{
