@@ -41,7 +41,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	private TagData type;
 	private TagData description;
 	//last name of experimenter
-	private TagData name;
+	private TagData expName;
 	
 	// Project
 	private TagData projectName;
@@ -108,7 +108,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	{
 		tagList=new ArrayList<TagData>();
 		tagList.add(type);
-		tagList.add(name);
+		tagList.add(expName);
 		tagList.add(description);
 		tagList.add(projectName);
 		tagList.add(group);
@@ -123,7 +123,10 @@ public class ExperimentCompUI extends ElementsCompUI
 			catch(NullPointerException e){}
 			try{ setType(experiment.getType(), ElementsCompUI.REQUIRED);}
 			catch(NullPointerException e){}
-			try{ setName(experiment.getLinkedExperimenter().getLastName(), ElementsCompUI.REQUIRED);}
+//			try{ setName(experiment.getLinkedExperimenter().getLastName(), ElementsCompUI.REQUIRED);}
+			try{String [] name= {experiment.getLinkedExperimenter().getFirstName(),
+					experiment.getLinkedExperimenter().getLastName()};
+				setName(name, ElementsCompUI.REQUIRED);}
 			catch(NullPointerException e){}
 		}
 
@@ -160,84 +163,201 @@ public class ExperimentCompUI extends ElementsCompUI
 	 * @param overwrite
 	 * @return
 	 */
+//	public boolean addData(Experiment exp, boolean overwrite)
+//	{
+//		boolean conflicts=false;
+//		
+//		if(experiment!=null){
+//			if(exp!=null){
+//				String desc=exp.getDescription();
+//				ExperimentType type=exp.getType();
+//				Experimenter exper=exp.getLinkedExperimenter();
+//				addData(exper,overwrite);
+//				//TODO: save Partner
+//				//				String partner=
+//				if(overwrite){
+//					if(exp.getID()!=null && !exp.getID().equals(""))
+//						experiment.setID(exp.getID());
+//					if(desc!=null && !desc.equals("")) experiment.setDescription(desc);
+//					if(type!=null && !type.equals("")) experiment.setType(type);
+//					
+//					LOGGER.info("[DATA] overwrite EXPERIMENT data");
+//				}else{
+//					if(experiment.getID()==null || experiment.getID().equals(""))
+//						experiment.setID(exp.getID());
+//					if(experiment.getDescription()==null || experiment.getDescription().equals("")) 
+//						experiment.setDescription(desc);
+//					if(experiment.getType()==null ) 
+//						experiment.setType(type);
+//					LOGGER.info("[DATA] complete EXPERIMENT data");
+//				}
+//			}
+//		}else if(exp!=null){
+//			experiment=exp;
+//			LOGGER.info("[DATA] add EXPERIMENT data");
+//		}
+//		
+//		setGUIData();
+//			
+//		return conflicts;
+//	}
+	
+//	public boolean addData(Experimenter exper, boolean overwrite)
+//	{
+//		boolean conflicts=false;
+//		if(experiment!=null && experiment.getLinkedExperimenter()!=null){ 
+//			if(exper!=null){
+//				String nameL=exper.getLastName();
+//				String nameF=exper.getFirstName();
+//				if(overwrite){
+//					if(exper.getID()!=null && !exper.getID().equals(""))
+//						experiment.getLinkedExperimenter().setID(exper.getID());
+//					if(!nameL.equals("")) experiment.getLinkedExperimenter().setLastName(nameL);
+//					if(!nameF.equals("")) experiment.getLinkedExperimenter().setFirstName(nameF);
+//					LOGGER.info("[DATA] overwrite EXPERIMENTER data");
+//				}else{
+//					if(experiment.getLinkedExperimenter().getID()==null || experiment.getLinkedExperimenter().getID().equals(""))
+//						experiment.getLinkedExperimenter().setID(exper.getID());
+//					if(experiment.getLinkedExperimenter().getLastName()==null || experiment.getLinkedExperimenter().getLastName().equals(""))
+//						experiment.getLinkedExperimenter().setLastName(nameL);
+//					if(experiment.getLinkedExperimenter().getFirstName()==null || experiment.getLinkedExperimenter().getFirstName().equals(""))
+//						experiment.getLinkedExperimenter().setFirstName(nameF);
+//					LOGGER.info("[DATA] complete EXPERIMENTER data");
+//				}
+//			}
+//		}else if(exper!=null){
+//			experiment.linkExperimenter(exper);
+//			LOGGER.info("[DATA] add EXPERIMENTER data");
+//		}
+//		setGUIData();
+//		
+//		
+//		return conflicts;
+//	}
+	
 	public boolean addData(Experiment exp, boolean overwrite)
 	{
 		boolean conflicts=false;
-		
-		if(experiment!=null){
-			if(exp!=null){
-				String desc=exp.getDescription();
-				ExperimentType type=exp.getType();
-				Experimenter exper=exp.getLinkedExperimenter();
-				addData(exper,overwrite);
-				//TODO: save Partner
-				//				String partner=
-				if(overwrite){
-					if(exp.getID()!=null && !exp.getID().equals(""))
-						experiment.setID(exp.getID());
-					if(desc!=null && !desc.equals("")) experiment.setDescription(desc);
-					if(type!=null && !type.equals("")) experiment.setType(type);
-					
-//					if(exper==null){
-//						experiment.linkExperimenter(exper);
-//					}
-//					else if(!exper.getLastName().equals("")){
-//						experiment.getLinkedExperimenter().setLastName(exper.getLastName());
-//					}
-					LOGGER.info("[DATA] overwrite EXPERIMENT data");
-				}else{
-					if(experiment.getID()==null || experiment.getID().equals(""))
-						experiment.setID(exp.getID());
-					if(experiment.getDescription()==null || experiment.getDescription().equals("")) 
-						experiment.setDescription(desc);
-					if(experiment.getType()==null ) 
-						experiment.setType(type);
-					
-//					if(exper==null){
-//						experiment.linkExperimenter(exper);
-//					}else if(experiment.getLinkedExperimenter().getLastName().equals("")){
-//						experiment.getLinkedExperimenter().setLastName(exper.getLastName());
-//					}
-					LOGGER.info("[DATA] complete EXPERIMENT data");
-				}
+		if(overwrite)
+			replaceData(exp);
+		else
+			try {
+				completeData(exp);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}else if(exp!=null){
-			experiment=exp;
-			LOGGER.info("[DATA] add EXPERIMENT data");
-		}
 		
 		setGUIData();
-			
+		
+		
 		return conflicts;
 	}
 	
 	public boolean addData(Experimenter exper, boolean overwrite)
 	{
 		boolean conflicts=false;
-		if(experiment!=null && experiment.getLinkedExperimenter()!=null){ 
-			if(exper!=null){
-				String name=exper.getLastName();
-				if(overwrite){
-					if(exper.getID()!=null && !exper.getID().equals(""))
-						experiment.getLinkedExperimenter().setID(exper.getID());
-					if(!name.equals("")) experiment.getLinkedExperimenter().setLastName(name);
-					LOGGER.info("[DATA] overwrite EXPERIMENTER data");
-				}else{
-					if(experiment.getLinkedExperimenter().getID()==null || experiment.getLinkedExperimenter().getID().equals(""))
-						experiment.getLinkedExperimenter().setID(exper.getID());
-					if(experiment.getLinkedExperimenter().getLastName()==null || experiment.getLinkedExperimenter().getLastName().equals(""))
-						experiment.getLinkedExperimenter().setLastName(name);
-					LOGGER.info("[DATA] complete EXPERIMENTER data");
-				}
+		if(overwrite)
+			replaceData(exper);
+		else
+			try {
+				completeData(exper);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}else if(exper!=null){
-			experiment.linkExperimenter(exper);
-			LOGGER.info("[DATA] add EXPERIMENTER data");
-		}
 		setGUIData();
 		
 		
 		return conflicts;
+	}
+	
+	/**
+	 * Overwrites only tags that are not set
+	 * @param exper
+	 * @throws Exception 
+	 */
+	public void completeData(Experiment e) throws Exception
+	{
+		//copy input fields
+		Experiment copyIn=null;
+		if(experiment!=null){
+			getData();//experiment+experimenter
+			copyIn=new Experiment(experiment);
+		}
+		
+		replaceData(e);
+		
+		// set input field values again
+		if(copyIn!=null){
+			String desc=copyIn.getDescription();
+			ExperimentType type=copyIn.getType();
+			
+			if(desc!=null && !desc.equals("")) experiment.setDescription(desc);
+			if(type!=null && !type.equals("")) experiment.setType(type);
+			
+			Experimenter exper=copyIn.getLinkedExperimenter();
+			if(exper!=null){
+				String nameL=exper.getLastName();
+				String nameF=exper.getFirstName();
+				if(!nameL.equals("")) experiment.getLinkedExperimenter().setLastName(nameL);
+				if(!nameF.equals("")) experiment.getLinkedExperimenter().setFirstName(nameF);
+				LOGGER.info("[DATA] complete EXPERIMENT data");
+			}
+			setGUIData();
+		}
+	}
+	
+	
+	/**
+	 * Overwrites only tags that are not set
+	 * @param exper
+	 * @throws Exception 
+	 */
+	public void completeData(Experimenter exper) throws Exception
+	{
+		// copy input fields
+		Experimenter copyIn=null;
+		if(experiment!=null && experiment.getLinkedExperimenter()!=null){
+			getData();
+			copyIn=new Experimenter(experiment.getLinkedExperimenter());
+		}
+		replaceData(exper);
+		
+		// set input field values again
+		if(copyIn!=null){
+			String nameL=copyIn.getLastName();
+			String nameF=copyIn.getFirstName();
+			if(!nameL.equals("")) experiment.getLinkedExperimenter().setLastName(nameL);
+			if(!nameF.equals("")) experiment.getLinkedExperimenter().setFirstName(nameF);
+			LOGGER.info("[DATA] complete EXPERIMENTER data");
+		}
+	}
+	
+	/**
+	 * Replace intern experimenter object by given experimenter. All manuell input data are lost. 
+	 * @param exper
+	 */
+	public void replaceData(Experimenter exper)
+	{
+		if(exper!=null){
+			experiment.linkExperimenter(exper);
+			LOGGER.info("[DATA] replace EXPERIMENTER data");
+			setGUIData();
+		}
+	}
+	
+	/**
+	 * Replace intern experiment object by given experiment. All manuell input data are lost. 
+	 * @param e
+	 */
+	public void replaceData(Experiment e)
+	{
+		if(e!=null){
+			experiment=e;
+			LOGGER.info("[DATA] replace EXPERIMENT data");
+			setGUIData();
+		}
 	}
 	
 	
@@ -258,7 +378,8 @@ public class ExperimentCompUI extends ElementsCompUI
 			LOGGER.severe("[DATA] can't read EXPERIMENT type input");
 		}
 		try{
-			experiment.getLinkedExperimenter().setLastName(name.getTagValue());
+			experiment.getLinkedExperimenter().setFirstName(expName.getTagValue(0));
+			experiment.getLinkedExperimenter().setLastName(expName.getTagValue(1));
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read EXPERIMENT experimenter input");
 		}
@@ -297,7 +418,7 @@ public class ExperimentCompUI extends ElementsCompUI
 		addTagToGUI(group);
 		addTagToGUI(projectPartner);
 		addVSpaceToGui(10);
-		addTagToGUI(name);
+		addTagToGUI(expName);
 		addTagToGUI(type);
 		addTagToGUI(description);
 		
@@ -331,7 +452,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	{
 		clearTagValue(type);
 		clearTagValue(description);
-		clearTagValue(name);
+		clearTagValue(expName);
 		clearTagValue(projectName);
 		clearTagValue(projectPartner);
 		clearTagValue(group);
@@ -382,10 +503,20 @@ public class ExperimentCompUI extends ElementsCompUI
 	
 	public void setName(String value, boolean prop)
 	{
-		if(name == null) 
-			name = new TagData(TagNames.EXPNAME+": ",value,prop,TagData.TEXTFIELD);
+		if(expName == null) 
+			expName = new TagData(TagNames.EXPNAME+": ",value,prop,TagData.TEXTFIELD);
 		else 
-			name.setTagValue(value,prop);
+			expName.setTagValue(value,prop);
+	}
+	
+	public void setName(String[] value, boolean prop)
+	{
+		if(expName == null) 
+			expName = new TagData(TagNames.EXPNAME+": ",value,prop,TagData.ARRAYFIELDS);
+		else {
+			expName.setTagValue(value[0],0,prop);
+			expName.setTagValue(value[1],1,prop);
+		}
 	}
 	
 	public void setProjectName(String value, boolean prop)
@@ -439,7 +570,8 @@ public class ExperimentCompUI extends ElementsCompUI
 		
 		setType(null, ElementsCompUI.OPTIONAL);
 		setDescription(null, ElementsCompUI.OPTIONAL);
-		setName(null,OPTIONAL);
+//		setName(null,OPTIONAL);
+		setName(new String[2],OPTIONAL);
 		
 		projectName.setEnable(false);
 		group.setEnable(false);
@@ -447,7 +579,7 @@ public class ExperimentCompUI extends ElementsCompUI
 		if(inactive){
 			
 			projectPartner.setEnable(false);
-			name.setEnable(false);
+			expName.setEnable(false);
 			type.setEnable(false);
 			description.setEnable(false);
 		}
@@ -494,8 +626,9 @@ public class ExperimentCompUI extends ElementsCompUI
 					group.setVisible(true);
 					break;
 				case TagNames.EXPNAME:
-					setName(null, prop);
-					this.name.setVisible(true);
+//					setName(null, prop);
+					setName(new String[2], prop);
+					this.expName.setVisible(true);
 					break;
 				case TagNames.PROJECTNAME:
 					setProjectName(null, prop);
@@ -523,7 +656,7 @@ public class ExperimentCompUI extends ElementsCompUI
 		if(isActive(group))list.add(group);
 		if(isActive(type)) list.add(type);
 		if(isActive(description)) list.add(description);
-		if(isActive(name)) list.add(name);
+		if(isActive(expName)) list.add(expName);
 
 		return list;
 	}

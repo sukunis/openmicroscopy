@@ -166,7 +166,7 @@ public class SaveMetadata
 				}else{
 					LightSourceSettings lSett=model.getLightSourceSettings(cNr);
 					if(lSett!=null){
-						if(lSett.getID().equals("")){
+						if(lSett.getID()==null || lSett.getID().equals("")){
 							// lightSrcSettings not yet linked to created lightSrc
 							LOGGER.info("[SAVE] link LIGHTSRC to channel");
 							lSett.setID(thisLightSrc.getID());
@@ -184,7 +184,7 @@ public class SaveMetadata
 				}else{
 					DetectorSettings dSett = model.getDetectorSettings(cNr);
 					if(dSett!=null){
-						if(dSett.getID().equals("")){
+						if(dSett.getID()==null || dSett.getID().equals("")){
 							//detectorSettings not yet linked to new created detector
 							LOGGER.info("[SAVE] link DETECTOR to channel");
 							dSett.setID(thisDetector.getID());
@@ -259,7 +259,7 @@ public class SaveMetadata
 			omeStore.storeObjectiveSettings(os,i);
 		
 		Objective o=model.getObjective();
-		if(o!=null)
+		if(o!=null )
 			omeStore.storeObjective(o,i,model.getImageIndex());
 	}
 

@@ -48,7 +48,6 @@ public class MetaDataModel
 	private ElementsCompUI image;
 	private List<ElementsCompUI> detectorList;
 	private List<ElementsCompUI> lightSrcList;
-	private List<LightSource> lightSrcOrigList;
 	
 	// list of all filter for current image
 	private List<Filter> filterList;
@@ -67,7 +66,6 @@ public class MetaDataModel
 	
 	//-----------------------------------
 	private ElementsCompUI experimentUI;
-	private ElementsCompUI objectiveSettingsUI; 
 	private ElementsCompUI objectiveUI;
 	private ElementsCompUI imgEnvUI;
 	private ElementsCompUI sampleUI;
@@ -82,6 +80,8 @@ public class MetaDataModel
 	private int numOfChannels;
 	
 	private OME ome;
+
+	private List<LightSource> lightSrcOrigList;
 	
 	
 	
@@ -110,6 +110,33 @@ public class MetaDataModel
 		detectorList=new ArrayList<ElementsCompUI>(numOfChannels);
 		
 		lightPathList=new ArrayList<ElementsCompUI>(numOfChannels);
+	}
+	
+	public void clearData()
+	{
+		imageIndex=-1;
+		numOfChannels=-1;
+		
+		imageOME=null;
+		ome=null;
+		image=null;
+		
+		experimentUI=null;
+		sampleUI=null;
+		objectiveUI=null;
+		imgEnvUI=null;
+		
+		filterList=null;
+		dichroicList=null;
+		linkedChannelForDichroic=null;
+		linkedChannelForFilter=null;
+		
+		channelList=new ArrayList<ElementsCompUI>();
+		planeList=new ArrayList<ElementsCompUI>();
+		lightSrcList=new ArrayList<ElementsCompUI>();
+		detectorList=new ArrayList<ElementsCompUI>();
+		
+		lightPathList=new ArrayList<ElementsCompUI>();
 	}
 	
 	public boolean noticUserInput()

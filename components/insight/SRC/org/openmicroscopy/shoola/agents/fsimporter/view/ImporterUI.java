@@ -36,6 +36,7 @@ import java.awt.Toolkit;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -75,6 +76,8 @@ import javax.swing.text.StyledDocument;
 
 
 
+
+
 //Third-party libraries
 import info.clearthought.layout.TableLayout;
 
@@ -94,6 +97,8 @@ import org.openmicroscopy.shoola.agents.imviewer.view.ImViewer;
 import org.openmicroscopy.shoola.env.data.model.FileObject;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.env.data.model.ImportableObject;
+
+
 //import org.openmicroscopy.shoola.env.data.util.SecurityContext;
 import omero.gateway.SecurityContext;
 
@@ -807,6 +812,12 @@ class ImporterUI extends TopWindow
 
 	public void startImport() {
 		chooser.importFiles();
+	}
+
+	public void addAndRefreshMetaFileView(File[] files) 
+	{
+		List<ImportableFile> list=chooser.addAndRefreshMetaFileView(files);
+		refreshMetaFileView(list);
 	}
 
 }

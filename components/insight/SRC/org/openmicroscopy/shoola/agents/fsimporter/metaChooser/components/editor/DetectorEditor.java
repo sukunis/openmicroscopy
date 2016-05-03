@@ -31,6 +31,8 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveEditor.ObjectiveTable;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveEditor.ObjectiveTableModel;
 
+import sun.nio.ch.SelChImpl;
+
 public class DetectorEditor extends JDialog implements ActionListener 
 {
 	/** Logger for this class. */
@@ -274,7 +276,11 @@ public class DetectorEditor extends JDialog implements ActionListener
 		
 	}
 
-	public Detector getDetector() {
+	public Detector getDetector() 
+	{
+		if(selectDetector==null)
+			return null;
+		
 		return new Detector(selectDetector);
 	}
 

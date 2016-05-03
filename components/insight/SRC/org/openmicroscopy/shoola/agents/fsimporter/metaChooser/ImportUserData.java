@@ -1,5 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser;
 
+import com.sun.xml.internal.fastinfoset.util.StringArray;
+
 import omero.gateway.model.ExperimenterData;
 import omero.gateway.model.GroupData;
 import omero.model.Project;
@@ -29,8 +31,15 @@ public class ImportUserData
 		
 	}
 	
+
 	public String getUser()
 	{
 		return experimenter.getLastName();
+	}
+	
+	public String[] getUserFullName()
+	{
+		String[] name={experimenter.getFirstName(),experimenter.getLastName()};
+		return name;
 	}
 }

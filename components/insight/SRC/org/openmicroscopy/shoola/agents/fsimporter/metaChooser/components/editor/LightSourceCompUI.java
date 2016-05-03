@@ -304,8 +304,14 @@ public class LightSourceCompUI extends ElementsCompUI
 		
 		//TODO
 		if(lightSrc!=null && !l.getClass().equals(lightSrc.getClass())){
-			LOGGER.severe("[DATA] add LIGHTSOURCE data: different lightSrc types");
-			return;
+			LOGGER.info("[DEBUG] different lightSrc types "+lightSrc.getClass().getSimpleName()+" - "+
+					l.getClass().getSimpleName());
+			if(overwrite){
+				showLightSrcPane(l);
+			}else{
+				LOGGER.warning("[DATA] add LIGHTSOURCE data: different lightSrc types - do nothing");
+				return;
+			}
 		}
 		
 		if(lightSrc!=null){
@@ -1690,6 +1696,9 @@ public class LightSourceCompUI extends ElementsCompUI
 			}
 		}
 		return result;
+	}
+	public void clearList() {
+		availableLightSrcList=null;
 	}
 
 

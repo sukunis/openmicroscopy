@@ -29,6 +29,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -434,6 +435,9 @@ class ImporterControl
                     model.onUploadComplete((FileImportComponent) evt.getNewValue());
             } else if(ImportDialog.REFRESH_FILE_LIST.equals(name)){
     			view.refreshMetaFileView((List<ImportableFile>) evt.getNewValue());
+    		} else if(ImportDialog.ADD_AND_REFRESH_FILE_LIST.equals(name)){
+    			view.addAndRefreshMetaFileView( (File[]) evt.getNewValue());
+    			
     		}
         }
 

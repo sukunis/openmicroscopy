@@ -180,7 +180,13 @@ public class OMEStore
 	
 	public void storeObjectiveSettings(ObjectiveSettings o,Image i)
 	{
+		if(o.getObjective()==null)
+			return;
+		
 		LOGGER.info("[SAVE] save OBJECTIVE SETTINGS");
+		if(o.getID()==null || o.getID().equals("")){
+			o.setID(MetadataTools.createLSID("ObjectiveSettings", 0));
+		}
 		i.setObjectiveSettings(o);
 	}
 	
@@ -261,7 +267,12 @@ public class OMEStore
 	
 	public void storeDetectorSettings(DetectorSettings dSett,Channel c) 
 	{
+		if(dSett.getDetector()==null)
+			return;
 		LOGGER.info("[SAVE] save DETECTOR SETTINGS");
+		if(dSett.getID()==null || dSett.getID().equals("")){
+			dSett.setID(MetadataTools.createLSID("DetectorSettings", 0));
+		}
 		c.setDetectorSettings(dSett);
 	}
 	
@@ -337,7 +348,12 @@ public class OMEStore
 	
 	public void storeLightSrcSettings(LightSourceSettings lSett,Channel c) 
 	{
+		if(lSett.getLightSource()==null)
+			return;
 		LOGGER.info("[SAVE] save LIGHTSRC SETTINGS");
+		if(lSett.getID()==null || lSett.getID().equals("")){
+			lSett.setID(MetadataTools.createLSID("LightSourceSettings", 0));
+		}
 		c.setLightSourceSettings(lSett);
 	}
 	

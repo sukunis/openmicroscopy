@@ -86,7 +86,6 @@ public class LightSourceEditor extends JDialog
 						int idx=lightSrcTable.getSelectedRow();
 						if(idx!=-1){
 							lightSrc=availableLightSrc.get(idx);
-							LOGGER.info("[DEBUG] lightSrcEditor load row "+idx+"/"+availableLightSrc.size());
 						}else
 							lightSrc=null;
 					} catch (Exception e1) {

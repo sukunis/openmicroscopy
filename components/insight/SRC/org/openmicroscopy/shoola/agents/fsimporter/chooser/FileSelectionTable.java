@@ -503,6 +503,71 @@ class FileSelectionTable
 	    }
 	    return files;
 	}
+	
+	void addFile(File srcFile,File newFile)
+	{
+		//search for rowIndex inside table of srcFile
+		int n = table.getRowCount();
+	    DefaultTableModel dtm = (DefaultTableModel) table.getModel();
+	    FileElement srcElement;
+	    FileObject file;
+	    int rowIndex=-1;
+	    for (int i = 0; i < n; i++) {
+	    	srcElement = (FileElement) dtm.getValueAt(i, this.fileIndex);
+	        file = srcElement.getFile();
+	        if(file.getAbsolutePath().equals(srcFile.getAbsolutePath())){
+	        	rowIndex=i;
+	        	System.out.println("[DEBUG] addFile, srcIndex "+rowIndex);
+	        	i=n;
+	        }
+	    }
+		//copy information and add newFile to table
+	    if(rowIndex!=-1){
+	    	srcElement = (FileElement) dtm.getValueAt(rowIndex, this.fileIndex);
+	    	FileObject f=new FileObject(newFile);
+	    	
+	    	//Check if the file has already 
+		    List<FileElement> inQueue = new ArrayList<FileElement>();
+		    FileElement element;
+		    for (int i = 0; i < table.getRowCount(); i++) {
+		        element = (FileElement) dtm.getValueAt(i, this.fileIndex);
+		        inQueue.add(element);
+		    }
+		    
+		    if (allowAddToQueue(inQueue, f, srcElement.getGroup().getId(), 
+		    		srcElement.getUser().getId())) 
+		    {
+		    	FileElement newElement = new FileElement(f, model.getType(), 
+		    			srcElement.getGroup(), srcElement.getUser());
+		    	newElement.setName(f.getName());
+
+
+		    	final Vector<Object> row = new Vector<Object>();
+		    	row.setSize(this.columnHeadings.size());
+
+		    	if (this.fileIndex != null) {
+		    		row.set(this.fileIndex, newElement);
+		    	}
+		    	if (this.groupIndex != null) {
+		    		row.set(this.groupIndex, newElement.getGroup());
+		    	}
+		    	if (this.ownerIndex != null) {
+		    		row.set(this.ownerIndex, newElement.getUser());
+		    	}
+		    	if (this.containerIndex != null) {
+		    		row.set(this.containerIndex, dtm.getValueAt(rowIndex, this.containerIndex));
+		    	}
+		    	if (this.folderAsDatasetIndex != null) {
+		    		row.set(this.folderAsDatasetIndex,  dtm.getValueAt(rowIndex, this.folderAsDatasetIndex));
+		    	}
+		    	if (this.sizeIndex != null) {
+		    		row.set(this.sizeIndex, newElement.getFileLengthAsString());
+		    	}
+		    	dtm.addRow(row);
+	    	}
+	    }
+	    model.onSelectionChanged();
+	}
 
 	/**
 	 * Resets the components.
@@ -619,6 +684,8 @@ class FileSelectionTable
 	    }
 	    model.onSelectionChanged();
 	}
+	
+	
 
 	/**
 	 * Returns the size of the files to import.

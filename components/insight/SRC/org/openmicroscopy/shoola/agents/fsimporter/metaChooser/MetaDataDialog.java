@@ -18,6 +18,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -47,9 +48,12 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
@@ -62,6 +66,7 @@ import ome.xml.model.Experimenter;
 import ome.xml.model.Project;
 import omero.gateway.model.ExperimenterData;
 
+import org.apache.commons.io.FilenameUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
@@ -120,6 +125,21 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	/** Button to refresh the file chooser. */
 	private JButton refreshFilesButton;
 	
+	/** load another profile xml */
+	private JButton loadProfileButton;
+
+	/** load another hardware specification */
+	private JButton loadHardwareSpecButton;
+
+	/** reset metadata to data from image file*/
+	private JButton resetFileDataButton;
+
+	/** save data for current image*/
+	private JButton saveDataButton;
+
+	/** save data for all image files in selected directory*/
+	private JButton saveAllDataButton;
+	
 	/** Test text area*/
 	public JTextArea textArea; 
 	
@@ -156,6 +176,11 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	private String defaultMic="Unspecified";
 	
 	private String[] channelList;
+
+
+	
+
+	
 	
 	/** Bound property indicating that the cancel button is pressed. */
 	public static final String CANCEL_SELECTION_PROPERTY = "cancelSelection";
@@ -166,6 +191,21 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	/** Action id indicating to reset the names. */
 	private static final int CMD_REFRESH = 3;
 	private static final int LOAD_MIC_SETTINGS=4;
+
+
+	private static final int CMD_SAVEALL = 5;
+
+
+	private static final int CMD_RESET = 6;
+
+
+	private static final int CMD_SAVE = 7;
+
+
+	private static final int CMD_SPECIFICATION = 8;
+
+
+	private static final int CMD_PROFILE = 9;
 	
 	
 	
@@ -223,7 +263,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 		if(f.isDirectory()){
 
-			dir=new FNode(new File(f.getAbsolutePath()),data);
+			dir=new FNode(new File(f.getAbsolutePath()),data,null);
 			parent.add(dir);
 			LOGGER.info("[TREE] Append Dir "+f.getAbsolutePath());
 			File[] files=(new File(f.getAbsolutePath()).listFiles());
@@ -237,7 +277,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			//add files, attention: only image files?
 		}else{
 			try {
-				file=new FNode(new File(f.getAbsolutePath()),data);
+				file=new FNode(new File(f.getAbsolutePath()),data,fileObj);
 				LOGGER.info("[TREE] Append File "+f.getAbsolutePath());
 				parent.add(file);
 			} catch (Exception e) {
@@ -257,11 +297,14 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 		
 		//import project
-		Project p=new Project();//==import project
-		p.setName(fileObj.getParent().asProject().getName().getValue());
-		p.setDescription(fileObj.getParent().asProject().getDescription().toString());
-		ome.addProject(p);
-		
+		if(fileObj.isFolderAsContainer()){
+			Project p=new Project();//==import project
+			p.setName(fileObj.getParent().asProject().getName().getValue());
+			p.setDescription(fileObj.getParent().asProject().getDescription().toString());
+			ome.addProject(p);
+		}else{
+			//screen import object
+		}
 		//TODO: input experiment data
 		
 		//TODO: input probe data as XMLAnnotation link by project
@@ -320,6 +363,37 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		refreshFilesButton.setToolTipText("Refresh the selected files and metaData");
 	    refreshFilesButton.setActionCommand("" + CMD_REFRESH);
 	    refreshFilesButton.addActionListener(this);
+	    
+	    loadProfileButton=new JButton("Load Profile");
+	    loadProfileButton.setBackground(UIUtilities.BACKGROUND);
+	    loadProfileButton.setToolTipText("Load another profile file ");
+	    loadProfileButton.setActionCommand("" + CMD_PROFILE);
+	    loadProfileButton.addActionListener(this);
+	    
+	    loadHardwareSpecButton=new JButton("Load Specification");
+	    loadHardwareSpecButton.setBackground(UIUtilities.BACKGROUND);
+	    loadHardwareSpecButton.setToolTipText("Load another microscope hardware specification");
+	    loadHardwareSpecButton.setActionCommand("" + CMD_SPECIFICATION);
+	    loadHardwareSpecButton.addActionListener(this);
+	    
+	    resetFileDataButton=new JButton("Reset");
+	    resetFileDataButton.setBackground(UIUtilities.BACKGROUND);
+	    resetFileDataButton.setToolTipText("Reset metadata. Load selected image metadata from file.");
+	    resetFileDataButton.setActionCommand("" + CMD_RESET);
+	    resetFileDataButton.addActionListener(this);
+	    
+	    saveDataButton=new JButton("Save File");
+	    saveDataButton.setBackground(UIUtilities.BACKGROUND);
+	    saveDataButton.setToolTipText("Save selected image metadata to separate *.ome file with image name");
+	    saveDataButton.setActionCommand("" + CMD_SAVE);
+	    saveDataButton.addActionListener(this);
+	    
+	    saveAllDataButton=new JButton("Save All");
+	    saveAllDataButton.setBackground(UIUtilities.BACKGROUND);
+	    saveAllDataButton.setToolTipText("Save metadata of all images of selected directory.");
+	    saveAllDataButton.setActionCommand("" + CMD_SAVEALL);
+	    saveAllDataButton.addActionListener(this);
+	    
 	    
 	    UOSProfileReader propReader=new UOSProfileReader(new File("profileUOSImporter.xml"));
 	    UOSHardwareReader hardwareDef=new UOSHardwareReader(new File("hardwareUOSImporter.xml"));
@@ -530,6 +604,49 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		return bar;
 	}
 	
+	private JPanel buildToolBarMetaUI()
+	{
+		JPanel bar = new JPanel();
+		bar.setLayout(new BoxLayout(bar, BoxLayout.X_AXIS));
+		
+		JPanel barL=new JPanel(new FlowLayout(FlowLayout.LEFT));
+		barL.add(Box.createHorizontalStrut(5));
+		//refresh
+		int plugin = ImporterAgent.runAsPlugin();
+		if (!(plugin == LookupNames.IMAGE_J_IMPORT ||
+				plugin == LookupNames.IMAGE_J)) {
+
+			barL.add(refreshFilesButton);
+		}
+		//load profile
+		barL.add(Box.createHorizontalStrut(5));
+		barL.add(loadProfileButton);
+		barL.add(Box.createHorizontalStrut(10));
+		
+		JPanel barM=new JPanel(new FlowLayout(FlowLayout.LEFT));
+		barM.add(Box.createHorizontalStrut(5));
+		//load Hardware specification
+		barM.add(loadHardwareSpecButton);
+		barM.add(Box.createHorizontalStrut(10));
+		
+		
+		JPanel barR = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		barR.add(barM);
+		//reset
+		barR.add(resetFileDataButton);
+		barR.add(Box.createHorizontalStrut(5));
+		//save
+		barR.add(saveDataButton);
+		barR.add(Box.createHorizontalStrut(5));
+		//save all
+		barR.add(saveAllDataButton);
+		barR.add(Box.createHorizontalStrut(10));
+		
+		bar.add(barL);
+		bar.add(barR);
+		return bar;
+	}
+	
 
 	private void buildGUI()
 	{
@@ -554,9 +671,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		// Lays out the buttons.
 		JPanel bar = new JPanel();
 		bar.setLayout(new BoxLayout(bar, BoxLayout.X_AXIS));
-		bar.add(buildToolBarLeft());
-		bar.add(buildToolBarRight());
-		
+//		bar.add(buildToolBarLeft());
+//		bar.add(buildToolBarRight());
+		bar.add(buildToolBarMetaUI());
 		controls.add(new JSeparator());
 		controls.add(bar);
 		add(controls, BorderLayout.SOUTH);
@@ -769,31 +886,15 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	private void loadFileMetaData(String file, MetaDataUI metaUI, MetaDataModel parent,ImportUserData userdata) 
 			throws UnknownFormatException, FormatException,IOException
 	{
-		Cursor cursor=getCursor();
-		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		
 		ImageReader reader = new ImageReader();
 		LOGGER.info("### read "+ file+" ###");
 		try {
-			//record metadata to ome-xml format
-			ServiceFactory factory=new ServiceFactory();
-			OMEXMLService service = factory.getInstance(OMEXMLService.class);
-			IMetadata metadata =  service.createOMEXMLMetadata();
-			reader.setMetadataStore(metadata);
+			IMetadata metadata = readMetadataFromFile(file, reader);
+			if(metadata==null) return;
 			
-			try{
-			reader.setId(file);
-			}catch(Exception e){
-				LOGGER.severe("Error read file");
-				setCursor(cursor);
-				return;
-			}
-			
-			LOGGER.info("use READER: "+reader.getReader().getClass().getName());
 			LOGGER.info("[DEBUG] Link data to file "+file);
 			metaUI.linkToFile(new File(file));
 			
-			//TODO: automatische auswahl mic bzgl format
 			if(reader.getSeriesCount()<2){
 				LOGGER.info("no serie ");
 				metaUI.readData(metadata, 0);
@@ -818,11 +919,73 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		} catch (Exception e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			setCursor(cursor);
 		}
 		
-		setCursor(cursor);
 	}
+	
+	private void loadFileMetaData(String file, MetaDataUI metaUI) 
+			throws UnknownFormatException, FormatException,IOException
+	{
+		ImageReader reader = new ImageReader();
+		LOGGER.info("### read "+ file+" ###");
+		try {
+			IMetadata metadata = readMetadataFromFile(file, reader);
+			if(metadata==null) return;
+			
+			LOGGER.info("[DEBUG] Link data to file "+file);
+			metaUI.linkToFile(new File(file));
+			
+			if(reader.getSeriesCount()<2){
+				LOGGER.info("no serie ");
+				metaUI.readData(metadata, 0);
+				metaUI.showData();
+				metaPanel.addTab(metadata.getImageName(0),(Component) metaUI);
+			}else{
+				for(int j=0; j< reader.getSeriesCount(); j++){
+					LOGGER.info("[SERIE] ------------ read SERIE "+j+" of "+reader.getSeriesCount()+
+							": "+metadata.getImageName(j)+"---------------------" );
+					reader.setSeries(j);
+					//new metaUI tab
+					metaUI=new MetaDataUI(customSettings);
+					metaUI.linkToFile(new File(file));
+					metaUI.readData(metadata, j);
+					metaUI.showData();
+					metaPanel.addTab("#"+j+": "+metadata.getImageName(j),(Component) metaUI);
+
+				}
+			}
+		} catch (Exception e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	private IMetadata readMetadataFromFile(String file, 
+			ImageReader reader) throws DependencyException, ServiceException 
+	{
+		Cursor cursor=getCursor();
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		
+		//record metadata to ome-xml format
+		ServiceFactory factory=new ServiceFactory();
+		OMEXMLService service = factory.getInstance(OMEXMLService.class);
+		IMetadata metadata =  service.createOMEXMLMetadata();
+		reader.setMetadataStore(metadata);
+		
+		try{
+		reader.setId(file);
+		}catch(Exception e){
+			LOGGER.severe("Error read file");
+			setCursor(cursor);
+			return null;
+		}
+		setCursor(cursor);
+		LOGGER.info("use READER: "+reader.getReader().getClass().getName());
+		return metadata;
+	}
+	
 	
 
 	
@@ -836,6 +999,17 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			fname=node.getAbsolutePath();
 		} 
 		return fname;
+	}
+	
+	private ImportableFile getSelectedImportableFile()
+	{
+		ImportableFile f=null;
+		FNode node = (FNode)fileTree.getLastSelectedPathComponent();
+
+		if (node!=null && node.isLeaf()) {
+			f=node.getImportableFile();
+		} 
+		return f;
 	}
 	
 	private ImportUserData getImportData()
@@ -914,7 +1088,22 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			if(c instanceof ImportDialog)
 				((ImportDialog)c).importFiles();
 			break;
-		case CMD_REFRESH: 
+		case CMD_REFRESH:
+			//Schleife durch fileTree
+			//dir-> refresh dir
+			//file without a parent dir -> add *.ome
+			
+//			DefaultMutableTreeNode root=(DefaultMutableTreeNode) fileTree.getModel().getRoot();
+//			Enumeration e = root.preorderEnumeration();
+//		    while(e.hasMoreElements()){
+//		    	 DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
+//		         while (node.getParent() == null) {
+//		        	
+//		         }
+//		    }
+			firePropertyChange(ImportDialog.ADD_AND_REFRESH_FILE_LIST,null, null);
+			
+			break;
 		case LOAD_MIC_SETTINGS: 
 			JComboBox cb = (JComboBox)evt.getSource();
 	        String petName = (String)cb.getSelectedItem();
@@ -926,7 +1115,49 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			repaint();
 	        
 	        break;
+		case CMD_SAVE:
+			LOGGER.info("[DEBUG] metadataui save");
+			dataView.save();
+			String srcFile=getSelectedFile().equals("") ? "" : getSelectedFile();
+ 			
+ 			String fileName="";
+ 			if(!srcFile.equals(""))
+ 				fileName=FilenameUtils.removeExtension(srcFile)+".ome";
+ 			
+ 			File[] fileList={new File(srcFile),new File(fileName)};
+ 			firePropertyChange(ImportDialog.ADD_AND_REFRESH_FILE_LIST,null, fileList);
+			break;
+		case CMD_SAVEALL:
+			break;
+		case CMD_RESET:
+			metaPanel.removeAll();
+			//TODO: profile default data eleminate
+			dataView=new MetaDataUI(customSettings);
+			String file = getSelectedFile(); 
+			if(!file.equals("")){
+				try {
+					loadFileMetaData(file, dataView);
+				} catch (FormatException | IOException e) {
+					LOGGER.severe("[RESET] Can't load metadata from file.");
+					LOGGER.severe("[RESET] "+e.getMessage());
+				}
+			}else{
+				try {
+					dataView.showData();
+				} catch (Exception e) {
+					LOGGER.severe("[RESET] Can't reload view.");
+					LOGGER.severe("[RESET] "+e.getMessage());
+				}
+				metaPanel.addTab("",dataView);
+			}
+			
+			break;
+		case CMD_PROFILE:
+			break;
+		case CMD_SPECIFICATION:
+			break;
 		}
+		
 		
 
 	}

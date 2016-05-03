@@ -1,9 +1,14 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope;
 
+import info.clearthought.layout.TableLayout;
+
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -22,7 +27,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import loci.common.services.ServiceFactory;
+import loci.formats.ImageReader;
 import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import ome.xml.meta.IMetadata;
 import ome.xml.model.Annotation;
@@ -112,6 +119,7 @@ public class MetaDataUI extends JPanel
 	private JButton resetBtn;
 	
 	GridBagLayout gbl;
+	
 	
 	/** modul props */
 	private Submodule expModul;
@@ -370,6 +378,7 @@ public class MetaDataUI extends JPanel
 		ExperimentCompUI eUI=model.getExpModul();
 		if(eUI!=null && e!=null){
 			eUI.addData(e, overwrite);
+			
 			eUI.setFieldsExtern(true);
 		}
 	}
@@ -505,9 +514,9 @@ public class MetaDataUI extends JPanel
 			if(e!=null){
 				eUI.addData(e, false);
 			}
-			if(exper!=null){
-				eUI.addData(exper, false);
-			}
+//			if(exper!=null){
+//				eUI.addData(exper, false);
+//			}
 		}
 	}
 
@@ -623,7 +632,8 @@ public class MetaDataUI extends JPanel
 					}
 					model.addLightSrcModul(lUI);
 				}
-				
+				lUI.clearList();
+				lUI.addToList(customSett.getMicLightSrcList());
 				lUI.addToList(lightSources);
 
 			}
@@ -759,6 +769,8 @@ public class MetaDataUI extends JPanel
 				oUI.addData(o, false); 
 				oUI.addData(os,false); 
 			}
+			oUI.clearList();
+			oUI.addToList(customSett.getMicObjList());
 			oUI.addToList(objList);
 			
 			// link object 
@@ -775,7 +787,8 @@ public class MetaDataUI extends JPanel
 			importUserData=data;
 			ExperimentCompUI e=model.getExpModul();
 			if(e!=null){
-				e.setName(importUserData.getUser(), ElementsCompUI.OPTIONAL);
+//				e.setName(importUserData.getUser(), ElementsCompUI.OPTIONAL);
+				e.setName(importUserData.getUserFullName(), ElementsCompUI.OPTIONAL);
 				e.setGroupName(importUserData.getGroup(), ElementsCompUI.OPTIONAL);
 				e.setProjectName(importUserData.getProject(), ElementsCompUI.OPTIONAL);
 				e.setFieldsExtern(true);
@@ -788,14 +801,14 @@ public class MetaDataUI extends JPanel
 	{
 		initLayout();
 		// global buttons
-		initBtnElements();
+//		initBtnElements();
 		
 		showExperimentData();
 		showImageData();
 		showChannelData();
 		showSampleData();
 		
-		addToPlaceholder(getButtonPane(), GUIPlaceholder.Pos_Bottom, 2);
+//		addToPlaceholder(getButtonPane(), GUIPlaceholder.Pos_Bottom, 2);
 		revalidate();
 		repaint();
 	}
@@ -980,59 +993,107 @@ public class MetaDataUI extends JPanel
 		setLayout( gbl );
 
 		gbl.columnWidths = new int[] {50, 50,50,50};
+		
+		double[][] layoutDesign=new double[][]{
+				//X-achse
+				{0.25,0.25,0.25,TableLayout.FILL},
+				//Y-Achse
+				{0.5,0.5}
+		};
+		TableLayout layout=new TableLayout(layoutDesign);
+//		GridLayout layout=new GridLayout(4,4);
+		setLayout(layout);
 	}
 	
-	protected void initBtnElements() 
-	{
-		// Button on bottom pane for load/save metadata
-		loadBtn=new JButton("Load settings"); // -> Datachooser dialog
-		loadBtn.setSize(30, 7);
-		loadBtn.setEnabled(false);
-		saveBtn=new JButton("Save settings"); // -> Datachooser
-		saveBtn.setSize(30, 7);
-
-		saveBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(ome!=null && model!=null){
-//					SaveMetadataUserDefinedUI pane = new SaveMetadataUserDefinedUI(ome,model,null,file);
-//					JDialog diag=createSaveDialog(pane,"Save MetaData", 600,600);
-					if(file!=null){
-						LOGGER.info("[SAVE] save to "+file.getAbsolutePath());
-						SaveMetadata saver=new SaveMetadata(ome, model, null, file);
-						saver.save();
-					}else{
-						LOGGER.severe("[SAVE] no destination file is given");
-					}
-				}
-			}
-		});
-		
-		saveAllBtn=new JButton("Save all");
-		saveAllBtn.setSize(30,7);
-		saveAllBtn.setEnabled(false);
-		
-		loadProfileBtn=new JButton("Load Profile File");
-		loadProfileBtn.setSize(30,7);
-		loadProfileBtn.setEnabled(false);
-
+//	protected void initBtnElements() 
+//	{
+//		// Button on bottom pane for load/save metadata
+//		loadBtn=new JButton("Load settings"); // -> Datachooser dialog
+//		loadBtn.setSize(30, 7);
+//		loadBtn.setEnabled(false);
+//		saveBtn=new JButton("Save settings"); // -> Datachooser
+//		saveBtn.setSize(30, 7);
+//
+//		saveBtn.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				save();
+//			}
+//		});
+//		
+//		saveAllBtn=new JButton("Save all");
+//		saveAllBtn.setSize(30,7);
+//		saveAllBtn.setEnabled(false);
+//		
+//		loadProfileBtn=new JButton("Load Profile File");
+//		loadProfileBtn.setSize(30,7);
+//		loadProfileBtn.setEnabled(false);
+//
 //		resetBtn=new JButton("Reset"); 
 //		resetBtn.setSize(30, 7);
+//		resetBtn.setEnabled(false);
 //		
 //		resetBtn.addActionListener(new ActionListener() {
 //			@Override
 //			public void actionPerformed(ActionEvent e) {
-//				reloadMetaData();
+//				try {
+//					reloadMetaDataFromFile();
+//				} catch (Exception e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 //			}
 //		});
+//	}
+//	
+	private void reloadMetaDataFromFile() throws Exception 
+	{
+		if(file!=null){
+			Cursor cursor=getCursor();
+			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			
+			
+			
+			ImageReader reader = new ImageReader();
+			//record metadata to ome-xml format
+			ServiceFactory factory=new ServiceFactory();
+			OMEXMLService service = factory.getInstance(OMEXMLService.class);
+			IMetadata metadata =  service.createOMEXMLMetadata();
+			reader.setMetadataStore((MetadataStore) metadata);
+
+			try{
+				reader.setId(file.getAbsolutePath());
+			}catch(Exception e){
+				LOGGER.severe("Error read file");
+				setCursor(cursor);
+			}
+			setCursor(cursor);
+			LOGGER.info("RESET file data : use READER: "+reader.getReader().getClass().getName());
+
+			if(metadata!=null){
+				componentsInit=false;
+				model=new MetaDataModel();
+				initModelComponents(customSett.getModules());
+				control=new MetaDataControl(model);
+				
+				readData(metadata, 0);
+//				showData();
+			}
+		}
 	}
-	
+
+	private void clearData() 
+	{
+		model.clearData();
+	}
+
 	protected JPanel getButtonPane()
 	{
 		JPanel buttonPane = new JPanel();
 		GridBagLayout layout=new GridBagLayout();
 		buttonPane.setLayout(layout);
 		Box buttonBox = Box.createHorizontalBox();
-//		buttonBox.add(resetBtn);
+		buttonBox.add(resetBtn);
+		buttonBox.add(Box.createHorizontalGlue());
 		buttonBox.add(loadProfileBtn);
 		buttonBox.add(Box.createHorizontalStrut(40));
 		buttonBox.add(loadBtn);
@@ -1062,47 +1123,82 @@ public class MetaDataUI extends JPanel
 	}
 	
 	
-	
-	// Placeholder functions
-		private void addToPlaceholder(JComponent comp1,GUIPlaceholder place, int width )
-		{
-			JScrollPane comp=new JScrollPane(comp1);
-			switch (place) {
-			case Pos_A:
-				addComponent(this,gbl,comp,0,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
-				break;
-			case Pos_B:
-				addComponent(this,gbl,comp,1,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
-				break;
-			case Pos_C:
-				addComponent(this,gbl,comp,2,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
-				break;
-			case Pos_D:
-				addComponent(this,gbl,comp,3,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
-				break;
-			case Pos_E:
-				addComponent(this,gbl,comp,0,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
-				break;
-			case Pos_F:
-				addComponent(this,gbl,comp,1,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
-				break;
-			case Pos_G:
-				addComponent(this,gbl,comp,2,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
-				break;
-			case Pos_H:
-				addComponent(this,gbl,comp,3,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
-				break;
-			case Pos_Bottom:
-				addComponent(this,gbl,comp1,2,10,width,1,1.0,0,GridBagConstraints.HORIZONTAL);
-				break;
-			default:
-				LOGGER.severe("[GUI] Unknown position for element");
-				break;
-			}
-		}
 
+	// Placeholder functions
+//	private void addToPlaceholder(JComponent comp1,GUIPlaceholder place, int width )
+//	{
+//
+//		JScrollPane comp=new JScrollPane(comp1);
+//		switch (place) {
+//		case Pos_A:
+//			addComponent(this,gbl,comp,0,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
+//			break;
+//		case Pos_B:
+//			addComponent(this,gbl,comp,1,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
+//			break;
+//		case Pos_C:
+//			addComponent(this,gbl,comp,2,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
+//			break;
+//		case Pos_D:
+//			addComponent(this,gbl,comp,3,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
+//			break;
+//		case Pos_E:
+//			addComponent(this,gbl,comp,0,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
+//			break;
+//		case Pos_F:
+//			addComponent(this,gbl,comp,1,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
+//			break;
+//		case Pos_G:
+//			addComponent(this,gbl,comp,2,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
+//			break;
+//		case Pos_H:
+//			addComponent(this,gbl,comp,3,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
+//			break;
+//		case Pos_Bottom:
+//			addComponent(this,gbl,comp1,2,10,width,1,1.0,0,GridBagConstraints.HORIZONTAL);
+//			break;
+//		default:
+//			LOGGER.severe("[GUI] Unknown position for element");
+//			break;
+//		}
+//	}
 	
-	
+	private void addToPlaceholder(JComponent comp1,GUIPlaceholder place, int width )
+	{
+		JScrollPane comp=new JScrollPane(comp1);
+		switch (place) {
+		case Pos_A:
+			add(comp,"0,0");
+			break;
+		case Pos_B:
+			add(comp,"1,0");
+			break;
+		case Pos_C:
+			add(comp,"2,0");
+			break;
+		case Pos_D:
+			add(comp,"3,0");
+			break;
+		case Pos_E:			
+			add(comp,"0,1");
+			break;
+		case Pos_F:
+			add(comp,"1,1");
+			break;
+		case Pos_G:
+			add(comp,"2,1");
+			break;
+		case Pos_H:
+			add(comp,"3,1");
+			break;
+		default:
+			LOGGER.severe("[GUI] Unknown position for element");
+			break;
+		}
+	}
+
+
+
 	protected int getObjectiveByID(List<Objective> list,String id)
 	{
 		int result=-1;
@@ -1115,7 +1211,7 @@ public class MetaDataUI extends JPanel
 		}
 		return result;
 	}
-	
+
 	protected int getLightSrcByID(List<LightSource> list,String id)
 	{
 		int result=-1;
@@ -1140,8 +1236,8 @@ public class MetaDataUI extends JPanel
 		}
 		return result;
 	}
-	
-	
+
+
 	/**
 	 * @return
 	 */
@@ -1164,7 +1260,7 @@ public class MetaDataUI extends JPanel
 		});
 		return btnPlanePos;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -1231,6 +1327,23 @@ public class MetaDataUI extends JPanel
 		d.pack();
 //		d.setVisible(true);
 		return d;
+	}
+
+	/**
+	 * 
+	 */
+	public void save() {
+		if(ome!=null && model!=null){
+//					SaveMetadataUserDefinedUI pane = new SaveMetadataUserDefinedUI(ome,model,null,file);
+//					JDialog diag=createSaveDialog(pane,"Save MetaData", 600,600);
+			if(file!=null){
+				LOGGER.info("[SAVE] save to "+file.getAbsolutePath());
+				SaveMetadata saver=new SaveMetadata(ome, model, null, file);
+				saver.save();
+			}else{
+				LOGGER.severe("[SAVE] no destination file is given");
+			}
+		}
 	}
 	
 	

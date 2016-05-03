@@ -727,6 +727,11 @@ public class ObjectiveCompUI extends ElementsCompUI
 		setFields= setFields || b;		
 	}
 
+	public void clearList() 
+	{
+		availableObj=null;
+	}
+
 	
 	
 }
