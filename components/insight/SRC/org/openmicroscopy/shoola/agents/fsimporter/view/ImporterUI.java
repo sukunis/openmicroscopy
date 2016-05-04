@@ -182,6 +182,8 @@ class ImporterUI extends TopWindow
     
     /** The debug text.*/
     private JTextPane	debugTextPane;
+
+	private TitlePanel titlePane;
     
 	/**
 	 * Creates the component hosting the debug text.
@@ -296,17 +298,17 @@ class ImporterUI extends TopWindow
 		container.setLayout(new BorderLayout(0, 0));
 		
 		IconManager icons = IconManager.getInstance();
-		TitlePanel tp = new TitlePanel(TEXT_TITLE, "", TEXT_TITLE_DESCRIPTION, 
+		titlePane = new TitlePanel(TEXT_TITLE, "", TEXT_TITLE_DESCRIPTION, 
 				icons.getIcon(IconManager.IMPORT_48));
 		JXPanel p = new JXPanel();
 		JXPanel lp = new JXPanel();
 		lp.setLayout(new FlowLayout(FlowLayout.LEFT));
 		lp.add(messageLabel);
 		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-		p.add(tp);
+		p.add(titlePane);
 		p.add(lp);
-		p.setBackgroundPainter(tp.getBackgroundPainter());
-		lp.setBackgroundPainter(tp.getBackgroundPainter());
+		p.setBackgroundPainter(titlePane.getBackgroundPainter());
+		lp.setBackgroundPainter(titlePane.getBackgroundPainter());
 		container.add(p, BorderLayout.NORTH);
 		container.add(tabs, BorderLayout.CENTER);
 		container.add(controlsBar, BorderLayout.SOUTH);
@@ -491,6 +493,7 @@ class ImporterUI extends TopWindow
 			c.add(createDebugTab(), "0, 0");
 			tabs.insertClosableComponent(c);
 		}
+		setNewTitle(metaData.getMicName());
 //		selectMetaDataChooser();
 		pack();
 	}
@@ -818,6 +821,13 @@ class ImporterUI extends TopWindow
 	{
 		List<ImportableFile> list=chooser.addAndRefreshMetaFileView(files);
 		refreshMetaFileView(list);
+	}
+	
+	public void setNewTitle(String micName)
+	{
+		titlePane.setTitle(TEXT_TITLE+": "+micName);
+//		revalidate();
+//		repaint();
 	}
 
 }

@@ -146,7 +146,8 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	
 	/** Bound property indicating to add files to the queue by MetaDataDialog*/
 	public static final String ADD_AND_REFRESH_FILE_LIST="addAndRefreshMetaList";
-
+	
+	
 	// Command Ids
 	/** Action id indicating to import the selected files. */
 	private static final int CMD_IMPORT = 1;

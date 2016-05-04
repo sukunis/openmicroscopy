@@ -145,7 +145,6 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	
 	private JTree fileTree;
 //	private JComboBox<String> micList;
-	private JLabel micName;
 	
 //	private JPanel metaPanelAcq;
 	private JPanel metaPanelMic;
@@ -173,7 +172,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	
 	private FNode lastNode;
 	
-	private String defaultMic="Unspecified";
+	private String micName;
 	
 	private String[] channelList;
 
@@ -369,20 +368,22 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    loadProfileButton.setToolTipText("Load another profile file ");
 	    loadProfileButton.setActionCommand("" + CMD_PROFILE);
 	    loadProfileButton.addActionListener(this);
+	    loadProfileButton.setEnabled(false);
 	    
 	    loadHardwareSpecButton=new JButton("Load Specification");
 	    loadHardwareSpecButton.setBackground(UIUtilities.BACKGROUND);
 	    loadHardwareSpecButton.setToolTipText("Load another microscope hardware specification");
 	    loadHardwareSpecButton.setActionCommand("" + CMD_SPECIFICATION);
 	    loadHardwareSpecButton.addActionListener(this);
+	    loadHardwareSpecButton.setEnabled(false);
 	    
-	    resetFileDataButton=new JButton("Reset");
+	    resetFileDataButton=new JButton("Reset/Clear");
 	    resetFileDataButton.setBackground(UIUtilities.BACKGROUND);
-	    resetFileDataButton.setToolTipText("Reset metadata. Load selected image metadata from file.");
+	    resetFileDataButton.setToolTipText("Reset metadata. Show only metadata of selected image file.");
 	    resetFileDataButton.setActionCommand("" + CMD_RESET);
 	    resetFileDataButton.addActionListener(this);
 	    
-	    saveDataButton=new JButton("Save File");
+	    saveDataButton=new JButton("Save To File");
 	    saveDataButton.setBackground(UIUtilities.BACKGROUND);
 	    saveDataButton.setToolTipText("Save selected image metadata to separate *.ome file with image name");
 	    saveDataButton.setActionCommand("" + CMD_SAVE);
@@ -405,7 +406,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    customSettings.setMicLightSrcList(hardwareDef.getLightSources());
 	    
 	    
-	    micName=new JLabel(customSettings.getMicName());
+	    micName=customSettings.getMicName();
 	    dataView=new MetaDataUI(customSettings);
 	    
 	    metaPanelMic= new JPanel(new BorderLayout(5,5));
@@ -530,49 +531,13 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	
 	private Component buildDataView()
 	{
-		JPanel tab2 =buildDataViewMicroscope();
-		
-		JPanel micP = new JPanel(new BorderLayout());
-		JLabel miclabel=new JLabel("Microscope:");
-		miclabel.setLabelFor(micName);
-		micP.add(miclabel,BorderLayout.WEST);
-		micP.add(micName,BorderLayout.CENTER);
-		micP.setBorder(BorderFactory.createEmptyBorder(10,5,10,5));
-		
-		JPanel mainPanel= new JPanel(new BorderLayout());
-		mainPanel.add(micP,BorderLayout.NORTH);
-		metaPanel.add(tab2);
-		mainPanel.add(metaPanel,BorderLayout.CENTER);
-		
-		JPanel tab3=(JPanel) createDebugTab();
-		tab3.setVisible(DEBUG);
-		JPanel tab4=(JPanel) createBioFormatTab();
-		tab4.setVisible(DEBUG);
-
-		if(DEBUG){
-			tp = new JTabbedPane();
-			tp.addTab("Acquisition and Instrument Infos", mainPanel);
-			tp.setMnemonicAt(0, KeyEvent.VK_1);
-			tp.addTab("Debug",tab3 );
-			tp.setMnemonicAt(1, KeyEvent.VK_2);
-			tp.addTab("Bio-Format Info",tab4);
-			tp.setMnemonicAt(2, KeyEvent.VK_3);
-
-			return tp;
-		}
-		else{
-			return mainPanel;
-		}
+		metaPanel.add(metaPanelMic);
+		return metaPanel;
 	}
 	
 	
 	
-	private JPanel buildDataViewMicroscope() 
-	{
-		JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.add(metaPanelMic,BorderLayout.CENTER);
-		return mainPanel;
-	}
+	
 	
 	/**
 	 * Builds and lays out the tool bar.
@@ -619,19 +584,17 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			barL.add(refreshFilesButton);
 		}
 		//load profile
-		barL.add(Box.createHorizontalStrut(5));
+		barL.add(Box.createHorizontalStrut(10));
 		barL.add(loadProfileButton);
+		barL.add(Box.createHorizontalStrut(5));
+		//load Hardware specification
+		barL.add(loadHardwareSpecButton);
 		barL.add(Box.createHorizontalStrut(10));
 		
-		JPanel barM=new JPanel(new FlowLayout(FlowLayout.LEFT));
-		barM.add(Box.createHorizontalStrut(5));
-		//load Hardware specification
-		barM.add(loadHardwareSpecButton);
-		barM.add(Box.createHorizontalStrut(10));
+		
 		
 		
 		JPanel barR = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		barR.add(barM);
 		//reset
 		barR.add(resetFileDataButton);
 		barR.add(Box.createHorizontalStrut(5));
@@ -680,6 +643,16 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 //		micList.setSelectedIndex(0);
 	}
+	public String getMicName() {
+		return micName;
+	}
+
+
+	public void setMicName(String micName) {
+		this.micName = micName;
+	}
+
+
 	private void clearDataView()
 	{
 //		dataView.clearView();
@@ -1067,7 +1040,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
 		String name = evt.getPropertyName();
-		
+		System.out.println("[DEBUG] MetaDataDialog notice propertyChange "+name);
 	}
 
 	/**

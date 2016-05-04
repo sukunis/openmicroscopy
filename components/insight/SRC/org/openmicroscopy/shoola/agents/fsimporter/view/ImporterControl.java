@@ -437,8 +437,7 @@ class ImporterControl
     			view.refreshMetaFileView((List<ImportableFile>) evt.getNewValue());
     		} else if(ImportDialog.ADD_AND_REFRESH_FILE_LIST.equals(name)){
     			view.addAndRefreshMetaFileView( (File[]) evt.getNewValue());
-    			
-    		}
+    		} 
         }
 
 	/** 
