@@ -4,6 +4,7 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -145,6 +146,7 @@ public abstract class ElementsCompUI extends JPanel
 	void addLabelTextRows(List<JLabel> labels,List<JComponent> fields,GridBagLayout gridbag,Container container) {
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
+		c.insets = new Insets( 0, 0, 1, 0);
 		int numLabels = labels.size();
 
 		for (int i = 0; i < numLabels; i++) {

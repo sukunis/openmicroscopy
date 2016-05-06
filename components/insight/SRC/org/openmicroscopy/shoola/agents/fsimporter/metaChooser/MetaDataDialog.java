@@ -50,6 +50,8 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import loci.common.services.DependencyException;
@@ -71,12 +73,10 @@ import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeDataView;
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
 import org.openmicroscopy.shoola.env.LookupNames;
 import org.openmicroscopy.shoola.env.data.model.FileObject;
@@ -144,12 +144,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	public JTextArea textArea; 
 	
 	private JTree fileTree;
-//	private JComboBox<String> micList;
 	
-//	private JPanel metaPanelAcq;
-	private JPanel metaPanelMic;
-	private JTabbedPane metaPanel;
-//	private MicroscopeDataView dataView;
+	private JPanel metaPanel;
 	private MetaDataUI dataView;
 	private CustomViewProperties customSettings;
 	
@@ -175,6 +171,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	private String micName;
 	
 	private String[] channelList;
+
+
+	private boolean holdData;
 
 
 	
@@ -327,27 +326,76 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		DefaultTreeModel treeModel=(DefaultTreeModel)fileTree.getModel();
 		FNode root =(FNode)treeModel.getRoot();
 		
-		root.removeAllChildren();
-		
-		 ImportableFile f;
-		 Iterator<ImportableFile> j=files.iterator();
+		if(!holdData){
+			root.removeAllChildren();
 
-		    while (j.hasNext()) {
-		    	f = j.next();
-		    	addNode(root,f.getFile(),f);
-		    	LOGGER.info("BUILD FILE TREE: add "+f.getFile().getAbsolutePath()+
-		    			"[group: "+f.getGroup().getName()+", project: "+
-		    			f.getParent().asProject().getName().getValue()+"]");
-		    }
-		    treeModel.reload();
+			ImportableFile f;
+			Iterator<ImportableFile> j=files.iterator();
+
+			while (j.hasNext()) {
+				f = j.next();
+				addNode(root,f.getFile(),f);
+				LOGGER.info("BUILD FILE TREE: add "+f.getFile().getAbsolutePath()+
+						"[group: "+f.getGroup().getName()+", project: "+
+						f.getParent().asProject().getName().getValue()+"]");
+			}
+			treeModel.reload();
+		}else{
+			TreePath path=fileTree.getSelectionPath();
+			
+			FNode node = (FNode)fileTree.getLastSelectedPathComponent();
+			
+			String dirName=node.getFile().getName();
+			FNode dirNode=node;
+			if(node!=null && node.isLeaf()){
+				System.out.println("[DEBUG] node is Leaf");
+				dirName=node.getFile().getParentFile().getName();
+				dirNode=(FNode) node.getParent();
+			}
+			
+			insertNodes(files,dirName,dirNode);
+			fileTree.updateUI();
+			fileTree.expandPath(path);
+			
+		}
 	}
+
+
+
 	
-	
-	
-	
+	private void insertNodes(List<ImportableFile> files,String dirName,FNode dir) 
+	{
+		if(dir==null || dir.getFile()==null){
+			dir=(FNode)fileTree.getModel().getRoot();
+			System.out.println("[DEBUG] select root as dir");
+			ImportableFile f;
+			Iterator<ImportableFile> j=files.iterator();
+			dir.removeAllChildren();
+			while (j.hasNext()) {
+				f = j.next();
+				System.out.println("[DEBUG] insert only file");
+				// single file in the importQueue, only insert this and their ome file
+				addNode(dir,f.getFile(),f);
+			}
+		}else{
+			System.out.println("[DEBUG] update node "+dirName);
+			dir.removeAllChildren();
+			File[] fileList=(new File(dir.getFile().getAbsolutePath()).listFiles());
+
+			if(fileList != null && fileList.length>0){
+				for(int i=0; i<fileList.length;i++){
+					addNode(dir,new FileObject(fileList[i]),null);
+				}
+			}
+		}
+	}
+
+
+
 	private void initComponents(FileFilter[] filters,
 	        ImporterAction importerAction)
 	{
+		holdData=false;
 		cancelImportButton = new JButton(importerAction);
 //		importerAction.setEnabled(false);
 				
@@ -409,23 +457,17 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    micName=customSettings.getMicName();
 	    dataView=new MetaDataUI(customSettings);
 	    
-	    metaPanelMic= new JPanel(new BorderLayout(5,5));
-	    metaPanelMic.add(dataView);
 		
-		metaPanel=new JTabbedPane();
-	  
-//	    micList= new JComboBox<String>(CustomViewProperties.MICLIST);
-//		micList.addActionListener(this);
-//		micList.setActionCommand("" + LOAD_MIC_SETTINGS);
-//		micList.setVisible(false);
-	
+		metaPanel=new JPanel(new BorderLayout());
+		metaPanel.add(dataView,BorderLayout.CENTER);
 		
-		File root=new File(System.getProperty("user.home"));
-		FNode rootNode=new FNode(root);
-		
+//		File root=new File(System.getProperty("user.home"));
+//		FNode rootNode=new FNode(root);
+		FNode rootNode=new FNode("ImportQueue");
 		//Create a tree that allows one selection at a time
 		fileTree = new JTree(rootNode);
-		fileTree.setRootVisible(false);
+		fileTree.setRootVisible(true);
+		fileTree.setShowsRootHandles(true);
 		fileTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
 		//Listen for when the selection changes.
@@ -529,15 +571,6 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	}
 
 	
-	private Component buildDataView()
-	{
-		metaPanel.add(metaPanelMic);
-		return metaPanel;
-	}
-	
-	
-	
-	
 	
 	/**
 	 * Builds and lays out the tool bar.
@@ -615,7 +648,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	{
 		setLayout(new BorderLayout(0,0));
 		JSplitPane splitPane;		
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,buildFileView(),buildDataView());
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,buildFileView(),metaPanel);
 		splitPane.setResizeWeight(0.5);
 		splitPane.setDividerLocation(150);
 		
@@ -653,81 +686,11 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	}
 
 
-	private void clearDataView()
-	{
-//		dataView.clearView();
-//		dataView.initView();
-		metaPanelMic.removeAll();
-		metaPanel.removeAll();
-	}
-	
-	
-	
-	
-	//ome version
-//	private void loadAndShowDataForSelection()
-//	{
-//		
-//		if(lastNode!=null){
-//			System.out.println("[DEBUG] LAST selection: "+lastNode.getAbsolutePath());
-//			lastNode.setModel(dataView.getModel());
-//		}
-//		if(dataView.hasUserInput() ) 
-//		{
-//			if(lastSelectionType==FILE)
-//			{
-//				dataView.saveViewData();
-//			}else{
-//				System.out.println("DIRECTORY USER INPUT");
-//			}
-//		}
-//		clearDataView();
-//		
-//		System.out.println("");
-//		System.out.println("");
-//		System.out.println("");
-//		
-//		String file = getSelectedFile(); 
-//		
-//		//import user data
-//		ImportUserData importData = getImportData();
-//		
-//		//TODO parent dir data
-//		MetaDataModel parentModel=getParentMetaDataModel();
-//		if(parentModel!=null){
-//			System.out.println("[DEBUG] READ MODEL OF "+lastNode.getAbsolutePath());
-//			try {
-//				Experiment e=parentModel.getExperiment();
-//				if(e!=null){
-//				System.out.println("[DEBUG] Exp desc: "+e.getDescription());
-//				}else{
-//					System.out.println("[DEBUG] exp == null");
-//				}
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		
-//		// is selection a file or directory
-//		if(file.equals("")){
-//			LOGGER.info("[GUI] select directory");
-//			//show dataview
-//			metaPanel.addTab("",dataView);
-//			lastSelectionType=DIR;
-//			return;
-//		}else{
-//			lastSelectionType=FILE;
-//		}
-//		
-//		loadFileMetaData(file, importData);
-//	}
-	
 	private void loadAndShowDataForSelection()
 	{
 		saveModel();
 
-		clearDataView();
+		JComponent panel=null;
 		
 		System.out.println("");
 		System.out.println("");
@@ -768,9 +731,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
-			metaPanel.addTab("",dataView);
+			panel=dataView;
 			
-			return;
 		}else{
 			lastSelectionType=FILE;
 			dataView=new MetaDataUI(customSettings);
@@ -781,7 +743,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			System.out.println("[DEBUG]--- ADD METADATA FROM FILE");
 		
 			try {
-				loadFileMetaData(file, dataView,parentModel,importData);
+				panel=loadFileMetaData(file, dataView,parentModel,importData);
 			} catch (FormatException e) {
 				LOGGER.warning("MY Unknown file format "+file);
 			}catch(IOException e){
@@ -789,6 +751,14 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			}
 		}
 		
+		// notice last selection for save user input as model
+		lastNode=(FNode)fileTree.getLastSelectedPathComponent();
+		
+		metaPanel.removeAll();
+		if(panel!=null)
+			metaPanel.add(panel,BorderLayout.CENTER);
+		revalidate();
+		repaint();
 	}
 
 
@@ -818,7 +788,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	private void addParentModel(MetaDataModel myModel,MetaDataUI view) 
 	{
 		try {
-			if(myModel!=null && myModel.noticUserInput()){ 
+			if(myModel!=null && myModel.noticUserInput() && lastNode!=null){ 
 				System.out.println("[DEBUG]--- ADD MODEL OF "+lastNode.getAbsolutePath());
 				view.addData(myModel);
 			}else{
@@ -856,14 +826,16 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		return null;
 	}
 	
-	private void loadFileMetaData(String file, MetaDataUI metaUI, MetaDataModel parent,ImportUserData userdata) 
+	private JComponent loadFileMetaData(String file, MetaDataUI metaUI, MetaDataModel parent,ImportUserData userdata) 
 			throws UnknownFormatException, FormatException,IOException
 	{
+		JComponent panel=null;
+		
 		ImageReader reader = new ImageReader();
 		LOGGER.info("### read "+ file+" ###");
 		try {
 			IMetadata metadata = readMetadataFromFile(file, reader);
-			if(metadata==null) return;
+			if(metadata==null) return null;
 			
 			LOGGER.info("[DEBUG] Link data to file "+file);
 			metaUI.linkToFile(new File(file));
@@ -872,8 +844,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 				LOGGER.info("no serie ");
 				metaUI.readData(metadata, 0);
 				metaUI.showData();
-				metaPanel.addTab(metadata.getImageName(0),(Component) metaUI);
+				panel=metaUI;
 			}else{
+				JTabbedPane panelObj=new JTabbedPane();
 				for(int j=0; j< reader.getSeriesCount(); j++){
 					LOGGER.info("[SERIE] ------------ read SERIE "+j+" of "+reader.getSeriesCount()+
 							": "+metadata.getImageName(j)+"---------------------" );
@@ -885,25 +858,28 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 					addParentModel(parent, metaUI);
 					metaUI.readData(metadata, j);
 					metaUI.showData();
-					metaPanel.addTab("#"+j+": "+metadata.getImageName(j),(Component) metaUI);
+					((JTabbedPane) panelObj).addTab("#"+j+": "+metadata.getImageName(j),(Component) metaUI);
 
 				}
+				panel=panelObj;
 			}
 		} catch (Exception e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		return panel;
 	}
 	
-	private void loadFileMetaData(String file, MetaDataUI metaUI) 
+	private JComponent loadFileMetaData(String file, MetaDataUI metaUI) 
 			throws UnknownFormatException, FormatException,IOException
 	{
+		
+		JComponent panel=null;
 		ImageReader reader = new ImageReader();
 		LOGGER.info("### read "+ file+" ###");
 		try {
 			IMetadata metadata = readMetadataFromFile(file, reader);
-			if(metadata==null) return;
+			if(metadata==null) return null;
 			
 			LOGGER.info("[DEBUG] Link data to file "+file);
 			metaUI.linkToFile(new File(file));
@@ -912,8 +888,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 				LOGGER.info("no serie ");
 				metaUI.readData(metadata, 0);
 				metaUI.showData();
-				metaPanel.addTab(metadata.getImageName(0),(Component) metaUI);
+				panel= metaUI;
 			}else{
+				JTabbedPane panelObj=new JTabbedPane();
 				for(int j=0; j< reader.getSeriesCount(); j++){
 					LOGGER.info("[SERIE] ------------ read SERIE "+j+" of "+reader.getSeriesCount()+
 							": "+metadata.getImageName(j)+"---------------------" );
@@ -923,15 +900,15 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 					metaUI.linkToFile(new File(file));
 					metaUI.readData(metadata, j);
 					metaUI.showData();
-					metaPanel.addTab("#"+j+": "+metadata.getImageName(j),(Component) metaUI);
-
+					((JTabbedPane) panelObj).addTab("#"+j+": "+metadata.getImageName(j),(Component) metaUI);
 				}
+				panel=panelObj;
 			}
 		} catch (Exception e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		return panel;
 	}
 
 
@@ -966,9 +943,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	{
 		String fname="";
 		FNode node = (FNode)fileTree.getLastSelectedPathComponent();
-		if (node == null) return fname;
 
-		if (node.isLeaf()) {
+		if (node!=null && node.isLeaf()) {
 			fname=node.getAbsolutePath();
 		} 
 		return fname;
@@ -1089,8 +1065,13 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	        
 	        break;
 		case CMD_SAVE:
-			LOGGER.info("[DEBUG] metadataui save");
 			dataView.save();
+			//freeze status fileTree
+			holdData=true;
+			TreePath path=fileTree.getSelectionPath();
+			System.out.println("[DEBUG] path to selection: "+path.toString());
+			DefaultTreeModel treeModel=(DefaultTreeModel)fileTree.getModel();
+			
 			String srcFile=getSelectedFile().equals("") ? "" : getSelectedFile();
  			
  			String fileName="";
@@ -1099,17 +1080,26 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
  			
  			File[] fileList={new File(srcFile),new File(fileName)};
  			firePropertyChange(ImportDialog.ADD_AND_REFRESH_FILE_LIST,null, fileList);
+ 			fileTree.expandPath(path);
+ 			holdData=false;
 			break;
 		case CMD_SAVEALL:
+			FNode parentNode = (FNode)fileTree.getLastSelectedPathComponent();
+			Enumeration children =parentNode.children();
+			while(children.hasMoreElements()){
+				FNode node=(FNode)children.nextElement();
+				//load all data
+				//save
+			}
 			break;
 		case CMD_RESET:
-			metaPanel.removeAll();
+			JComponent panel=null;
 			//TODO: profile default data eleminate
 			dataView=new MetaDataUI(customSettings);
 			String file = getSelectedFile(); 
 			if(!file.equals("")){
 				try {
-					loadFileMetaData(file, dataView);
+					panel=loadFileMetaData(file, dataView);
 				} catch (FormatException | IOException e) {
 					LOGGER.severe("[RESET] Can't load metadata from file.");
 					LOGGER.severe("[RESET] "+e.getMessage());
@@ -1121,9 +1111,15 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 					LOGGER.severe("[RESET] Can't reload view.");
 					LOGGER.severe("[RESET] "+e.getMessage());
 				}
-				metaPanel.addTab("",dataView);
+				panel=dataView;
 			}
 			
+			metaPanel.removeAll();
+			if(panel!=null)
+				metaPanel.add(panel,BorderLayout.CENTER);
+			
+			revalidate();
+			repaint();
 			break;
 		case CMD_PROFILE:
 			break;
@@ -1144,8 +1140,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		}else{
 			loadAndShowDataForSelection();
 		}
-		// notice last selection for save user input as model
-		lastNode=(FNode)fileTree.getLastSelectedPathComponent();
+		
 		revalidate();
 		repaint();
 		

@@ -494,7 +494,6 @@ class ImporterUI extends TopWindow
 			tabs.insertClosableComponent(c);
 		}
 		setNewTitle(metaData.getMicName());
-//		selectMetaDataChooser();
 		pack();
 	}
 	

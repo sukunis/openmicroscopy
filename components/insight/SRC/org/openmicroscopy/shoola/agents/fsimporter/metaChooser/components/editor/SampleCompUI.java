@@ -388,6 +388,11 @@ public class SampleCompUI extends ElementsCompUI
 		return conflict;
 	}
 	
+	private void completeData(Sample s)
+	{
+		
+	}
+	
 	private void readGUIInput() 
 	{
 		if(sample==null)
@@ -463,7 +468,7 @@ public class SampleCompUI extends ElementsCompUI
 	private void setRawMaterialDesc(String value, boolean prop) 
 	{
 		if(rawMaterialDesc == null) 
-			rawMaterialDesc = new TagData(TagNames.RAWDESC+": ",value,prop,TagData.TEXTPANE);
+			rawMaterialDesc = new TagData(TagNames.RAWDESC+": ",value,prop,TagData.TEXTAREA);
 		else 
 			rawMaterialDesc.setTagValue(value,prop);
 	}
@@ -489,7 +494,7 @@ public class SampleCompUI extends ElementsCompUI
 	public void setPreparationDescription(String value, boolean prop)
 	{
 		if(preparationDescription == null) 
-			preparationDescription = new TagData(TagNames.PREPDESC+": ",value,prop,TagData.TEXTPANE);
+			preparationDescription = new TagData(TagNames.PREPDESC+": ",value,prop,TagData.TEXTAREA);
 		else 
 			preparationDescription.setTagValue(value,prop);	
 	}
@@ -507,7 +512,7 @@ public class SampleCompUI extends ElementsCompUI
 	public void setGridType(String value, boolean prop)
 	{
 		if(gridBoxType == null) 
-			gridBoxType = new TagData(TagNames.GRIDBOXTYPE+": ",value,prop,TagData.TEXTPANE);
+			gridBoxType = new TagData(TagNames.GRIDBOXTYPE+": ",value,prop,TagData.TEXTAREA);
 		else 
 			gridBoxType.setTagValue(value,prop);	
 	}
@@ -525,7 +530,7 @@ public class SampleCompUI extends ElementsCompUI
 	public void setExpObjectNr(String value, boolean prop)
 	{
 		if(expObjectNr == null) 
-			expObjectNr = new TagData(TagNames.EXPOBJNR+": ",value,prop,TagData.TEXTPANE);
+			expObjectNr = new TagData(TagNames.EXPOBJNR+": ",value,prop,TagData.TEXTFIELD);
 		else 
 			expObjectNr.setTagValue(value,prop);	
 	}
@@ -533,7 +538,7 @@ public class SampleCompUI extends ElementsCompUI
 	public void setExpObjectType(String value, boolean prop)
 	{
 		if(expObjectType == null) 
-			expObjectType = new TagData(TagNames.EXPOBJTYPE+": ",value,prop,TagData.TEXTPANE);
+			expObjectType = new TagData(TagNames.EXPOBJTYPE+": ",value,prop,TagData.TEXTAREA);
 		else 
 			expObjectType.setTagValue(value,prop);	
 	}

@@ -13,10 +13,20 @@ public class FNode extends DefaultMutableTreeNode
 	private MetaDataModel model;
 	private ImportableFile iFile;
 	
+	private Boolean saved;
+	
 	public FNode(File file){
 		this.importData=null;
 		iFile=null;
 		setUserObject(file);
+		saved=false;
+	}
+	public FNode(Object object)
+	{
+		this.importData=null;
+		iFile=null;
+		setUserObject(object);
+		saved=false;
 	}
 	
 	public FNode(File file,ImportUserData importData,ImportableFile iFile ){
@@ -25,8 +35,13 @@ public class FNode extends DefaultMutableTreeNode
 		setUserObject(file);
 	}
 	
-	public File getFile(){
-		return (File) getUserObject();
+	public File getFile()
+	{
+		Object o=getUserObject();
+		if(o instanceof File)
+			return (File) o;
+		else
+			return null;
 	}
 	
 	public ImportableFile getImportableFile()
@@ -34,9 +49,15 @@ public class FNode extends DefaultMutableTreeNode
 		return iFile;
 	}
 	
-	public boolean isLeaf(){
-		return !getFile().isDirectory();
-	}
+//	/**
+//	 * Returns true if the node is a leaf or the root node.
+//	 */
+//	public boolean isLeaf()
+//	{
+//		File f=getFile();
+//		boolean result=f!=null? !f.isDirectory() : true;
+//		return result;
+//	}
 	
 	public String toString() {
 		String ad="";
@@ -44,13 +65,27 @@ public class FNode extends DefaultMutableTreeNode
 			ad=" [Group: "+importData.getGroup()+", Project: "+
 					importData.getProject()+"]";
 		}
+		if(getFile()==null){
+			return null;
+		}
         return getFile().getName()+ad;
     } 
 	
-	public String getAbsolutePath(){
+	public String getAbsolutePath()
+	{
+		if(getFile()==null)
+			return null;
+		
 		return getFile().getAbsolutePath();
 	}
+	
+	/**
+	 * true if node is a directory or the root
+	 */
 	public boolean getAllowsChildren() {
+		if(getFile()==null)
+			return true;
+		
 		return getFile().isDirectory();
 	} 
 	

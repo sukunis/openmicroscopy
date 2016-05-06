@@ -371,6 +371,7 @@ public class ExperimentCompUI extends ElementsCompUI
 			experiment.setDescription(description.getTagValue());
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read EXPERIMENT description input");
+			e.printStackTrace();
 		}
 		try{
 			experiment.setType(getExperimentType(type.getTagValue()));
@@ -495,7 +496,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	public void setDescription(String value, boolean prop)
 	{
 		if(description == null) 
-			description = new TagData(TagNames.DESC+": ",value,prop,TagData.TEXTPANE);
+			description = new TagData(TagNames.DESC+": ",value,prop,TagData.TEXTAREA);
 		else 
 			description.setTagValue(value,prop);	
 	}

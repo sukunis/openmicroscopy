@@ -1630,7 +1630,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setDescription(String value, boolean prop)
 	{
 		if(description == null) 
-			description = new TagData(TagNames.DESC+": ",value,prop,TagData.TEXTPANE);
+			description = new TagData(TagNames.DESC+": ",value,prop,TagData.TEXTAREA);
 		else 
 			description.setTagValue(value,prop);
 	}

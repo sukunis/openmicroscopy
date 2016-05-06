@@ -32,6 +32,8 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.text.JTextComponent;
@@ -42,6 +44,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.format.DateTimeFormat;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ScrollablePanel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.util.ui.UIUtilities;
 
@@ -70,6 +73,7 @@ public class TagData
 	static final int ARRAYFIELDS=4;
 	static final int TIMESTAMP=5;
 	static final int LIST=6;
+	static final int TEXTAREA=7;
 
 	private JLabel label;
 	private JComponent inputField;
@@ -143,6 +147,9 @@ public class TagData
 		case TEXTPANE:
 			initTextPane();
 			break;
+		case TEXTAREA:
+			initTextArea();
+			break;
 		case CHECKBOX:
 			initCheckBox(val);
 			break;
@@ -194,6 +201,11 @@ public class TagData
 	{
 		inputField = new JTextPane();
 		inputField.addKeyListener(fieldKeyListener);
+	}
+	
+	private void initTextArea()
+	{
+		inputField = new ScrollableTextPane();
 	}
 
 	private void initCheckBox(String val)
@@ -283,6 +295,8 @@ public class TagData
 		case TEXTPANE:
 
 			break;
+		case TEXTAREA:
+			break;
 		case CHECKBOX:
 			((JCheckBox)inputField).addActionListener(l);
 			break;
@@ -332,6 +346,9 @@ public class TagData
 			break;
 		case TEXTPANE:
 			val=((JTextPane) inputField).getText();
+			break;
+		case TEXTAREA:
+			val=((ScrollableTextPane)inputField).getText();
 			break;
 		case TEXTFIELD:
 			val=((JTextField) inputField).getText();
@@ -453,6 +470,9 @@ public class TagData
 		case TEXTPANE:
 			setValTextPane(val);
 			break;
+		case TEXTAREA:
+			setValTextArea(val);
+			break;
 		case CHECKBOX:
 			setValCheckbox(val);
 			break;
@@ -559,6 +579,10 @@ public class TagData
 	private void setValTextPane(String val) {
 		((JTextPane) inputField).setText(val);
 	}
+	
+	private void setValTextArea(String val){
+		((ScrollableTextPane)inputField).setText(val);
+	}
 
 	private void setValComboBox(String val) {
 		for(int c=0; c< ((JComboBox<String>) inputField).getItemCount(); c++)
@@ -640,6 +664,43 @@ public class TagData
                     return null;
                 }
             }	
+	}
+	
+	class ScrollableTextPane extends JScrollPane
+	{
+		JTextArea area;
+		
+		public ScrollableTextPane()
+		{
+			area=new JTextArea();
+			area.setRows(2);
+			area.setLineWrap(true);
+			area.setWrapStyleWord(true);
+			area.addKeyListener(fieldKeyListener);
+			setViewportView(area);
+			
+		}
+		
+		public void setText(String val)
+		{
+			area.setText(val);
+		}
+		
+		public String getText()
+		{
+			System.out.println("[DEBUG] area text "+area.getText());
+			return area.getText();
+		}
+
+		@Override
+		public void setBackground(Color bg) {
+			// TODO Auto-generated method stub
+			super.setBackground(bg);
+			if(area!=null)
+				area.setBackground(bg);
+		}
+		
+
 	}
 
 }

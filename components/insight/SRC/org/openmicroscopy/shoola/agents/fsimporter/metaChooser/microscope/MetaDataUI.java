@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -156,6 +157,8 @@ public class MetaDataUI extends JPanel
 	
 	public MetaDataUI(CustomViewProperties sett)
 	{
+		
+		this.setBorder(BorderFactory.createEmptyBorder());
 		customSett=sett;
 		
 		componentsInit=false;
