@@ -44,6 +44,7 @@ import ome.xml.model.Arc;
 import ome.xml.model.Channel;
 import ome.xml.model.Filament;
 import ome.xml.model.GenericExcitationSource;
+import ome.xml.model.Image;
 import ome.xml.model.Laser;
 import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.LightSource;
@@ -97,9 +98,9 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	private TitledBorder tb;
 	
-	private LightSource lightSrc;
-	private LightSourceSettings lightSrcSett;
-	private LightSourceSettingsCompUI lightSrcSettUI;
+	protected LightSource lightSrc;
+	protected LightSourceSettings lightSrcSett;
+	protected LightSourceSettingsCompUI lightSrcSettUI;
 	
 	
 	private List<LightSource> availableLightSrcList;
@@ -170,7 +171,6 @@ public class LightSourceCompUI extends ElementsCompUI
 		if(list==null || list.size()==0)
 			return;
 		
-		LOGGER.info("[LIST] ADD LIGHTSRC TO LIST anzahl: "+ list.size());
 		if(availableLightSrcList==null){
 
 			availableLightSrcList=new ArrayList<LightSource>();
@@ -297,233 +297,423 @@ public class LightSourceCompUI extends ElementsCompUI
 		return lightSrcSettUI;
 	}
 	
-	public void addData(LightSource l,boolean overwrite) 
+//	public void addData(LightSource l,boolean overwrite) 
+//	{
+//		if(l==null)
+//			return;
+//		
+//		//TODO
+//		if(lightSrc!=null && !l.getClass().equals(lightSrc.getClass())){
+//			LOGGER.info("[DEBUG] different lightSrc types "+lightSrc.getClass().getSimpleName()+" - "+
+//					l.getClass().getSimpleName());
+//			if(overwrite){
+//				showLightSrcPane(l);
+//			}else{
+//				LOGGER.warning("[DATA] add LIGHTSOURCE data: different lightSrc types - do nothing");
+//				return;
+//			}
+//		}
+//		
+//		if(lightSrc!=null){
+//			if(overwrite){
+//				if(l.getID()!=null && !l.getID().equals(""))
+//					lightSrc.setID(l.getID());
+//			}else{
+//				if(lightSrc.getID()==null || lightSrc.getID().equals(""))
+//					lightSrc.setID(l.getID());
+//			}
+//		}
+//
+//		if(l instanceof Laser){
+//			addDataLaser(l,overwrite);
+//		}else if(l instanceof Arc){
+//			addDataArc(l,overwrite);
+//		}else if(l instanceof Filament){
+//			addDataFilament(l,overwrite);
+//		}else if(l instanceof GenericExcitationSource){
+//			addDataGES(l,overwrite);
+//		}else if(l instanceof LightEmittingDiode){
+//			addDataLED(l,overwrite);
+//		}
+//		showLightSrcPane(lightSrc);
+//		setGUIData();
+//		
+//	}
+	
+	public boolean addData(LightSource lSrc, boolean overwrite)
 	{
-		if(l==null)
-			return;
+		boolean conflicts=false;
 		
 		//TODO
-		if(lightSrc!=null && !l.getClass().equals(lightSrc.getClass())){
+		if(lightSrc!=null && !lSrc.getClass().equals(lightSrc.getClass())){
 			LOGGER.info("[DEBUG] different lightSrc types "+lightSrc.getClass().getSimpleName()+" - "+
-					l.getClass().getSimpleName());
+					lSrc.getClass().getSimpleName());
 			if(overwrite){
-				showLightSrcPane(l);
+				showLightSrcPane(lSrc);
 			}else{
 				LOGGER.warning("[DATA] add LIGHTSOURCE data: different lightSrc types - do nothing");
-				return;
+				return conflicts;
 			}
 		}
 		
-		if(lightSrc!=null){
-			if(overwrite){
-				if(l.getID()!=null && !l.getID().equals(""))
-					lightSrc.setID(l.getID());
-			}else{
-				if(lightSrc.getID()==null || lightSrc.getID().equals(""))
-					lightSrc.setID(l.getID());
+		if(overwrite){
+			replaceData(lSrc);
+			LOGGER.info("[DATA] -- replace LIGHTSOURCE data");
+		}else
+			try {
+				completeData(lSrc);
+				LOGGER.info("[DATA] -- complete LIGHTSOURCE data");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}
-
-		if(l instanceof Laser){
-			addDataLaser(l,overwrite);
-		}else if(l instanceof Arc){
-			addDataArc(l,overwrite);
-		}else if(l instanceof Filament){
-			addDataFilament(l,overwrite);
-		}else if(l instanceof GenericExcitationSource){
-			addDataGES(l,overwrite);
-		}else if(l instanceof LightEmittingDiode){
-			addDataLED(l,overwrite);
-		}
 		showLightSrcPane(lightSrc);
 		setGUIData();
-		
+		return conflicts;
 	}
 	
-	private void addDataLED(LightSource l,boolean overwrite) 
+	private void completeData(LightSource lSrc) throws Exception 
 	{
-		String mo=l.getModel();
-		String ma=l.getManufacturer();
-		if(lightSrc!=null){
-			if(overwrite){
-				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
-				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
 
-				LOGGER.info("[DATA] overwrite LIGHTSOURCE data");
-			}else{
-				if(lightSrc.getManufacturer()==null)
-					lightSrc.setManufacturer(ma);
-				if(lightSrc.getModel()==null)
-					lightSrc.setModel(mo);
-				LOGGER.info("[DATA] complete LIGHTSOURCE data");
-			}
-		}else{
-			lightSrc=l;
-			LOGGER.info("[DATA] add LIGHTSOURCE data");
-		}
-		
-	}
-	private void addDataGES(LightSource l,boolean overwrite) 
-	{
-		String mo=l.getModel();
-		String ma=l.getManufacturer();
-		Power p=l.getPower();
-		if(lightSrc!=null){
-			if(overwrite){
-				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
-				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
-				if(p!=null) lightSrc.setPower(p);
-				LOGGER.info("[DATA] overwrite LIGHTSOURCE data");
-			}else{
-				if(lightSrc.getManufacturer()==null)
-					lightSrc.setManufacturer(ma);
-				if(lightSrc.getModel()==null)
-					lightSrc.setModel(mo);
-				if(lightSrc.getPower()==null)
-					lightSrc.setPower(p);
-				LOGGER.info("[DATA] complete LIGHTSOURCE data");
-			}
-		}else {
-			lightSrc=l;
-			LOGGER.info("[DATA] add LIGHTSOURCE data");
-		}
-		
-		
-	}
-	private void addDataFilament(LightSource l,boolean overwrite) 
-	{
-		String mo=l.getModel();
-		String ma=l.getManufacturer();
-		Power p=l.getPower();
-		FilamentType t=((Filament)l).getType();
-		if(lightSrc!=null){
-			if(overwrite){
-				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
-				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
-				if(p!=null) lightSrc.setPower(p);
-				if(t!=null) ((Filament) lightSrc).setType(t);
-				LOGGER.info("[DATA] overwrite LIGHTSOURCE data");
-			}else{
-				if(lightSrc.getManufacturer()==null)
-					lightSrc.setManufacturer(ma);
-				if(lightSrc.getModel()==null)
-					lightSrc.setModel(mo);
-				if(lightSrc.getPower()==null)
-					lightSrc.setPower(p);
-				if(((Filament) lightSrc).getType()==null)
-					if(t!=null) ((Filament) lightSrc).setType(t);
-				LOGGER.info("[DATA] complete LIGHTSOURCE data");
-			}
-		}else {
-			lightSrc=l;
-			LOGGER.info("[DATA] add LIGHTSOURCE data");
-		}
-
-	}
-	private void addDataArc(LightSource l,boolean overwrite) 
-	{
-		String mo=l.getModel();
-		String ma=l.getManufacturer();
-		Power p=l.getPower();
-		ArcType t=((Arc)l).getType();
-		if(lightSrc!=null){
-			if(overwrite){
-				
-				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
-				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
-				if(p!=null) lightSrc.setPower(p);
-				if(t!=null) ((Arc) lightSrc).setType(t);
-				LOGGER.info("[DATA] overwrite LIGHTSOURCE data");
-			}else{
-				if(lightSrc.getManufacturer()==null)
-					lightSrc.setManufacturer(ma);
-				if(lightSrc.getModel()==null)
-					lightSrc.setModel(mo);
-				if(lightSrc.getPower()==null)
-					lightSrc.setPower(p);
-				if(((Arc) lightSrc).getType()==null)
-					if(t!=null) ((Arc) lightSrc).setType(t);
-				LOGGER.info("[DATA] complete LIGHTSOURCE data");
-			}
-		}else {
-			lightSrc=l;
-			LOGGER.info("[DATA] add LIGHTSOURCE data");
+		if(lSrc instanceof Laser){
+			completeDataLaser(lSrc);
+		}else if(lSrc instanceof Arc){
+			completeDataArc(lSrc);
+		}else if(lSrc instanceof Filament){
+			completeDataFilament(lSrc);
+		}else if(lSrc instanceof GenericExcitationSource){
+			completeDataGES(lSrc);
+		}else if(lSrc instanceof LightEmittingDiode){
+			completeDataLED(lSrc);
 		}
 	}
-	private void addDataLaser(LightSource l,boolean overwrite) 
+	
+	private void replaceData(LightSource l)
 	{
-		String mo=l.getModel();
-		String ma=l.getManufacturer();
-		Power p=l.getPower();
-		LaserType t=((Laser)l).getType();
-		LaserMedium m=((Laser)l).getLaserMedium();
-		PositiveInteger fM=((Laser)l).getFrequencyMultiplication();
-		Boolean tu=((Laser)l).getTuneable();
-		Boolean po=((Laser)l).getPockelCell();
-		Frequency rr=((Laser)l).getRepetitionRate();
-		Length w=((Laser)l).getWavelength();
-		Pulse pu=((Laser)l).getPulse();
-				
+		if(l!=null){
+			lightSrc=l;
+		}
+	}
+	
+//	private void addDataLED(LightSource l,boolean overwrite) 
+//	{
+//		String mo=l.getModel();
+//		String ma=l.getManufacturer();
+//		if(lightSrc!=null){
+//			if(overwrite){
+//				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
+//				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
+//
+//				LOGGER.info("[DATA] overwrite LIGHTSOURCE data");
+//			}else{
+//				if(lightSrc.getManufacturer()==null)
+//					lightSrc.setManufacturer(ma);
+//				if(lightSrc.getModel()==null)
+//					lightSrc.setModel(mo);
+//				LOGGER.info("[DATA] complete LIGHTSOURCE data");
+//			}
+//		}else{
+//			lightSrc=l;
+//			LOGGER.info("[DATA] add LIGHTSOURCE data");
+//		}
+//	}
+	private void completeDataLED(LightSource l) throws Exception
+	{
+		//copy input fields
+		LightSource copyIn=null;
+		if(lightSrc!=null){
+			getData();
+			copyIn=new LightEmittingDiode((LightEmittingDiode)lightSrc);
+		}
 
-		if(lightSrc!=null){	
-			if(overwrite){
-				
-				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
-				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
-				if(p!=null) lightSrc.setPower(p);
-				if(t!=null) ((Laser) lightSrc).setType(t);
+		replaceData(l);
 
-				if(m!=null) ((Laser)lightSrc).setLaserMedium(m);
-				if(fM!=null) ((Laser)lightSrc).setFrequencyMultiplication(fM);
-				if(tu!=null){
-					((Laser)lightSrc).setTuneable(tu);
-				}
-				if(po!=null) ((Laser)lightSrc).setPockelCell(po);
-				if(rr!=null) ((Laser)lightSrc).setRepetitionRate(rr);
-				if(w!=null) ((Laser)lightSrc).setWavelength(w);
-				if(pu!=null) ((Laser)lightSrc).setPulse(pu);
-				if(((Laser)l).getLinkedPump()!=null) ((Laser)lightSrc).linkPump(((Laser)l).getLinkedPump());
-				LOGGER.info("[DATA] overwrite LIGHTSOURCE data");
-			}else{
-				
-				if(lightSrc.getManufacturer()==null)
-					lightSrc.setManufacturer(ma);
-				if(lightSrc.getModel()==null)
-					lightSrc.setModel(mo);
-				if(lightSrc.getPower()==null)
-					lightSrc.setPower(p);
-				if(((Laser) lightSrc).getType()==null)
-					((Laser) lightSrc).setType(t);
-				if(((Laser)lightSrc).getLaserMedium()==null)
-					((Laser)lightSrc).setLaserMedium(m);
-				if(((Laser)lightSrc).getFrequencyMultiplication()==null)
-					((Laser)lightSrc).setFrequencyMultiplication(fM);
-				try{
-//				if(((Laser)lightSrc).getTuneable()==null){
-					((Laser)lightSrc).setTuneable(tu);
+		// set input field values again
+		if(copyIn!=null){
+			String mo=copyIn.getModel();
+			String ma=copyIn.getManufacturer();
+			
+			if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
+			if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
+		}
+	}
+	
+//	private void addDataGES(LightSource l,boolean overwrite) 
+//	{
+//		String mo=l.getModel();
+//		String ma=l.getManufacturer();
+//		Power p=l.getPower();
+//		if(lightSrc!=null){
+//			if(overwrite){
+//				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
+//				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
+//				if(p!=null) lightSrc.setPower(p);
+//				LOGGER.info("[DATA] overwrite LIGHTSOURCE data");
+//			}else{
+//				if(lightSrc.getManufacturer()==null)
+//					lightSrc.setManufacturer(ma);
+//				if(lightSrc.getModel()==null)
+//					lightSrc.setModel(mo);
+//				if(lightSrc.getPower()==null)
+//					lightSrc.setPower(p);
+//				LOGGER.info("[DATA] complete LIGHTSOURCE data");
+//			}
+//		}else {
+//			lightSrc=l;
+//			LOGGER.info("[DATA] add LIGHTSOURCE data");
+//		}
+//	}
+	
+	private void completeDataGES(LightSource l) throws Exception
+	{
+		//copy input fields
+		LightSource copyIn=null;
+		if(lightSrc!=null){
+			getData();
+			copyIn=new GenericExcitationSource((GenericExcitationSource)lightSrc);
+		}
+
+		replaceData(l);
+
+		// set input field values again
+		if(copyIn!=null){
+			String mo=copyIn.getModel();
+			String ma=copyIn.getManufacturer();
+			Power p=copyIn.getPower();
+			
+			if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
+			if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
+			if(p!=null) lightSrc.setPower(p);
+		}
+	}
+	
+	
+//	private void addDataFilament(LightSource l,boolean overwrite) 
+//	{
+//		String mo=l.getModel();
+//		String ma=l.getManufacturer();
+//		Power p=l.getPower();
+//		FilamentType t=((Filament)l).getType();
+//		if(lightSrc!=null){
+//			if(overwrite){
+//				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
+//				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
+//				if(p!=null) lightSrc.setPower(p);
+//				if(t!=null) ((Filament) lightSrc).setType(t);
+//				LOGGER.info("[DATA] overwrite LIGHTSOURCE data");
+//			}else{
+//				if(lightSrc.getManufacturer()==null)
+//					lightSrc.setManufacturer(ma);
+//				if(lightSrc.getModel()==null)
+//					lightSrc.setModel(mo);
+//				if(lightSrc.getPower()==null)
+//					lightSrc.setPower(p);
+//				if(((Filament) lightSrc).getType()==null)
+//					if(t!=null) ((Filament) lightSrc).setType(t);
+//				LOGGER.info("[DATA] complete LIGHTSOURCE data");
+//			}
+//		}else {
+//			lightSrc=l;
+//			LOGGER.info("[DATA] add LIGHTSOURCE data");
+//		}
+//
+//	}
+	
+	private void completeDataFilament(LightSource l) throws Exception
+	{
+		//copy input fields
+		LightSource copyIn=null;
+		if(lightSrc!=null){
+			getData();
+			copyIn=new Filament((Filament)lightSrc);
+		}
+
+		replaceData(l);
+
+		// set input field values again
+		if(copyIn!=null){
+			String mo=copyIn.getModel();
+			String ma=copyIn.getManufacturer();
+			Power p=copyIn.getPower();
+			FilamentType t=((Filament)copyIn).getType();
+			
+			if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
+			if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
+			if(p!=null) lightSrc.setPower(p);
+			if(t!=null) ((Filament) lightSrc).setType(t);
+		}
+	}
+//	private void addDataArc(LightSource l,boolean overwrite) 
+//	{
+//		String mo=l.getModel();
+//		String ma=l.getManufacturer();
+//		Power p=l.getPower();
+//		ArcType t=((Arc)l).getType();
+//		if(lightSrc!=null){
+//			if(overwrite){
+//				
+//				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
+//				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
+//				if(p!=null) lightSrc.setPower(p);
+//				if(t!=null) ((Arc) lightSrc).setType(t);
+//				LOGGER.info("[DATA] overwrite LIGHTSOURCE data");
+//			}else{
+//				if(lightSrc.getManufacturer()==null)
+//					lightSrc.setManufacturer(ma);
+//				if(lightSrc.getModel()==null)
+//					lightSrc.setModel(mo);
+//				if(lightSrc.getPower()==null)
+//					lightSrc.setPower(p);
+//				if(((Arc) lightSrc).getType()==null)
+//					if(t!=null) ((Arc) lightSrc).setType(t);
+//				LOGGER.info("[DATA] complete LIGHTSOURCE data");
+//			}
+//		}else {
+//			lightSrc=l;
+//			LOGGER.info("[DATA] add LIGHTSOURCE data");
+//		}
+//	}
+	
+	private void completeDataArc(LightSource l) throws Exception
+	{
+		//copy input fields
+		LightSource copyIn=null;
+		if(lightSrc!=null){
+			getData();
+			copyIn=new Arc((Arc)lightSrc);
+		}
+
+		replaceData(l);
+
+		// set input field values again
+		if(copyIn!=null){
+			String mo=copyIn.getModel();
+			String ma=copyIn.getManufacturer();
+			Power p=copyIn.getPower();
+			ArcType t=((Arc)copyIn).getType();
+			
+			if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
+			if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
+			if(p!=null) lightSrc.setPower(p);
+			if(t!=null) ((Arc) lightSrc).setType(t);
+		}
+	}
+	
+//	private void addDataLaser(LightSource l,boolean overwrite) 
+//	{
+//		String mo=l.getModel();
+//		String ma=l.getManufacturer();
+//		Power p=l.getPower();
+//		LaserType t=((Laser)l).getType();
+//		LaserMedium m=((Laser)l).getLaserMedium();
+//		PositiveInteger fM=((Laser)l).getFrequencyMultiplication();
+//		Boolean tu=((Laser)l).getTuneable();
+//		Boolean po=((Laser)l).getPockelCell();
+//		Frequency rr=((Laser)l).getRepetitionRate();
+//		Length w=((Laser)l).getWavelength();
+//		Pulse pu=((Laser)l).getPulse();
+//				
+//
+//		if(lightSrc!=null){	
+//			if(overwrite){
+//				
+//				if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
+//				if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
+//				if(p!=null) lightSrc.setPower(p);
+//				if(t!=null) ((Laser) lightSrc).setType(t);
+//
+//				if(m!=null) ((Laser)lightSrc).setLaserMedium(m);
+//				if(fM!=null) ((Laser)lightSrc).setFrequencyMultiplication(fM);
+//				if(tu!=null){
+//					((Laser)lightSrc).setTuneable(tu);
 //				}
-//				if(((Laser)lightSrc).getPockelCell()==null)
-					((Laser)lightSrc).setPockelCell(po);
-				}catch(Exception e){
-					LOGGER.warning("LIGHTSRC Can't set checkbox values");
-				}
-				if(((Laser)lightSrc).getRepetitionRate()==null)
-					((Laser)lightSrc).setRepetitionRate(rr);
-				if(((Laser)lightSrc).getWavelength()==null)
-					((Laser)lightSrc).setWavelength(w);
-				if(((Laser)lightSrc).getPulse()==null)
-					((Laser)lightSrc).setPulse(pu);
-				if(((Laser)lightSrc).getLinkedPump()==null)
-					((Laser)lightSrc).linkPump(((Laser)l).getLinkedPump());
-				LOGGER.info("[DATA] complete LIGHTSOURCE data");
-			}
-		}else {
-			lightSrc=l;
-			LOGGER.info("[DATA] add LIGHTSOURCE data");
+//				if(po!=null) ((Laser)lightSrc).setPockelCell(po);
+//				if(rr!=null) ((Laser)lightSrc).setRepetitionRate(rr);
+//				if(w!=null) ((Laser)lightSrc).setWavelength(w);
+//				if(pu!=null) ((Laser)lightSrc).setPulse(pu);
+//				if(((Laser)l).getLinkedPump()!=null) ((Laser)lightSrc).linkPump(((Laser)l).getLinkedPump());
+//				LOGGER.info("[DATA] overwrite LIGHTSOURCE data");
+//			}else{
+//				
+//				if(lightSrc.getManufacturer()==null)
+//					lightSrc.setManufacturer(ma);
+//				if(lightSrc.getModel()==null)
+//					lightSrc.setModel(mo);
+//				if(lightSrc.getPower()==null)
+//					lightSrc.setPower(p);
+//				if(((Laser) lightSrc).getType()==null)
+//					((Laser) lightSrc).setType(t);
+//				if(((Laser)lightSrc).getLaserMedium()==null)
+//					((Laser)lightSrc).setLaserMedium(m);
+//				if(((Laser)lightSrc).getFrequencyMultiplication()==null)
+//					((Laser)lightSrc).setFrequencyMultiplication(fM);
+//				try{
+////				if(((Laser)lightSrc).getTuneable()==null){
+//					((Laser)lightSrc).setTuneable(tu);
+////				}
+////				if(((Laser)lightSrc).getPockelCell()==null)
+//					((Laser)lightSrc).setPockelCell(po);
+//				}catch(Exception e){
+//					LOGGER.warning("LIGHTSRC Can't set checkbox values");
+//				}
+//				if(((Laser)lightSrc).getRepetitionRate()==null)
+//					((Laser)lightSrc).setRepetitionRate(rr);
+//				if(((Laser)lightSrc).getWavelength()==null)
+//					((Laser)lightSrc).setWavelength(w);
+//				if(((Laser)lightSrc).getPulse()==null)
+//					((Laser)lightSrc).setPulse(pu);
+//				if(((Laser)lightSrc).getLinkedPump()==null)
+//					((Laser)lightSrc).linkPump(((Laser)l).getLinkedPump());
+//				LOGGER.info("[DATA] complete LIGHTSOURCE data");
+//			}
+//		}else {
+//			lightSrc=l;
+//			LOGGER.info("[DATA] add LIGHTSOURCE data");
+//		}
+//	}
+	
+	private void completeDataLaser(LightSource l) throws Exception
+	{
+		//copy input fields
+		LightSource copyIn=null;
+		if(lightSrc!=null){
+			getData();
+			copyIn=new Laser((Laser)lightSrc);
 		}
-		
 
+		replaceData(l);
+
+		// set input field values again
+		if(copyIn!=null){
+			String mo=copyIn.getModel();
+			String ma=copyIn.getManufacturer();
+			Power p=copyIn.getPower();
+			LaserType t=((Laser)copyIn).getType();
+			LaserMedium m=((Laser)copyIn).getLaserMedium();
+			PositiveInteger fM=((Laser)copyIn).getFrequencyMultiplication();
+			Boolean tu=((Laser)copyIn).getTuneable();
+			Boolean po=((Laser)copyIn).getPockelCell();
+			Frequency rr=((Laser)copyIn).getRepetitionRate();
+			Length w=((Laser)copyIn).getWavelength();
+			Pulse pu=((Laser)copyIn).getPulse();
+			
+			if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
+			if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
+			if(p!=null) lightSrc.setPower(p);
+			if(t!=null) ((Laser) lightSrc).setType(t);
+			if(m!=null) ((Laser)lightSrc).setLaserMedium(m);
+			if(fM!=null) ((Laser)lightSrc).setFrequencyMultiplication(fM);
+			if(tu!=null){
+				((Laser)lightSrc).setTuneable(tu);
+			}
+			if(po!=null) ((Laser)lightSrc).setPockelCell(po);
+			if(rr!=null) ((Laser)lightSrc).setRepetitionRate(rr);
+			if(w!=null) ((Laser)lightSrc).setWavelength(w);
+			if(pu!=null) ((Laser)lightSrc).setPulse(pu);
+			if(((Laser)l).getLinkedPump()!=null) ((Laser)lightSrc).linkPump(((Laser)l).getLinkedPump());
+		}
 	}
+	
 	public void addData(LightSourceSettings ls,boolean overwrite)
 	{
 		if(lightSrcSettUI!=null)

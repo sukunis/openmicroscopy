@@ -213,7 +213,7 @@ public class UOSProfileReader
 			loadImgEnvTags(node);
 			break;
 		default:
-			System.out.println("Unknown module: "+moduleName);
+			LOGGER.warning("[VIEW_PROP] Unknown module: "+moduleName);
 			break;
 		}
 	}
@@ -323,7 +323,7 @@ view.setImageConf(conf);
 			view.addImageEnvData(pos, width);
 			break;
 		default:
-			System.out.println("Unknown module "+moduleName);
+			LOGGER.warning("[VIEW_PROP] Unknown module "+moduleName);
 			break;
 		}
 		

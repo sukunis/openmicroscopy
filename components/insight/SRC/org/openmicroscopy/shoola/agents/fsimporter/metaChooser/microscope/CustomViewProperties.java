@@ -173,53 +173,53 @@ public class CustomViewProperties
 	public void addImageData(GUIPlaceholder pos, String width)
 	{
 		moduleList.add(new Submodule(MicSubmodule.IMAGE_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] add image module at "+pos+", "+width);
+		LOGGER.info("[VIEW_PROP] -- add image module at "+pos+", "+width);
 	}
 	
 	public void addChannelData(GUIPlaceholder pos, String width)
 	{
 		moduleList.add(new Submodule(MicSubmodule.CHANNEL_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] add channel module at "+pos+", "+width);
+		LOGGER.info("[VIEW_PROP] -- add channel module at "+pos+", "+width);
 	}
 	public void addObjectiveData(GUIPlaceholder pos, String width)
 	{
 		moduleList.add(new Submodule(MicSubmodule.OBJECTIVE_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] add objective module at "+pos+", "+width);
+		LOGGER.info("[VIEW_PROP] -- add objective module at "+pos+", "+width);
 	}
 	public void addDetectorData(GUIPlaceholder pos, String width)
 	{
 		moduleList.add(new Submodule(MicSubmodule.DETECTOR_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] add detector module at "+pos+", "+width);
+		LOGGER.info("[VIEW_PROP] -- add detector module at "+pos+", "+width);
 	}
 	public void addLightSourceData(GUIPlaceholder pos, String width)
 	{
 		moduleList.add(new Submodule(MicSubmodule.LIGHTSOURCE_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] add lightSource module at "+pos+", "+width);
+		LOGGER.info("[VIEW_PROP] -- add lightSource module at "+pos+", "+width);
 	}
 	public void addLightPathData(GUIPlaceholder pos, String width)
 	{
 		moduleList.add(new Submodule(MicSubmodule.LIGHTPATH_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] add lightPath module at "+pos+", "+width);
+		LOGGER.info("[VIEW_PROP] -- add lightPath module at "+pos+", "+width);
 	}
 	public void addExperimentData(GUIPlaceholder pos, String width)
 	{
 		moduleList.add(new Submodule(MicSubmodule.EXPERIMENT_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] add experiment module at "+pos+", "+width);
+		LOGGER.info("[VIEW_PROP] -- add experiment module at "+pos+", "+width);
 	}
 	public void addSampleData(GUIPlaceholder pos, String width)
 	{
 		moduleList.add(new Submodule(MicSubmodule.SAMPLE_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] add sample module at "+pos+", "+width);
+		LOGGER.info("[VIEW_PROP] -- add sample module at "+pos+", "+width);
 	}
 	public void addPlaneData(GUIPlaceholder pos, String width)
 	{
 		moduleList.add(new Submodule(MicSubmodule.PLANE_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] add plane module at "+pos+", "+width);
+		LOGGER.info("[VIEW_PROP] -- add plane module at "+pos+", "+width);
 	}
 	public void addImageEnvData(GUIPlaceholder pos, String width)
 	{
 		moduleList.add(new Submodule(MicSubmodule.IMAGEENVIRONMENT_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] add imageEnv module at "+pos+", "+width);
+		LOGGER.info("[VIEW_PROP] -- add imageEnv module at "+pos+", "+width);
 	}
 	
 	
@@ -293,13 +293,11 @@ public class CustomViewProperties
 	}
 
 	public List<Objective> getMicObjList() {
-		LOGGER.info("[DEBUG] return mic object list of "+micObjList.size());
 		return micObjList;
 	}
 
 	public void setMicObjList(List<Objective> micObjList) {
 		this.micObjList = micObjList;
-		LOGGER.info("[DEBUG] set mic object list of "+micObjList.size());
 	}
 
 	public List<Detector> getMicDetectorList() {

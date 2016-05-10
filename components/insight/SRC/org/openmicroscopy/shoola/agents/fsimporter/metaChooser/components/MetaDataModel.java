@@ -14,6 +14,7 @@ import ome.xml.model.Experiment;
 import ome.xml.model.Filter;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
+import ome.xml.model.Instrument;
 import ome.xml.model.LightPath;
 import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
@@ -100,6 +101,7 @@ public class MetaDataModel
 	
 	public MetaDataModel(int imgIdx, int _numOfChannels)
 	{
+		LOGGER.info("[DEBUG] set image index "+imgIdx);
 		imageIndex=imgIdx;
 		numOfChannels=_numOfChannels;
 		
@@ -145,17 +147,17 @@ public class MetaDataModel
 		boolean result=false;
 		
 		if(experimentUI!=null){
-			LOGGER.info("[DEBUG] changes in EXPERIMENT: "+
+			LOGGER.info("[DEBUG] -- changes in EXPERIMENT: "+
 				((ExperimentCompUI) experimentUI).userInput());
 			hasUserInput=hasUserInput || ((ExperimentCompUI) experimentUI).userInput();
 		}
 		
-		if(image!=null){ LOGGER.info("[DEBUG] changes in IMAGE: "+
+		if(image!=null){ LOGGER.info("[DEBUG] -- changes in IMAGE: "+
 				((ImageCompUI) image).userInput());
 		hasUserInput=hasUserInput ||((ImageCompUI) image).userInput();
 		}
 		
-		if(objectiveUI!=null){ LOGGER.info("[DEBUG] changes in OBJECT: "+
+		if(objectiveUI!=null){ LOGGER.info("[DEBUG] -- changes in OBJECT: "+
 				objectiveUI.userInput());
 		hasUserInput=hasUserInput ||objectiveUI.userInput();
 		}
@@ -166,7 +168,7 @@ public class MetaDataModel
 					result=result ||( detectorList.get(i)).userInput();
 		}
 		hasUserInput=hasUserInput ||result;
-		LOGGER.info("[DEBUG] changes in DETECTOR: "+result);
+		LOGGER.info("[DEBUG] -- changes in DETECTOR: "+result);
 
 		result=false;
 		for(int i=0; i<lightSrcList.size();i++){
@@ -174,7 +176,7 @@ public class MetaDataModel
 					result=result || (lightSrcList.get(i)).userInput();
 		}
 		hasUserInput=hasUserInput ||result;
-		 LOGGER.info("[DEBUG] changes in LIGHTSRC: "+result);
+		 LOGGER.info("[DEBUG] -- changes in LIGHTSRC: "+result);
 		 
 		 result=false;
 		for(int i=0; i<channelList.size();i++){
@@ -182,7 +184,7 @@ public class MetaDataModel
 					result=result || ( channelList.get(i)).userInput();
 		}
 		hasUserInput=hasUserInput ||result;
-		LOGGER.info("[DEBUG] changes in CHANNEL: "+result);
+		LOGGER.info("[DEBUG] -- changes in CHANNEL: "+result);
 		
 		result=false;
 		for(int i=0; i<lightPathList.size();i++){
@@ -190,14 +192,14 @@ public class MetaDataModel
 					result=result || ( lightPathList.get(i)).userInput();
 		}
 		hasUserInput=hasUserInput ||result;
-		LOGGER.info("[DEBUG] changes in LIGHTPATH: "+result);
+		LOGGER.info("[DEBUG] -- changes in LIGHTPATH: "+result);
 		
-		if(sampleUI!=null){ LOGGER.info("[DEBUG] changes in SAMPLE: "+
+		if(sampleUI!=null){ LOGGER.info("[DEBUG] -- changes in SAMPLE: "+
 				( sampleUI).userInput());
 		hasUserInput=hasUserInput ||( sampleUI).userInput();
 		}
 		
-		if(imgEnvUI!=null){ LOGGER.info("[DEBUG] changes in IMGENV: "+
+		if(imgEnvUI!=null){ LOGGER.info("[DEBUG] -- changes in IMGENV: "+
 				( imgEnvUI).userInput());
 		hasUserInput=hasUserInput || ( imgEnvUI).userInput();
 		}
@@ -208,7 +210,7 @@ public class MetaDataModel
 					result=result ||( planeList.get(i)).userInput();
 		}
 		hasUserInput=hasUserInput ||result;
-		LOGGER.info("[DEBUG] changes in PLANE: "+result);
+		LOGGER.info("[DEBUG] -- changes in PLANE: "+result);
 		
 		
 		return hasUserInput;
@@ -230,6 +232,7 @@ public class MetaDataModel
 	
 	public void setOME(OME o)
 	{
+		LOGGER.info("[DEBUG] set ome");
 		ome=o;
 	}
 	
@@ -239,6 +242,7 @@ public class MetaDataModel
 	}
 	public void setImageOMEData(Image i)
 	{
+		LOGGER.info("[DEBUG] set image ome");
 		imageOME=i;
 	}
 	
@@ -420,7 +424,59 @@ public class MetaDataModel
 	
 	public Detector getDetector(int index) throws Exception
 	{
-		return detectorList!=null ? ((DetectorCompUI)detectorList.get(index)).getData() : null;
+		Detector res=null;
+		if(detectorList!=null){
+			DetectorCompUI dUI=((DetectorCompUI)detectorList.get(index));
+			if(dUI!=null){
+				res=dUI.getData();
+				DetectorSettings dSett=getDetectorSettings(index);
+				// check if this detector is linked to channel
+				if(!detectorIsLinkedToChannel(dSett, res.getID())){
+					LOGGER.info("[DEBUG] detector is not linked");
+					if(imageOME!=null){
+						if(imageOME.getLinkedInstrument()==null ){
+							createAndLinkNewInstrument(imageOME, ome);
+						}
+						linkDetector(dSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfDetectorList());
+						//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
+					}else{
+						LOGGER.info("[DEBUG] can't link detector. ");
+					}
+				}
+			}
+		}
+		return res;
+	}
+	
+	private void linkDetector(DetectorSettings dSett, Detector d,
+			int imgIdx, int sizeOfDetectorList) 
+	{
+		if(d==null)
+			return;
+		else{
+			if(d.getID()==null || d.getID().equals("")){
+				d.setID(MetadataTools.createLSID("Detector", imgIdx,sizeOfDetectorList));
+			}
+			
+			// new objectiveSettings for this image
+			if(dSett==null){
+				LOGGER.info("[DEBUG] no detector settings available for current channel");
+				dSett=new DetectorSettings();
+			}
+			dSett.setID(d.getID());
+			// link to given object
+			LOGGER.info("[DEBUG] link to detector id = "+d.getID());
+			dSett.setDetector(d);
+		}
+	}
+
+	private boolean detectorIsLinkedToChannel(DetectorSettings sett,String id) 
+	{
+		boolean res=false;
+		if(sett!=null && sett.getDetector()!=null && sett.getDetector().getID().equals(id))
+			res=true;
+		
+		return res;
 	}
 	
 	public DetectorSettings getDetectorSettings(int index) throws Exception
@@ -564,7 +620,58 @@ public class MetaDataModel
 	
 	public LightSource getLightSourceData(int index) throws Exception
 	{
-		return lightSrcList!=null ?((LightSourceCompUI)lightSrcList.get(index)).getData() : null;
+		LightSource res=null;
+		if(lightSrcList!=null){
+			LightSourceCompUI lUI=((LightSourceCompUI)lightSrcList.get(index));
+			if(lUI!=null){
+				res=lUI.getData();
+				LightSourceSettings lSett=getLightSourceSettings(index);
+				// check if this detector is linked to channel
+				if(!lightSrcIsLinkedToChannel(lSett, res.getID())){
+					LOGGER.info("[DEBUG] lightSrc is not linked");
+					if(imageOME!=null){
+						if(imageOME.getLinkedInstrument()==null ){
+							createAndLinkNewInstrument(imageOME, ome);
+						}
+						linkLightSrc(lSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfLightSourceList());
+					}else{
+						LOGGER.info("[DEBUG] can't link lightSrc. ");
+					}
+				}
+			}
+		}
+		return res;
+	}
+	
+	private void linkLightSrc(LightSourceSettings dSett, LightSource d,
+			int imgIdx, int sizeOfList) 
+	{
+		if(d==null)
+			return;
+		else{
+			if(d.getID()==null || d.getID().equals("")){
+				d.setID(MetadataTools.createLSID("LightSource", imgIdx,sizeOfList));
+			}
+			
+			// new objectiveSettings for this image
+			if(dSett==null){
+				LOGGER.info("[DEBUG] no lightSrc settings available for current channel");
+				dSett=new LightSourceSettings();
+			}
+			dSett.setID(d.getID());
+			// link to given object
+			LOGGER.info("[DEBUG] link to lightSrc id = "+d.getID());
+			dSett.setLightSource(d);
+		}
+	}
+
+	private boolean lightSrcIsLinkedToChannel(LightSourceSettings sett,String id) 
+	{
+		boolean res=false;
+		if(sett!=null && sett.getLightSource()!=null && sett.getLightSource().getID().equals(id))
+			res=true;
+		
+		return res;
 	}
 	
 	public LightSourceSettings getLightSourceSettings(int index) throws Exception
@@ -602,6 +709,14 @@ public class MetaDataModel
 			return ((ImagingEnvironmentCompUI) imgEnvUI).getData();
 	}
 	
+	public void createAndLinkNewInstrument(Image img,OME o)
+	{
+		 Instrument i=new Instrument();
+		 i.setID(MetadataTools.createLSID("Instrument", 0));
+		 img.linkInstrument(i);
+		 o.addInstrument(i);
+	}
+	
 	public void setObjectiveData(ObjectiveCompUI o)
 	{
 		objectiveUI=o;
@@ -609,12 +724,58 @@ public class MetaDataModel
 	
 	public Objective getObjective() throws Exception
 	{
-		if(objectiveUI==null)
-			return null;
-		else
-			return ((ObjectiveCompUI) objectiveUI).getData();
+		Objective res=null;
+		if(objectiveUI!=null){
+			res=((ObjectiveCompUI) objectiveUI).getData();
+			ObjectiveSettings oSett=getObjectiveSettings();
+			// check if this objective is linked to image
+			if(!objectiveIsLinkedToImage(oSett,res.getID())){
+				LOGGER.info("[DEBUG] objective is not linked");
+				if(imageOME!=null){
+					 if(imageOME.getLinkedInstrument()==null ){
+						createAndLinkNewInstrument(imageOME, ome);
+					 }
+					linkObjective(oSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfObjectiveList());
+//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
+				}else{
+					LOGGER.info("[DEBUG] can't link objective. ");
+				}
+			}
+		}
+		return res;
 	}
 	
+
+	private void linkObjective(ObjectiveSettings oSett,
+			Objective o, int imgIdx, int sizeOfObjectiveList) 
+	{
+		if(o==null)
+			return;
+		else{
+			if(o.getID()==null || o.getID().equals("")){
+				o.setID(MetadataTools.createLSID("Objective", imgIdx,sizeOfObjectiveList));
+			}
+			
+			// new objectiveSettings for this image
+			if(oSett==null){
+				LOGGER.info("[DEBUG] no objective settings available for current image");
+				oSett=new ObjectiveSettings();
+			}
+			oSett.setID(o.getID());
+			// link to given object
+			LOGGER.info("[DEBUG] link to objective id = "+o.getID());
+			oSett.setObjective(o);
+		}
+	}
+
+	private boolean objectiveIsLinkedToImage(ObjectiveSettings sett,String id) 
+	{
+		boolean res=false;
+		if(sett!=null && sett.getObjective()!=null && sett.getObjective().getID().equals(id))
+			res=true;
+		
+		return res;
+	}
 
 	public ObjectiveCompUI getObjectiveModul() 
 	{
@@ -856,21 +1017,22 @@ public class MetaDataModel
 	}
 
 
-	
+	//TODO necessary??
 	public void save() 
 	{
-		LOGGER.info("[MODEL] Save data");
+		LOGGER.info("[MODEL] -- Save model data");
 		try {
 			if(experimentUI!=null && ((ExperimentCompUI) experimentUI).userInput()){
 				System.out.println("################# Experiment Data changed");
 				((ExperimentCompUI) experimentUI).getData();
 			}
+			
+			getObjective();
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// TODO Auto-generated method stub
 		
 	}
 

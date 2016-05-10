@@ -1747,7 +1747,6 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	 */
 	public List<ImportableFile> addAndRefreshMetaFileView(File[] files) 
 	{
-		System.out.println("[DEBUG] importdialog addAndRefresh");
 		if(files!=null){
 				table.addFile(files[0],files[1]);
 		}
@@ -1780,6 +1779,11 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		}
 
 		return new NullImportSettings(group, user);
+	}
+	
+	public FileFilter getFileFilter()
+	{
+		return chooser!=null ? chooser.getFileFilter() : null;
 	}
 
 }

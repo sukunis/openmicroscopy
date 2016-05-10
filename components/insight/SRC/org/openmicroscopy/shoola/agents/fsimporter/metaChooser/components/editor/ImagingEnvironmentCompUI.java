@@ -20,6 +20,7 @@ import ome.units.UNITS;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.unit.Unit;
+import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.primitives.PercentFraction;
@@ -289,40 +290,92 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		
 	}
 
-	public void addData(ImagingEnvironment i,boolean overwrite) 
+//	public void addData(ImagingEnvironment i,boolean overwrite) 
+//	{
+//		if(env!=null){
+//			Temperature t=i.getTemperature();
+//			Pressure p=i.getAirPressure();
+//			PercentFraction h=i.getHumidity();
+//			PercentFraction co=i.getCO2Percent();
+//			if(i!=null){
+//				if(overwrite){
+//				
+//					if(t!=null) env.setTemperature(t);
+//					if(p!=null) env.setAirPressure(p);
+//					if(h!=null) env.setHumidity(h);
+//					if(co!=null) env.setCO2Percent(co);
+//					LOGGER.info("[DATA] overwrite IMG_ENV data");
+//				}else{
+//					if(env.getTemperature()==null)
+//						env.setTemperature(t);
+//					if(env.getAirPressure()==null)
+//						env.setAirPressure(p);
+//					if(env.getHumidity()==null)
+//						env.setHumidity(h);
+//					if(env.getCO2Percent()==null)
+//						 env.setCO2Percent(co);
+//					LOGGER.info("[DATA] complete IMG_ENV data");
+//				}
+//			}
+//		}else if(i!=null){
+//			env=i;
+//			LOGGER.info("[DATA] add IMG_ENV data");
+//		}
+//		
+//		setGUIData();
+//	}
+	
+	public boolean addData(ImagingEnvironment img, boolean overwrite)
 	{
-		if(env!=null){
-			Temperature t=i.getTemperature();
-			Pressure p=i.getAirPressure();
-			PercentFraction h=i.getHumidity();
-			PercentFraction co=i.getCO2Percent();
-			if(i!=null){
-				if(overwrite){
-				
-					if(t!=null) env.setTemperature(t);
-					if(p!=null) env.setAirPressure(p);
-					if(h!=null) env.setHumidity(h);
-					if(co!=null) env.setCO2Percent(co);
-					LOGGER.info("[DATA] overwrite IMG_ENV data");
-				}else{
-					if(env.getTemperature()==null)
-						env.setTemperature(t);
-					if(env.getAirPressure()==null)
-						env.setAirPressure(p);
-					if(env.getHumidity()==null)
-						env.setHumidity(h);
-					if(env.getCO2Percent()==null)
-						 env.setCO2Percent(co);
-					LOGGER.info("[DATA] complete IMG_ENV data");
-				}
+		boolean conflicts=false;
+		if(overwrite){
+			replaceData(img);
+			LOGGER.info("[DATA] -- replace IMAGE_ENV data");
+		}else
+			try {
+				completeData(img);
+				LOGGER.info("[DATA] -- complete IMAGE_ENV data");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}else if(i!=null){
-			env=i;
-			LOGGER.info("[DATA] add IMG_ENV data");
-		}
-		
 		setGUIData();
+		return conflicts;
 	}
+	
+	private void replaceData(ImagingEnvironment i)
+	{
+		if(i!=null){
+			env=i;
+			
+		}
+	}
+	
+	private void completeData(ImagingEnvironment i) throws Exception
+	{
+		//copy input fields
+		ImagingEnvironment copyIn=null;
+		if(env!=null){
+			getData();
+			copyIn=new ImagingEnvironment(env);
+		}
+
+		replaceData(i);
+
+		// set input field values again
+		if(copyIn!=null){
+			Temperature t=copyIn.getTemperature();
+			Pressure p=copyIn.getAirPressure();
+			PercentFraction h=copyIn.getHumidity();
+			PercentFraction co=copyIn.getCO2Percent();
+				
+			if(t!=null) env.setTemperature(t);
+			if(p!=null) env.setAirPressure(p);
+			if(h!=null) env.setHumidity(h);
+			if(co!=null) env.setCO2Percent(co);
+		}
+	}
+	
 
 	public void setFieldsExtern(boolean b) {
 		setFields= setFields || b;

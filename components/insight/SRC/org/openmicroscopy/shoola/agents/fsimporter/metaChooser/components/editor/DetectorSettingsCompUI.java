@@ -22,6 +22,7 @@ import ome.units.UNITS;
 import ome.units.quantity.ElectricPotential;
 import ome.units.unit.Unit;
 import ome.xml.model.DetectorSettings;
+import ome.xml.model.Image;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.EnumerationException;
@@ -110,49 +111,103 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 			createDummyPane(objConf.getSettingList(),false);
 	}
 
-	public boolean addData(DetectorSettings ds,boolean overwrite) 
+//	public boolean addData(DetectorSettings ds,boolean overwrite) 
+//	{
+//		boolean conflicts=false;
+//		if(detectorSett!=null){
+//			if(ds!=null){
+//				Double g=ds.getGain();
+//				ElectricPotential v=ds.getVoltage();
+//				Double o=ds.getOffset();
+//				Double z=ds.getZoom();
+//				Binning b=ds.getBinning();
+//				if(overwrite){
+//					if(ds.getID()!=null && !ds.getID().equals(""))
+//						detectorSett.setID(ds.getID());
+//					if(g!=null) detectorSett.setGain(g);
+//					if(v!=null) detectorSett.setVoltage(v);
+//					if(o!=null) detectorSett.setOffset(o);
+//					if(z!=null) detectorSett.setZoom(z);
+//					if(b!=null) detectorSett.setBinning(b);
+//					LOGGER.info("[DATA] overwrite DETECTOR_SETTINGS data");
+//				}else{
+//					if(detectorSett.getID()==null || detectorSett.getID().equals(""))
+//						detectorSett.setID(ds.getID());
+//					if(detectorSett.getGain()==null)
+//						detectorSett.setGain(g);
+//					if(detectorSett.getVoltage()==null)
+//						detectorSett.setVoltage(v);
+//					if(detectorSett.getOffset()==null)
+//						 detectorSett.setOffset(o);
+//					if(detectorSett.getZoom()==null)
+//						detectorSett.setZoom(z);
+//					if(detectorSett.getBinning()==null)
+//						detectorSett.setBinning(b);
+//					LOGGER.info("[DATA] complete DETECTOR_SETTINGS data");
+//				}
+//			}
+//			
+//		}else if(ds!=null){
+//			detectorSett=ds;
+//			LOGGER.info("[DATA] add DETECTOR_SETTINGS data");
+//			
+//		}
+//		setGUIData();
+//		return conflicts;
+//	}
+	
+	public boolean addData(DetectorSettings sett, boolean overwrite)
 	{
 		boolean conflicts=false;
-		if(detectorSett!=null){
-			if(ds!=null){
-				Double g=ds.getGain();
-				ElectricPotential v=ds.getVoltage();
-				Double o=ds.getOffset();
-				Double z=ds.getZoom();
-				Binning b=ds.getBinning();
-				if(overwrite){
-					if(ds.getID()!=null && !ds.getID().equals(""))
-						detectorSett.setID(ds.getID());
-					if(g!=null) detectorSett.setGain(g);
-					if(v!=null) detectorSett.setVoltage(v);
-					if(o!=null) detectorSett.setOffset(o);
-					if(z!=null) detectorSett.setZoom(z);
-					if(b!=null) detectorSett.setBinning(b);
-					LOGGER.info("[DATA] overwrite DETECTOR_SETTINGS data");
-				}else{
-					if(detectorSett.getID()==null || detectorSett.getID().equals(""))
-						detectorSett.setID(ds.getID());
-					if(detectorSett.getGain()==null)
-						detectorSett.setGain(g);
-					if(detectorSett.getVoltage()==null)
-						detectorSett.setVoltage(v);
-					if(detectorSett.getOffset()==null)
-						 detectorSett.setOffset(o);
-					if(detectorSett.getZoom()==null)
-						detectorSett.setZoom(z);
-					if(detectorSett.getBinning()==null)
-						detectorSett.setBinning(b);
-					LOGGER.info("[DATA] complete DETECTOR_SETTINGS data");
-				}
+		if(overwrite){
+			replaceData(sett);
+			LOGGER.info("[DATA] -- replace DETECTOR_SETTINGS data");
+		}else
+			try {
+				completeData(sett);
+				LOGGER.info("[DATA] -- complete DETECTOR_SETTINGS data");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-		}else if(ds!=null){
-			detectorSett=ds;
-			LOGGER.info("[DATA] add DETECTOR_SETTINGS data");
-			
-		}
 		setGUIData();
 		return conflicts;
+	}
+	
+	private void replaceData(DetectorSettings d)
+	{
+		if(d!=null){
+			detectorSett=d;
+			
+		}
+	}
+	
+	private void completeData(DetectorSettings d) throws Exception
+	{
+		//copy input fields
+		DetectorSettings copyIn=null;
+		if(detectorSett!=null){
+			getData();
+			copyIn=new DetectorSettings(detectorSett);
+		}
+
+		replaceData(d);
+
+		// set input field values again
+		if(copyIn!=null){
+			Double g=copyIn.getGain();
+			ElectricPotential v=copyIn.getVoltage();
+			Double o=copyIn.getOffset();
+			Double z=copyIn.getZoom();
+			Binning b=copyIn.getBinning();
+
+			if(g!=null) detectorSett.setGain(g);
+			if(v!=null) detectorSett.setVoltage(v);
+			if(o!=null) detectorSett.setOffset(o);
+			if(z!=null) detectorSett.setZoom(z);
+			if(b!=null) detectorSett.setBinning(b);
+		}
+		
 	}
 	
 	

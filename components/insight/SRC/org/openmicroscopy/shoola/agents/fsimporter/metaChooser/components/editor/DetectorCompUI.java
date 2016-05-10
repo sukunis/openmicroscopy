@@ -38,6 +38,7 @@ import javax.swing.border.TitledBorder;
 
 
 
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
@@ -48,6 +49,7 @@ import ome.units.quantity.ElectricPotential;
 import ome.units.unit.Unit;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
+import ome.xml.model.Image;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
 import ome.xml.model.enums.DetectorType;
@@ -142,7 +144,6 @@ public class DetectorCompUI extends ElementsCompUI
 		if(list==null || list.size()==0)
 			return;
 		
-		LOGGER.info("[LIST-DEBUG] ADD DETECTOR TO LIST anzahl: "+ list.size());
 		if(availableDetectors==null){
 			availableDetectors=new ArrayList<Detector>();
 		}
@@ -195,54 +196,112 @@ public class DetectorCompUI extends ElementsCompUI
 		add(editBtn,BorderLayout.SOUTH);
 	}
 	
-	public boolean addData(Detector d, boolean overwrite) 
+//	public boolean addData(Detector d, boolean overwrite) 
+//	{
+//		boolean conflicts=false;
+//		if(detector!=null)
+//		{
+//			if(d!=null){
+//				String mo=d.getModel();
+//				String ma=d.getManufacturer();
+//				DetectorType t=d.getType();
+//				ElectricPotential v=d.getVoltage();
+//				Double o = d.getOffset();
+//				Double z=d.getZoom();
+//				Double a=d.getAmplificationGain();
+//				Double g=d.getGain();
+//				if(overwrite){
+//					if(d.getID()!=null && !d.getID().equals(""))
+//						detector.setID(d.getID());
+//					if(mo!=null && !mo.equals("")) detector.setModel(mo);
+//					if(ma!=null && !ma.equals("")) detector.setManufacturer(ma);
+//					if(t!=null) detector.setType(t);
+//					if(v!=null) detector.setVoltage(v);
+//					if(o!=null) detector.setOffset(o);
+//					if(z!=null) detector.setZoom(z);
+//					if(a!=null) detector.setAmplificationGain(a);
+//					if(g!=null) detector.setGain(g);
+//					LOGGER.info("[DATA] overwrite DETECTOR data");
+//				}else{
+//					if(detector.getID()==null || detector.getID().equals(""))
+//						detector.setID(d.getID());
+//					if(detector.getModel()==null || detector.getModel().equals("") )
+//						detector.setModel(mo);
+//					if(detector.getManufacturer()==null || detector.getManufacturer().equals(""))
+//						detector.setManufacturer(ma);
+//					if(detector.getType()==null)detector.setType(t);
+//					if(detector.getVoltage()==null) detector.setVoltage(v);
+//					if(detector.getOffset()==null) detector.setOffset(o);
+//					if(detector.getZoom()==null) detector.setZoom(z);
+//					if(detector.getAmplificationGain()==null) detector.setAmplificationGain(a);
+//					if(detector.getGain()==null) detector.setGain(g);
+//					LOGGER.info("[DATA] complete DETECTOR data");
+//				}
+//			}
+//		}else if(d!=null){
+//			detector=d;
+//			LOGGER.info("[DATA] add DETECTOR data");
+//		}
+//		setGUIData();
+//		return conflicts;
+//	}
+	
+	public boolean addData(Detector d, boolean overwrite)
 	{
 		boolean conflicts=false;
-		if(detector!=null)
-		{
-			if(d!=null){
-				String mo=d.getModel();
-				String ma=d.getManufacturer();
-				DetectorType t=d.getType();
-				ElectricPotential v=d.getVoltage();
-				Double o = d.getOffset();
-				Double z=d.getZoom();
-				Double a=d.getAmplificationGain();
-				Double g=d.getGain();
-				if(overwrite){
-					if(d.getID()!=null && !d.getID().equals(""))
-						detector.setID(d.getID());
-					if(mo!=null && !mo.equals("")) detector.setModel(mo);
-					if(ma!=null && !ma.equals("")) detector.setManufacturer(ma);
-					if(t!=null) detector.setType(t);
-					if(v!=null) detector.setVoltage(v);
-					if(o!=null) detector.setOffset(o);
-					if(z!=null) detector.setZoom(z);
-					if(a!=null) detector.setAmplificationGain(a);
-					if(g!=null) detector.setGain(g);
-					LOGGER.info("[DATA] overwrite DETECTOR data");
-				}else{
-					if(detector.getID()==null || detector.getID().equals(""))
-						detector.setID(d.getID());
-					if(detector.getModel()==null || detector.getModel().equals("") )
-						detector.setModel(mo);
-					if(detector.getManufacturer()==null || detector.getManufacturer().equals(""))
-						detector.setManufacturer(ma);
-					if(detector.getType()==null)detector.setType(t);
-					if(detector.getVoltage()==null) detector.setVoltage(v);
-					if(detector.getOffset()==null) detector.setOffset(o);
-					if(detector.getZoom()==null) detector.setZoom(z);
-					if(detector.getAmplificationGain()==null) detector.setAmplificationGain(a);
-					if(detector.getGain()==null) detector.setGain(g);
-					LOGGER.info("[DATA] complete DETECTOR data");
-				}
+		if(overwrite){
+			replaceData(d);
+			LOGGER.info("[DATA] -- replace DETECTOR data");
+		}else
+			try {
+				completeData(d);
+				LOGGER.info("[DATA] -- complete DETECTOR data");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}else if(d!=null){
-			detector=d;
-			LOGGER.info("[DATA] add DETECTOR data");
-		}
 		setGUIData();
 		return conflicts;
+	}
+	
+	private void replaceData(Detector d)
+	{
+		if(d!=null){
+			detector=d;
+		}
+	}
+	
+	private void completeData(Detector d) throws Exception
+	{
+		//copy input fields
+		Detector copyIn=null;
+		if(detector!=null){
+			getData();
+			copyIn=new Detector(detector);
+		}
+
+		replaceData(d);
+
+		// set input field values again
+		if(copyIn!=null){
+			String mo=copyIn.getModel();
+			String ma=copyIn.getManufacturer();
+			DetectorType t=copyIn.getType();
+			ElectricPotential v=copyIn.getVoltage();
+			Double o = copyIn.getOffset();
+			Double z=copyIn.getZoom();
+			Double a=copyIn.getAmplificationGain();
+			Double g=copyIn.getGain();
+
+			if(mo!=null && !mo.equals("")) detector.setModel(mo);
+			if(ma!=null && !ma.equals("")) detector.setManufacturer(ma);
+			if(t!=null) detector.setType(t);
+			if(v!=null) detector.setVoltage(v);
+			if(o!=null) detector.setOffset(o);
+			if(z!=null) detector.setZoom(z);
+			if(a!=null) detector.setAmplificationGain(a);
+			if(g!=null) detector.setGain(g);
+		}
 	}
 	
 	//TODO: is this the right place for implementation
@@ -252,6 +311,8 @@ public class DetectorCompUI extends ElementsCompUI
 			detectorSettUI.addData(ds,overwrite);
 		}
 	}
+	
+	
 	
 	private void setGUIData()
 	{
@@ -327,7 +388,11 @@ public class DetectorCompUI extends ElementsCompUI
 		detector=new Detector();		
 	}
 
-	
+	/**
+	 * Read gui input if necessary.
+	 * @return detector object
+	 * @throws Exception
+	 */
 	public Detector getData() throws Exception
 	{
 		if(userInput())

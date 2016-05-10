@@ -17,6 +17,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Tag
 
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import ome.xml.model.Image;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.Medium;
@@ -114,40 +115,88 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	}
 	
 	
-	public boolean addData(ObjectiveSettings os, boolean overwrite)
+//	public boolean addData(ObjectiveSettings os, boolean overwrite)
+//	{
+//		boolean conflicts=false;
+//		if(oSett!=null){
+//			if(os!=null){
+//				Double rI=os.getRefractiveIndex();
+//				Medium m=os.getMedium();
+//				Double cc=os.getCorrectionCollar();
+//				if(overwrite){
+//					if(os.getID()!=null && !os.getID().equals(""))
+//						oSett.setID(os.getID());
+//					if(rI!=null)oSett.setRefractiveIndex(rI);
+//					if(m!=null)oSett.setMedium(m);
+//					if(cc!=null)oSett.setCorrectionCollar(cc);
+//					LOGGER.info("[DATA] overwrite OBJECTIVE_SETTINGS data");
+//				}else{
+//					if(oSett.getID()==null || oSett.getID().equals(""))
+//						oSett.setID(os.getID());
+//					if(oSett.getRefractiveIndex()==null)
+//						oSett.setRefractiveIndex(rI);
+//					if(oSett.getMedium()==null)
+//						oSett.setMedium(m);
+//					if(oSett.getCorrectionCollar()==null)
+//						oSett.setCorrectionCollar(cc);
+//					LOGGER.info("[DATA] complete OBJECTIVE_SETTINGS data");
+//				}
+//			}
+//		}else if(os!=null){
+//			oSett=os;
+//			LOGGER.info("[DATA] add OBJECTIVE_SETTINGS data");
+//		}
+//		
+//		setGUIData();
+//		return conflicts;
+//	}
+	
+	public boolean addData(ObjectiveSettings objS, boolean overwrite)
 	{
 		boolean conflicts=false;
-		if(oSett!=null){
-			if(os!=null){
-				Double rI=os.getRefractiveIndex();
-				Medium m=os.getMedium();
-				Double cc=os.getCorrectionCollar();
-				if(overwrite){
-					if(os.getID()!=null && !os.getID().equals(""))
-						oSett.setID(os.getID());
-					if(rI!=null)oSett.setRefractiveIndex(rI);
-					if(m!=null)oSett.setMedium(m);
-					if(cc!=null)oSett.setCorrectionCollar(cc);
-					LOGGER.info("[DATA] overwrite OBJECTIVE_SETTINGS data");
-				}else{
-					if(oSett.getID()==null || oSett.getID().equals(""))
-						oSett.setID(os.getID());
-					if(oSett.getRefractiveIndex()==null)
-						oSett.setRefractiveIndex(rI);
-					if(oSett.getMedium()==null)
-						oSett.setMedium(m);
-					if(oSett.getCorrectionCollar()==null)
-						oSett.setCorrectionCollar(cc);
-					LOGGER.info("[DATA] complete OBJECTIVE_SETTINGS data");
-				}
+		if(overwrite){
+			replaceData(objS);
+			LOGGER.info("[DATA] -- replace OBJECTIVE_SETTINGS data");
+		}else
+			try {
+				completeData(objS);
+				LOGGER.info("[DATA] -- complete OBJECTIVE_SETTINGS data");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}else if(os!=null){
-			oSett=os;
-			LOGGER.info("[DATA] add OBJECTIVE_SETTINGS data");
-		}
-		
 		setGUIData();
 		return conflicts;
+	}
+	
+	private void replaceData(ObjectiveSettings o)
+	{
+		if(o!=null){
+			oSett=o;
+		}
+	}
+	
+	private void completeData(ObjectiveSettings o) throws Exception
+	{
+		//copy input fields
+		ObjectiveSettings copyIn=null;
+		if(oSett!=null){
+			getData();
+			copyIn=new ObjectiveSettings(oSett);
+		}
+
+		replaceData(o);
+
+		// set input field values again
+		if(copyIn!=null){
+			Double rI=copyIn.getRefractiveIndex();
+			Medium m=copyIn.getMedium();
+			Double cc=copyIn.getCorrectionCollar();
+
+			if(rI!=null)oSett.setRefractiveIndex(rI);
+			if(m!=null)oSett.setMedium(m);
+			if(cc!=null)oSett.setCorrectionCollar(cc);
+		}
 	}
 	
 	private void readGUIInput() throws Exception

@@ -191,67 +191,131 @@ public class ChannelCompUI extends ElementsCompUI
 			} catch (NullPointerException e) { }
 		}
 	}
+//	
+//	public boolean addData(Channel c, boolean overwrite) 
+//	{
+//		boolean conflicts=false;
+//		if(channel!=null){
+//			if(c!=null){
+//				//read data
+//				String name=c.getName();
+//				Color color=c.getColor();
+//				String fluor=c.getFluor();
+//				Length exW=c.getExcitationWavelength();
+//				Length emW=c.getEmissionWavelength();
+//				AcquisitionMode aMode=c.getAcquisitionMode();
+//				ContrastMethod cMethod=c.getContrastMethod();
+//				Double ndf=c.getNDFilter();
+//				
+//				
+//				if(overwrite){
+//					if(c.getID()!=null && !c.getID().equals(""))
+//						channel.setID(c.getID());
+//					if(name!=null && !name.equals("")) channel.setName(name);
+//					if(color!=null) channel.setColor(color);
+//					if(fluor!=null && !fluor.equals("")) channel.setFluor(fluor);
+//					if(exW!=null) channel.setExcitationWavelength(exW);
+//					if(emW!=null) channel.setEmissionWavelength(emW);
+//					if(aMode!=null) channel.setAcquisitionMode(aMode);
+//					if(cMethod!=null) channel.setContrastMethod(cMethod);
+//					if(ndf!=null) channel.setNDFilter(ndf);
+//					
+//					LOGGER.info("[DATA] overwrite CHANNEL data");
+//				}else{
+//					if(channel.getID()==null || channel.getID().equals(""))
+//						channel.setID(c.getID());
+//					if(channel.getName()==null || channel.getName().equals(""))
+//						channel.setName(name);
+//					if(channel.getColor()==null)
+//						channel.setColor(color);
+//					if(channel.getFluor()==null || channel.getFluor().equals(""))
+//						channel.setFluor(fluor);
+//					if(channel.getExcitationWavelength()==null)
+//						channel.setExcitationWavelength(exW);
+//					if(channel.getEmissionWavelength()==null)
+//						channel.setEmissionWavelength(emW);
+//					if(channel.getAcquisitionMode()==null)
+//						channel.setAcquisitionMode(aMode);
+//					if(channel.getContrastMethod()==null)
+//						channel.setContrastMethod(cMethod);
+//					if(channel.getNDFilter()==null)
+//						channel.setNDFilter(ndf);
+//					
+//					LOGGER.info("[DATA] complete CHANNEL data");
+//				}
+//			}
+//		}else if(c!=null){
+//			channel=c;
+//			LOGGER.info("[DATA] add CHANNEL data");
+//		}
+//		
+//		setGUIData();
+//		
+//		return conflicts;
+//	}
 	
 	public boolean addData(Channel c, boolean overwrite) 
 	{
 		boolean conflicts=false;
-		if(channel!=null){
-			if(c!=null){
-				//read data
-				String name=c.getName();
-				Color color=c.getColor();
-				String fluor=c.getFluor();
-				Length exW=c.getExcitationWavelength();
-				Length emW=c.getEmissionWavelength();
-				AcquisitionMode aMode=c.getAcquisitionMode();
-				ContrastMethod cMethod=c.getContrastMethod();
-				Double ndf=c.getNDFilter();
-				
-				
-				if(overwrite){
-					if(c.getID()!=null && !c.getID().equals(""))
-						channel.setID(c.getID());
-					if(name!=null && !name.equals("")) channel.setName(name);
-					if(color!=null) channel.setColor(color);
-					if(fluor!=null && !fluor.equals("")) channel.setFluor(fluor);
-					if(exW!=null) channel.setExcitationWavelength(exW);
-					if(emW!=null) channel.setEmissionWavelength(emW);
-					if(aMode!=null) channel.setAcquisitionMode(aMode);
-					if(cMethod!=null) channel.setContrastMethod(cMethod);
-					if(ndf!=null) channel.setNDFilter(ndf);
-					
-					LOGGER.info("[DATA] overwrite CHANNEL data");
-				}else{
-					if(channel.getID()==null || channel.getID().equals(""))
-						channel.setID(c.getID());
-					if(channel.getName()==null || channel.getName().equals(""))
-						channel.setName(name);
-					if(channel.getColor()==null)
-						channel.setColor(color);
-					if(channel.getFluor()==null || channel.getFluor().equals(""))
-						channel.setFluor(fluor);
-					if(channel.getExcitationWavelength()==null)
-						channel.setExcitationWavelength(exW);
-					if(channel.getEmissionWavelength()==null)
-						channel.setEmissionWavelength(emW);
-					if(channel.getAcquisitionMode()==null)
-						channel.setAcquisitionMode(aMode);
-					if(channel.getContrastMethod()==null)
-						channel.setContrastMethod(cMethod);
-					if(channel.getNDFilter()==null)
-						channel.setNDFilter(ndf);
-					
-					LOGGER.info("[DATA] complete CHANNEL data");
-				}
+		if(overwrite){
+			replaceData(c);
+			LOGGER.info("[DATA] -- replace CHANNEL data");
+		}else
+			try {
+				completeData(c);
+				LOGGER.info("[DATA] -- complete CHANNEL data");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}else if(c!=null){
-			channel=c;
-			LOGGER.info("[DATA] add CHANNEL data");
-		}
 		
 		setGUIData();
-		
 		return conflicts;
+	}
+	
+	private void completeData(Channel c) throws Exception
+	{
+		//copy input fields
+		Channel copyIn=null;
+		if(channel!=null){
+			getData();
+			copyIn=new Channel(channel);
+		}
+		
+		replaceData(c);
+		
+		// set input field values again
+		if(copyIn!=null){
+			//read data
+			String name=copyIn.getName();
+			Color color=copyIn.getColor();
+			String fluor=copyIn.getFluor();
+			Length exW=copyIn.getExcitationWavelength();
+			Length emW=copyIn.getEmissionWavelength();
+			AcquisitionMode aMode=copyIn.getAcquisitionMode();
+			ContrastMethod cMethod=copyIn.getContrastMethod();
+			Double ndf=copyIn.getNDFilter();
+			
+			if(c.getID()!=null && !c.getID().equals(""))
+				channel.setID(c.getID());
+			if(name!=null && !name.equals("")) channel.setName(name);
+			if(color!=null) channel.setColor(color);
+			if(fluor!=null && !fluor.equals("")) channel.setFluor(fluor);
+			if(exW!=null) channel.setExcitationWavelength(exW);
+			if(emW!=null) channel.setEmissionWavelength(emW);
+			if(aMode!=null) channel.setAcquisitionMode(aMode);
+			if(cMethod!=null) channel.setContrastMethod(cMethod);
+			if(ndf!=null) channel.setNDFilter(ndf);
+		
+		}
+	}
+	
+	private void replaceData(Channel c)
+	{
+		if(c!=null){
+			channel=c;
+			
+		}
 	}
 	
 	private void readGUIInput() 

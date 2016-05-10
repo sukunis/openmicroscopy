@@ -28,6 +28,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Tag
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
+import ome.xml.model.Image;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.Correction;
@@ -121,67 +122,127 @@ public class ObjectiveCompUI extends ElementsCompUI
 	}
 
 	
-
+//
+//	public boolean addData(Objective obj, boolean overwrite)
+//	{
+//		boolean conflicts=false;
+//		if(objective!=null){
+//			if(obj!=null){
+//				String mo=obj.getModel();
+//				String ma=obj.getManufacturer();
+//				Double nm=obj.getNominalMagnification();
+//				Double cM=obj.getCalibratedMagnification();
+//				Double l=obj.getLensNA();
+//				Immersion i=obj.getImmersion();
+//				Correction c=obj.getCorrection();
+//				Length wD=obj.getWorkingDistance();
+//				Boolean ir=obj.getIris();
+//				if(overwrite){
+//					if(obj.getID()!=null && !obj.getID().equals(""))
+//						objective.setID(obj.getID());
+//					if(mo!=null && !mo.equals("")) objective.setModel(mo);
+//					if(ma!=null && !ma.equals("")) objective.setManufacturer(ma);
+//					if(nm!=null) objective.setNominalMagnification(nm);
+//					if(cM!=null) objective.setCalibratedMagnification(cM);
+//					if(l!=null) objective.setLensNA(l);
+//					if(i!=null) objective.setImmersion(i);
+//					if(c!=null) objective.setCorrection(c);
+//					if(wD!=null) objective.setWorkingDistance(wD);
+//					if(ir!=null) objective.setIris(ir);
+//					LOGGER.info("[DATA] overwrite OBJECTIVE data");
+//				}else{
+//					if(objective.getID()==null || objective.getID().equals(""))
+//						objective.setID(obj.getID());
+//					if(objective.getModel()==null || objective.getModel().equals("") )
+//						objective.setModel(mo);
+//					if(objective.getManufacturer()==null || objective.getManufacturer().equals("") )
+//						objective.setManufacturer(ma);
+//					if(objective.getNominalMagnification()==null)
+//						objective.setNominalMagnification(nm);
+//					if(objective.getCalibratedMagnification()==null)
+//						objective.setCalibratedMagnification(cM);
+//					if(objective.getLensNA()==null)
+//						objective.setLensNA(l);
+//					if(objective.getImmersion()==null)
+//						objective.setImmersion(i);
+//					if(objective.getCorrection()==null)
+//						objective.setCorrection(c);
+//					if(objective.getWorkingDistance()==null)
+//						objective.setWorkingDistance(wD);
+//					if(objective.getIris()==null)
+//						objective.setIris(ir);
+//					LOGGER.info("[DATA] complete OBJECTIVE data");
+//				}
+//			}
+//			
+//		}else if(obj!=null){
+//			objective=obj;
+//			LOGGER.info("[DATA] add OBJECTIVE data");
+//		}
+//		setGUIData();
+//		
+//		return conflicts;
+//		
+//	}
+	
 	public boolean addData(Objective obj, boolean overwrite)
 	{
 		boolean conflicts=false;
-		if(objective!=null){
-			if(obj!=null){
-				String mo=obj.getModel();
-				String ma=obj.getManufacturer();
-				Double nm=obj.getNominalMagnification();
-				Double cM=obj.getCalibratedMagnification();
-				Double l=obj.getLensNA();
-				Immersion i=obj.getImmersion();
-				Correction c=obj.getCorrection();
-				Length wD=obj.getWorkingDistance();
-				Boolean ir=obj.getIris();
-				if(overwrite){
-					if(obj.getID()!=null && !obj.getID().equals(""))
-						objective.setID(obj.getID());
-					if(mo!=null && !mo.equals("")) objective.setModel(mo);
-					if(ma!=null && !ma.equals("")) objective.setManufacturer(ma);
-					if(nm!=null) objective.setNominalMagnification(nm);
-					if(cM!=null) objective.setCalibratedMagnification(cM);
-					if(l!=null) objective.setLensNA(l);
-					if(i!=null) objective.setImmersion(i);
-					if(c!=null) objective.setCorrection(c);
-					if(wD!=null) objective.setWorkingDistance(wD);
-					if(ir!=null) objective.setIris(ir);
-					LOGGER.info("[DATA] overwrite OBJECTIVE data");
-				}else{
-					if(objective.getID()==null || objective.getID().equals(""))
-						objective.setID(obj.getID());
-					if(objective.getModel()==null || objective.getModel().equals("") )
-						objective.setModel(mo);
-					if(objective.getManufacturer()==null || objective.getManufacturer().equals("") )
-						objective.setManufacturer(ma);
-					if(objective.getNominalMagnification()==null)
-						objective.setNominalMagnification(nm);
-					if(objective.getCalibratedMagnification()==null)
-						objective.setCalibratedMagnification(cM);
-					if(objective.getLensNA()==null)
-						objective.setLensNA(l);
-					if(objective.getImmersion()==null)
-						objective.setImmersion(i);
-					if(objective.getCorrection()==null)
-						objective.setCorrection(c);
-					if(objective.getWorkingDistance()==null)
-						objective.setWorkingDistance(wD);
-					if(objective.getIris()==null)
-						objective.setIris(ir);
-					LOGGER.info("[DATA] complete OBJECTIVE data");
-				}
+		if(overwrite){
+			replaceData(obj);
+			LOGGER.info("[DATA] -- replace OBJECTIVE data");
+		}else
+			try {
+				completeData(obj);
+				LOGGER.info("[DATA] -- complete OBJECTIVE data");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-		}else if(obj!=null){
-			objective=obj;
-			LOGGER.info("[DATA] add OBJECTIVE data");
-		}
+		
 		setGUIData();
-		
 		return conflicts;
-		
+	}
+	
+	private void completeData(Objective o) throws Exception
+	{
+		//copy input fields
+		Objective copyIn=null;
+		if(objective!=null){
+			getData();
+			copyIn=new Objective(objective);
+		}
+
+		replaceData(o);
+		// set input field values again
+		if(copyIn!=null){
+			String mo=copyIn.getModel();
+			String ma=copyIn.getManufacturer();
+			Double nm=copyIn.getNominalMagnification();
+			Double cM=copyIn.getCalibratedMagnification();
+			Double l=copyIn.getLensNA();
+			Immersion i=copyIn.getImmersion();
+			Correction c=copyIn.getCorrection();
+			Length wD=copyIn.getWorkingDistance();
+			Boolean ir=copyIn.getIris();
+			
+			if(mo!=null && !mo.equals("")) objective.setModel(mo);
+			if(ma!=null && !ma.equals("")) objective.setManufacturer(ma);
+			if(nm!=null) objective.setNominalMagnification(nm);
+			if(cM!=null) objective.setCalibratedMagnification(cM);
+			if(l!=null) objective.setLensNA(l);
+			if(i!=null) objective.setImmersion(i);
+			if(c!=null) objective.setCorrection(c);
+			if(wD!=null) objective.setWorkingDistance(wD);
+			if(ir!=null) objective.setIris(ir);
+		}
+	}
+	
+	private void replaceData(Objective o)
+	{
+		if(o!=null){
+			objective=o;
+		}
 	}
 	
 	public void addData(ObjectiveSettings os, boolean overwrite)
@@ -190,17 +251,13 @@ public class ObjectiveCompUI extends ElementsCompUI
 			objectiveSettUI.addData(os,overwrite);
 	}
 
-//	public void setList(List<Objective> _list)
-//	{
-//		availableObj=_list;
-//	}
+
 	
 	public void addToList(List<Objective> list)
 	{
 		if(list==null || list.size()==0)
 			return;
 
-		LOGGER.info("[LIST] ADD OBJECTIVE TO LIST anzahl: "+ list.size());
 		if(availableObj==null){
 			availableObj=new ArrayList<Objective>();
 		}

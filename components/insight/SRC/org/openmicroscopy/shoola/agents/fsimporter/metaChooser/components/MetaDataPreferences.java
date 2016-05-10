@@ -53,11 +53,11 @@ public class MetaDataPreferences extends JPanel
 		tagList=null;
 		if(elem!=null){
 			tagList=elem.getActiveTags();
-			if(tagList!=null && tagList.size()>0){
-				System.out.println("[MetadataPreferences::MetadataPreferences()] TagListSize: "+objName+": "+tagList.size());
-			}else{
-				System.out.println("[MetadataPreferences::MetadataPreferences()] TagListSize: "+objName+": null");
-			}
+//			if(tagList!=null && tagList.size()>0){
+//				System.out.println("[MetadataPreferences::MetadataPreferences()] TagListSize: "+objName+": "+tagList.size());
+//			}else{
+//				System.out.println("[MetadataPreferences::MetadataPreferences()] TagListSize: "+objName+": null");
+//			}
 		}
 		
 		

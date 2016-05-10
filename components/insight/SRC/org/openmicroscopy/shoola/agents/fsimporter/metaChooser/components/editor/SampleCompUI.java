@@ -33,12 +33,14 @@ import javax.swing.border.TitledBorder;
 
 
 
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
+import ome.xml.model.Image;
 import ome.xml.model.XMLAnnotation;
 import ome.xml.model.primitives.Timestamp;
 import loci.formats.MetadataTools;
@@ -304,93 +306,163 @@ public class SampleCompUI extends ElementsCompUI
 		return sample;
 	}
 	
-	public boolean addData(Sample s,boolean overwrite)
+//	public boolean addData(Sample s,boolean overwrite)
+//	{
+//		boolean conflict=false;
+//		if(s==null)
+//			return false;
+//		if(sample!=null){
+//				String pdesc=s.getPrepDescription();
+//				Timestamp pdate=s.getPrepDate();
+//				String rc=s.getRawMaterialCode();
+//				String rdesc=s.getRawMaterialDesc();
+//				
+//				GridBox g=s.getGridBox();
+//				Integer gNr=null;
+//				String gT=null;
+//				if(g!=null){
+//					gNr=g.getNr();
+//					gT=g.getType();
+//				}
+//				ObservedSample os=s.getObservedSample(0);
+//				String osgx=null;
+//				String osgy=null;
+//				String ost=null;
+//				String osNr=null;
+//				if(os!=null){
+//					osgx=os.getGridNumberX();
+//					osgy=os.getGridNumberY();
+//					ost=os.getObjectType();
+//					osNr=os.getObjectNumber();
+//				}
+//				
+//				if(overwrite){
+//					if(pdesc!=null && !pdesc.equals("")) sample.setPrepDescription(pdesc);
+//					if(pdate!=null) sample.setPrepDate(pdate);
+//					if(rc!=null && !rc.equals("")) sample.setRawMaterialCode(rc);
+//					if(rdesc!=null && !rdesc.equals("")) sample.setRawMaterialDesc(rdesc);
+//					if(gNr!=null) sample.getGridBox().setNr(gNr);
+//					if(gT!=null && !gT.equals("")) sample.getGridBox().setType(gT);
+//					if(osgx!=null && !osgx.equals("")) sample.getObservedSample(0).setGridNumberY(osgx);
+//					if(osgy!=null && !osgy.equals("")) sample.getObservedSample(0).setGridNumberY(osgy);
+//					if(ost!=null && !ost.equals("")) sample.getObservedSample(0).setObjectType(ost);
+//					if(osNr!=null && !osNr.equals("")) sample.getObservedSample(0).setObjectNumber(osNr);
+//					LOGGER.info("[DATA] overwrite SAMPLE data");
+//				}else{
+//					if(sample.getPrepDescription()==null || sample.getPrepDescription().equals(""))
+//						sample.setPrepDescription(pdesc);
+//					if(sample.getPrepDate()==null )
+//						sample.setPrepDate(pdate);
+//					if(sample.getRawMaterialCode()==null || sample.getRawMaterialCode().equals(""))
+//						sample.setRawMaterialCode(rc);
+//					if(sample.getRawMaterialDesc()==null || sample.getRawMaterialDesc().equals(""))
+//						sample.setRawMaterialDesc(rdesc);
+//					
+//					if(sample.getGridBox()==null){
+//						sample.setGridBoxData(gNr, gT); 
+//					}else{
+//						if(sample.getGridBox().getNr()==null )
+//							sample.getGridBox().setNr(gNr);
+//						if(sample.getGridBox().getType()==null || sample.getGridBox().getType().equals(""))
+//							sample.getGridBox().setType(gT);
+//					}
+//					if(sample.getObservedSample(0)==null){
+//						sample.setObservedSample(os);
+//					}else{
+//						if(sample.getObservedSample(0).getGridNumberX()==null || sample.getObservedSample(0).getGridNumberX().equals(""))
+//							sample.getObservedSample(0).setGridNumberX(osgx);
+//						if(sample.getObservedSample(0).getGridNumberY()==null || sample.getObservedSample(0).getGridNumberY().equals(""))
+//							sample.getObservedSample(0).setGridNumberY(osgy);
+//						if(sample.getObservedSample(0).getObjectType()==null || sample.getObservedSample(0).getObjectType().equals(""))
+//							sample.getObservedSample(0).setObjectType(ost);
+//						if(sample.getObservedSample(0).getObjectNumber()==null || sample.getObservedSample(0).getObjectNumber().equals(""))
+//							sample.getObservedSample(0).setObjectNumber(osNr);
+//					}
+//					LOGGER.info("[DATA] complete SAMPLE data");
+//				}
+//		}else{
+//			sample=s;
+//			
+//			LOGGER.info("[DATA] add SAMPLE data");
+//		}
+//		
+//		setGUIData();
+//		return conflict;
+//	}
+	
+	public boolean addData(Sample s, boolean overwrite)
 	{
-		boolean conflict=false;
-		if(s==null)
-			return false;
-		if(sample!=null){
-				String pdesc=s.getPrepDescription();
-				Timestamp pdate=s.getPrepDate();
-				String rc=s.getRawMaterialCode();
-				String rdesc=s.getRawMaterialDesc();
-				
-				GridBox g=s.getGridBox();
-				Integer gNr=null;
-				String gT=null;
-				if(g!=null){
-					gNr=g.getNr();
-					gT=g.getType();
-				}
-				ObservedSample os=s.getObservedSample(0);
-				String osgx=null;
-				String osgy=null;
-				String ost=null;
-				String osNr=null;
-				if(os!=null){
-					osgx=os.getGridNumberX();
-					osgy=os.getGridNumberY();
-					ost=os.getObjectType();
-					osNr=os.getObjectNumber();
-				}
-				
-				if(overwrite){
-					if(pdesc!=null && !pdesc.equals("")) sample.setPrepDescription(pdesc);
-					if(pdate!=null) sample.setPrepDate(pdate);
-					if(rc!=null && !rc.equals("")) sample.setRawMaterialCode(rc);
-					if(rdesc!=null && !rdesc.equals("")) sample.setRawMaterialDesc(rdesc);
-					if(gNr!=null) sample.getGridBox().setNr(gNr);
-					if(gT!=null && !gT.equals("")) sample.getGridBox().setType(gT);
-					if(osgx!=null && !osgx.equals("")) sample.getObservedSample(0).setGridNumberY(osgx);
-					if(osgy!=null && !osgy.equals("")) sample.getObservedSample(0).setGridNumberY(osgy);
-					if(ost!=null && !ost.equals("")) sample.getObservedSample(0).setObjectType(ost);
-					if(osNr!=null && !osNr.equals("")) sample.getObservedSample(0).setObjectNumber(osNr);
-					LOGGER.info("[DATA] overwrite SAMPLE data");
-				}else{
-					if(sample.getPrepDescription()==null || sample.getPrepDescription().equals(""))
-						sample.setPrepDescription(pdesc);
-					if(sample.getPrepDate()==null )
-						sample.setPrepDate(pdate);
-					if(sample.getRawMaterialCode()==null || sample.getRawMaterialCode().equals(""))
-						sample.setRawMaterialCode(rc);
-					if(sample.getRawMaterialDesc()==null || sample.getRawMaterialDesc().equals(""))
-						sample.setRawMaterialDesc(rdesc);
-					
-					if(sample.getGridBox()==null){
-						sample.setGridBoxData(gNr, gT); 
-					}else{
-						if(sample.getGridBox().getNr()==null )
-							sample.getGridBox().setNr(gNr);
-						if(sample.getGridBox().getType()==null || sample.getGridBox().getType().equals(""))
-							sample.getGridBox().setType(gT);
-					}
-					if(sample.getObservedSample(0)==null){
-						sample.setObservedSample(os);
-					}else{
-						if(sample.getObservedSample(0).getGridNumberX()==null || sample.getObservedSample(0).getGridNumberX().equals(""))
-							sample.getObservedSample(0).setGridNumberX(osgx);
-						if(sample.getObservedSample(0).getGridNumberY()==null || sample.getObservedSample(0).getGridNumberY().equals(""))
-							sample.getObservedSample(0).setGridNumberY(osgy);
-						if(sample.getObservedSample(0).getObjectType()==null || sample.getObservedSample(0).getObjectType().equals(""))
-							sample.getObservedSample(0).setObjectType(ost);
-						if(sample.getObservedSample(0).getObjectNumber()==null || sample.getObservedSample(0).getObjectNumber().equals(""))
-							sample.getObservedSample(0).setObjectNumber(osNr);
-					}
-					LOGGER.info("[DATA] complete SAMPLE data");
-				}
-		}else{
-			sample=s;
-			
-			LOGGER.info("[DATA] add SAMPLE data");
-		}
-		
+		boolean conflicts=false;
+		if(overwrite){
+			replaceData(s);
+			LOGGER.info("[DATA] -- replace SAMPLE data");
+		}else
+			try {
+				completeData(s);
+				LOGGER.info("[DATA] -- complete SAMPLE data");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		setGUIData();
-		return conflict;
+		return conflicts;
 	}
 	
-	private void completeData(Sample s)
+	private void replaceData(Sample s)
 	{
-		
+		if(s!=null){
+			sample=s;
+		}
+	}
+	
+	private void completeData(Sample s) throws Exception
+	{
+		//copy input fields
+		Sample copyIn=null;
+		if(sample!=null){
+			getData();
+			copyIn=new Sample(sample);
+		}
+
+		replaceData(s);
+
+		// set input field values again
+		if(copyIn!=null){
+			String pdesc=copyIn.getPrepDescription();
+			Timestamp pdate=copyIn.getPrepDate();
+			String rc=copyIn.getRawMaterialCode();
+			String rdesc=copyIn.getRawMaterialDesc();
+			
+			GridBox g=copyIn.getGridBox();
+			Integer gNr=null;
+			String gT=null;
+			if(g!=null){
+				gNr=g.getNr();
+				gT=g.getType();
+			}
+			ObservedSample os=copyIn.getObservedSample(0);
+			String osgx=null;
+			String osgy=null;
+			String ost=null;
+			String osNr=null;
+			if(os!=null){
+				osgx=os.getGridNumberX();
+				osgy=os.getGridNumberY();
+				ost=os.getObjectType();
+				osNr=os.getObjectNumber();
+			}
+
+			if(pdesc!=null && !pdesc.equals("")) sample.setPrepDescription(pdesc);
+			if(pdate!=null) sample.setPrepDate(pdate);
+			if(rc!=null && !rc.equals("")) sample.setRawMaterialCode(rc);
+			if(rdesc!=null && !rdesc.equals("")) sample.setRawMaterialDesc(rdesc);
+			if(gNr!=null) sample.getGridBox().setNr(gNr);
+			if(gT!=null && !gT.equals("")) sample.getGridBox().setType(gT);
+			if(osgx!=null && !osgx.equals("")) sample.getObservedSample(0).setGridNumberY(osgx);
+			if(osgy!=null && !osgy.equals("")) sample.getObservedSample(0).setGridNumberY(osgy);
+			if(ost!=null && !ost.equals("")) sample.getObservedSample(0).setObjectType(ost);
+			if(osNr!=null && !osNr.equals("")) sample.getObservedSample(0).setObjectNumber(osNr);
+		}
 	}
 	
 	private void readGUIInput() 

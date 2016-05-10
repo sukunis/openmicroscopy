@@ -91,7 +91,7 @@ public class OMEStore
 					return i;
 				}
 			}catch(Exception e){
-				LOGGER.warning("empty EXPERIMENTER");
+				LOGGER.warning("[SAVE] -- empty EXPERIMENTER");
 			}
 
 		}
@@ -114,7 +114,7 @@ public class OMEStore
 	
 	public void storeExperiment(Experiment e)
 	{
-		LOGGER.info("save EXPERIMENT data");
+		LOGGER.info("[SAVE] -- save EXPERIMENT data");
 		int idxExperiment=getExperimentIndexByID(e.getID());
 			
 		//store Experimenter
@@ -129,7 +129,7 @@ public class OMEStore
 				if(exp.getID()==null || exp.getID().equals(""))
 					exp.setID(MetadataTools.createLSID("Experimenter",ome.sizeOfExperimenterList()));
 
-				LOGGER.info("* create new EXPERIMENTER "+exp.getID());
+				LOGGER.info("[SAVE] --  create new EXPERIMENTER "+exp.getID());
 				ome.addExperimenter(exp);
 			}else{
 				//save by id
@@ -146,7 +146,7 @@ public class OMEStore
 		// store Experiment
 		if(idxExperiment==-1){
 			e.setID(MetadataTools.createLSID("Experiment", 0));
-			LOGGER.info("[SAVE] * add new EXPERIMENT "+e.getID());
+			LOGGER.info("[SAVE] -- add new EXPERIMENT "+e.getID());
 			ome.addExperiment(e);
 		}else{
 			//rewrite
@@ -157,10 +157,10 @@ public class OMEStore
 
 	public void storeSample(Sample s,Image i) 
 	{
-		LOGGER.info("save SAMPLE data");
+		LOGGER.info("[SAVE] -- save SAMPLE data");
 		StructuredAnnotations annot=ome.getStructuredAnnotations();
 		if(annot==null){
-			LOGGER.info("Structured Annotation are empty");
+			LOGGER.info("[SAVE] -- Structured Annotation are empty");
 			annot=new StructuredAnnotations();
 		}
 		int annotationIndex=annot.sizeOfXMLAnnotationList();
@@ -172,7 +172,6 @@ public class OMEStore
 		annot.addXMLAnnotation(sampleAnnot);
 		
 		ome.setStructuredAnnotations(annot);
-		LOGGER.info("[DEBUG] size structuredAnnot "+ome.getStructuredAnnotations().sizeOfXMLAnnotationList());
 		i.linkAnnotation(sampleAnnot);
 		
 	}
@@ -183,7 +182,7 @@ public class OMEStore
 		if(o.getObjective()==null)
 			return;
 		
-		LOGGER.info("[SAVE] save OBJECTIVE SETTINGS");
+		LOGGER.info("[SAVE] -- save OBJECTIVE SETTINGS");
 		if(o.getID()==null || o.getID().equals("")){
 			o.setID(MetadataTools.createLSID("ObjectiveSettings", 0));
 		}
@@ -214,7 +213,7 @@ public class OMEStore
 					return i;
 				}
 			}catch(Exception e){
-				LOGGER.warning("empty OBJECTIVE");
+				LOGGER.warning("[SAVE] -- empty OBJECTIVE");
 			}
 
 		}
@@ -223,12 +222,12 @@ public class OMEStore
 	
 	public void storeObjective(Objective o, Image i, int imageIndex) 
 	{
-		LOGGER.info("save OBJECTIVE data");
+		LOGGER.info("[SAVE] -- save OBJECTIVE data");
 		Instrument instrument =i.getLinkedInstrument();
 		if(instrument==null){
 			instrument=new Instrument();
 			instrument.setID(MetadataTools.createLSID("Instrument", imageIndex));
-			LOGGER.info("* create new INSTRUMENT "+instrument.getID());
+			LOGGER.info("[SAVE] --  create new INSTRUMENT "+instrument.getID());
 			ome.addInstrument(instrument);
 			i.linkInstrument(instrument);
 		}
@@ -239,10 +238,11 @@ public class OMEStore
 //		if(idxModel==-1){
 			if(idxID==-1){
 				//new one
-				if(o.getID()==null || o.getID().equals(""))
+				if(o.getID()==null || o.getID().equals("")){
 					o.setID(MetadataTools.createLSID("Objective",imageIndex,instrument.sizeOfObjectiveList()));
-				
-				LOGGER.info("* add new OBJECTIVE "+o.getID());
+					// link to current image
+				}
+				LOGGER.info("[SAVE] --  add new OBJECTIVE "+o.getID());
 				instrument.addObjective(o);
 			}else{
 				//save by id
@@ -261,7 +261,7 @@ public class OMEStore
 
 	public void storeImagingEnv(ImagingEnvironment iEnv,Image i) 
 	{
-		LOGGER.info("save IMAGE ENVIRONMENT data");
+		LOGGER.info("[SAVE] -- save IMAGE ENVIRONMENT data");
 		i.setImagingEnvironment(iEnv);
 	}
 	
@@ -269,7 +269,7 @@ public class OMEStore
 	{
 		if(dSett.getDetector()==null)
 			return;
-		LOGGER.info("[SAVE] save DETECTOR SETTINGS");
+		LOGGER.info("[SAVE] -- save DETECTOR SETTINGS");
 		if(dSett.getID()==null || dSett.getID().equals("")){
 			dSett.setID(MetadataTools.createLSID("DetectorSettings", 0));
 		}
@@ -283,7 +283,7 @@ public class OMEStore
 		if(instrument==null){
 			instrument=new Instrument();
 			instrument.setID(MetadataTools.createLSID("Instrument", imageIndex));
-			LOGGER.info("[SAVE] * create new INSTRUMENT "+instrument.getID());
+			LOGGER.info("[SAVE] -- create new INSTRUMENT "+instrument.getID());
 			ome.addInstrument(instrument);
 			i.linkInstrument(instrument);
 		}
@@ -297,12 +297,12 @@ public class OMEStore
 				if(d.getID()==null || d.getID().equals(""))
 					d.setID(MetadataTools.createLSID("Detector",imageIndex,instrument.sizeOfDetectorList()));
 				
-				LOGGER.info("[SAVE] * add new DETECTOR "+d.getID());
+				LOGGER.info("[SAVE] -- add new DETECTOR "+d.getID());
 				instrument.addDetector(d);
 			}else{
 				//save by id
 				instrument.setDetector(idxID, d);
-				LOGGER.info("[SAVE] save DETECTOR data by id "+d.getID());
+				LOGGER.info("[SAVE] -- save DETECTOR data by id "+d.getID());
 			}
 //		}else{
 //			// save by model, perhaps ref has changed
@@ -338,7 +338,7 @@ public class OMEStore
 					return i;
 				}
 			}catch(Exception e){
-				LOGGER.warning("empty DETECTOR");
+				LOGGER.warning("[SAVE] -- empty DETECTOR");
 			}
 
 		}
@@ -350,7 +350,7 @@ public class OMEStore
 	{
 		if(lSett.getLightSource()==null)
 			return;
-		LOGGER.info("[SAVE] save LIGHTSRC SETTINGS");
+		LOGGER.info("[SAVE] -- save LIGHTSRC SETTINGS");
 		if(lSett.getID()==null || lSett.getID().equals("")){
 			lSett.setID(MetadataTools.createLSID("LightSourceSettings", 0));
 		}
@@ -359,12 +359,12 @@ public class OMEStore
 	
 	public void storeLightSrc(LightSource l, Image i,int imageIndex) 
 	{
-		LOGGER.info("[SAVE] save LIGHTSOURCE data");
+		LOGGER.info("[SAVE] -- save LIGHTSOURCE data");
 		Instrument instrument = i.getLinkedInstrument();
 		if(instrument==null){
 			instrument=new Instrument();
 			instrument.setID(MetadataTools.createLSID("Instrument", imageIndex));
-			LOGGER.info("* create new INSTRUMENT "+instrument.getID());
+			LOGGER.info("[SAVE] --  create new INSTRUMENT "+instrument.getID());
 			ome.addInstrument(instrument);
 			i.linkInstrument(instrument);
 		}
@@ -378,7 +378,7 @@ public class OMEStore
 				if(l.getID()==null || l.getID().equals(""))
 					l.setID(MetadataTools.createLSID("LightSource",imageIndex,instrument.sizeOfLightSourceList()));
 				
-				LOGGER.info("* add new LIGHTSOURCE "+l.getID());
+				LOGGER.info("[SAVE] --  add new LIGHTSOURCE "+l.getID());
 				instrument.addLightSource(l);
 			}else{
 				//save by id
@@ -415,7 +415,7 @@ public class OMEStore
 					return i;
 				}
 			}catch(Exception e){
-				LOGGER.warning("empty DETECTOR");
+				LOGGER.warning("[SAVE] -- empty DETECTOR");
 			}
 
 		}
@@ -425,12 +425,12 @@ public class OMEStore
 	
 	public void storeFilterList(List<Filter> fList,Image img,int imageIndex) 
 	{
-		LOGGER.info("save FILTER data");
+		LOGGER.info("[SAVE] -- save FILTER data");
 		Instrument instrument = img.getLinkedInstrument();
 		if(instrument==null){
 			instrument=new Instrument();
 			instrument.setID(MetadataTools.createLSID("Instrument", imageIndex));
-			LOGGER.info("* create new INSTRUMENT "+instrument.getID());
+			LOGGER.info("[SAVE] --  create new INSTRUMENT "+instrument.getID());
 			ome.addInstrument(instrument);
 			img.linkInstrument(instrument);
 		}
@@ -444,7 +444,7 @@ public class OMEStore
 				if(f.getID()==null || f.getID().equals(""))
 					f.setID(MetadataTools.createLSID("Filter",imageIndex,instrument.sizeOfFilterList()));
 
-				LOGGER.info("* add new FILTER "+f.getID());
+				LOGGER.info("[SAVE] --  add new FILTER "+f.getID());
 				instrument.addFilter(f);
 			}else{
 				//save by id
@@ -473,12 +473,12 @@ public class OMEStore
 
 	public void storeDichroicList(List<Dichroic> dList,Image img, int imageIndex) 
 	{
-		LOGGER.info("save DICHROIC data");
+		LOGGER.info("[SAVE] -- save DICHROIC data");
 		Instrument instrument = img.getLinkedInstrument();
 		if(instrument==null){
 			instrument=new Instrument();
 			instrument.setID(MetadataTools.createLSID("Instrument", imageIndex));
-			LOGGER.info("* create new INSTRUMENT "+instrument.getID());
+			LOGGER.info("[SAVE] --  create new INSTRUMENT "+instrument.getID());
 			ome.addInstrument(instrument);
 			img.linkInstrument(instrument);
 		}
@@ -490,7 +490,7 @@ public class OMEStore
 				if(f.getID()==null || f.getID().equals(""))
 					f.setID(MetadataTools.createLSID("Dichroic",imageIndex,instrument.sizeOfDichroicList()));
 
-				LOGGER.info("* add new DICHROIC "+f.getID());
+				LOGGER.info("[SAVE] --  add new DICHROIC "+f.getID());
 				instrument.addDichroic(f);
 			}else{
 				//save by id
@@ -525,20 +525,20 @@ public class OMEStore
 		Pixels pixels=i.getPixels();
 		if(pixels==null){
 			//TODO create new or corrupted data???
-			LOGGER.severe("[SAVE] no PIXELS object available");
+			LOGGER.severe("[SAVE] -- no PIXELS object available");
 		}else{
 			int idx = getChannelIndexByID(pixels.copyChannelList(),c.getID());
 			if(idx==-1){
 				if(c.getID()==null || c.getID().equals("")){
 					c.setID(MetadataTools.createLSID("Channel", pixels.sizeOfChannelList()));
 				}
-				LOGGER.info("[SAVE] * add new CHANNEL "+c.getID());
+				LOGGER.info("[SAVE] -- add new CHANNEL "+c.getID());
 				pixels.addChannel(c);
 			}else{
 				Channel omeCH=pixels.getChannel(idx);
 				ChannelCompUI.mergeData(c, omeCH);
 				pixels.setChannel(idx, omeCH);
-					LOGGER.info("[SAVE] * save CHANNEL "+c.getID()+" at "+idx+" for image ");
+					LOGGER.info("[SAVE] -- save CHANNEL "+c.getID()+" at "+idx+" for image ");
 				
 			}
 			i.setPixels(pixels);
@@ -547,7 +547,7 @@ public class OMEStore
 	
 	public void storeImage(Image image, int imageIndex) 
 	{
-		LOGGER.info("save IMAGE data");
+		LOGGER.info("[SAVE] -- save IMAGE data");
 		ome.setImage(imageIndex, image);
 	}
 
@@ -579,7 +579,7 @@ public class OMEStore
 				index=Integer.parseInt(str);
 			}
 		} catch (NumberFormatException e) {
-			LOGGER.severe("Wrong Format: "+str);
+			LOGGER.severe("[SAVE] -- Wrong Format: "+str);
 		}
 		return index;
 	}

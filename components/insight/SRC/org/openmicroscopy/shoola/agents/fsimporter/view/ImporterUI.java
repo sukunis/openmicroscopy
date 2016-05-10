@@ -500,8 +500,8 @@ class ImporterUI extends TopWindow
 	public void refreshMetaFileView(List<ImportableFile> files){
 		if (files == null)
 			LOGGER.info("No data select");
-		
-		metaData.refreshFileView(files);
+	
+		metaData.refreshFileView(files,chooser.getFileFilter());
 	}
 	
 	/** Indicates to the select the metaData chooser. */

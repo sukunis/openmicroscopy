@@ -86,8 +86,8 @@ public abstract class ElementsCompUI extends JPanel
 	
 	public static Length parseToLength(String c, Unit<Length> unit) throws Exception
 	{
-//		if(c==null || c.equals(""))
-//			return null;
+		if(c==null || c.equals(""))
+			return null;
 		
 		return new Length(Double.valueOf(c), unit);
 	}

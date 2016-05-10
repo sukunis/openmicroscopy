@@ -394,6 +394,7 @@ public class TagData
 	{
 		if(this.unit!=unit){
 			label.setText(this.name+" ["+unit.getSymbol()+"]:");
+			this.unit=unit;
 		}
 		setTagValue(val);
 		setTagProp(property);
@@ -688,7 +689,6 @@ public class TagData
 		
 		public String getText()
 		{
-			System.out.println("[DEBUG] area text "+area.getText());
 			return area.getText();
 		}
 

@@ -21,6 +21,7 @@ import ome.units.UNITS;
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
 import ome.xml.model.DetectorSettings;
+import ome.xml.model.Image;
 import ome.xml.model.Laser;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.primitives.PercentFraction;
@@ -109,37 +110,81 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 //						BorderFactory.createEmptyBorder(5,5,5,5)));
 	}
 	
-	public void addData(LightSourceSettings ls,boolean overwrite)
+//	public void addData(LightSourceSettings ls,boolean overwrite)
+//	{
+//		if(lightSrc!=null){
+//			if(ls!=null){
+//				Length w=ls.getWavelength();
+//				PercentFraction p=ls.getAttenuation();
+//				if(overwrite){
+//					if(ls.getID()!=null && !ls.getID().equals(""))
+//						lightSrc.setID(ls.getID());
+//					if(w!=null) lightSrc.setWavelength(w);
+//					if(p!=null) lightSrc.setAttenuation(p);
+//					LOGGER.info("[DATA] overwrite LIGHTSRC_SETTINGS data");
+//				}else{
+//					if(lightSrc.getID()==null || lightSrc.getID().equals(""))
+//						lightSrc.setID(ls.getID());
+//					if(lightSrc.getWavelength()==null)
+//						lightSrc.setWavelength(w);
+//					if(lightSrc.getAttenuation()==null)
+//						lightSrc.setAttenuation(p);
+//					LOGGER.info("[DATA] complete LIGHTSRC_SETTINGS data");
+//				}
+//			}
+//			
+//		}else if(ls!=null){
+//			lightSrc=ls;
+//			LOGGER.info("[DATA] add LIGHTSRC_SETTINGS data");
+//		}
+//		
+//		setGUIData();
+//	}
+//	
+	public boolean addData(LightSourceSettings l, boolean overwrite)
 	{
-		if(lightSrc!=null){
-			if(ls!=null){
-				Length w=ls.getWavelength();
-				PercentFraction p=ls.getAttenuation();
-				if(overwrite){
-					if(ls.getID()!=null && !ls.getID().equals(""))
-						lightSrc.setID(ls.getID());
-					if(w!=null) lightSrc.setWavelength(w);
-					if(p!=null) lightSrc.setAttenuation(p);
-					LOGGER.info("[DATA] overwrite LIGHTSRC_SETTINGS data");
-				}else{
-					if(lightSrc.getID()==null || lightSrc.getID().equals(""))
-						lightSrc.setID(ls.getID());
-					if(lightSrc.getWavelength()==null)
-						lightSrc.setWavelength(w);
-					if(lightSrc.getAttenuation()==null)
-						lightSrc.setAttenuation(p);
-					LOGGER.info("[DATA] complete LIGHTSRC_SETTINGS data");
-				}
+		boolean conflicts=false;
+		if(overwrite){
+			replaceData(l);
+			LOGGER.info("[DATA] -- replace LIGHTSRC_SETTINGS data");
+		}else
+			try {
+				completeData(l);
+				LOGGER.info("[DATA] -- complete LIGHTSRC_SETTINGS data");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-		}else if(ls!=null){
-			lightSrc=ls;
-			LOGGER.info("[DATA] add LIGHTSRC_SETTINGS data");
-		}
-		
 		setGUIData();
+		return conflicts;
 	}
+	
+	private void replaceData(LightSourceSettings l)
+	{
+		if(l!=null){
+			lightSrc=l;
+		}
+	}
+	
+	private void completeData(LightSourceSettings l) throws Exception
+	{
+		//copy input fields
+		LightSourceSettings copyIn=null;
+		if(lightSrc!=null){
+			getData();
+			copyIn=new LightSourceSettings(lightSrc);
+		}
 
+		replaceData(l);
+
+		// set input field values again
+		if(copyIn!=null){
+			Length w=copyIn.getWavelength();
+			PercentFraction p=copyIn.getAttenuation();
+			if(w!=null) lightSrc.setWavelength(w);
+			if(p!=null) lightSrc.setAttenuation(p);
+		}
+	}
 	
 	private void setGUIData()
 	{

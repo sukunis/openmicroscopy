@@ -66,7 +66,7 @@ public class FNode extends DefaultMutableTreeNode
 					importData.getProject()+"]";
 		}
 		if(getFile()==null){
-			return null;
+			return (String)getUserObject();
 		}
         return getFile().getName()+ad;
     } 

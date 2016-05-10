@@ -184,89 +184,87 @@ public class MetaDataUI extends JPanel
 	private void initModelComponents(List<Submodule> list) 
 	{
 		if(!componentsInit){
-		LOGGER.info("[GUI] init model components "+list.size()+"####");
-		for(Submodule subm:list){
-			switch (subm.getModule()) { 
-			case OBJECTIVE_DATA:
-				LOGGER.info("[GUI] init OBJECTIVE modul");
-				ObjectiveCompUI oUI=new ObjectiveCompUI(customSett.getObjConf());
-				oUI.addToList(customSett.getMicObjList());
-				model.setObjectiveData(oUI); 
-				initObjectiveUI=true;
-				objModul=subm;
-				break;
-			case DETECTOR_DATA:
-				LOGGER.info("[GUI] init DETECTOR modul");
-				DetectorCompUI dUI=new DetectorCompUI(customSett.getDetectorConf());
-				dUI.addToList(customSett.getMicDetectorList());
-				model.addDetectorData(dUI);
-				initDetectorUI=true;
-				detModul=subm;
-				break;
-			case LIGHTSOURCE_DATA:
-				LOGGER.info("[GUI] init LIGHTSRC modul");
-				LightSourceCompUI lUI=new LightSourceCompUI(customSett.getLightSrcConf());
-				lUI.addToList(customSett.getMicLightSrcList());
-				model.addLightSrcModul(lUI);
-				initLightSrcUI=true;
-				lightSModul=subm;
-				break;
-			case CHANNEL_DATA:
-				LOGGER.info("[GUI] init CHANNEL modul");
-				ChannelCompUI chUI=new ChannelCompUI(customSett.getChannelConf()); 
-				model.addChannelData(chUI);
-				initChannelUI=true;
-				chModul=subm;
-				break;
-			case LIGHTPATH_DATA:
-				LOGGER.info("[GUI] init LIGHTPATH modul");
-				LightPathCompUI lpUI=new LightPathCompUI();
-				model.setLightPath(lpUI, 0);
-				initLightPathUI=true;
-				lightPModul=subm;
-				break;
-			case IMAGEENVIRONMENT_DATA:
-				LOGGER.info("[GUI] init IMAGEENV modul");
-				ImagingEnvironmentCompUI ieUI=new ImagingEnvironmentCompUI(customSett.getImgEnvConf());
-				model.setImagingEnv(ieUI);
-				initImageEnvUI=true;
-				imgEnvModul=subm;
-				break;
-			case PLANE_DATA:
-				LOGGER.info("[GUI] init PLANE modul");
-				PlaneCompUI pUI=new PlaneCompUI();
-//				model.setPlane(pUI);
-				initPlanesUI=true;
-				planeModul=subm;
-				break;
-			case EXPERIMENT_DATA:
-				LOGGER.info("[GUI] init EXPERIMENT modul");
-				ExperimentCompUI eUI=new ExperimentCompUI(customSett.getExpConf());
-				model.setExpData(eUI);
-				initExperimentUI=true;
-				expModul=subm;
-				break;
-			case SAMPLE_DATA:
-				LOGGER.info("[GUI] init SAMPLE modul");
-				SampleCompUI sUI=new SampleCompUI(customSett.getSampleConf());
-				model.setSampleData(sUI);
-				initSampleUI=true;
-				sampleModul=subm;
-				break;
-			case IMAGE_DATA:
-				LOGGER.info("[GUI] init IMAGE modul");
-				ImageCompUI iUI=new ImageCompUI(customSett.getImageConf()); 
-				model.setImageModul(iUI);
-				initImageUI=true;
-				imgModul=subm;
-				break;
-			default:
-				break;
+			for(Submodule subm:list){
+				switch (subm.getModule()) { 
+				case OBJECTIVE_DATA:
+					LOGGER.info("[GUI] -- init OBJECTIVE modul");
+					ObjectiveCompUI oUI=new ObjectiveCompUI(customSett.getObjConf());
+					oUI.addToList(customSett.getMicObjList());
+					model.setObjectiveData(oUI); 
+					initObjectiveUI=true;
+					objModul=subm;
+					break;
+				case DETECTOR_DATA:
+					LOGGER.info("[GUI] -- init DETECTOR modul");
+					DetectorCompUI dUI=new DetectorCompUI(customSett.getDetectorConf());
+					dUI.addToList(customSett.getMicDetectorList());
+					model.addDetectorData(dUI);
+					initDetectorUI=true;
+					detModul=subm;
+					break;
+				case LIGHTSOURCE_DATA:
+					LOGGER.info("[GUI] -- init LIGHTSRC modul");
+					LightSourceCompUI lUI=new LightSourceCompUI(customSett.getLightSrcConf());
+					lUI.addToList(customSett.getMicLightSrcList());
+					model.addLightSrcModul(lUI);
+					initLightSrcUI=true;
+					lightSModul=subm;
+					break;
+				case CHANNEL_DATA:
+					LOGGER.info("[GUI] -- init CHANNEL modul");
+					ChannelCompUI chUI=new ChannelCompUI(customSett.getChannelConf()); 
+					model.addChannelData(chUI);
+					initChannelUI=true;
+					chModul=subm;
+					break;
+				case LIGHTPATH_DATA:
+					LOGGER.info("[GUI] -- init LIGHTPATH modul");
+					LightPathCompUI lpUI=new LightPathCompUI();
+					model.setLightPath(lpUI, 0);
+					initLightPathUI=true;
+					lightPModul=subm;
+					break;
+				case IMAGEENVIRONMENT_DATA:
+					LOGGER.info("[GUI] -- init IMAGEENV modul");
+					ImagingEnvironmentCompUI ieUI=new ImagingEnvironmentCompUI(customSett.getImgEnvConf());
+					model.setImagingEnv(ieUI);
+					initImageEnvUI=true;
+					imgEnvModul=subm;
+					break;
+				case PLANE_DATA:
+					LOGGER.info("[GUI] -- init PLANE modul");
+					PlaneCompUI pUI=new PlaneCompUI();
+					//				model.setPlane(pUI);
+					initPlanesUI=true;
+					planeModul=subm;
+					break;
+				case EXPERIMENT_DATA:
+					LOGGER.info("[GUI] -- init EXPERIMENT modul");
+					ExperimentCompUI eUI=new ExperimentCompUI(customSett.getExpConf());
+					model.setExpData(eUI);
+					initExperimentUI=true;
+					expModul=subm;
+					break;
+				case SAMPLE_DATA:
+					LOGGER.info("[GUI] -- init SAMPLE modul");
+					SampleCompUI sUI=new SampleCompUI(customSett.getSampleConf());
+					model.setSampleData(sUI);
+					initSampleUI=true;
+					sampleModul=subm;
+					break;
+				case IMAGE_DATA:
+					LOGGER.info("[GUI] -- init IMAGE modul");
+					ImageCompUI iUI=new ImageCompUI(customSett.getImageConf()); 
+					model.setImageModul(iUI);
+					initImageUI=true;
+					imgModul=subm;
+					break;
+				default:
+					break;
+				}
+				componentsInit=true;
 			}
-			componentsInit=true;
 		}
-		}
-		LOGGER.info("[GUI] ### FINISHED init modules ");
 	}
 
 	/** return model object*/
@@ -284,7 +282,6 @@ public class MetaDataUI extends JPanel
 	public void addData(MetaDataModel m) throws Exception
 	{
 		if(m!=null && model!=null){
-			LOGGER.info("[DEBUG] add PARENT data");
 			addExperimentData(m.getExperiment(), true);
 			
 			addImageData(m.getImageData(),true);
@@ -427,7 +424,8 @@ public class MetaDataUI extends JPanel
 					//TODO: no referenced instrument? -> createDummy
 					Instrument instrument=image.getLinkedInstrument();
 					if(instrument==null){
-						LOGGER.warning("[DATA] NO INSTRUMENTS available");
+						LOGGER.warning("[DATA] NO INSTRUMENTS available, create new");
+						model.createAndLinkNewInstrument(image, ome);
 					}else{
 						objectives=instrument.copyObjectiveList();
 						detectors=instrument.copyDetectorList();
@@ -621,7 +619,6 @@ public class MetaDataUI extends JPanel
 						LOGGER.info("[DATA] LIGHTSOURCE  data not available");
 					}else{
 						lUI.addData(l,false);
-						System.out.println("[DEBUG] orig data tunable : "+((Laser) l).getTuneable());
 						lUI.addData(ls,false);
 					}
 
@@ -766,8 +763,7 @@ public class MetaDataUI extends JPanel
 			}
 			
 			if(!oDataAvailable){
-				
-				LOGGER.info("[DATA] OBJECTIVE data not available");
+				LOGGER.info("[DATA] --file: OBJECTIVE data not available");
 			}else{
 				oUI.addData(o, false); 
 				oUI.addData(os,false); 
@@ -1337,6 +1333,7 @@ public class MetaDataUI extends JPanel
 	 */
 	public void save() {
 		if(ome!=null && model!=null){
+			model.save();
 //					SaveMetadataUserDefinedUI pane = new SaveMetadataUserDefinedUI(ome,model,null,file);
 //					JDialog diag=createSaveDialog(pane,"Save MetaData", 600,600);
 			if(file!=null){

@@ -517,7 +517,6 @@ class FileSelectionTable
 	        file = srcElement.getFile();
 	        if(file.getAbsolutePath().equals(srcFile.getAbsolutePath())){
 	        	rowIndex=i;
-	        	System.out.println("[DEBUG] addFile, srcIndex "+rowIndex);
 	        	i=n;
 	        }
 	    }

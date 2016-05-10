@@ -22,6 +22,7 @@ import ome.units.UNITS;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.unit.Unit;
+import ome.xml.model.Channel;
 import ome.xml.model.Image;
 import ome.xml.model.Pixels;
 import ome.xml.model.enums.PixelType;
@@ -115,72 +116,143 @@ public class ImageCompUI extends ElementsCompUI
 		image.setPixels(new Pixels());
 	}
 	
+//	public boolean addData(Image img, boolean overwrite)
+//	{
+//		boolean conflicts=false;
+//		if(image!=null){
+//			if(img!=null){
+//				String name=img.getName();
+//				PositiveInteger dimX=img.getPixels().getSizeX();
+//				PositiveInteger dimY=img.getPixels().getSizeY();
+//				PositiveInteger dimZ=img.getPixels().getSizeZ();
+//				PositiveInteger dimT=img.getPixels().getSizeT();
+//				PositiveInteger dimC=img.getPixels().getSizeC();
+//				PixelType type=img.getPixels().getType();
+//				Time timeInc=img.getPixels().getTimeIncrement();
+//				Timestamp stamp=img.getAcquisitionDate();
+//				Length pixelSizeX=img.getPixels().getPhysicalSizeX();
+//				Length pixelSizeY=img.getPixels().getPhysicalSizeY();
+////				//TODO stagePos,wellNr,expRef
+//				Pixels p=image.getPixels();
+//				
+//				if(overwrite){
+//					if(img.getID()!=null && !img.getID().equals(""))
+//						image.setID(img.getID());
+//					if(name!=null && !name.equals("")) image.setName(name);
+//					if(dimX!=null && !dimX.toString().equals("")) p.setSizeX(dimX);
+//					if(dimY!=null && !dimY.toString().equals("")) p.setSizeX(dimY);
+//					if(dimZ!=null && !dimZ.toString().equals("")) p.setSizeX(dimZ);
+//					if(dimT!=null && !dimT.toString().equals("")) p.setSizeX(dimT);
+//					if(dimC!=null && !dimC.toString().equals("")) p.setSizeX(dimC);
+//					if(type!=null && !type.toString().equals("")) p.setType(type);
+//					//TODO test ifEmpty
+//					if(timeInc!=null) p.setTimeIncrement(timeInc);
+//					if(stamp!=null) image.setAcquisitionDate(stamp);
+//					if(pixelSizeX!=null) p.setPhysicalSizeX(pixelSizeX);
+//					if(pixelSizeY!=null) p.setPhysicalSizeY(pixelSizeY);
+//					
+//					LOGGER.info("[DATA] overwrite IMAGE data");
+//				}else{
+//					if(image.getID()==null || image.getID().equals(""))
+//						image.setID(img.getID());
+//					if(image.getName()==null || image.getName().equals(""))
+//						image.setName(name);
+//					if(p.getSizeX() ==null || p.getSizeX().equals(""))
+//						p.setSizeX(dimX);
+//					if(p.getSizeY() ==null || p.getSizeY().equals(""))
+//						p.setSizeY(dimY);
+//					if(p.getSizeZ() ==null || p.getSizeZ().equals(""))
+//						p.setSizeZ(dimZ);
+//					if(p.getSizeT() ==null || p.getSizeT().equals(""))
+//						p.setSizeT(dimT);
+//					if(p.getSizeC() ==null || p.getSizeC().equals(""))
+//						p.setSizeC(dimC);
+//					if(p.getType()==null ) p.setType(type);
+//					if(image.getAcquisitionDate()==null) image.setAcquisitionDate(stamp);
+//					if(p.getTimeIncrement()==null) p.setTimeIncrement(timeInc);
+//					if(p.getPhysicalSizeX()==null) p.setPhysicalSizeX(pixelSizeX);
+//					if(p.getPhysicalSizeY()==null) p.setPhysicalSizeY(pixelSizeY);
+//					LOGGER.info("[DATA] complete IMAGE data");
+//				}
+//			}
+//		}else if(img!=null){
+//			LOGGER.info("[DATA] add IMAGE data");
+//			image=img;
+//		}
+//			
+//		setGUIData();
+//		return conflicts;
+//	}
+	
+
 	public boolean addData(Image img, boolean overwrite)
 	{
 		boolean conflicts=false;
-		if(image!=null){
-			if(img!=null){
-				String name=img.getName();
-				PositiveInteger dimX=img.getPixels().getSizeX();
-				PositiveInteger dimY=img.getPixels().getSizeY();
-				PositiveInteger dimZ=img.getPixels().getSizeZ();
-				PositiveInteger dimT=img.getPixels().getSizeT();
-				PositiveInteger dimC=img.getPixels().getSizeC();
-				PixelType type=img.getPixels().getType();
-				Time timeInc=img.getPixels().getTimeIncrement();
-				Timestamp stamp=img.getAcquisitionDate();
-				Length pixelSizeX=img.getPixels().getPhysicalSizeX();
-				Length pixelSizeY=img.getPixels().getPhysicalSizeY();
-//				//TODO stagePos,wellNr,expRef
-				Pixels p=image.getPixels();
-				
-				if(overwrite){
-					if(img.getID()!=null && !img.getID().equals(""))
-						image.setID(img.getID());
-					if(name!=null && !name.equals("")) image.setName(name);
-					if(dimX!=null && !dimX.toString().equals("")) p.setSizeX(dimX);
-					if(dimY!=null && !dimY.toString().equals("")) p.setSizeX(dimY);
-					if(dimZ!=null && !dimZ.toString().equals("")) p.setSizeX(dimZ);
-					if(dimT!=null && !dimT.toString().equals("")) p.setSizeX(dimT);
-					if(dimC!=null && !dimC.toString().equals("")) p.setSizeX(dimC);
-					if(type!=null && !type.toString().equals("")) p.setType(type);
-					//TODO test ifEmpty
-					if(timeInc!=null) p.setTimeIncrement(timeInc);
-					if(stamp!=null) image.setAcquisitionDate(stamp);
-					if(pixelSizeX!=null) p.setPhysicalSizeX(pixelSizeX);
-					if(pixelSizeY!=null) p.setPhysicalSizeY(pixelSizeY);
-					
-					LOGGER.info("[DATA] overwrite IMAGE data");
-				}else{
-					if(image.getID()==null || image.getID().equals(""))
-						image.setID(img.getID());
-					if(image.getName()==null || image.getName().equals(""))
-						image.setName(name);
-					if(p.getSizeX() ==null || p.getSizeX().equals(""))
-						p.setSizeX(dimX);
-					if(p.getSizeY() ==null || p.getSizeY().equals(""))
-						p.setSizeY(dimY);
-					if(p.getSizeZ() ==null || p.getSizeZ().equals(""))
-						p.setSizeZ(dimZ);
-					if(p.getSizeT() ==null || p.getSizeT().equals(""))
-						p.setSizeT(dimT);
-					if(p.getSizeC() ==null || p.getSizeC().equals(""))
-						p.setSizeC(dimC);
-					if(p.getType()==null ) p.setType(type);
-					if(image.getAcquisitionDate()==null) image.setAcquisitionDate(stamp);
-					if(p.getTimeIncrement()==null) p.setTimeIncrement(timeInc);
-					if(p.getPhysicalSizeX()==null) p.setPhysicalSizeX(pixelSizeX);
-					if(p.getPhysicalSizeY()==null) p.setPhysicalSizeY(pixelSizeY);
-					LOGGER.info("[DATA] complete IMAGE data");
-				}
+		if(overwrite){
+			replaceData(img);
+			LOGGER.info("[DATA] -- replace IMAGE data");
+		}else
+			try {
+				completeData(img);
+				LOGGER.info("[DATA] -- complete IMAGE data");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}else if(img!=null){
-			LOGGER.info("[DATA] add IMAGE data");
-			image=img;
-		}
-			
 		setGUIData();
 		return conflicts;
+	}
+	
+	private void replaceData(Image i)
+	{
+		if(i!=null){
+			image=i;
+			
+		}
+	}
+	
+	private void completeData(Image i) throws Exception
+	{
+		//copy input fields
+		Image copyIn=null;
+		if(image!=null){
+			getData();
+			copyIn=new Image(image);
+		}
+
+		replaceData(i);
+
+		// set input field values again
+		if(copyIn!=null){
+			String name=copyIn.getName();
+			PositiveInteger dimX=copyIn.getPixels().getSizeX();
+			PositiveInteger dimY=copyIn.getPixels().getSizeY();
+			PositiveInteger dimZ=copyIn.getPixels().getSizeZ();
+			PositiveInteger dimT=copyIn.getPixels().getSizeT();
+			PositiveInteger dimC=copyIn.getPixels().getSizeC();
+			PixelType type=copyIn.getPixels().getType();
+			Time timeInc=copyIn.getPixels().getTimeIncrement();
+			Timestamp stamp=copyIn.getAcquisitionDate();
+			Length pixelSizeX=copyIn.getPixels().getPhysicalSizeX();
+			Length pixelSizeY=copyIn.getPixels().getPhysicalSizeY();
+//			//TODO stagePos,wellNr,expRef
+			Pixels p=image.getPixels();
+			
+			if(name!=null && !name.equals("")) image.setName(name);
+			if(dimX!=null && !dimX.toString().equals("")) p.setSizeX(dimX);
+			if(dimY!=null && !dimY.toString().equals("")) p.setSizeX(dimY);
+			if(dimZ!=null && !dimZ.toString().equals("")) p.setSizeX(dimZ);
+			if(dimT!=null && !dimT.toString().equals("")) p.setSizeX(dimT);
+			if(dimC!=null && !dimC.toString().equals("")) p.setSizeX(dimC);
+			if(type!=null && !type.toString().equals("")) p.setType(type);
+			//TODO test ifEmpty
+			if(timeInc!=null) p.setTimeIncrement(timeInc);
+			if(stamp!=null) image.setAcquisitionDate(stamp);
+			if(pixelSizeX!=null) p.setPhysicalSizeX(pixelSizeX);
+			if(pixelSizeY!=null) p.setPhysicalSizeY(pixelSizeY);
+			
+			
+		}
 	}
 	
 	
