@@ -8,6 +8,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 
 import loci.formats.meta.IMetadata;
 import ome.specification.XMLWriter;
@@ -42,22 +43,25 @@ public class SaveMetadata
 	public SaveMetadata(OME _ome,MetaDataModel _model, IMetadata _store, File srcImage)
 	{
 		try{
-		ome=_ome;
-		model=_model;
-		omexmlMeta=_store;
-		
-		omeStore=new OMEStore(ome);
-		
-		FileAnnotation annotation = new FileAnnotation();
-//		annotation.setName(srcImage.getName());
-//		annotation.setFile(srcImage);
-		
-		// save xml in *.ome under same name and path like srcImage
-		srcImageFName=FilenameUtils.removeExtension(srcImage.getAbsolutePath());
-		linkFile=srcImage.getName();
+			ome=_ome;
+			model=_model;
+			omexmlMeta=_store;
+
+			omeStore=new OMEStore(ome);
+
+			FileAnnotation annotation = new FileAnnotation();
+			//		annotation.setName(srcImage.getName());
+			//		annotation.setFile(srcImage);
+
+			// save xml in *.ome under same name and path like srcImage
+			srcImageFName=FilenameUtils.removeExtension(srcImage.getAbsolutePath());
+			linkFile=srcImage.getName();
 		}catch (Exception err){
+			String name= srcImage!=null ? srcImage.getAbsolutePath() : "";
 			LOGGER.severe("[SAVE] corrupted save data: ");
-			err.printStackTrace();
+			ExceptionDialog ld = new ExceptionDialog("Invalid Data Error!", 
+					"Corrupted data : "+name,err);
+			ld.setVisible(true);
 		}
 		
 	}
@@ -173,6 +177,10 @@ public class SaveMetadata
 						}else if(!lSett.getID().equals(thisLightSrc.getID())){
 							LOGGER.severe("[SAVE] wrong LIGHTSOURCE reference at CHANNEL "+thisChannel.getName()+": "+
 									lSett.getID()+" - "+thisLightSrc.getID());
+							ExceptionDialog ld = new ExceptionDialog("Link LightSource Error!", 
+									"Wrong lightsource reference at channel "+thisChannel.getName()+": "+
+										lSett.getID()+" - "+thisLightSrc.getID());
+							ld.setVisible(true);
 						}else{
 							omeStore.storeLightSrcSettings(lSett,thisChannel);
 						}
@@ -191,6 +199,10 @@ public class SaveMetadata
 						}else if(!dSett.getID().equals(thisDetector.getID())){
 							LOGGER.severe("[SAVE] wrong DETECTOR reference at CHANNEL "+thisChannel.getName()+": "+
 									dSett.getID()+" - "+thisDetector.getID());
+							ExceptionDialog ld = new ExceptionDialog("Link Detector Error!", 
+									"Wrong detector reference at channel "+thisChannel.getName()+": "+
+										dSett.getID()+" - "+thisDetector.getID());
+							ld.setVisible(true);
 						}else{
 							omeStore.storeDetectorSettings(dSett,thisChannel);
 						}

@@ -153,6 +153,12 @@ class LightSourceComponent
             key = (String) entry.getKey();
             set = !notSet.contains(key);
             value = entry.getValue();
+            
+            if(value!=null)
+            	System.out.println("[DEBUG INSIGHT] transformLightSrc: "+key+" = "+value.toString());
+            else
+            	System.out.println("[DEBUG INSIGHT] transformLightSrc: "+key+" = null");
+            
             label = UIUtilities.setTextFont(key, Font.BOLD, sizeLabel);
             label.setBackground(UIUtilities.BACKGROUND_COLOR);
             if (LightSourceData.LASER.equals(kind)) {

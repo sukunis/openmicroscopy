@@ -13,6 +13,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -84,6 +85,9 @@ public class UOSProfileReader
 			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			LOGGER.severe("[VIEW_PROP] Can't read property file");
+			ExceptionDialog ld = new ExceptionDialog("Property File Error!", 
+					"Can't read given property file "+file.getAbsolutePath(),e);
+			ld.setVisible(true);
 		} 
 	}
 	

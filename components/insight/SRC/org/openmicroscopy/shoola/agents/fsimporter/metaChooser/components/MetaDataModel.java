@@ -431,7 +431,7 @@ public class MetaDataModel
 				res=dUI.getData();
 				DetectorSettings dSett=getDetectorSettings(index);
 				// check if this detector is linked to channel
-				if(!detectorIsLinkedToChannel(dSett, res.getID())){
+				if(res!=null && !detectorIsLinkedToChannel(dSett, res.getID())){
 					LOGGER.info("[DEBUG] detector is not linked");
 					if(imageOME!=null){
 						if(imageOME.getLinkedInstrument()==null ){
@@ -627,7 +627,7 @@ public class MetaDataModel
 				res=lUI.getData();
 				LightSourceSettings lSett=getLightSourceSettings(index);
 				// check if this detector is linked to channel
-				if(!lightSrcIsLinkedToChannel(lSett, res.getID())){
+				if(res!=null && !lightSrcIsLinkedToChannel(lSett, res.getID())){
 					LOGGER.info("[DEBUG] lightSrc is not linked");
 					if(imageOME!=null){
 						if(imageOME.getLinkedInstrument()==null ){
@@ -729,7 +729,7 @@ public class MetaDataModel
 			res=((ObjectiveCompUI) objectiveUI).getData();
 			ObjectiveSettings oSett=getObjectiveSettings();
 			// check if this objective is linked to image
-			if(!objectiveIsLinkedToImage(oSett,res.getID())){
+			if(res!=null && !objectiveIsLinkedToImage(oSett,res.getID())){
 				LOGGER.info("[DEBUG] objective is not linked");
 				if(imageOME!=null){
 					 if(imageOME.getLinkedInstrument()==null ){

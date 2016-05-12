@@ -284,8 +284,8 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 			createDummyPane(inactive);
 		else{
 		clearDataValues();
-		if(lightSrc==null && list!=null && list.size()>0)
-			createNewElement();
+//		if(lightSrc==null && list!=null && list.size()>0)
+//			createNewElement();
 		for(int i=0; i<list.size();i++){
 			TagConfiguration t=list.get(i);
 			String name=t.getName();
@@ -296,9 +296,13 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 				switch (name) {
 				case TagNames.SET_WAVELENGTH:
 					try {
+						if(val!=null){
 						Length value = parseToLength(val, t.getUnit());
 						setWavelength(value, prop);
-						lightSrc.setWavelength(value);
+						}else{
+							setWavelength(null, prop);
+						}
+//						lightSrc.setWavelength(value);
 					} catch (Exception e) {
 						setWavelength(null, prop);
 					}
@@ -306,9 +310,13 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 					break;
 				case TagNames.ATTENUATION:
 					try{
+						if(val!=null){
 						PercentFraction value=parseAttenuation(val);
 					setAttenuation(value, prop);
-					lightSrc.setAttenuation(value);
+						}else{
+							setAttenuation(null, prop);
+						}
+//					lightSrc.setAttenuation(value);
 					}catch(Exception e){
 						setAttenuation(null, prop);
 					}

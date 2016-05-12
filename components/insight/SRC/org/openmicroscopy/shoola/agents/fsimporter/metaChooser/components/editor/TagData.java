@@ -46,6 +46,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ScrollablePanel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.util.ui.UIUtilities;
 
 public class TagData 
@@ -373,10 +374,14 @@ public class TagData
 		switch (type) {
 		case ARRAYFIELDS:
 			Component comp=inputField.getComponent(index);
-			if(comp instanceof JTextField)
+			if(comp instanceof JTextField){
 				val=((JTextField) comp).getText();
-			else
+			}else{
+				ExceptionDialog ld = new ExceptionDialog("Tag Data Parse Error!", 
+						"Can't parse tag value of "+label.getText());
+				ld.setVisible(true);
 				LOGGER.severe("can't get value at "+index+" ");
+			}
 
 		default:
 			getTagValue();
@@ -497,7 +502,9 @@ public class TagData
 			val=DateTools.formatDate(((JTextField)inputField).getText(), DateTools.TIMESTAMP_FORMAT);
 		}catch(Exception e){
 			LOGGER.severe("Wrong string input format timestamp: "+val);
-			e.printStackTrace();
+			ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
+					"Wrong timestamp format at input at "+label.getText(),e);
+			ld.setVisible(true);
 		}
 		return val;
 	}
@@ -526,6 +533,9 @@ public class TagData
 			} catch (ParseException e1) {
 				// TODO Auto-generated catch block
 				LOGGER.severe("Parse error date for format "+dateformat);
+				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
+						"Wrong timestamp format at input at "+label.getText(),e1);
+				ld.setVisible(true);
 			}
 			
 			try {
@@ -534,6 +544,9 @@ public class TagData
 				((JTextField) inputField).setText( f.format(d));
 			} catch (Exception e) {
 				LOGGER.severe("Parse error for timestamp");
+				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
+						"Wrong timestamp format at input at "+label.getText(),e);
+				ld.setVisible(true);
 			}
 			
 		}

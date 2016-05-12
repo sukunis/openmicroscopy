@@ -922,7 +922,8 @@ public class LightSourceCompUI extends ElementsCompUI
 			LOGGER.severe("[DATA] can't read LIGHTSRC model input");
 		}
 		try{
-			((Laser)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
+			if(power.getTagValue()!=null)
+				((Laser)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.severe("[DATA] can't read LIGHTSRC power input");
 		}
@@ -978,8 +979,8 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	public static Frequency parseFrequency(String c,Unit<Frequency> unit) throws Exception
 	{
-//		if(c==null || c.equals(""))
-//			return null;
+		if(c==null || c.equals(""))
+			return null;
 //		
 //		LOGGER.info("[DEBUG] parse: unit= "+unit.getSymbol());
 //		
@@ -1029,8 +1030,8 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	public static Power parsePower(String c,Unit<Power> unit) throws Exception
 	{
-//		if(c==null || c.equals(""))
-//			return null;
+		if(c==null || c.equals(""))
+			return null;
 //		if(unit==null)
 //			unit=powerUnit;
 		
@@ -1344,8 +1345,8 @@ public class LightSourceCompUI extends ElementsCompUI
 			createDummyPane(inactive);
 		else{
 			clearDataValues();
-			if(lightSrc==null && list!=null && list.size()>0)
-				createNewElement();
+//			if(lightSrc==null && list!=null && list.size()>0)
+//				createNewElement();
 			for(int i=0; i<list.size();i++){
 				TagConfiguration t=list.get(i);
 				String name=t.getName();
@@ -1356,19 +1357,23 @@ public class LightSourceCompUI extends ElementsCompUI
 					switch (name) {
 					case TagNames.MODEL:
 						setModel(val, prop);
-						lightSrc.setModel(val);
+//						lightSrc.setModel(val);
 						model.setVisible(true);
 						break;
 					case TagNames.MANUFAC:
 						setManufact(val, prop);
-						lightSrc.setManufacturer(val);
+//						lightSrc.setManufacturer(val);
 						manufact.setVisible(true);
 						break;
 					case TagNames.L_TYPE:
 						try{
+							if(val!=null){
 							LaserType value=parseLaserType(val);
 							setType(value, prop);
-							((Laser)lightSrc).setType(value);
+							}else{
+								setType((LaserType)null,prop);
+							}
+//							((Laser)lightSrc).setType(value);
 						}catch(Exception e){
 							setType((LaserType)null,prop);
 						}
@@ -1376,9 +1381,13 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.A_TYPE:
 						try{
+							if(val!=null){							
 							ArcType value=parseArcType(val);
 							setType(value, prop);
-							((Arc)lightSrc).setType(value);
+							}else{
+								setType((ArcType)null,prop);
+							}
+//							((Arc)lightSrc).setType(value);
 						}catch(Exception e){
 							setType((ArcType)null,prop);
 						}
@@ -1386,9 +1395,13 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.F_TYPE:
 						try{
+							if(val!=null){
 							FilamentType value=parseFilamentType(val);
 							setType(value, prop);
-							((Filament)lightSrc).setType(value);
+							}else{
+								setType((FilamentType)null,prop);
+							}
+//							((Filament)lightSrc).setType(value);
 						}catch(Exception e){
 							setType((FilamentType)null,prop);
 						}
@@ -1396,9 +1409,13 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.POWER:
 						try{
-							Power value = parsePower(val, t.getUnit());
+							
+							if(val!=null){Power value = parsePower(val, t.getUnit());
 						setPower(value, prop);
-						lightSrc.setPower(value);
+							}else{
+								setPower(null, prop);
+							}
+//						lightSrc.setPower(value);
 						}catch(Exception e){
 							setPower(null, prop);
 						}
@@ -1406,9 +1423,13 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.MEDIUM:
 						try {
+							if(val!=null){
 							LaserMedium value=parseMedium(val);
 							setMedium(value,prop);
-							((Laser)lightSrc).setLaserMedium(value);
+							}else{
+								setMedium(null, prop);
+							}
+//							((Laser)lightSrc).setLaserMedium(value);
 						} catch (Exception e) {
 							setMedium(null, prop);
 						}
@@ -1416,9 +1437,13 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.FREQMUL:
 						try {
+							if(val!=null){
 							PositiveInteger value=parseToPositiveInt(val);
 							setFreqMultiplication(value, prop);
-							((Laser)lightSrc).setFrequencyMultiplication(value);
+							}else{
+								setFreqMultiplication(null, prop);
+							}
+//							((Laser)lightSrc).setFrequencyMultiplication(value);
 						} catch (Exception e) {
 							setFreqMultiplication(null, prop);
 						}
@@ -1426,8 +1451,12 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.TUNABLE:
 						try {
+							if(val!=null){
 							setTunable(val, prop);
-							((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(val));
+							}else{
+								setTunable((String)null, prop);
+							}
+//							((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(val));
 						} catch (Exception e) {
 							setTunable((String)null, prop);
 						}
@@ -1435,9 +1464,13 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.PULSE:
 						try {
+							if(val!=null){
 							Pulse value=parsePulse(val);
 							setPulse(value, prop);
-							((Laser)lightSrc).setPulse(value);
+							}else{
+								setPulse(null,prop);
+							}
+//							((Laser)lightSrc).setPulse(value);
 						} catch (Exception e) {
 							setPulse(null,prop);
 						}
@@ -1445,8 +1478,12 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.POCKELCELL:
 						try {
+							if(val!=null){
 							setPocketCell(BooleanUtils.toBoolean(val), prop);
-							((Laser)lightSrc).setPockelCell(BooleanUtils.toBoolean(val));
+							}else{
+								setPocketCell(null, prop);
+							}
+//							((Laser)lightSrc).setPockelCell(BooleanUtils.toBoolean(val));
 						} catch (Exception e) {
 							setPocketCell(null, prop);
 						}
@@ -1454,10 +1491,13 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.REPRATE:
 						try {
-							
+							if(val!=null){
 							Frequency value=parseFrequency(val, t.getUnit());
 							setRepititationRate(value, prop);
-							((Laser)lightSrc).setRepetitionRate(value);
+							}else{
+								setRepititationRate(null, prop);
+							}
+//							((Laser)lightSrc).setRepetitionRate(value);
 						} catch (Exception e) {
 							setRepititationRate(null, prop);
 						}
@@ -1465,8 +1505,11 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.PUMP:
 						try {
-							
+							if(val!=null){
 							setPump(val, prop);
+							}else{
+								setPump(null, prop);
+							}
 //							TODO: ((Laser)lightSrc).linkPump(o);
 						} catch (Exception e) {
 							setPump(null, prop);
@@ -1475,9 +1518,13 @@ public class LightSourceCompUI extends ElementsCompUI
 						break;
 					case TagNames.WAVELENGTH:
 						try {
+							if(val!=null){
 							Length value = parseToLength(val, t.getUnit());
 							setWavelength(value, prop);
-							((Laser)lightSrc).setWavelength(value);
+							}else{
+								setWavelength(null, prop);
+							}
+//							((Laser)lightSrc).setWavelength(value);
 						} catch (Exception e) {
 							setWavelength(null, prop);
 						}

@@ -362,8 +362,8 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 			createDummyPane(inactive);
 		else{
 		clearDataValues();
-		if(detectorSett==null && list!=null && list.size()>0)
-			createNewElement();
+//		if(detectorSett==null && list!=null && list.size()>0)
+//			createNewElement();
 		for(int i=0; i<list.size();i++){
 			TagConfiguration t=list.get(i);
 			String name=t.getName();
@@ -374,9 +374,13 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 				switch (name) {
 				case TagNames.GAIN:
 					try{
+						if(val!=null){
 						Double value=parseToDouble(val);
 						setGain(value, prop);
-						detectorSett.setGain(value);
+//						detectorSett.setGain(value);
+						}else{
+							setGain(null,OPTIONAL);
+						}
 					}
 					catch(Exception e){
 						setGain(null,OPTIONAL);
@@ -385,8 +389,13 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					break;
 				case TagNames.VOLTAGE:
 					try{
-						ElectricPotential value=new ElectricPotential(Double.valueOf(val), t.getUnit());
-						detectorSett.setVoltage(value);
+						if(val!=null){
+							ElectricPotential value=new ElectricPotential(Double.valueOf(val), t.getUnit());
+							setVoltage(value, prop);
+						}else{
+							setVoltage(null, OPTIONAL);
+						}
+//						detectorSett.setVoltage(value);
 					}
 					catch(Exception e){
 						setVoltage(null, OPTIONAL);
@@ -395,8 +404,12 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					break;
 				case TagNames.OFFSET:
 					try{
+						if(val!=null){
 						setOffset(Double.valueOf(val), prop);
-						detectorSett.setOffset(Double.valueOf(val));
+						}else{
+							setOffset(null, OPTIONAL);
+						}
+//						detectorSett.setOffset(Double.valueOf(val));
 					}
 					catch(Exception e){
 						setOffset(null, OPTIONAL);
@@ -405,9 +418,13 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					break;
 				case TagNames.CONFZOOM:
 					try{
+						if(val!=null){
 						Double value=parseToDouble(val);
 					setConfocalZoom(value, prop);
-					detectorSett.setZoom(value);
+						}else{
+							setConfocalZoom(null, prop);
+						}
+//					detectorSett.setZoom(value);
 					}catch(Exception e){
 						setConfocalZoom(null, prop);
 					}
@@ -415,9 +432,13 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					break;
 				case TagNames.BINNING:
 					try{
+						if(val!=null){
 						Binning value=parseBinning(val);
 						setBinning(value, prop);
-						detectorSett.setBinning(value);
+						}else{
+							setBinning(null, prop);
+						}
+//						detectorSett.setBinning(value);
 					}catch(Exception e){
 						setBinning(null, prop);
 					}

@@ -339,9 +339,10 @@ public class DetectorCompUI extends ElementsCompUI
 	
 	private void readGUIInput() throws Exception
 	{
-		
+		LOGGER.info("[DATA] -- read gui input detector");
 		if(detector==null)
 			createNewElement();
+		
 		try{
 		detector.setModel(model.getTagValue().equals("")?
 				null : model.getTagValue());
@@ -441,45 +442,6 @@ public class DetectorCompUI extends ElementsCompUI
 
 	}
 	
-//	public void showOptionPane() 
-//	{
-//		JButton newBtn=new JButton("New...");
-//		newBtn.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				createNewElem();
-//				
-//			}
-//		});
-//		
-//		JButton selectBtn=new JButton("Select from data...");
-//		if(availableDetectors==null || availableDetectors.isEmpty())
-//			selectBtn.setEnabled(false);
-//		JButton addBtn=new JButton("Select from system...");
-//		addBtn.setEnabled(false);
-//		
-//		GridBagConstraints c = new GridBagConstraints();
-//		c.anchor = GridBagConstraints.WEST;
-//		c.gridwidth = GridBagConstraints.REMAINDER;     //end row
-//		c.fill = GridBagConstraints.HORIZONTAL;
-//		c.weightx = 1.0;
-//		
-//		globalPane.add(newBtn,c);
-//		globalPane.add(selectBtn,c);
-//		globalPane.add(addBtn,c);
-//		
-//	}
-	
-	private void createNewElem()
-	{
-		globalPane.removeAll();
-    	globalPane.setLayout(gridbag);
-    	createDummyPane(false);
-    	buildComponents();   
-    	revalidate();
-    	repaint();
-	}
-	
-	
 	
 	public void createDummyPane(boolean inactive)
 	{
@@ -513,8 +475,6 @@ public class DetectorCompUI extends ElementsCompUI
 			createDummyPane(inactive);
 		else{
 			clearDataValues();
-			if(detector==null && list!=null && list.size()>0)
-				createNewElement();
 			for(int i=0; i<list.size();i++){
 				TagConfiguration t=list.get(i);
 				String name=t.getName();
@@ -525,29 +485,39 @@ public class DetectorCompUI extends ElementsCompUI
 					switch (name) {
 					case TagNames.MODEL: 
 						try{
-							setModel(val,prop);
-							detector.setModel(val);
+							if(val!=null){
+								setModel(val,prop);
+								setFields=true;
+							}else{
+								setModel(null,OPTIONAL);
+							}
 						}
 						catch(Exception e){
 							setModel(null,OPTIONAL);
 						}
 						model.setVisible(true);
+					
 						break;
 					case TagNames.MANUFAC: 
 						try{
-							setManufact(val, prop);
-							detector.setManufacturer(val);
+							if(val!=null){
+								setManufact(val, prop);
+								setFields=true;
+							}else{
+								setManufact(null, OPTIONAL);
+							}
 						}
 						catch(Exception e){
 							setManufact(null, OPTIONAL);
 						}
 						manufact.setVisible(true);
+						
 						break;
 					case TagNames.TYPE:
 						try{
 							DetectorType value= DetectorType.fromString(val);
 							setType(value, prop);
-							detector.setType(value);
+							setFields=true;
 						}
 						catch(Exception e){
 							setType(null,OPTIONAL);
@@ -557,7 +527,7 @@ public class DetectorCompUI extends ElementsCompUI
 					case TagNames.ZOOM:
 						try{
 							setZoom(Double.valueOf(val), prop);
-							detector.setZoom(Double.valueOf(val));
+							setFields=true;
 						}
 						catch(Exception e){
 							setZoom(null, OPTIONAL);
@@ -567,7 +537,7 @@ public class DetectorCompUI extends ElementsCompUI
 					case TagNames.AMPLGAIN:
 						try{
 							setAmplGain(Double.valueOf(val), prop);
-							detector.setZoom(Double.valueOf(val));
+							setFields=true;
 						}
 						catch(Exception e){
 							setAmplGain(null, OPTIONAL);

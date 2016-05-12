@@ -514,8 +514,8 @@ public class ObjectiveCompUI extends ElementsCompUI
 			createDummyPane(inactive);
 		else{
 			clearDataValues();
-			if(objective==null && taglist!=null && taglist.size()>0)
-				createNewElement();
+//			if(objective==null && taglist!=null && taglist.size()>0)
+//				createNewElement();
 			for(int i=0; i<taglist.size();i++){
 				TagConfiguration t=taglist.get(i);
 				String name=t.getName();
@@ -527,18 +527,21 @@ public class ObjectiveCompUI extends ElementsCompUI
 					case TagNames.MODEL:
 						setModel(val,prop);
 						model.setVisible(true);
-						objective.setModel(val);
+//						objective.setModel(val);
 						break;
 					case TagNames.MANUFAC:
 						setManufact(val,prop);
 						manufact.setVisible(true);
-						objective.setManufacturer(val);
+//						objective.setManufacturer(val);
 						break;
 					case TagNames.NOMMAGN:
 						try{
+							if(val!=null){
 							setNomMagnification(Double.valueOf(val), prop);
-							
-							objective.setNominalMagnification(Double.valueOf(val));
+							}else{
+								setNomMagnification(null, prop);
+							}
+//							objective.setNominalMagnification(Double.valueOf(val));
 						}catch(Exception e){
 							setNomMagnification(null, prop);
 						}
@@ -546,9 +549,12 @@ public class ObjectiveCompUI extends ElementsCompUI
 						break;
 					case TagNames.CALMAGN:
 						try{
+							if(val!=null){
 							setCalMagnification(Double.valueOf(val), prop);
-							
-							objective.setCalibratedMagnification(Double.valueOf(val));
+							}else{
+								setCalMagnification(null,prop);
+							}
+//							objective.setCalibratedMagnification(Double.valueOf(val));
 						}catch(Exception e){
 							setCalMagnification(null,prop);
 						}
@@ -556,9 +562,12 @@ public class ObjectiveCompUI extends ElementsCompUI
 						break;
 					case TagNames.LENSNA:
 						try{
+							if(val!=null){
 							setLensNA(Double.valueOf(val), prop);
-							
-							objective.setLensNA(Double.valueOf(val));
+							}else{
+								setLensNA(null,prop);
+							}
+//							objective.setLensNA(Double.valueOf(val));
 						}catch(Exception e){
 							setLensNA(null,prop);
 						}
@@ -566,10 +575,13 @@ public class ObjectiveCompUI extends ElementsCompUI
 						break;
 					case TagNames.IMMERSION:
 						try {
-							Immersion im=Immersion.fromString(val);
-							setImmersion(im, prop);
-							
-							objective.setImmersion(im);
+							if(val!=null){
+								Immersion im=Immersion.fromString(val);
+								setImmersion(im, prop);
+							}else{
+								setImmersion(null, prop);
+							}
+							//							objective.setImmersion(im);
 						} catch (EnumerationException e) {
 							setImmersion(null, prop);
 						}
@@ -577,9 +589,13 @@ public class ObjectiveCompUI extends ElementsCompUI
 						break;
 					case TagNames.CORRECTION:
 						try {
-							Correction co = Correction.fromString(val);
-							setCorrection(co, prop);
-							objective.setCorrection(co);
+							if(val!=null){
+								Correction co = Correction.fromString(val);
+								setCorrection(co, prop);
+							}else{
+								setCorrection(null, prop);
+							}
+							//							objective.setCorrection(co);
 						} catch (EnumerationException e) {
 							setCorrection(null, prop);
 						}
@@ -587,10 +603,14 @@ public class ObjectiveCompUI extends ElementsCompUI
 						break;
 					case TagNames.WORKDIST:
 						try{
-							Length l= new Length(new Double(val), t.getUnit());
-							setWorkingDist(l, prop);
-							
-							objective.setWorkingDistance(l);
+
+							if(val!=null){
+								Length l= new Length(new Double(val), t.getUnit());
+								setWorkingDist(l, prop);
+							}else{
+								setWorkingDist(null,prop);
+							}
+							//							objective.setWorkingDistance(l);
 						}catch(Exception e){
 							setWorkingDist(null,prop);
 						}
@@ -602,7 +622,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 				}
 			}
 		}
-		
+
 		if(inactive){
 			model.setEnable(false);
 			manufact.setEnable(false);

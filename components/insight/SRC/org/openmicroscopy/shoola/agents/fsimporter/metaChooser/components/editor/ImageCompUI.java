@@ -490,8 +490,8 @@ public class ImageCompUI extends ElementsCompUI
 			createDummyPane(inactive);
 		else{
 			clearDataValues();
-			if(image==null && list!=null && list.size()>0)
-				createNewElement();
+//			if(image==null && list!=null && list.size()>0)
+//				createNewElement();
 			for(int i=0; i<list.size();i++){
 				TagConfiguration t=list.get(i);
 				String name=t.getName();

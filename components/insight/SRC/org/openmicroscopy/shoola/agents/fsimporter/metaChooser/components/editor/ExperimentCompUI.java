@@ -511,8 +511,8 @@ public class ExperimentCompUI extends ElementsCompUI
 			createDummyPane(inactive);
 		else{
 		clearDataValues();
-		if(experiment==null && list!=null && list.size()>0)
-			createNewElement();
+//		if(experiment==null && list!=null && list.size()>0)
+//			createNewElement();
 		for(int i=0; i<list.size();i++){
 			TagConfiguration t=list.get(i);
 			String name=t.getName();
@@ -523,9 +523,13 @@ public class ExperimentCompUI extends ElementsCompUI
 				switch (name) {
 				case TagNames.TYPE:
 					try{
+						if(val!=null){
 						ExperimentType value= getExperimentType(val);
 						setType(value, prop);
-						experiment.setType(value);
+						}else{
+							setType(null, prop);
+						}
+//						experiment.setType(value);
 					}catch(Exception e){
 						setType(null, prop);
 					}
@@ -533,8 +537,12 @@ public class ExperimentCompUI extends ElementsCompUI
 					break;
 				case TagNames.DESC:
 					try{
+						if(val!=null){
 						setDescription(val, prop);
-						experiment.setDescription(val);
+						}else{
+							setDescription(null, prop);
+						}
+//						experiment.setDescription(val);
 					}catch(Exception e){
 						setDescription(null, prop);
 					}

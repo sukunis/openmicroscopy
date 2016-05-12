@@ -76,6 +76,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.SampleCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotation;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 
 public class MetaDataUI extends JPanel
 {
@@ -461,7 +462,9 @@ public class MetaDataUI extends JPanel
 
 			}catch(Exception e){
 				LOGGER.severe("[DATA] CAN'T read METADATA");
-				e.printStackTrace();
+				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+						"Can't read given metadata  from "+file.getAbsolutePath(),e);
+				ld.setVisible(true);
 			}
 		}else{
 			LOGGER.warning("[DATA] NOT available METADATA ");
@@ -490,6 +493,9 @@ public class MetaDataUI extends JPanel
 				LOGGER.info("[DATA] load PLANE");
 			}catch(Exception e){
 				LOGGER.severe("[DATA] PLANE data load failed");
+				ExceptionDialog ld = new ExceptionDialog("Plane Data Error!", 
+						"Can't read plane data from file "+file.getAbsolutePath(),e);
+				ld.setVisible(true);
 			}
 		}
 	}
@@ -610,6 +616,14 @@ public class MetaDataUI extends JPanel
 						l=lightSources.get(idx);
 						dataAvailable=true;
 					}
+				}else{
+					// if only one lightSrc in instruments available, show this
+					if(lightSources.size()==1){
+						l=lightSources.get(0);
+						dataAvailable=true;
+					}else{
+						LOGGER.info("[DATA] -- more than one unlinked lightSrc available");
+					}
 				}
 
 				LightSourceCompUI lUI=null;
@@ -663,6 +677,14 @@ public class MetaDataUI extends JPanel
 					if(idx!=-1){
 						d=detectors.get(idx);
 						dDataAvailable=true;
+					}
+				}else{
+					// if only one detector in instruments available, show this
+					if(detectors.size()==1){
+						d=detectors.get(0);
+						dDataAvailable=true;
+					}else{
+						LOGGER.info("[DATA] -- more than one unlinked detectors available");
 					}
 				}
 
@@ -760,10 +782,18 @@ public class MetaDataUI extends JPanel
 					o=objList.get(idx);
 					oDataAvailable=true;
 				}
+			}else{
+				// if only one objective in instruments available, show this
+				if(objList.size()==1){
+					o=objList.get(0);
+					oDataAvailable=true;
+				}else{
+					LOGGER.info("[DATA] -- more than one unlinked objectives available");
+				}
 			}
 			
 			if(!oDataAvailable){
-				LOGGER.info("[DATA] --file: OBJECTIVE data not available");
+				LOGGER.info("[DATA] -- file: OBJECTIVE data not available");
 			}else{
 				oUI.addData(o, false); 
 				oUI.addData(os,false); 
@@ -1044,46 +1074,46 @@ public class MetaDataUI extends JPanel
 //		});
 //	}
 //	
-	private void reloadMetaDataFromFile() throws Exception 
-	{
-		if(file!=null){
-			Cursor cursor=getCursor();
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			
-			
-			
-			ImageReader reader = new ImageReader();
-			//record metadata to ome-xml format
-			ServiceFactory factory=new ServiceFactory();
-			OMEXMLService service = factory.getInstance(OMEXMLService.class);
-			IMetadata metadata =  service.createOMEXMLMetadata();
-			reader.setMetadataStore((MetadataStore) metadata);
+//	private void reloadMetaDataFromFile() throws Exception 
+//	{
+//		if(file!=null){
+//			Cursor cursor=getCursor();
+//			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//			
+//			
+//			
+//			ImageReader reader = new ImageReader();
+//			//record metadata to ome-xml format
+//			ServiceFactory factory=new ServiceFactory();
+//			OMEXMLService service = factory.getInstance(OMEXMLService.class);
+//			IMetadata metadata =  service.createOMEXMLMetadata();
+//			reader.setMetadataStore((MetadataStore) metadata);
+//
+//			try{
+//				reader.setId(file.getAbsolutePath());
+//			}catch(Exception e){
+//				LOGGER.severe("Error read file");
+//				setCursor(cursor);
+//			}
+//			setCursor(cursor);
+//			LOGGER.info("RESET file data : use READER: "+reader.getReader().getClass().getName());
+//
+//			if(metadata!=null){
+//				componentsInit=false;
+//				model=new MetaDataModel();
+//				initModelComponents(customSett.getModules());
+//				control=new MetaDataControl(model);
+//				
+//				readData(metadata, 0);
+////				showData();
+//			}
+//		}
+//	}
 
-			try{
-				reader.setId(file.getAbsolutePath());
-			}catch(Exception e){
-				LOGGER.severe("Error read file");
-				setCursor(cursor);
-			}
-			setCursor(cursor);
-			LOGGER.info("RESET file data : use READER: "+reader.getReader().getClass().getName());
-
-			if(metadata!=null){
-				componentsInit=false;
-				model=new MetaDataModel();
-				initModelComponents(customSett.getModules());
-				control=new MetaDataControl(model);
-				
-				readData(metadata, 0);
-//				showData();
-			}
-		}
-	}
-
-	private void clearData() 
-	{
-		model.clearData();
-	}
+//	private void clearData() 
+//	{
+//		model.clearData();
+//	}
 
 	protected JPanel getButtonPane()
 	{
@@ -1192,6 +1222,9 @@ public class MetaDataUI extends JPanel
 			break;
 		default:
 			LOGGER.severe("[GUI] Unknown position for element");
+			ExceptionDialog ld = new ExceptionDialog("Property File Error!", 
+					"Use unknown position ["+place+"] in given property file.");
+			ld.setVisible(true);
 			break;
 		}
 	}
@@ -1331,19 +1364,33 @@ public class MetaDataUI extends JPanel
 	/**
 	 * 
 	 */
-	public void save() {
-		if(ome!=null && model!=null){
-			model.save();
-//					SaveMetadataUserDefinedUI pane = new SaveMetadataUserDefinedUI(ome,model,null,file);
-//					JDialog diag=createSaveDialog(pane,"Save MetaData", 600,600);
-			if(file!=null){
-				LOGGER.info("[SAVE] save to "+file.getAbsolutePath());
-				SaveMetadata saver=new SaveMetadata(ome, model, null, file);
-				saver.save();
+	public void save() 
+	{
+			if(ome!=null && model!=null){
+				model.save();
+				//					SaveMetadataUserDefinedUI pane = new SaveMetadataUserDefinedUI(ome,model,null,file);
+				//					JDialog diag=createSaveDialog(pane,"Save MetaData", 600,600);
+				if(file!=null){
+					LOGGER.info("[SAVE] save to "+file.getAbsolutePath());
+					SaveMetadata saver=new SaveMetadata(ome, model, null, file);
+					saver.save();
+				}else{
+					LOGGER.severe("[SAVE] no destination file is given");
+					ExceptionDialog ld = new ExceptionDialog("Save File Error!", 
+							"No file is given!");
+					ld.setVisible(true);
+				}
 			}else{
-				LOGGER.severe("[SAVE] no destination file is given");
+				String b1=(ome!=null) ? "available": "not available";
+				String b2=(model!=null) ? "available": "not available";
+				String fileName=file!=null ? file.getName() : "";
+				LOGGER.severe("--CAN'T SAVE "+fileName+" : OME = "+b1+", MODEL = "+b2);
+				ExceptionDialog ld = new ExceptionDialog("Can't save "+fileName+"!",
+						"OME = "+b1+", MODEL = "+b2); 
+
+				ld.setVisible(true);
 			}
-		}
+		
 	}
 	
 	

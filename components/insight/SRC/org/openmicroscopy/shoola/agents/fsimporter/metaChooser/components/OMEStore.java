@@ -7,6 +7,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotation;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 
 import com.drew.metadata.Metadata;
 
@@ -526,6 +527,9 @@ public class OMEStore
 		if(pixels==null){
 			//TODO create new or corrupted data???
 			LOGGER.severe("[SAVE] -- no PIXELS object available");
+			ExceptionDialog ld = new ExceptionDialog("OME Format Error!", 
+					"No pixel element available to save channel.");
+			ld.setVisible(true);
 		}else{
 			int idx = getChannelIndexByID(pixels.copyChannelList(),c.getID());
 			if(idx==-1){
@@ -580,6 +584,9 @@ public class OMEStore
 			}
 		} catch (NumberFormatException e) {
 			LOGGER.severe("[SAVE] -- Wrong Format: "+str);
+			ExceptionDialog ld = new ExceptionDialog("ID Format Error!", 
+					"Wrong id format : "+str,e);
+			ld.setVisible(true);
 		}
 		return index;
 	}

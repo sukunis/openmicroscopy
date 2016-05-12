@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import loci.formats.MetadataTools;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -189,6 +190,9 @@ public class Sample
 
 			}catch(Exception e){//this generic but you can control another types of exception
 				LOGGER.severe("Wrong date format for SAMPLE preparation date");
+				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
+						"Wrong timestamp format",e);
+				ld.setVisible(true);
 				return "";
 			}
 			return dateFormat.format(timestamp);

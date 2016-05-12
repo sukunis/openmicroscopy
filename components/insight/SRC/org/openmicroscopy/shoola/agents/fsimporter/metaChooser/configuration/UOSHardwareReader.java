@@ -47,6 +47,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightSourceCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -136,7 +137,10 @@ public class UOSHardwareReader
 			readConfiguration(doc);
 			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			LOGGER.severe("[VIEW_PROP] Can't read property file");
+			LOGGER.severe("[VIEW_PROP] Can't read hardware file");
+			ExceptionDialog ld = new ExceptionDialog("Hardware File Error!", 
+					"Can't read given hardware file "+file.getAbsolutePath(),e);
+			ld.setVisible(true);
 		} 
 	}
 	

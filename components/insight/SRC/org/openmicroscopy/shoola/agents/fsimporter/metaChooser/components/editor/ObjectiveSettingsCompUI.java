@@ -289,8 +289,8 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 			createDummyPane(inactive);
 		else{
 		clearDataValues();
-		if(oSett==null && list!=null && list.size()>0)
-			createNewElement();
+//		if(oSett==null && list!=null && list.size()>0)
+//			createNewElement();
 		for(int i=0; i<list.size();i++){
 			TagConfiguration t=list.get(i);
 			String name=t.getName();
@@ -301,9 +301,13 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 				switch (name) {
 				case TagNames.CORCOLLAR: 
 					try{
+						if(val!=null){
 						Double value=parseToDouble(val);
 						setCorCollar(value, prop);
-						oSett.setCorrectionCollar(value);
+						}else{
+							setCorCollar(null, prop);
+						}
+//						oSett.setCorrectionCollar(value);
 					}
 					catch(Exception e){
 						setCorCollar(null, prop);
@@ -312,9 +316,13 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 					break;
 				case TagNames.OBJ_MEDIUM: 
 					try{
-						Medium value=parseMedium(val);
-						setMedium(value, prop);
-						oSett.setMedium(value);
+						if(val!=null){
+							Medium value=parseMedium(val);
+							setMedium(value, prop);
+						}else{
+							setMedium(null, prop);	
+						}
+						//						oSett.setMedium(value);
 					}catch(Exception e){
 						setMedium(null, prop);	
 					}
@@ -322,15 +330,19 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 					break;
 				case TagNames.REFINDEX:
 					try{
-						Double value=parseToDouble(val);
-						setRefractIndex(value, prop);
-						oSett.setRefractiveIndex(value);
+						if(val!=null){
+							Double value=parseToDouble(val);
+							setRefractIndex(value, prop);
+						}else{
+							setRefractIndex(null, prop);		
+						}
+						//						oSett.setRefractiveIndex(value);
 					}catch(Exception e){
 						setRefractIndex(null, prop);	
 					}
 					refractIndex.setVisible(true);
 					break;
-					default:LOGGER.warning("[CONF] OBJECTIVE SETT unknown tag: "+name );break;
+				default:LOGGER.warning("[CONF] OBJECTIVE SETT unknown tag: "+name );break;
 				}
 			}
 		}

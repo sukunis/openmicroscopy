@@ -6,6 +6,7 @@ import loci.formats.MetadataTools;
 import ome.xml.model.primitives.Timestamp;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -130,6 +131,9 @@ public class ObservedSample
 			}
 		}
 		}catch(Exception e){
+			ExceptionDialog ld = new ExceptionDialog("Parse Error Observed Sample!", 
+					"Can not parse given observed sample from ome file",e);
+			ld.setVisible(true);
 			LOGGER.severe("Can not parse OBSERVED SAMPLE");
 		}
 	}
