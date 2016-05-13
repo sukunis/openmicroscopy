@@ -435,7 +435,7 @@ public class MetaDataModel
 					LOGGER.info("[DEBUG] detector is not linked");
 					if(imageOME!=null){
 						if(imageOME.getLinkedInstrument()==null ){
-							createAndLinkNewInstrument(imageOME, ome);
+							createAndLinkNewInstrument(ome);
 						}
 						linkDetector(dSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfDetectorList());
 						//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
@@ -631,7 +631,7 @@ public class MetaDataModel
 					LOGGER.info("[DEBUG] lightSrc is not linked");
 					if(imageOME!=null){
 						if(imageOME.getLinkedInstrument()==null ){
-							createAndLinkNewInstrument(imageOME, ome);
+							createAndLinkNewInstrument(ome);
 						}
 						linkLightSrc(lSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfLightSourceList());
 					}else{
@@ -709,12 +709,13 @@ public class MetaDataModel
 			return ((ImagingEnvironmentCompUI) imgEnvUI).getData();
 	}
 	
-	public void createAndLinkNewInstrument(Image img,OME o)
+	public void createAndLinkNewInstrument(OME o)
 	{
 		 Instrument i=new Instrument();
-		 i.setID(MetadataTools.createLSID("Instrument", 0));
-		 img.linkInstrument(i);
+		 i.setID(MetadataTools.createLSID("Instrument", o.sizeOfInstrumentList()));
+		 imageOME.linkInstrument(i);
 		 o.addInstrument(i);
+		 LOGGER.info("[DEBUG] create new Instrument : "+i.getID());
 	}
 	
 	public void setObjectiveData(ObjectiveCompUI o)
@@ -733,7 +734,7 @@ public class MetaDataModel
 				LOGGER.info("[DEBUG] objective is not linked");
 				if(imageOME!=null){
 					 if(imageOME.getLinkedInstrument()==null ){
-						createAndLinkNewInstrument(imageOME, ome);
+						createAndLinkNewInstrument(ome);
 					 }
 					linkObjective(oSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfObjectiveList());
 //					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
@@ -1023,7 +1024,6 @@ public class MetaDataModel
 		LOGGER.info("[MODEL] -- Save model data");
 		try {
 			if(experimentUI!=null && ((ExperimentCompUI) experimentUI).userInput()){
-				System.out.println("################# Experiment Data changed");
 				((ExperimentCompUI) experimentUI).getData();
 			}
 			

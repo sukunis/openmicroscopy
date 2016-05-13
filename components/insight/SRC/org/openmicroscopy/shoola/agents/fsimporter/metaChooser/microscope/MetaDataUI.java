@@ -392,18 +392,15 @@ public class MetaDataUI extends JPanel
 	
 	/** read data from metadata container 
 	 * @param imageIndex TODO*/
-	public void readData(IMetadata data, int imageIndex)
+	public void readData(OME o, int imageIndex)
 	{
-		if(data !=null)
+		if(o !=null)
 		{		
 			try{
-				ServiceFactory factory = new ServiceFactory();
-				OMEXMLService service = factory.getInstance(OMEXMLService.class);
-				String xml = service.getOMEXML((MetadataRetrieve) data);//TODO: cast necessary??
-				ome = (OME) service.createOMEXMLRoot(xml);
+				ome=o;
 
 				//TODO eigentlich imageList!!!!
-				
+				model.setOME(ome);
 				model.setImageIndex(imageIndex);
 				Image image=ome.getImage(imageIndex);
 //				//TODO richtiges project!!
@@ -426,7 +423,7 @@ public class MetaDataUI extends JPanel
 					Instrument instrument=image.getLinkedInstrument();
 					if(instrument==null){
 						LOGGER.warning("[DATA] NO INSTRUMENTS available, create new");
-						model.createAndLinkNewInstrument(image, ome);
+						model.createAndLinkNewInstrument(ome); 
 					}else{
 						objectives=instrument.copyObjectiveList();
 						detectors=instrument.copyDetectorList();
@@ -490,9 +487,9 @@ public class MetaDataUI extends JPanel
 					}
 					
 				}
-				LOGGER.info("[DATA] load PLANE");
+				LOGGER.info("[DATA] -- load PLANE");
 			}catch(Exception e){
-				LOGGER.severe("[DATA] PLANE data load failed");
+				LOGGER.severe("[DATA] -- PLANE data load failed");
 				ExceptionDialog ld = new ExceptionDialog("Plane Data Error!", 
 						"Can't read plane data from file "+file.getAbsolutePath(),e);
 				ld.setVisible(true);
@@ -547,7 +544,7 @@ public class MetaDataUI extends JPanel
 					}
 					
 					
-					LOGGER.info("[DATA] load CHANNEL data "+cUI.getName());
+					LOGGER.info("[DATA] -- load CHANNEL data "+cUI.getName());
 
 					readLightPathData(channels.get(i),i);
 					readLightSource(channels.get(i),i,lightSources);
@@ -587,7 +584,7 @@ public class MetaDataUI extends JPanel
 			}
 			
 			if(!dataAvailable){
-				LOGGER.info("[DATA] LIGHTPATH data not available");
+				LOGGER.info("[DATA] -- LIGHTPATH data not available");
 			}else{
 				lpUI.setModel(model); 
 				lpUI.addData(lp,false);
@@ -630,7 +627,7 @@ public class MetaDataUI extends JPanel
 				if(i<model.getNumberOfLightSrc()){
 					lUI =model.getLightSourceModul(i);
 					if(!dataAvailable){
-						LOGGER.info("[DATA] LIGHTSOURCE  data not available");
+						LOGGER.info("[DATA] -- LIGHTSOURCE  data not available");
 					}else{
 						lUI.addData(l,false);
 						lUI.addData(ls,false);
@@ -639,7 +636,7 @@ public class MetaDataUI extends JPanel
 				}else{
 					lUI = new LightSourceCompUI(customSett.getLightSrcConf());
 					if(!dataAvailable){
-						LOGGER.info("[DATA] LIGHTSOURCE  data not available");
+						LOGGER.info("[DATA] -- LIGHTSOURCE  data not available");
 					}else{
 						lUI.addData(l,false);
 						lUI.addData(ls,false);
@@ -652,7 +649,7 @@ public class MetaDataUI extends JPanel
 
 			}
 			else{
-				LOGGER.info("[DATA] LIGHTSOURCE  data not available");
+				LOGGER.info("[DATA] -- LIGHTSOURCE  data not available");
 			}
 			
 		}
@@ -694,7 +691,7 @@ public class MetaDataUI extends JPanel
 					dUI =model.getDetectorModul(i); 
 					if(!dDataAvailable){
 
-						LOGGER.info("[DATA] DETECTOR data not available");
+						LOGGER.info("[DATA] -- DETECTOR data not available");
 					}else{
 						dUI.addData(d, false);
 						dUI.addData(ds,false);
@@ -704,7 +701,7 @@ public class MetaDataUI extends JPanel
 					dUI = new DetectorCompUI(customSett.getDetectorConf());
 					if(!dDataAvailable){
 
-						LOGGER.info("[DATA] DETECTOR data not available");
+						LOGGER.info("[DATA] -- DETECTOR data not available");
 					}else{
 						dUI.addData(d, false);
 						dUI.addData(ds,false);
@@ -715,7 +712,7 @@ public class MetaDataUI extends JPanel
 				dUI.addToList(customSett.getMicDetectorList());
 				dUI.addToList(detectors);
 			}else{
-				LOGGER.info("[DATA] DETECTOR data not available");
+				LOGGER.info("[DATA] -- DETECTOR data not available");
 			}
 		}
 	}
@@ -812,7 +809,7 @@ public class MetaDataUI extends JPanel
 	public void readData(ImportUserData data)
 	{
 		if(data!=null){
-			LOGGER.info("[DATA] add IMPORT USER data");
+			LOGGER.info("[DATA] -- add IMPORT USER data");
 			importUserData=data;
 			ExperimentCompUI e=model.getExpModul();
 			if(e!=null){
@@ -975,7 +972,7 @@ public class MetaDataUI extends JPanel
 		ChannelCompUI channel=model.getChannelModul(chNr);
 		String chName=channel.getName();
 		
-		LOGGER.info("[GUI-ACTION] select Channel "+chName);
+		LOGGER.info("[GUI-ACTION] -- select Channel "+chName);
 		
 		
 		CardLayout cl;
@@ -1005,11 +1002,11 @@ public class MetaDataUI extends JPanel
 	}
 	
 
-	public void saveViewData()
-	{
-		if(model!=null)
-			model.save(); 
-	}
+//	public void saveViewData()
+//	{
+//		if(model!=null)
+//			model.save(); 
+//	}
 	
 	
 	
@@ -1034,86 +1031,7 @@ public class MetaDataUI extends JPanel
 		setLayout(layout);
 	}
 	
-//	protected void initBtnElements() 
-//	{
-//		// Button on bottom pane for load/save metadata
-//		loadBtn=new JButton("Load settings"); // -> Datachooser dialog
-//		loadBtn.setSize(30, 7);
-//		loadBtn.setEnabled(false);
-//		saveBtn=new JButton("Save settings"); // -> Datachooser
-//		saveBtn.setSize(30, 7);
-//
-//		saveBtn.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				save();
-//			}
-//		});
-//		
-//		saveAllBtn=new JButton("Save all");
-//		saveAllBtn.setSize(30,7);
-//		saveAllBtn.setEnabled(false);
-//		
-//		loadProfileBtn=new JButton("Load Profile File");
-//		loadProfileBtn.setSize(30,7);
-//		loadProfileBtn.setEnabled(false);
-//
-//		resetBtn=new JButton("Reset"); 
-//		resetBtn.setSize(30, 7);
-//		resetBtn.setEnabled(false);
-//		
-//		resetBtn.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				try {
-//					reloadMetaDataFromFile();
-//				} catch (Exception e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-//	
-//	private void reloadMetaDataFromFile() throws Exception 
-//	{
-//		if(file!=null){
-//			Cursor cursor=getCursor();
-//			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-//			
-//			
-//			
-//			ImageReader reader = new ImageReader();
-//			//record metadata to ome-xml format
-//			ServiceFactory factory=new ServiceFactory();
-//			OMEXMLService service = factory.getInstance(OMEXMLService.class);
-//			IMetadata metadata =  service.createOMEXMLMetadata();
-//			reader.setMetadataStore((MetadataStore) metadata);
-//
-//			try{
-//				reader.setId(file.getAbsolutePath());
-//			}catch(Exception e){
-//				LOGGER.severe("Error read file");
-//				setCursor(cursor);
-//			}
-//			setCursor(cursor);
-//			LOGGER.info("RESET file data : use READER: "+reader.getReader().getClass().getName());
-//
-//			if(metadata!=null){
-//				componentsInit=false;
-//				model=new MetaDataModel();
-//				initModelComponents(customSett.getModules());
-//				control=new MetaDataControl(model);
-//				
-//				readData(metadata, 0);
-////				showData();
-//			}
-//		}
-//	}
 
-//	private void clearData() 
-//	{
-//		model.clearData();
-//	}
 
 	protected JPanel getButtonPane()
 	{
@@ -1153,44 +1071,7 @@ public class MetaDataUI extends JPanel
 	
 	
 
-	// Placeholder functions
-//	private void addToPlaceholder(JComponent comp1,GUIPlaceholder place, int width )
-//	{
-//
-//		JScrollPane comp=new JScrollPane(comp1);
-//		switch (place) {
-//		case Pos_A:
-//			addComponent(this,gbl,comp,0,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
-//			break;
-//		case Pos_B:
-//			addComponent(this,gbl,comp,1,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
-//			break;
-//		case Pos_C:
-//			addComponent(this,gbl,comp,2,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
-//			break;
-//		case Pos_D:
-//			addComponent(this,gbl,comp,3,0,width,5,0.25,1.0,GridBagConstraints.BOTH);
-//			break;
-//		case Pos_E:
-//			addComponent(this,gbl,comp,0,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
-//			break;
-//		case Pos_F:
-//			addComponent(this,gbl,comp,1,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
-//			break;
-//		case Pos_G:
-//			addComponent(this,gbl,comp,2,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
-//			break;
-//		case Pos_H:
-//			addComponent(this,gbl,comp,3,5,width,5,0.25,1.0,GridBagConstraints.BOTH);
-//			break;
-//		case Pos_Bottom:
-//			addComponent(this,gbl,comp1,2,10,width,1,1.0,0,GridBagConstraints.HORIZONTAL);
-//			break;
-//		default:
-//			LOGGER.severe("[GUI] Unknown position for element");
-//			break;
-//		}
-//	}
+	
 	
 	private void addToPlaceholder(JComponent comp1,GUIPlaceholder place, int width )
 	{
@@ -1371,11 +1252,11 @@ public class MetaDataUI extends JPanel
 				//					SaveMetadataUserDefinedUI pane = new SaveMetadataUserDefinedUI(ome,model,null,file);
 				//					JDialog diag=createSaveDialog(pane,"Save MetaData", 600,600);
 				if(file!=null){
-					LOGGER.info("[SAVE] save to "+file.getAbsolutePath());
+					LOGGER.info("[SAVE] -- save to "+file.getAbsolutePath());
 					SaveMetadata saver=new SaveMetadata(ome, model, null, file);
 					saver.save();
 				}else{
-					LOGGER.severe("[SAVE] no destination file is given");
+					LOGGER.severe("[SAVE] -- no destination file is given");
 					ExceptionDialog ld = new ExceptionDialog("Save File Error!", 
 							"No file is given!");
 					ld.setVisible(true);

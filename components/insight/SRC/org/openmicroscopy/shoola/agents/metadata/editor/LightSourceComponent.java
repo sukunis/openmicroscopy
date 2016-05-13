@@ -154,10 +154,6 @@ class LightSourceComponent
             set = !notSet.contains(key);
             value = entry.getValue();
             
-            if(value!=null)
-            	System.out.println("[DEBUG INSIGHT] transformLightSrc: "+key+" = "+value.toString());
-            else
-            	System.out.println("[DEBUG INSIGHT] transformLightSrc: "+key+" = null");
             
             label = UIUtilities.setTextFont(key, Font.BOLD, sizeLabel);
             label.setBackground(UIUtilities.BACKGROUND_COLOR);
@@ -247,7 +243,7 @@ class LightSourceComponent
                 	arcTypeBox.setEditedColor(UIUtilities.EDITED_COLOR);
                 	area = arcTypeBox;//parent.replaceCombobox(arcTypeBox);
             	}
-            } else if (LightSourceData.FILAMENT.equals(kind)) {
+            } else if (LightSourceData.FILAMENT.equals(kind))            {
             	if (EditorUtil.TYPE.equals(key)) {
             		selected = model.getChannelEnumerationSelected(
                 			Editor.FILAMENT_TYPE, (String) value);
@@ -260,11 +256,10 @@ class LightSourceComponent
                 	filamentTypeBox.setEditedColor(UIUtilities.EDITED_COLOR);
                 	area = filamentTypeBox;//parent.replaceCombobox(filamentTypeBox);
             	}
-            } else if (LightSourceData.LIGHT_EMITTING_DIODE.equals(
-            		kind)) {
+            } else if (LightSourceData.LIGHT_EMITTING_DIODE.equals(kind)) {
             	if (EditorUtil.TYPE.equals(key)) {
-            		
-                	area = new JLabel();
+
+            		area = new JLabel();
             	}
             } else {
             	lightTypeBox.setSelectedIndex(lightTypeBox.getItemCount()-1);
@@ -304,11 +299,15 @@ class LightSourceComponent
             	((OMETextArea) area).setText((String) value);
             	((OMETextArea) area).setEditedColor(
             			UIUtilities.EDITED_COLOR);
-            }
-            else {
+            }else {
             	area = UIUtilities.createComponent(OMETextArea.class, null);
             	((OMETextArea) area).setEditable(false);
-            	((OMETextArea) area).setText((String) value);
+//            	((OMETextArea) area).setText((String) value);
+            	if (value != null)
+            		((OMETextArea) area).setText(value.toString());
+            	else
+            		((OMETextArea) area).setText("N/A");
+            	
             	((OMETextArea) area).setEditedColor(
             			UIUtilities.EDITED_COLOR);
             }

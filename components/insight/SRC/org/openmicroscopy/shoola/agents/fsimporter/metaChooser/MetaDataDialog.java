@@ -3,35 +3,27 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.swing.BorderFactory;
+import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -47,12 +39,7 @@ import javax.swing.event.TreeSelectionListener;
 //import javax.swing.filechooser.FileFilter;
 
 import javax.swing.filechooser.FileFilter;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -65,7 +52,6 @@ import loci.formats.UnknownFormatException;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import ome.xml.meta.OMEXMLMetadataRoot;
-import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
 import ome.xml.model.Project;
 import omero.gateway.model.ExperimenterData;
@@ -79,6 +65,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOS
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
 import org.openmicroscopy.shoola.env.LookupNames;
@@ -149,7 +136,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	private JTree fileTree;
 	
 	private JPanel metaPanel;
-	private MetaDataUI dataView;
+//	private MetaDataUI dataView;
 	private CustomViewProperties customSettings;
 	
 	
@@ -468,11 +455,11 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    
 	    
 	    micName=customSettings.getMicName();
-	    dataView=new MetaDataUI(customSettings);
-	    
+//	    dataView=new MetaDataUI(customSettings);
+	    MetaDataView view=new MetaDataView();
 		
 		metaPanel=new JPanel(new BorderLayout());
-		metaPanel.add(dataView,BorderLayout.CENTER);
+		metaPanel.add(view,BorderLayout.CENTER);
 		
 //		File root=new File(System.getProperty("user.home"));
 //		FNode rootNode=new FNode(root);
@@ -643,54 +630,22 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 		//get parent dir model data
 		MetaDataModel parentModel=getParentMetaDataModel();
-//		if(lastNode!=null && parentModel!=null){
-//			LOGGER.info("[DEBUG] READ MODEL OF "+lastNode.getAbsolutePath());
-//			try {
-//				parentModel.noticUserInput();
-//				
-//			} catch (Exception e) {
-//				LOGGER.severe("can't read model of "+lastNode.getAbsolutePath());
-//				e.printStackTrace();
-//			}
-//		}
 		
 		
 		// is selection a file or directory
 		if(file.equals("")){
 			lastSelectionType=DIR;
-			LOGGER.info("[GUI] -- select directory");
-			//show dataview
-			dataView=new MetaDataUI(customSettings);
-			dataView.readData(importData);
-			addParentModel(parentModel,dataView);
-			try {
-				//get current dir model data
-				MetaDataModel dirModel=getCurrentSelectionMetaDataModel();
-				dataView.addData(dirModel);
-				
-				dataView.showData();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-			panel=dataView;
+			
+			MetaDataModel dirModel=getCurrentSelectionMetaDataModel();
+			MetaDataView view = new MetaDataView(customSettings, file, importData, parentModel, dirModel);
+			view.setVisible();
+			panel=view;
 			
 		}else{
 			lastSelectionType=FILE;
-			dataView=new MetaDataUI(customSettings);
-			dataView.readData(importData);
-			
-			addParentModel(parentModel,dataView);
-			
-			LOGGER.info("[DEBUG]--- ADD METADATA FROM FILE");
-		
-			try {
-				panel=loadFileMetaData(file, dataView,parentModel,importData);
-			} catch (FormatException e) {
-				LOGGER.warning("MY Unknown file format "+file);
-			}catch(IOException e){
-				LOGGER.warning("Can't read/access "+file);
-			}
+			MetaDataView view=new MetaDataView(customSettings, file, importData, parentModel);
+			view.setVisible();
+			panel=view;
 		}
 		
 		// notice last selection for save user input as model
@@ -709,13 +664,13 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	 * Load data for given node: importData, parentData,fileData
 	 * @param node
 	 */
-	private void loadData(FNode node)
+	private MetaDataView loadData(FNode node)
 	{
 		//import user data
 		ImportUserData importData = getImportData();
 		
 		//set parent dir data
-		MetaDataModel parentModel=lastNode.getModel();
+		MetaDataModel parentModel=lastNode.getModel(0);
 		if(lastNode!=null && parentModel!=null){
 			LOGGER.info("[DEBUG] -- READ MODEL OF "+lastNode.getAbsolutePath());
 			try {
@@ -730,21 +685,22 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		}
 		//set current dir data
 		MetaDataModel dirModel=getCurrentSelectionMetaDataModel();
-
-		dataView=new MetaDataUI(customSettings);
-		dataView.readData(importData);
-
-		addParentModel(parentModel,dataView);
-
-		LOGGER.info("[DEBUG]--- ADD METADATA FROM FILE");
-
-		try {
-			loadFileMetaData(node.getAbsolutePath(), dataView,parentModel,importData);
-		} catch (FormatException e) {
-			LOGGER.warning("MY Unknown file format "+node.getAbsolutePath());
-		}catch(IOException e){
-			LOGGER.warning("Can't read/access "+node.getAbsolutePath());
-		}
+//
+//		dataView=new MetaDataUI(customSettings);
+//		dataView.readData(importData);
+//
+//		addParentModel(parentModel,dataView);
+//
+//		LOGGER.info("[DEBUG]--- ADD METADATA FROM FILE");
+//
+//		try {
+//			loadFileMetaData(node.getAbsolutePath(), dataView,parentModel,importData);
+//		} catch (FormatException e) {
+//			LOGGER.warning("MY Unknown file format "+node.getAbsolutePath());
+//		}catch(IOException e){
+//			LOGGER.warning("Can't read/access "+node.getAbsolutePath());
+//		}
+		return new MetaDataView(customSettings, node.getAbsolutePath(), importData, parentModel);
 	}
 
 
@@ -752,7 +708,12 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	{
 		if(lastNode!=null){
 			LOGGER.info("[DEBUG] -- SAVE MODEL FOR: "+lastNode.getAbsolutePath());
-			lastNode.setModel(dataView.getModel());
+			LOGGER.info("[DEBUG] components metaPanel: "+metaPanel.getComponentCount());
+			Component c=metaPanel.getComponent(0);
+			if(c instanceof MetaDataView)
+				lastNode.setModelObject(((MetaDataView) c).getModelObject());
+			else
+				LOGGER.info("[DEBUG] metaPanel Component class: "+metaPanel.getComponent(0).getClass());
 			//TODO: save to file if there are some changes
 //			if(dataView.getModel().noticUserInput())
 //			{
@@ -798,7 +759,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		if(node!=null){
 			FNode parent=(FNode) node.getParent();
 			if(parent!=null){
-				return parent.getModel();
+				return parent.getModel(0);
 			}
 		}
 		return null;
@@ -813,7 +774,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		FNode node = (FNode)fileTree.getLastSelectedPathComponent();
 		if(node!=null && !node.isLeaf()){
 			LOGGER.info("[GUI] -- Load current selection model");
-			return node.getModel();
+			return node.getModel(0);
 		}else{
 			LOGGER.info("[GUI] -- No model for current selection");
 		}
@@ -821,120 +782,120 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		return null;
 	}
 	
-	private JComponent loadFileMetaData(String file, MetaDataUI metaUI, MetaDataModel parent,ImportUserData userdata) 
-			throws UnknownFormatException, FormatException,IOException
-	{
-		JComponent panel=null;
-		
-		ImageReader reader = new ImageReader();
-		LOGGER.info("### read "+ file+" ###");
-		try {
-			IMetadata metadata = readMetadataFromFile(file, reader);
-			if(metadata==null) return null;
-			
-			LOGGER.info("[DEBUG] -- Link data to file "+file);
-			metaUI.linkToFile(new File(file));
-			
-			if(reader.getSeriesCount()<2){
-				LOGGER.info("no serie ");
-				metaUI.readData(metadata, 0);
-				metaUI.showData();
-				panel=metaUI;
-			}else{
-				JTabbedPane panelObj=new JTabbedPane();
-				for(int j=0; j< reader.getSeriesCount(); j++){
-					LOGGER.info("[SERIE] ------------ read SERIE "+j+" of "+reader.getSeriesCount()+
-							": "+metadata.getImageName(j)+"---------------------" );
-					reader.setSeries(j);
-					//new metaUI tab
-					metaUI=new MetaDataUI(customSettings);
-					metaUI.linkToFile(new File(file));
-					metaUI.readData(userdata);
-					addParentModel(parent, metaUI);
-					metaUI.readData(metadata, j);
-					metaUI.showData();
-					((JTabbedPane) panelObj).addTab("#"+j+": "+metadata.getImageName(j),(Component) metaUI);
+//	private JComponent loadFileMetaData(String file, MetaDataUI metaUI, MetaDataModel parent,ImportUserData userdata) 
+//			throws UnknownFormatException, FormatException,IOException
+//	{
+//		JComponent panel=null;
+//		
+//		ImageReader reader = new ImageReader();
+//		LOGGER.info("### read "+ file+" ###");
+//		try {
+//			IMetadata metadata = readMetadataFromFile(file, reader);
+//			if(metadata==null) return null;
+//			
+//			LOGGER.info("[DEBUG] -- Link data to file "+file);
+//			metaUI.linkToFile(new File(file));
+//			
+//			if(reader.getSeriesCount()<2){
+//				LOGGER.info("no serie ");
+//				metaUI.readData(metadata, 0);
+//				metaUI.showData();
+//				panel=metaUI;
+//			}else{
+//				JTabbedPane panelObj=new JTabbedPane();
+//				for(int j=0; j< reader.getSeriesCount(); j++){
+//					LOGGER.info("[SERIE] ------------ read SERIE "+j+" of "+reader.getSeriesCount()+
+//							": "+metadata.getImageName(j)+"---------------------" );
+//					reader.setSeries(j);
+//					//new metaUI tab
+//					metaUI=new MetaDataUI(customSettings);
+//					metaUI.linkToFile(new File(file));
+//					metaUI.readData(userdata);
+//					addParentModel(parent, metaUI);
+//					metaUI.readData(metadata, j);
+//					metaUI.showData();
+//					((JTabbedPane) panelObj).addTab("#"+j+": "+metadata.getImageName(j),(Component) metaUI);
+//
+//				}
+//				panel=panelObj;
+//			}
+//		} catch (Exception e){
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return panel;
+//	}
+//	
+//	private JComponent loadFileMetaData(String file, MetaDataUI metaUI) 
+//			throws UnknownFormatException, FormatException,IOException
+//	{
+//		
+//		JComponent panel=null;
+//		ImageReader reader = new ImageReader();
+//		LOGGER.info("### read "+ file+" ###");
+//		try {
+//			IMetadata metadata = readMetadataFromFile(file, reader);
+//			if(metadata==null) return null;
+//			
+//			LOGGER.info("[DEBUG] -- Link data to file "+file);
+//			metaUI.linkToFile(new File(file));
+//			
+//			if(reader.getSeriesCount()<2){
+//				LOGGER.info("no serie ");
+//				metaUI.readData(metadata, 0);
+//				metaUI.showData();
+//				panel= metaUI;
+//			}else{
+//				JTabbedPane panelObj=new JTabbedPane();
+//				for(int j=0; j< reader.getSeriesCount(); j++){
+//					LOGGER.info("[SERIE] ------------ read SERIE "+j+" of "+reader.getSeriesCount()+
+//							": "+metadata.getImageName(j)+"---------------------" );
+//					reader.setSeries(j);
+//					//new metaUI tab
+//					metaUI=new MetaDataUI(customSettings);
+//					metaUI.linkToFile(new File(file));
+//					metaUI.readData(metadata, j);
+//					metaUI.showData();
+//					((JTabbedPane) panelObj).addTab("#"+j+": "+metadata.getImageName(j),(Component) metaUI);
+//				}
+//				panel=panelObj;
+//			}
+//		} catch (Exception e){
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return panel;
+//	}
 
-				}
-				panel=panelObj;
-			}
-		} catch (Exception e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return panel;
-	}
-	
-	private JComponent loadFileMetaData(String file, MetaDataUI metaUI) 
-			throws UnknownFormatException, FormatException,IOException
-	{
-		
-		JComponent panel=null;
-		ImageReader reader = new ImageReader();
-		LOGGER.info("### read "+ file+" ###");
-		try {
-			IMetadata metadata = readMetadataFromFile(file, reader);
-			if(metadata==null) return null;
-			
-			LOGGER.info("[DEBUG] -- Link data to file "+file);
-			metaUI.linkToFile(new File(file));
-			
-			if(reader.getSeriesCount()<2){
-				LOGGER.info("no serie ");
-				metaUI.readData(metadata, 0);
-				metaUI.showData();
-				panel= metaUI;
-			}else{
-				JTabbedPane panelObj=new JTabbedPane();
-				for(int j=0; j< reader.getSeriesCount(); j++){
-					LOGGER.info("[SERIE] ------------ read SERIE "+j+" of "+reader.getSeriesCount()+
-							": "+metadata.getImageName(j)+"---------------------" );
-					reader.setSeries(j);
-					//new metaUI tab
-					metaUI=new MetaDataUI(customSettings);
-					metaUI.linkToFile(new File(file));
-					metaUI.readData(metadata, j);
-					metaUI.showData();
-					((JTabbedPane) panelObj).addTab("#"+j+": "+metadata.getImageName(j),(Component) metaUI);
-				}
-				panel=panelObj;
-			}
-		} catch (Exception e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return panel;
-	}
 
-
-	private IMetadata readMetadataFromFile(String file, 
-			ImageReader reader) throws DependencyException, ServiceException 
-	{
-		Cursor cursor=getCursor();
-		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		
-		//record metadata to ome-xml format
-		ServiceFactory factory=new ServiceFactory();
-		OMEXMLService service = factory.getInstance(OMEXMLService.class);
-		IMetadata metadata =  service.createOMEXMLMetadata();
-		reader.setMetadataStore(metadata);
-		
-		try{
-		reader.setId(file);
-		}catch(Exception e){
-			LOGGER.severe("Error read file");
-			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-					"Can't read metadata of "+file,e);
-			ld.setVisible(true);
-			setCursor(cursor);
-			return null;
-		}
-		setCursor(cursor);
-		LOGGER.info("use READER: "+reader.getReader().getClass().getName());
-		return metadata;
-	}
-	
-	
+//	private IMetadata readMetadataFromFile(String file, 
+//			ImageReader reader) throws DependencyException, ServiceException 
+//	{
+//		Cursor cursor=getCursor();
+//		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//		
+//		//record metadata to ome-xml format
+//		ServiceFactory factory=new ServiceFactory();
+//		OMEXMLService service = factory.getInstance(OMEXMLService.class);
+//		IMetadata metadata =  service.createOMEXMLMetadata();
+//		reader.setMetadataStore(metadata);
+//		
+//		try{
+//		reader.setId(file);
+//		}catch(Exception e){
+//			LOGGER.severe("Error read file");
+//			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+//					"Can't read metadata of "+file,e);
+//			ld.setVisible(true);
+//			setCursor(cursor);
+//			return null;
+//		}
+//		setCursor(cursor);
+//		LOGGER.info("use READER: "+reader.getReader().getClass().getName());
+//		return metadata;
+//	}
+//	
+//	
 
 	
 	private String getSelectedFile()
@@ -1028,15 +989,18 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 
 		switch (commandId) {
 		case CMD_CLOSE:
+			LOGGER.info("[GUI-ACTION] -- close");
 			firePropertyChange(CANCEL_SELECTION_PROPERTY,
 					Boolean.valueOf(false), Boolean.valueOf(true));
 			break;
 		case CMD_IMPORT: // call importFiles function of chooser
+			LOGGER.info("[GUI-ACTION] -- import");
 			Component c=owner.getComponent(0);
 			if(c instanceof ImportDialog)
 				((ImportDialog)c).importFiles();
 			break;
 		case CMD_REFRESH:
+			LOGGER.info("[GUI-ACTION] -- refresh");
 			//Schleife durch fileTree
 			//dir-> refresh dir
 			//file without a parent dir -> add *.ome
@@ -1064,6 +1028,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	        
 	        break;
 		case CMD_SAVE:
+			LOGGER.info("[GUI-ACTION] -- save");
 			TreePath path=fileTree.getSelectionPath();
 			String fileName=getSelectedFile();
 			if(fileName!=null){
@@ -1072,7 +1037,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			}
 			break;
 		case CMD_SAVEALL:
-			System.out.println("[DEBUG] ################### SAVE ALL #########################");
+			LOGGER.info("[GUI-ACTION] -- save all");
 			//only for directory
 			FNode parentNode = (FNode)fileTree.getLastSelectedPathComponent();
 			lastNode=parentNode;
@@ -1082,49 +1047,59 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 				FNode node=(FNode)children.nextElement();
 				//load all data and save
 				if(node!=null && node.isLeaf()){
-					loadData(node);
-					saveMetadataForNode(node.getAbsolutePath());
+					MetaDataView view=loadData(node);
+					saveMetadataForNode(node.getAbsolutePath(),view);
 				}
 			}
 			insertNodes(null, parentNode.getFile().getName(), parentNode);
 			fileTree.updateUI();
 			break;
 		case CMD_RESET:
+			LOGGER.info("[GUI-ACTION] -- reset");
 			JComponent panel=null;
 			//TODO: profile default data eliminate
-			dataView=new MetaDataUI(customSettings);
+//			dataView=new MetaDataUI(customSettings);
+//			String file = getSelectedFile(); 
+//			if(!file.equals("")){
+//				try {
+//					panel=loadFileMetaData(file, dataView);
+//				} catch (FormatException | IOException e) {
+//					LOGGER.severe("[RESET] Can't load metadata from file.");
+//					ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+//							"Can't load metadata of "+file,e);
+//					ld.setVisible(true);
+//				}
+//			}else{
+//				try {
+//					dataView.showData();
+//				} catch (Exception e) {
+//					LOGGER.severe("[RESET] Can't reload view.");
+//					ExceptionDialog ld = new ExceptionDialog("Metadata GUI Error!", 
+//							"Can't show metadata of "+file,e);
+//					ld.setVisible(true);
+//				}
+//				panel=dataView;
+//			}
+			//file
 			String file = getSelectedFile(); 
 			if(!file.equals("")){
-				try {
-					panel=loadFileMetaData(file, dataView);
-				} catch (FormatException | IOException e) {
-					LOGGER.severe("[RESET] Can't load metadata from file.");
-					ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-							"Can't load metadata of "+file,e);
-					ld.setVisible(true);
-				}
-			}else{
-				try {
-					dataView.showData();
-				} catch (Exception e) {
-					LOGGER.severe("[RESET] Can't reload view.");
-					ExceptionDialog ld = new ExceptionDialog("Metadata GUI Error!", 
-							"Can't show metadata of "+file,e);
-					ld.setVisible(true);
-				}
-				panel=dataView;
+				MetaDataView view = new MetaDataView(customSettings, file, null, null);
+				view.setVisible();
+				metaPanel.removeAll();
+				if(view!=null)
+					metaPanel.add(view,BorderLayout.CENTER);
+				
+				revalidate();
+				repaint();
 			}
 			
-			metaPanel.removeAll();
-			if(panel!=null)
-				metaPanel.add(panel,BorderLayout.CENTER);
 			
-			revalidate();
-			repaint();
 			break;
 		case CMD_PROFILE:
+			LOGGER.info("[GUI-ACTION] -- load profile file");
 			break;
 		case CMD_SPECIFICATION:
+			LOGGER.info("[GUI-ACTION] -- load specification file");
 			break;
 		}
 		
@@ -1158,22 +1133,13 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	{
 		LOGGER.info("[DEBUG] -- save node "+srcFile);
 		
-		Component[] comp=metaPanel.getComponents();
-		int sizeComp=metaPanel.getComponentCount();
-		for(Component c: comp){
-			if(c instanceof MetaDataUI){
-				((MetaDataUI) c).save();
-			}
-			else if(c instanceof JTabbedPane){
-				((MetaDataUI) ((JTabbedPane) c).getSelectedComponent()).save();
-			}
-		}
+		((MetaDataView)metaPanel.getComponent(0)).save();
 	}
 	
-	private void saveMetadataForNode(String srcFile)
+	private void saveMetadataForNode(String srcFile,MetaDataView view)
 	{
 		LOGGER.info("[DEBUG] -- save node "+srcFile);
-		dataView.save();
+		view.save();
 	}
 	
 	
