@@ -8,7 +8,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.slf4j.LoggerFactory;
 
 import loci.formats.meta.IMetadata;
 import ome.specification.XMLWriter;
@@ -17,6 +19,7 @@ import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
 import ome.xml.model.Experiment;
+import ome.xml.model.Experimenter;
 import ome.xml.model.FileAnnotation;
 import ome.xml.model.Filter;
 import ome.xml.model.Image;
@@ -31,8 +34,9 @@ import ome.xml.model.ObjectiveSettings;
 public class SaveMetadata 
 {
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-	
+//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 private static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(SaveMetadata.class);
 	private MetaDataModel model;
 	private IMetadata omexmlMeta;
 	private OME ome;
@@ -60,7 +64,7 @@ public class SaveMetadata
 			linkFile=srcImage.getName();
 		}catch (Exception err){
 			String name= srcImage!=null ? srcImage.getAbsolutePath() : "";
-			LOGGER.severe("[SAVE] corrupted save data: ");
+			LOGGER.error("[SAVE] corrupted save data: ");
 			ExceptionDialog ld = new ExceptionDialog("Invalid Data Error!", 
 					"Corrupted data : "+name,err);
 			ld.setVisible(true);
@@ -87,7 +91,7 @@ public class SaveMetadata
 			linkFile=srcImage.getName();
 		}catch (Exception err){
 			String name= srcImage!=null ? srcImage.getAbsolutePath() : "";
-			LOGGER.severe("[SAVE] corrupted save data: ");
+			LOGGER.error("[SAVE] corrupted save data: ");
 			ExceptionDialog ld = new ExceptionDialog("Invalid Data Error!", 
 					"Corrupted data : "+name,err);
 			ld.setVisible(true);
@@ -200,7 +204,7 @@ public class SaveMetadata
 			if(thisChannel!=null){
 				//link
 				if(thisLightSrc==null){
-					LOGGER.warning("[SAVE] could not save LIGHTSOURCE - not specified for CHANNEL "+thisChannel.getName());
+					LOGGER.warn("[SAVE] could not save LIGHTSOURCE - not specified for CHANNEL "+thisChannel.getName());
 				}else{
 					LightSourceSettings lSett=m.getLightSourceSettings(cNr);
 					if(lSett!=null){
@@ -209,7 +213,7 @@ public class SaveMetadata
 							LOGGER.info("[SAVE] link LIGHTSRC to channel");
 							lSett.setID(thisLightSrc.getID());
 						}else if(!lSett.getID().equals(thisLightSrc.getID())){
-							LOGGER.severe("[SAVE] wrong LIGHTSOURCE reference at CHANNEL "+thisChannel.getName()+": "+
+							LOGGER.error("[SAVE] wrong LIGHTSOURCE reference at CHANNEL "+thisChannel.getName()+": "+
 									lSett.getID()+" - "+thisLightSrc.getID());
 							ExceptionDialog ld = new ExceptionDialog("Link LightSource Error!", 
 									"Wrong lightsource reference at channel "+thisChannel.getName()+": "+
@@ -222,7 +226,7 @@ public class SaveMetadata
 				}
 
 				if(thisDetector==null ){
-					LOGGER.warning("[SAVE] could not save DETECTOR - not specified for CHANNEL "+thisChannel.getName());
+					LOGGER.warn("[SAVE] could not save DETECTOR - not specified for CHANNEL "+thisChannel.getName());
 				}else{
 					DetectorSettings dSett = m.getDetectorSettings(cNr);
 					if(dSett!=null){
@@ -231,7 +235,7 @@ public class SaveMetadata
 							LOGGER.info("[SAVE] link DETECTOR to channel");
 							dSett.setID(thisDetector.getID());
 						}else if(!dSett.getID().equals(thisDetector.getID())){
-							LOGGER.severe("[SAVE] wrong DETECTOR reference at CHANNEL "+thisChannel.getName()+": "+
+							LOGGER.error("[SAVE] wrong DETECTOR reference at CHANNEL "+thisChannel.getName()+": "+
 									dSett.getID()+" - "+thisDetector.getID());
 							ExceptionDialog ld = new ExceptionDialog("Link Detector Error!", 
 									"Wrong detector reference at channel "+thisChannel.getName()+": "+
@@ -245,7 +249,7 @@ public class SaveMetadata
 
 				LightPath thisLightPath=thisChannel.getLightPath();
 				if(thisLightPath==null){
-					LOGGER.warning("[SAVE] could not save LIGHTPATH- not specified for CHANNEL "+thisChannel.getName());
+					LOGGER.warn("[SAVE] could not save LIGHTPATH- not specified for CHANNEL "+thisChannel.getName());
 				}
 			}
 
@@ -320,10 +324,17 @@ public class SaveMetadata
 		
 		if(e!=null){
 			omeStore.storeExperiment(e);
-			omeStore.storeProjectPartner(((ExperimentCompUI)m.getExpModul()).getProjectPartnerAsExp()); 
+			omeStore.storeExperimenter(((ExperimentCompUI)m.getExpModul()).getProjectPartnerAsExp()); 
 			// update refs
 			i.linkExperiment(e);
 			i.linkExperimenter(e.getLinkedExperimenter());
+			
+			//if there are more than one experimenter?
+			ExperimentCompUI eUI = m.getExpModul();
+			List<Experimenter> eList=eUI.getExperimenterList();
+				for(int index=1; index<eList.size();index++){
+					omeStore.storeExperimenter(eList.get(index));
+				}
 		}
 		//TODO: refs update
 		//Refs to experimenter: Dataset, ExperimenterGroup, Image, MicrobeamManipulation, Project

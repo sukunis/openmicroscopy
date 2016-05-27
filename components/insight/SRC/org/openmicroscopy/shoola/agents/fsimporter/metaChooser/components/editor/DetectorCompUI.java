@@ -347,32 +347,32 @@ public class DetectorCompUI extends ElementsCompUI
 		detector.setModel(model.getTagValue().equals("")?
 				null : model.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read DETECTOR model input");
+			LOGGER.error("[DATA] can't read DETECTOR model input");
 		}
 		try{
 	
 		detector.setManufacturer(manufact.getTagValue().equals("")?
 				null : manufact.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read DETECTOR manufacturer input");
+			LOGGER.error("[DATA] can't read DETECTOR manufacturer input");
 		}
 		try{
 		detector.setType(type.getTagValue().equals("")?
 				null : DetectorType.fromString(type.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read DETECTOR type input");
+			LOGGER.error("[DATA] can't read DETECTOR type input");
 		}
 		try{
 		detector.setZoom(zoom.getTagValue().equals("")?
 				null : Double.valueOf(zoom.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read DETECTOR zoom input");
+			LOGGER.error("[DATA] can't read DETECTOR zoom input");
 		}
 		try{
 		detector.setAmplificationGain(amplGain.getTagValue().equals("")?
 				null : Double.valueOf(amplGain.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read DETECTOR amplification gain input");
+			LOGGER.error("[DATA] can't read DETECTOR amplification gain input");
 		}
 //		detector.setGain(gain.getTagValue().equals("")?
 //				null : Double.valueOf(gain.getTagValue()));
@@ -574,7 +574,7 @@ public class DetectorCompUI extends ElementsCompUI
 //						}
 //						offset.setVisible(true);
 //						break;
-					default: LOGGER.warning("[CONF] unknown tag: "+name );break;
+					default: LOGGER.warn("[CONF] unknown tag: "+name );break;
 					}
 				}
 			}

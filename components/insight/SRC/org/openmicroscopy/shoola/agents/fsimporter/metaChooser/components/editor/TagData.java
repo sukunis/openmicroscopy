@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.embed.swing.JFXPanel;
@@ -31,6 +32,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -40,23 +42,45 @@ import javax.swing.text.JTextComponent;
 
 import loci.common.DateTools;
 import ome.units.unit.Unit;
+import ome.xml.model.Experimenter;
 import ome.xml.model.primitives.Timestamp;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ScrollablePanel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterBox;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterListModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 import org.openmicroscopy.shoola.util.ui.UIUtilities;
+import org.slf4j.LoggerFactory;
 
 public class TagData 
 {
 	/** Logger for this class. */
-	private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+//	private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(TagData.class);
 
 	Color fillInfo=new Color(240,240,240);//Color.LIGHT_GRAY;
 	Color noInfo=new Color(217,229,220);//Color.blue;
 	Color resetInfo=Color.white;
+	
+	public static final String[] DATE_FORMATS_TAGS = {
+	    "yyyy:MM:dd HH:mm:ss",
+	    "dd/MM/yyyy HH:mm:ss",
+	    "MM/dd/yyyy hh:mm:ss aa",
+	    "yyyyMMdd HH:mm:ss",
+	    "yyyy/MM/dd HH:mm:ss",
+	    "yyyy-MM-dd'T'HH:mm:ssZ",
+	    "yyyy-MM-dd",
+	    "dd-MM-yyyy",
+	    "dd.MM.yyyy",
+	    "yyyy-MM-dd hh:mm:ss",
+	    "yyyy-MM-dd HH:mm:ss:SSS"
+	  };
 	
 	private final String datePattern = DateTools.TIMESTAMP_FORMAT;
 
@@ -92,7 +116,13 @@ public class TagData
 	private KeyListener fieldKeyListener;
 	private ActionListener fieldActionListener;
 
-
+	/**
+	 * Constructor for TagData element for array fields
+	 * @param name label for tagdata element
+	 * @param val array of values
+	 * @param prop property
+	 * @param type type==ARRAYFILEDS
+	 */
 	public TagData(String name, String[] val, boolean prop,int type) 
 	{
 		if(val==null)
@@ -114,6 +144,37 @@ public class TagData
 
 		label.setLabelFor(inputField);
 		setTagValue(val);
+		setTagProp(prop);
+		visible=false;
+	}
+	/**
+	 * Constructor for TagData element for list fields
+	 * @param name
+	 * @param model list model
+	 * @param prop
+	 * @param type
+	 */
+	public TagData(String name, ExperimenterListModel model, boolean prop, int type)
+	{
+		if(model==null)
+			model=new ExperimenterListModel();
+		
+		initListener();
+		this.markedToStore=false;
+		this.type=type;
+		this.name=name;
+		label = new JLabel(name);
+		
+		switch (type) {
+		case LIST:
+			initListField(model);
+			break;
+		default:
+			initTextField();
+			break;
+		}
+
+		label.setLabelFor(inputField);
 		setTagProp(prop);
 		visible=false;
 	}
@@ -190,6 +251,12 @@ public class TagData
 		inputField.setToolTipText("Format: "+datePattern);
 		inputField.addKeyListener(fieldKeyListener);
 
+	}
+	
+	private void initListField(ExperimenterListModel model)
+	{
+		inputField = new ExperimenterBox(model);
+		inputField.addKeyListener(fieldKeyListener);
 	}
 
 	private void initTextField()
@@ -335,9 +402,11 @@ public class TagData
 	{
 		return inputField;
 	}
+	
 	public JLabel getTagLabel(){
 		return label;
 	}
+	
 	public String getTagValue() 
 	{
 		String val="";
@@ -365,6 +434,17 @@ public class TagData
 		}
 		return val!=null? val : "";
 	}
+	
+	public List<Experimenter> getListValues()
+	{
+		List<Experimenter> list=null;
+		if(type == LIST){
+			list=((ExperimenterBox) inputField).getExperimenterList();
+			if(list.size()==0)
+				list=null;
+		}
+		return list;
+	}
 
 	
 
@@ -380,7 +460,7 @@ public class TagData
 				ExceptionDialog ld = new ExceptionDialog("Tag Data Parse Error!", 
 						"Can't parse tag value of "+label.getText());
 				ld.setVisible(true);
-				LOGGER.severe("can't get value at "+index+" ");
+				LOGGER.error("can't get value at "+index+" ");
 			}
 
 		default:
@@ -395,6 +475,13 @@ public class TagData
 		return unit;
 	}
 
+	public void setTagValue(Experimenter val)
+	{
+		if(type==LIST){
+			((ExperimenterBox) inputField).addElement(val);
+		}
+	}
+	
 	public void setTagValue(String val,Unit unit, boolean property)
 	{
 		if(this.unit!=unit){
@@ -497,11 +584,34 @@ public class TagData
 	
 	private String readTimestamp(String val) 
 	{
+//		
+//		 String creationDate = getImageCreationDate();
+//		    String date = DateTools.formatDate(creationDate, DATE_FORMATS, ".");
+//		    if (creationDate != null && date == null) {
+//		      LOGGER.warn("unknown creation date format: {}", creationDate);
+//		    }
+//		    creationDate = date;
+		
 		//TODO: format test
 		try{
-			val=DateTools.formatDate(((JTextField)inputField).getText(), DateTools.TIMESTAMP_FORMAT);
+			String creationDate = ((JTextField)inputField).getText();
+			// parse to yyyy-MM-ddT00:00:00
+			String date = DateTools.formatDate(creationDate, DATE_FORMATS_TAGS);
+			
+			if(creationDate != null && date ==null){
+				String formats="";
+				for(String s: DATE_FORMATS_TAGS){
+					formats=formats+s+"\n";
+				}
+				LOGGER.warn("unknown creation date format: {}", creationDate);
+				WarningDialog ld = new WarningDialog("Unknown Timestamp Format!", 
+						"Can't parse given timestamp ["+label.getText()+"] ! Please use one of the following date formats:\n"+formats);
+				ld.setVisible(true);
+			}
+			
+			val=date;//DateTools.formatDate(((JTextField)inputField).getText(), DateTools.TIMESTAMP_FORMAT);
 		}catch(Exception e){
-			LOGGER.severe("Wrong string input format timestamp: "+val);
+			LOGGER.error("Wrong string input format timestamp: "+val);
 			ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
 					"Wrong timestamp format at input at "+label.getText(),e);
 			ld.setVisible(true);
@@ -532,7 +642,7 @@ public class TagData
 				d=df.parse(s);
 			} catch (ParseException e1) {
 				// TODO Auto-generated catch block
-				LOGGER.severe("Parse error date for format "+dateformat);
+				LOGGER.error("Parse error date for format "+dateformat);
 				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
 						"Wrong timestamp format at input at "+label.getText(),e1);
 				ld.setVisible(true);
@@ -543,7 +653,7 @@ public class TagData
 				SimpleDateFormat f=new SimpleDateFormat(DateTools.TIMESTAMP_FORMAT);
 				((JTextField) inputField).setText( f.format(d));
 			} catch (Exception e) {
-				LOGGER.severe("Parse error for timestamp");
+				LOGGER.error("Parse error for timestamp");
 				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
 						"Wrong timestamp format at input at "+label.getText(),e);
 				ld.setVisible(true);
@@ -564,7 +674,7 @@ public class TagData
 			// split string 
 			String[] components=val.split("x");
 			if(components.length!= inputField.getComponentCount()){
-				LOGGER.warning("Wrong input for "+getTagLabel());
+				LOGGER.error("Wrong input for "+getTagLabel());
 			}
 			for(int i=0; i<components.length;i++)
 			{
@@ -658,8 +768,15 @@ public class TagData
 		this.visible = visible;
 	}
 
-	class MyStringConverter extends StringConverter<LocalDate>{
-		
+	class MyStringConverter extends StringConverter<LocalDate>
+	{
+//		
+//		 String creationDate = getImageCreationDate();
+//		    String date = DateTools.formatDate(creationDate, DATE_FORMATS, ".");
+//		    if (creationDate != null && date == null) {
+//		      LOGGER.warn("unknown creation date format: {}", creationDate);
+//		    }
+//		    creationDate = date;
 		DateTimeFormatter dateFormatter = 
                 DateTimeFormatter.ofPattern(datePattern);
             @Override

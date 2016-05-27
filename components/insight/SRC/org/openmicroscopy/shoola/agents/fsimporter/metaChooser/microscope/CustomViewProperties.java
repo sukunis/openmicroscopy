@@ -11,6 +11,7 @@ import ome.xml.model.Objective;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
+import org.slf4j.LoggerFactory;
 
 
 public class CustomViewProperties 
@@ -20,7 +21,9 @@ public class CustomViewProperties
 		"Zeiss LSM 510 META NLO","Zeiss TIRF 3"};
 	
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 private static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(CustomViewProperties.class);
     
     private String micName;
     

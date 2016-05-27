@@ -254,28 +254,28 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		try{
 		detectorSett.setGain(parseToDouble(gain.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read DETECTOR SETT gain input");
+			LOGGER.error("[DATA] can't read DETECTOR SETT gain input");
 		}
 		try{
 		detectorSett.setVoltage(voltage.getTagValue().equals("") ? 
 				null : new ElectricPotential(Double.valueOf(voltage.getTagValue()), voltage.getTagUnit()) );
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read DETECTOR SETT voltage input");
+			LOGGER.error("[DATA] can't read DETECTOR SETT voltage input");
 		}
 		try{
 		detectorSett.setOffset(parseToDouble(offset.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read DETECTOR SETT offset input");
+			LOGGER.error("[DATA] can't read DETECTOR SETT offset input");
 		}
 		try{
 		detectorSett.setZoom(parseToDouble(confocalZoom.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read DETECTOR SETT zoom input");
+			LOGGER.error("[DATA] can't read DETECTOR SETT zoom input");
 		}
 		try{
 		detectorSett.setBinning(parseBinning(binning.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read DETECTOR SETT binning input");
+			LOGGER.error("[DATA] can't read DETECTOR SETT binning input");
 		}
 		//TODO set subarray
 //		detectorSett.setSubarray
@@ -450,7 +450,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					subarray.setVisible(true);
 					break;
 				default:
-					LOGGER.warning("[CONF] DETECTOR SETT unknown tag: "+name );break;
+					LOGGER.warn("[CONF] DETECTOR SETT unknown tag: "+name );break;
 				}
 			}
 		}

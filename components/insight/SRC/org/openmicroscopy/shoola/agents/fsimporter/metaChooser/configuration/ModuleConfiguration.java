@@ -13,6 +13,8 @@ import ome.xml.model.enums.handlers.UnitsFrequencyEnumHandler;
 import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -24,7 +26,9 @@ import com.drew.metadata.Tag;
 public class ModuleConfiguration 
 {
 	/** Logger for this class. */
-    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+//    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 private static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(ModuleConfiguration.class);
 	
 	public static final String TAG_NAME="Name";
 	public static final String TAG_VALUE="Value";
@@ -60,7 +64,7 @@ public class ModuleConfiguration
 			u = UOSHardwareReader.parseUnit(unit,name);
 			thisList.add(new TagConfiguration(name, val,u, prop));
 		} catch (Exception e) {
-			LOGGER.warning("[HARDWARE] can't parse unit of tag "+name);
+			LOGGER.warn("[HARDWARE] can't parse unit of tag "+name);
 		}
 	
 		

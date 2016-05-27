@@ -11,6 +11,7 @@ import java.io.StringWriter;
  
 
 
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -18,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
  
@@ -33,8 +35,8 @@ import javax.swing.border.EmptyBorder;
  */
 public class ExceptionDialog extends JDialog {
  
-	private int dialogWidth = 500;
-	private int dialogHeight = 140;
+	private int dialogWidth = 600;
+	private int dialogHeight = 200;
  
 	private JLabel iconLabel = new JLabel();
  
@@ -45,7 +47,7 @@ public class ExceptionDialog extends JDialog {
 	private JTextArea errorTextArea = new JTextArea("");
  
 	private JTextArea exceptionTextArea = new JTextArea("");
-	private JScrollPane exceptionTextAreaSP = new JScrollPane();
+	private JPanel details  = new JPanel(new BorderLayout());
  
 	private JButton okButton = new JButton("OK");
 	private JButton viewButton = new JButton("View Error");
@@ -61,7 +63,8 @@ public class ExceptionDialog extends JDialog {
 		
  
 		setSize(dialogWidth, dialogHeight);
- 
+		setLocation(100, 100);
+		setModal(true);
 		setResizable(false);
  
 		errorTextArea.setText(errorDescription);
@@ -75,7 +78,8 @@ public class ExceptionDialog extends JDialog {
 		}else{
 			exceptionTextArea.setText("");
 		}
-		exceptionTextAreaSP = new JScrollPane(exceptionTextArea);
+		
+		
 		iconLabel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
  
 		iconLabel.setIcon(UIManager.getIcon("OptionPane.errorIcon"));
@@ -111,9 +115,9 @@ public class ExceptionDialog extends JDialog {
  
 		errorTextArea.setBackground(iconLabel.getBackground());
  
-		JScrollPane textAreaSP = new JScrollPane(errorTextArea);
- 
-		textAreaSP.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
+//		JScrollPane textAreaSP = new JScrollPane(errorTextArea);
+// 
+//		textAreaSP.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
  
 		errorLabel.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
 		
@@ -121,13 +125,18 @@ public class ExceptionDialog extends JDialog {
 		Font boldFont= new Font(txtFont.getFontName(), Font.BOLD, txtFont.getSize());
 		errorLabel.setFont(boldFont);
  
-		exceptionTextArea.setPreferredSize(new Dimension(100, 100));
+		
+		JScrollPane exceptionTextSP=new JScrollPane(exceptionTextArea);
+		exceptionTextSP.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
+		exceptionTextSP.setPreferredSize(new Dimension(100, 200));
+		exceptionTextSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		details.add(exceptionTextSP,BorderLayout.CENTER);
  
 		topPanel.add(iconLabel, BorderLayout.WEST);
  
 		JPanel p = new JPanel(new BorderLayout());
 		p.add(errorLabel, BorderLayout.NORTH);
-		p.add(textAreaSP);
+		p.add(errorTextArea, BorderLayout.CENTER);
  
 		topPanel.add(p);
  
@@ -155,7 +164,7 @@ public class ExceptionDialog extends JDialog {
 				if (open) {
 					viewButton.setText("View Error");
  
-					topPanel.remove(exceptionTextAreaSP);
+					topPanel.remove(details);
  
 					ExceptionDialog.this.setSize(dialogWidth, dialogHeight);
  
@@ -167,10 +176,10 @@ public class ExceptionDialog extends JDialog {
  
 					viewButton.setText("Hide Error");
  
-					topPanel.add(exceptionTextAreaSP, BorderLayout.SOUTH);
+					topPanel.add(details, BorderLayout.SOUTH);
  
 					ExceptionDialog.this.setSize(dialogWidth,
-							dialogHeight + 100);
+							dialogHeight + 200);
  
 					topPanel.revalidate();
  

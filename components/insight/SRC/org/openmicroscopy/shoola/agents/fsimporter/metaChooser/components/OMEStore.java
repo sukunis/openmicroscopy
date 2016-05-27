@@ -7,7 +7,9 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotation;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.slf4j.LoggerFactory;
 
 import com.drew.metadata.Metadata;
 
@@ -35,8 +37,9 @@ import loci.formats.meta.IMetadata;
 public class OMEStore 
 {
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-	
+//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 private static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(OMEStore.class);
 	private OME ome;
 //	private IMetadata data;
 	
@@ -92,14 +95,14 @@ public class OMEStore
 					return i;
 				}
 			}catch(Exception e){
-				LOGGER.warning("[SAVE] -- empty EXPERIMENTER");
+				LOGGER.warn("[SAVE] -- empty EXPERIMENTER");
 			}
 
 		}
 		return result;
 	}
 	
-	public void storeProjectPartner(Experimenter e) 
+	public void storeExperimenter(Experimenter e) 
 	{
 		int idx=getExperimenterIndexByLName(e.getLastName());
 		if(idx==-1){
@@ -161,7 +164,7 @@ public class OMEStore
 		LOGGER.info("[SAVE] -- save SAMPLE data");
 		StructuredAnnotations annot=ome.getStructuredAnnotations();
 		if(annot==null){
-			LOGGER.info("[SAVE] -- Structured Annotation are empty");
+			LOGGER.info("[SAVE] -- Structured Annotation are empty, create new one");
 			annot=new StructuredAnnotations();
 		}
 		int annotationIndex=annot.sizeOfXMLAnnotationList();
@@ -170,7 +173,14 @@ public class OMEStore
 		if(sampleAnnot.getID()==null)
 			sampleAnnot.setID(MetadataTools.createLSID(SampleAnnotation.SAMPLE_ANNOT_ID, annotationIndex));
 		sampleAnnot.setSample(s);
-		annot.addXMLAnnotation(sampleAnnot);
+		
+		// is there still a sample annotation
+		int index=getSampleAnnotationIndex(annot);
+		if(index!=-1){
+			annot.setXMLAnnotation(index, sampleAnnot);
+		}else{
+			annot.addXMLAnnotation(sampleAnnot);
+		}
 		
 		ome.setStructuredAnnotations(annot);
 		i.linkAnnotation(sampleAnnot);
@@ -178,6 +188,21 @@ public class OMEStore
 	}
 	
 	
+	private int getSampleAnnotationIndex(StructuredAnnotations annot) 
+	{
+		int index=-1;
+		
+		for(int i=0; i<annot.sizeOfXMLAnnotationList(); i++){
+			XMLAnnotation a=annot.getXMLAnnotation(i);
+			if(a.getID().contains("Annotation:Sample")){
+				return i;
+			}
+		}
+		return index;
+	}
+
+
+
 	public void storeObjectiveSettings(ObjectiveSettings o,Image i)
 	{
 		if(o.getObjective()==null)
@@ -214,7 +239,7 @@ public class OMEStore
 					return i;
 				}
 			}catch(Exception e){
-				LOGGER.warning("[SAVE] -- empty OBJECTIVE");
+				LOGGER.warn("[SAVE] -- empty OBJECTIVE");
 			}
 
 		}
@@ -339,7 +364,7 @@ public class OMEStore
 					return i;
 				}
 			}catch(Exception e){
-				LOGGER.warning("[SAVE] -- empty DETECTOR");
+				LOGGER.warn("[SAVE] -- empty DETECTOR");
 			}
 
 		}
@@ -416,7 +441,7 @@ public class OMEStore
 					return i;
 				}
 			}catch(Exception e){
-				LOGGER.warning("[SAVE] -- empty DETECTOR");
+				LOGGER.warn("[SAVE] -- empty DETECTOR");
 			}
 
 		}
@@ -526,7 +551,7 @@ public class OMEStore
 		Pixels pixels=i.getPixels();
 		if(pixels==null){
 			//TODO create new or corrupted data???
-			LOGGER.severe("[SAVE] -- no PIXELS object available");
+			LOGGER.error("[SAVE] -- no PIXELS object available");
 			ExceptionDialog ld = new ExceptionDialog("OME Format Error!", 
 					"No pixel element available to save channel.");
 			ld.setVisible(true);
@@ -583,7 +608,7 @@ public class OMEStore
 				index=Integer.parseInt(str);
 			}
 		} catch (NumberFormatException e) {
-			LOGGER.severe("[SAVE] -- Wrong Format: "+str);
+			LOGGER.error("[SAVE] -- Wrong Format: "+str);
 			ExceptionDialog ld = new ExceptionDialog("ID Format Error!", 
 					"Wrong id format : "+str,e);
 			ld.setVisible(true);

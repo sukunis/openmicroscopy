@@ -21,14 +21,18 @@ import ome.xml.model.primitives.PositiveInteger;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.slf4j.LoggerFactory;
 
 public abstract class ElementsCompUI extends JPanel
 {
 //	protected MetaDataControl controller;
 	
 	/** Logger for this class. */
-    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-	
+//    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 protected static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(ElementsCompUI.class);
+	 
 	// input required?
 	public static final boolean REQUIRED=true;
 	public static final boolean OPTIONAL =false;

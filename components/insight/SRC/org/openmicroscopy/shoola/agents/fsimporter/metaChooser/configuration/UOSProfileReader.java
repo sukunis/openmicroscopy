@@ -12,8 +12,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -38,8 +40,10 @@ import org.xml.sax.SAXException;
 public class UOSProfileReader 
 {
 	/** Logger for this class. */
-    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-    
+//    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 private static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(UOSProfileReader.class);
+	 
 	private static final String PROFILE = "Profile";
 	public static final String MICROSCOPE="Microscope";
 	public static final String MIC_NAME="Name";
@@ -84,7 +88,7 @@ public class UOSProfileReader
 			readConfiguration(doc);
 			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			LOGGER.severe("[VIEW_PROP] Can't read property file");
+			LOGGER.error("[VIEW_PROP] Can't read property file");
 			ExceptionDialog ld = new ExceptionDialog("Property File Error!", 
 					"Can't read given property file "+file.getAbsolutePath(),e);
 			ld.setVisible(true);
@@ -161,7 +165,7 @@ public class UOSProfileReader
 						addProperty(moduleName, pos, width);
 						loaded=true;
 					}else{
-						LOGGER.warning("[GUI] module property not complete: "+moduleName);
+						LOGGER.warn("[GUI] module property not complete: "+moduleName);
 					}
 				}else{
 					LOGGER.info("[GUI] hide "+moduleName);
@@ -169,7 +173,7 @@ public class UOSProfileReader
 				}
 				
 			}else{
-				LOGGER.warning("[GUI] module property not complete: "+moduleName);
+				LOGGER.warn("[GUI] module property not complete: "+moduleName);
 				return false;
 			}
 			
@@ -217,7 +221,7 @@ public class UOSProfileReader
 			loadImgEnvTags(node);
 			break;
 		default:
-			LOGGER.warning("[VIEW_PROP] Unknown module: "+moduleName);
+			LOGGER.warn("[VIEW_PROP] Unknown module: "+moduleName);
 			break;
 		}
 	}
@@ -327,7 +331,7 @@ view.setImageConf(conf);
 			view.addImageEnvData(pos, width);
 			break;
 		default:
-			LOGGER.warning("[VIEW_PROP] Unknown module "+moduleName);
+			LOGGER.warn("[VIEW_PROP] Unknown module "+moduleName);
 			break;
 		}
 		

@@ -47,7 +47,9 @@ import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightSourceCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -109,8 +111,9 @@ public class UOSHardwareReader
 	
 	
 	/** Logger for this class. */
-    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-    
+//    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 private static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(UOSHardwareReader.class);
     
     private List<Objective> objectiveList;
     private List<Detector> detectorList;
@@ -137,7 +140,7 @@ public class UOSHardwareReader
 			readConfiguration(doc);
 			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			LOGGER.severe("[VIEW_PROP] Can't read hardware file");
+			LOGGER.error("[VIEW_PROP] Can't read hardware file");
 			ExceptionDialog ld = new ExceptionDialog("Hardware File Error!", 
 					"Can't read given hardware file "+file.getAbsolutePath(),e);
 			ld.setVisible(true);
@@ -210,7 +213,7 @@ public class UOSHardwareReader
 			parseLightSources(subNodes,new LightEmittingDiode());
 			break;
 		default:
-			LOGGER.warning("[CONF] unknown hardware element "+nodeName);
+			LOGGER.warn("[CONF] unknown hardware element "+nodeName);
 				break;
 		}
 	}
@@ -288,8 +291,8 @@ public class UOSHardwareReader
 						try {
 							unit=parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue(),name);
 						} catch (Exception e) {
-							LOGGER.warning("[HARDWARE] wrong format of parameters of tag "+name);
-							LOGGER.warning("[HARDWARE] "+e.getMessage());
+							LOGGER.warn("[HARDWARE] wrong format of parameters of tag "+name);
+							LOGGER.warn("[HARDWARE] "+e.getMessage());
 						}
 					}
 					
@@ -338,7 +341,7 @@ public class UOSHardwareReader
 		else if(l instanceof LightEmittingDiode)
 			l=new LightEmittingDiode();
 		else{
-			LOGGER.warning("[HARDWARE] unknown lightSource type");
+			LOGGER.warn("[HARDWARE] unknown lightSource type");
 			return null;
 		}
 		
@@ -362,7 +365,7 @@ public class UOSHardwareReader
 						try {
 							unit=parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue(),name);
 						} catch (Exception e) {
-							LOGGER.warning("[HARDWARE] wrong format of parameters of tag "+name);
+							LOGGER.warn("[HARDWARE] wrong format of parameters of tag "+name);
 							e.getMessage();
 						}
 					}
@@ -443,10 +446,10 @@ public class UOSHardwareReader
 					//					TODO: ((LightEmittingDiode)lightSrc).set
 					break;
 				default:
-					LOGGER.warning("[CONF] unknown tag: "+name );break;
+					LOGGER.warn("[CONF] unknown tag: "+name );break;
 				}
 			}catch(Exception e){
-				LOGGER.warning("[HARDWARE] can't parse lightSrc tag "+name);
+				LOGGER.warn("[HARDWARE] can't parse lightSrc tag "+name);
 				e.printStackTrace();
 			}
 		}
@@ -486,10 +489,10 @@ public class UOSHardwareReader
 					//			case L_OFFSET:
 					//					detector.setOffset(Double.valueOf(val));
 					//				break;
-				default: LOGGER.warning("[HARDWARE] unknown tag: "+name );break;
+				default: LOGGER.warn("[HARDWARE] unknown tag: "+name );break;
 				}
 			}catch(Exception e){
-				LOGGER.warning("[HARDWARE] can't parse detector tag "+name);
+				LOGGER.warn("[HARDWARE] can't parse detector tag "+name);
 			}
 		}
 		return detector;
@@ -530,10 +533,10 @@ public class UOSHardwareReader
 					o.setWorkingDistance(l);
 					break;
 				default:
-					LOGGER.warning("[HARDWARE] unknown tag: "+name );break;
+					LOGGER.warn("[HARDWARE] unknown tag: "+name );break;
 				}	
 			}catch(Exception e){
-				LOGGER.warning("[HARDWARE] can't parse objective tag "+name);
+				LOGGER.warn("[HARDWARE] can't parse objective tag "+name);
 			}
 		}
 		return o;
@@ -592,7 +595,7 @@ public class UOSHardwareReader
 				unit = UnitsLengthEnumHandler.getBaseUnit(uL2);
 				break;
 			default:
-				LOGGER.warning("[HARDWARE] no unit available for tag "+name);
+				LOGGER.warn("[HARDWARE] no unit available for tag "+name);
 				break;
 			}
 				

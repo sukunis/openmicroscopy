@@ -136,7 +136,7 @@ public class ChannelCompUI extends ElementsCompUI
 	
 	private void createNewElement()
 	{
-		LOGGER.info("[DATA] create new CHANNEL");
+		LOGGER.info("[DATA] create new CHANNEL"); 
 		channel=new Channel();
 	}
 
@@ -326,38 +326,38 @@ public class ChannelCompUI extends ElementsCompUI
 		try{
 			channel.setName(name.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read CHANNEL name input");
+			LOGGER.error("[DATA] can't read CHANNEL name input");
 		}
 		try{
 			channel.setColor(parseColor(color.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read CHANNEL color input");
+			LOGGER.error("[DATA] can't read CHANNEL color input");
 		}
 		try{
 			channel.setFluor(fluorophore.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read CHANNEL fluorophore input");
+			LOGGER.error("[DATA] can't read CHANNEL fluorophore input");
 		}
 		try{
 			channel.setIlluminationType(parseIllumType(illumType.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read CHANNEL illumination type input");
+			LOGGER.error("[DATA] can't read CHANNEL illumination type input");
 		}
 		//		TODO channel.setExpTime;
 		try{
 			channel.setExcitationWavelength(parseToLength(excitWavelength.getTagValue(), excitWavelengthUnit));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read CHANNEL excitation wavelength input");
+			LOGGER.error("[DATA] can't read CHANNEL excitation wavelength input");
 		}
 		try{
 			channel.setEmissionWavelength(parseToLength(emissionWavelength.getTagValue(),emissionWavelengthUnit));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read CHANNEL emission wavelength input");
+			LOGGER.error("[DATA] can't read CHANNEL emission wavelength input");
 		}
 		try{
 			channel.setAcquisitionMode(parseAcqMode(imagingMode.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read CHANNEL acquisition mode input");
+			LOGGER.error("[DATA] can't read CHANNEL acquisition mode input");
 		}
 
 		//TODO: imagingmode und illuminationmode abspeichern
@@ -365,19 +365,19 @@ public class ChannelCompUI extends ElementsCompUI
 		try{
 			channel.setContrastMethod(parseContrastMethod(contrastMethod.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read CHANNEL contrast method input");
+			LOGGER.error("[DATA] can't read CHANNEL contrast method input");
 		}
 		try{
 			channel.setNDFilter(parseToDouble(ndFilter.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read CHANNEL ndfilter input");
+			LOGGER.error("[DATA] can't read CHANNEL ndfilter input");
 		}
 
 		//TODO: new one?
 		try{
 		if(lightPath!=null) channel.setLightPath(lightPath.getData());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read CHANNEL lightPath input");
+			LOGGER.error("[DATA] can't read CHANNEL lightPath input");
 		}
 	}
 
@@ -392,7 +392,7 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		if(channelOME==null ){
 			if(in==null){
-				LOGGER.severe("failed to merge CHANNEL data");
+				LOGGER.error("failed to merge CHANNEL data");
 			}else{
 				channelOME=in;
 			}
@@ -640,7 +640,7 @@ public class ChannelCompUI extends ElementsCompUI
 						ndFilter.setVisible(true);
 						break;
 					default:
-						LOGGER.warning("[CONF] unknown tag: "+name );break;
+						LOGGER.warn("[CONF] unknown tag: "+name );break;
 					}
 				}
 			}

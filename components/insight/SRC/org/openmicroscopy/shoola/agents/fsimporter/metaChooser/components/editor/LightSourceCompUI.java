@@ -202,7 +202,7 @@ public class LightSourceCompUI extends ElementsCompUI
 					showSourceTypeView( ((JComboBox)e.getSource()).getSelectedItem().toString());
 					
 				} catch (Exception e1) {
-					LOGGER.severe("[GUI] can't display selected source type");
+					LOGGER.error("[GUI] can't display selected source type");
 				}
 			}
 		};
@@ -351,7 +351,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			if(overwrite){
 				showLightSrcPane(lSrc);
 			}else{
-				LOGGER.warning("[DATA] add LIGHTSOURCE data: different lightSrc types - do nothing");
+				LOGGER.warn("[DATA] add LIGHTSOURCE data: different lightSrc types - do nothing");
 				return conflicts;
 			}
 		}
@@ -740,7 +740,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			setTitledBorder("LightEmittingDiode");
 			setGUIDataLightEmittingDiode();
 		}else{
-			LOGGER.severe(" unknown LIGHTSOURCE or element is null ");
+			LOGGER.error(" unknown LIGHTSOURCE or element is null ");
 		}
 	}
 	
@@ -757,7 +757,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		}else if(l instanceof LightEmittingDiode){
 			sourceType.setSelectedIndex(4);
 		}else{
-			LOGGER.severe(" unknown LIGHTSOURCE or element is null ");
+			LOGGER.error(" unknown LIGHTSOURCE or element is null ");
 		}
 	}
 	
@@ -785,7 +785,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		}else if(lightSrc instanceof LightEmittingDiode){
 			readGUIInputLightEmittingDiodeData();
 		}else{
-			LOGGER.severe("unknown LIGHTSOURCE or element is null");
+			LOGGER.error("unknown LIGHTSOURCE or element is null");
 		}
 	}
 	
@@ -808,7 +808,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		case LIGHT_EMITTING_DIODE:
 			lightSrc=new LightEmittingDiode();
 			break;
-		default: LOGGER.severe("unknown LightSource");
+		default: LOGGER.error("unknown LightSource");
 		break;
 		}
 		
@@ -818,12 +818,12 @@ public class LightSourceCompUI extends ElementsCompUI
 		try{
 			((LightEmittingDiode)lightSrc).setManufacturer(manufact.getTagValue().equals("")? null : manufact.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC led manufacturer input");
+			LOGGER.error("[DATA] can't read LIGHTSRC led manufacturer input");
 		}
 		try{
 			((LightEmittingDiode)lightSrc).setModel(model.getTagValue().equals("")? null : model.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC led model input");
+			LOGGER.error("[DATA] can't read LIGHTSRC led model input");
 		}
 		//TODO ((LightEmittingDiode)lightSrc).setLinkedAnnotation(index, o)
 	}
@@ -834,18 +834,18 @@ public class LightSourceCompUI extends ElementsCompUI
 			((GenericExcitationSource)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
 					null : manufact.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC ges manufacturer input");
+			LOGGER.error("[DATA] can't read LIGHTSRC ges manufacturer input");
 		}
 		try{
 			((GenericExcitationSource)lightSrc).setModel(model.getTagValue().equals("")? 
 					null : model.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC ges model input");
+			LOGGER.error("[DATA] can't read LIGHTSRC ges model input");
 		}
 		try{
 			((GenericExcitationSource)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC ges power input");
+			LOGGER.error("[DATA] can't read LIGHTSRC ges power input");
 		}
 		//TODO set Map
 //		((GenericExcitationSource)lightSrc).setMap(map.getTagValue().equals("") ? 
@@ -858,24 +858,24 @@ public class LightSourceCompUI extends ElementsCompUI
 			((Filament)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
 					null : manufact.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC fila manufacturer input");
+			LOGGER.error("[DATA] can't read LIGHTSRC fila manufacturer input");
 		}
 		try{
 			((Filament)lightSrc).setModel(model.getTagValue().equals("")? 
 					null : model.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC fila model input");
+			LOGGER.error("[DATA] can't read LIGHTSRC fila model input");
 		}
 		try{
 			((Filament)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC fila power input");
+			LOGGER.error("[DATA] can't read LIGHTSRC fila power input");
 		}
 		try{
 			((Filament)lightSrc).setType(type.getTagValue().equals("") ? 
 					null : FilamentType.fromString(type.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC fila type input");
+			LOGGER.error("[DATA] can't read LIGHTSRC fila type input");
 		}
 		
 	}
@@ -886,24 +886,24 @@ public class LightSourceCompUI extends ElementsCompUI
 			((Arc)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
 					null : manufact.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC arc manufacturer input");
+			LOGGER.error("[DATA] can't read LIGHTSRC arc manufacturer input");
 		}
 		try{
 			((Arc)lightSrc).setModel(model.getTagValue().equals("")? 
 					null : model.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC arc model input");
+			LOGGER.error("[DATA] can't read LIGHTSRC arc model input");
 		}
 		try{
 			((Arc)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC arc power input. "+e.getMessage());
+			LOGGER.error("[DATA] can't read LIGHTSRC arc power input. "+e.getMessage());
 		}
 		try{
 			((Arc)lightSrc).setType(type.getTagValue().equals("") ? 
 					null : ArcType.fromString(type.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC arc type input");
+			LOGGER.error("[DATA] can't read LIGHTSRC arc type input");
 		}
 	}
 
@@ -913,57 +913,57 @@ public class LightSourceCompUI extends ElementsCompUI
 			((Laser)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
 					null : manufact.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC maunfacturer input");
+			LOGGER.error("[DATA] can't read LIGHTSRC maunfacturer input");
 		}
 		try{
 			((Laser)lightSrc).setModel(model.getTagValue().equals("")? 
 					null : model.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC model input");
+			LOGGER.error("[DATA] can't read LIGHTSRC model input");
 		}
 		try{
 			if(power.getTagValue()!=null)
 				((Laser)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC power input");
+			LOGGER.error("[DATA] can't read LIGHTSRC power input");
 		}
 		try{
 			((Laser)lightSrc).setType(parseLaserType(type.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC type input");
+			LOGGER.error("[DATA] can't read LIGHTSRC type input");
 		}
 		try{
 			((Laser)lightSrc).setFrequencyMultiplication(parseToPositiveInt(freqMul.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC freq multiplication input");
+			LOGGER.error("[DATA] can't read LIGHTSRC freq multiplication input");
 		}
 		try{
 			((Laser)lightSrc).setLaserMedium(parseMedium(medium.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC medium input");
+			LOGGER.error("[DATA] can't read LIGHTSRC medium input");
 		}
 		try{
 
 			((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(tunable.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC tunable input");
+			LOGGER.error("[DATA] can't read LIGHTSRC tunable input");
 		}
 		try{
 
 			((Laser)lightSrc).setPulse(parsePulse(pulse.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC pulse input");
+			LOGGER.error("[DATA] can't read LIGHTSRC pulse input");
 		}
 		try{
 
 			((Laser)lightSrc).setPockelCell(Boolean.valueOf(pockelCell.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC pockell cell input");
+			LOGGER.error("[DATA] can't read LIGHTSRC pockell cell input");
 		}
 		try{
 			((Laser)lightSrc).setRepetitionRate(parseFrequency(repRate.getTagValue(), repRate.getTagUnit()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC repetition rate input");
+			LOGGER.error("[DATA] can't read LIGHTSRC repetition rate input");
 		}
 
 		//TODO: link pump object
@@ -972,7 +972,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		try{
 			((Laser)lightSrc).setWavelength(parseToLength(waveLength.getTagValue(),waveLength.getTagUnit()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC wavelength input");
+			LOGGER.error("[DATA] can't read LIGHTSRC wavelength input");
 		}
 		
 	}
@@ -1237,7 +1237,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		case LIGHT_EMITTING_DIODE:
 			addTagToGUI(description);
 			break;
-		default: LOGGER.severe("unknown LightSource");
+		default: LOGGER.error("unknown LightSource");
 		break;
 		}
 	}
@@ -1545,7 +1545,7 @@ public class LightSourceCompUI extends ElementsCompUI
 						description.setVisible(true);
 						break;
 					default:
-						LOGGER.warning("[CONF] unknown tag: "+name );break;
+						LOGGER.warn("[CONF] unknown tag: "+name );break;
 					}
 				}
 			}
@@ -1568,7 +1568,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		case FILAMENT: createFilamentDummy(inactive); break;
 		case GENERIC_EXCITATION: createGenericExcDummy(inactive); break;
 		case LIGHT_EMITTING_DIODE: createLightEmDummy(inactive); break;
-		default: LOGGER.severe("unknown LightSource");
+		default: LOGGER.error("unknown LightSource");
 		break;
 		}
 		
@@ -1588,7 +1588,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		case FILAMENT: initTagListFilament(); break;
 		case GENERIC_EXCITATION: initTagListGenericExc(); break;
 		case LIGHT_EMITTING_DIODE: initTagListLED(); break;
-		default: LOGGER.severe("unknown LightSource");
+		default: LOGGER.error("unknown LightSource");
 		break;
 		}
 	}

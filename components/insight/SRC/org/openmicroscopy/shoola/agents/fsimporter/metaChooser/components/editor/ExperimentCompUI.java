@@ -30,6 +30,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterListModel;
 
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
@@ -124,9 +125,12 @@ public class ExperimentCompUI extends ElementsCompUI
 			try{ setType(experiment.getType(), ElementsCompUI.REQUIRED);}
 			catch(NullPointerException e){}
 //			try{ setName(experiment.getLinkedExperimenter().getLastName(), ElementsCompUI.REQUIRED);}
-			try{String [] name= {experiment.getLinkedExperimenter().getFirstName(),
-					experiment.getLinkedExperimenter().getLastName()};
-				setName(name, ElementsCompUI.REQUIRED);}
+			try{
+//				String [] name= {experiment.getLinkedExperimenter().getFirstName(),
+//					experiment.getLinkedExperimenter().getLastName()};
+//				setName(name, ElementsCompUI.REQUIRED);
+				setName(experiment.getLinkedExperimenter(),ElementsCompUI.REQUIRED);
+				}
 			catch(NullPointerException e){}
 		}
 
@@ -298,19 +302,21 @@ public class ExperimentCompUI extends ElementsCompUI
 		try{
 			experiment.setDescription(description.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read EXPERIMENT description input");
+			LOGGER.error("[DATA] can't read EXPERIMENT description input");
 			e.printStackTrace();
 		}
 		try{
 			experiment.setType(getExperimentType(type.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read EXPERIMENT type input");
+			LOGGER.error("[DATA] can't read EXPERIMENT type input");
 		}
 		try{
-			experiment.getLinkedExperimenter().setFirstName(expName.getTagValue(0));
-			experiment.getLinkedExperimenter().setLastName(expName.getTagValue(1));
+//			experiment.getLinkedExperimenter().setFirstName(expName.getTagValue(0));
+//			experiment.getLinkedExperimenter().setLastName(expName.getTagValue(1));
+			// first element should be the inport user
+			experiment.linkExperimenter(expName.getListValues().get(0));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read EXPERIMENT experimenter input");
+			LOGGER.error("[DATA] can't read EXPERIMENT experimenter input");
 		}
 	}
 	
@@ -399,7 +405,10 @@ public class ExperimentCompUI extends ElementsCompUI
 		return experiment;
 	}
 	
-	
+	public List<Experimenter> getExperimenterList()
+	{
+		return expName.getListValues();
+	}
 
 	public void setType(ExperimentType value, boolean prop)
 	{
@@ -430,21 +439,36 @@ public class ExperimentCompUI extends ElementsCompUI
 	}
 	
 	
-	public void setName(String value, boolean prop)
-	{
-		if(expName == null) 
-			expName = new TagData(TagNames.EXPNAME+": ",value,prop,TagData.TEXTFIELD);
-		else 
-			expName.setTagValue(value,prop);
-	}
+//	public void setName(String value, boolean prop)
+//	{
+//		if(expName == null) 
+//			expName = new TagData(TagNames.EXPNAME+": ",value,prop,TagData.TEXTFIELD);
+//		else 
+//			expName.setTagValue(value,prop);
+//	}
+//	
+//	public void setName(String[] value, boolean prop)
+//	{
+//		if(expName == null) 
+//			expName = new TagData(TagNames.EXPNAME+": ",value,prop,TagData.ARRAYFIELDS);
+//		else {
+//			expName.setTagValue(value[0],0,prop);
+//			expName.setTagValue(value[1],1,prop);
+//		}
+//	}
 	
-	public void setName(String[] value, boolean prop)
+	public void setName(Experimenter value, boolean prop)
 	{
-		if(expName == null) 
-			expName = new TagData(TagNames.EXPNAME+": ",value,prop,TagData.ARRAYFIELDS);
-		else {
-			expName.setTagValue(value[0],0,prop);
-			expName.setTagValue(value[1],1,prop);
+		if(expName == null){ 
+			
+			ExperimenterListModel m=new ExperimenterListModel();
+			if(value!=null){
+				m.addElement(value);
+			}
+			expName = new TagData(TagNames.EXPNAME+": ",m,prop,TagData.LIST);
+		}
+		else{ 
+			expName.setTagValue(value);
 		}
 	}
 	
@@ -490,7 +514,7 @@ public class ExperimentCompUI extends ElementsCompUI
 		setType(null, ElementsCompUI.OPTIONAL);
 		setDescription(null, ElementsCompUI.OPTIONAL);
 //		setName(null,OPTIONAL);
-		setName(new String[2],OPTIONAL);
+		setName(null,OPTIONAL);
 		
 		projectName.setEnable(false);
 		group.setEnable(false);
@@ -554,7 +578,7 @@ public class ExperimentCompUI extends ElementsCompUI
 					break;
 				case TagNames.EXPNAME:
 //					setName(null, prop);
-					setName(new String[2], prop);
+					setName(null, prop);
 					this.expName.setVisible(true);
 					break;
 				case TagNames.PROJECTNAME:
@@ -566,7 +590,7 @@ public class ExperimentCompUI extends ElementsCompUI
 					projectPartner.setVisible(true);
 					break;
 				default:
-					LOGGER.warning("[CONF] unknown tag: "+name );break;
+					LOGGER.warn("[CONF] unknown tag: "+name );break;
 				}
 			}
 		}

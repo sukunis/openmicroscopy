@@ -207,17 +207,17 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 		try{
 			oSett.setRefractiveIndex(parseToDouble(refractIndex.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read OBJECTIVE SETT refraction index input");
+			LOGGER.error("[DATA] can't read OBJECTIVE SETT refraction index input");
 		}
 		try{
 			oSett.setMedium(parseMedium(medium.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read OBJECTIVE SETT medium input");
+			LOGGER.error("[DATA] can't read OBJECTIVE SETT medium input");
 		}
 		try{
 			oSett.setCorrectionCollar(parseToDouble(corCollar.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read OBJECTIVE SETT correction collar input");
+			LOGGER.error("[DATA] can't read OBJECTIVE SETT correction collar input");
 		}
 	}
 	
@@ -342,7 +342,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 					}
 					refractIndex.setVisible(true);
 					break;
-				default:LOGGER.warning("[CONF] OBJECTIVE SETT unknown tag: "+name );break;
+				default:LOGGER.warn("[CONF] OBJECTIVE SETT unknown tag: "+name );break;
 				}
 			}
 		}

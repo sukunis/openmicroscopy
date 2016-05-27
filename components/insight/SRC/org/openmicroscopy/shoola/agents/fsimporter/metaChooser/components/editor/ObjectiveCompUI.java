@@ -347,48 +347,48 @@ public class ObjectiveCompUI extends ElementsCompUI
 		try{
 			objective.setModel(model.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read OBJECTIVE model input");
+			LOGGER.error("[DATA] can't read OBJECTIVE model input");
 		}
 		try{
 			objective.setManufacturer(manufact.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read OBJECTIVE manufacturer input");
+			LOGGER.error("[DATA] can't read OBJECTIVE manufacturer input");
 		}
 		try{objective.setNominalMagnification(nomMagn.getTagValue().equals("")? 
 				null : Double.valueOf(nomMagn.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read OBJECTIVE nominal magnification input");
+			LOGGER.error("[DATA] can't read OBJECTIVE nominal magnification input");
 		}
 		try{
 			objective.setCalibratedMagnification(calMagn.getTagValue().equals("")? 
 					null : Double.valueOf(calMagn.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read OBJECTIVE calibrated magnification input");
+			LOGGER.error("[DATA] can't read OBJECTIVE calibrated magnification input");
 		}
 		try{
 			objective.setLensNA(lensNA.getTagValue().equals("")? 
 					null : Double.valueOf(lensNA.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read OBJECTIVE lensNa input");
+			LOGGER.error("[DATA] can't read OBJECTIVE lensNa input");
 		}
 		try{
 			objective.setImmersion(immersion.getTagValue().equals("")?
 					null : Immersion.fromString(immersion.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read OBJECTIVE immersion input");
+			LOGGER.error("[DATA] can't read OBJECTIVE immersion input");
 		}
 		try{
 
 			objective.setCorrection(correction.getTagValue().equals("") ?
 					null : Correction.fromString(correction.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read OBJECTIVE correction input");
+			LOGGER.error("[DATA] can't read OBJECTIVE correction input");
 		}
 		try{
 			objective.setWorkingDistance(workDist.getTagValue().equals("")?
 					null : new Length(new Double(workDist.getTagValue()), workDist.getTagUnit()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read OBJECTIVE working distance input");
+			LOGGER.error("[DATA] can't read OBJECTIVE working distance input");
 		}
 	}
 	
@@ -617,7 +617,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 						workDist.setVisible(true);
 						break;
 					default:
-						LOGGER.warning("[CONF] unknown tag: "+name );break;
+						LOGGER.warn("[CONF] unknown tag: "+name );break;
 					}
 				}
 			}

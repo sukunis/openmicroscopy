@@ -9,7 +9,9 @@ import java.util.logging.Logger;
 import loci.formats.MetadataTools;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -34,8 +36,9 @@ import ome.xml.model.primitives.Timestamp;
 public class Sample 
 {
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-	
+//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 private static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(Sample.class);
 	/** preparation data **/
 	private Timestamp preparationDate;
 	private String preparationDescription;
@@ -88,7 +91,7 @@ public class Sample
 	{
 		String tagName=element.getTagName();
 		if(!"Sample".equals(tagName)){
-			LOGGER.warning("Expecting node name of Sample - but this is "+tagName);
+			LOGGER.warn("Expecting node name of Sample - but this is "+tagName);
 		}
 		if(element.hasAttribute("namespace")){
 			//TODO test right namespace
@@ -168,8 +171,16 @@ public class Sample
 	
 	public void setPrepDate(String date)
 	{
-		//TODO parse
-//		this.preparationDate=date;
+		Timestamp timestamp=null;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		
+		if(date!=null){
+				timestamp = new Timestamp(date);
+		}
+		
+		if(date!=null && timestamp!=null)
+			this.preparationDate=timestamp;
+	
 	}
 	
 	public Timestamp getPrepDate()
@@ -180,7 +191,7 @@ public class Sample
 	public String getDateAsString()
 	{
 		java.sql.Timestamp timestamp=null;
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		
 		if(preparationDate!=null){
 			try{
@@ -189,7 +200,7 @@ public class Sample
 				timestamp = new java.sql.Timestamp(parsedDate.getTime());
 
 			}catch(Exception e){//this generic but you can control another types of exception
-				LOGGER.severe("Wrong date format for SAMPLE preparation date");
+				LOGGER.error("Wrong date format for SAMPLE preparation date");
 				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
 						"Wrong timestamp format",e);
 				ld.setVisible(true);
@@ -256,7 +267,7 @@ public class Sample
 //		
 //	}
 	
-	public void setGridBoxData(Integer nr, String type) 
+	public void setGridBoxData(String nr, String type) 
 	{
 		if(gridBox==null)
 			gridBox=new GridBox("0",nr,type);
@@ -266,12 +277,7 @@ public class Sample
 		}		
 	}
 	
-	public void setGridBoxData(String nr, String type)
-	{
-		
-		Integer gridBoxNr = (nr!=null && !nr.equals("")) ? Integer.valueOf(nr) : -1;
-		setGridBoxData(gridBoxNr,type);
-	}
+	
 	
 	/**
 	 * @param gridSizeX the gridSizeX to set
@@ -283,11 +289,10 @@ public class Sample
 	
 	public void setGridBoxNr(String nr)
 	{
-		Integer gridBoxNr = (nr!=null && !nr.equals("")) ? Integer.valueOf(nr) : -1;
 		if(gridBox==null){
-			gridBox=new GridBox("0",gridBoxNr,"");
+			gridBox=new GridBox("0",nr,"");
 		}else{
-			gridBox.setNr(gridBoxNr);
+			gridBox.setNr(nr);
 		}
 	}
 	
@@ -412,7 +417,7 @@ public class Sample
 	public static class GridBox
 	{
 		private String id;
-		private Integer nr;
+		private String nr;
 		private String type;
 		
 		public static String GRID="GridBox";
@@ -420,7 +425,7 @@ public class Sample
 		public static String GRID_NR="NR";
 		public static String GRID_TYPE="Type";
 		
-		public GridBox(String id,Integer nr, String type)
+		public GridBox(String id,String nr, String type)
 		{
 			this.id=id;
 			this.nr=nr;
@@ -438,7 +443,7 @@ public class Sample
 			}
 			
 			if(((Element) node).hasAttribute(GRID_NR)){
-				setNr(Integer.valueOf(
+				setNr(String.valueOf(
 						((Element) node).getAttribute(GRID_NR)));
 			}
 			if(((Element)node).hasAttribute(GRID_TYPE)){
@@ -468,14 +473,14 @@ public class Sample
 		/**
 		 * @return the sizeY
 		 */
-		public Integer getNr() {
+		public String getNr() {
 			return nr;
 		}
 
 		/**
 		 * @param sizeY the sizeY to set
 		 */
-		public void setNr(Integer nr) {
+		public void setNr(String nr) {
 			this.nr = nr;
 		}
 
@@ -509,7 +514,7 @@ public class Sample
 				xml.append("\"");
 			}
 			
-			if(nr>0){
+			if(nr!=null){
 				xml.append(" "+GRID_NR+"=\"");
 				xml.append(String.valueOf(nr));
 				xml.append("\"");

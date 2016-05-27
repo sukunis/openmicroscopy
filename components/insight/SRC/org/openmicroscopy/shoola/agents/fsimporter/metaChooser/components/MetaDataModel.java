@@ -37,6 +37,8 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.PlaneCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.SampleCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.slf4j.LoggerFactory;
 
 //see also ome.xml.model.OME
 //TODO use OME
@@ -44,8 +46,9 @@ public class MetaDataModel
 {
 	
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-    
+//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 private static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(MetaDataModel.class);
 	private ElementsCompUI image;
 	private List<ElementsCompUI> detectorList;
 	private List<ElementsCompUI> lightSrcList;
@@ -304,7 +307,7 @@ public class MetaDataModel
 	{
 		sampleUI=e;
 		if(e==null){
-			LOGGER.warning("[DEBUG] Add empty sample obj ");
+			LOGGER.warn("[DEBUG] Add empty sample obj ");
 		}
 	}
 	
@@ -390,7 +393,7 @@ public class MetaDataModel
 		if(detectorList!=null)
 			detectorList.add(chIdx,d);
 		else
-			LOGGER.warning("[Model] detector list not available");
+			LOGGER.warn("[Model] detector list not available");
 	}
 	
 	public void addDetectorData(DetectorCompUI d)
@@ -406,7 +409,7 @@ public class MetaDataModel
 			}
 		}
 		else
-			LOGGER.warning("[Model] detector list not available");
+			LOGGER.warn("[Model] detector list not available");
 	}
 	
 	public DetectorCompUI getDetectorModul(int i) 
@@ -492,7 +495,7 @@ public class MetaDataModel
 		if(lightPathList!=null)
 			lightPathList.add(chIdx, lpUI);
 		else
-			LOGGER.warning("[Model] light path not available");
+			LOGGER.warn("[Model] light path not available");
 		
 		// set linked Channel for Filter and dichroic list
 		LightPath lP=lpUI.getLightPath();
@@ -510,7 +513,7 @@ public class MetaDataModel
 				setLinkedChannel(lP,lightPathList.size());
 			}
 		}else{
-			LOGGER.warning("[Model] light path not available");
+			LOGGER.warn("[Model] light path not available");
 		}
 	}
 
@@ -540,7 +543,7 @@ public class MetaDataModel
 					if(linkedChannelForFilter.get(counter)==-1){
 						linkedChannelForFilter.set(counter, chIdx);
 					}else{
-						LOGGER.warning("DEBUG: filter schon von anderem Channel besetzt "+
+						LOGGER.warn("DEBUG: filter schon von anderem Channel besetzt "+
 								fC.getID());
 					}
 				}
@@ -556,7 +559,7 @@ public class MetaDataModel
 					if(linkedChannelForFilter.get(counter)==-1){
 						linkedChannelForFilter.set(counter, chIdx);
 					}else{
-						LOGGER.warning("filter is used by another channel"+
+						LOGGER.warn("filter is used by another channel"+
 								fC.getID());
 					}
 				}
@@ -573,7 +576,7 @@ public class MetaDataModel
 				if(linkedChannelForDichroic.get(counter)==-1){
 					linkedChannelForDichroic.set(counter,chIdx);
 				}else{
-					LOGGER.warning("dichroic is used by another channel "+d.getID());
+					LOGGER.warn("dichroic is used by another channel "+d.getID());
 				}
 			}
 			counter++;
@@ -593,7 +596,7 @@ public class MetaDataModel
 		if(lightSrcList!=null)
 			lightSrcList.add(chIdx,e);
 		else
-			LOGGER.warning("[MODEL] light source list not available");
+			LOGGER.warn("[MODEL] light source list not available");
 	}
 	
 	public void addLightSrcModul(ElementsCompUI e)
@@ -609,7 +612,7 @@ public class MetaDataModel
 			}
 		}
 		else
-			LOGGER.warning("[MODEL] light source list not available");
+			LOGGER.warn("[MODEL] light source list not available");
 	}
 	
 	

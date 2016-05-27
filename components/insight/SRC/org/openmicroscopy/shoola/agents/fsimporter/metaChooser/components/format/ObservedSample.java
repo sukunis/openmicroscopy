@@ -6,7 +6,9 @@ import loci.formats.MetadataTools;
 import ome.xml.model.primitives.Timestamp;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -26,7 +28,9 @@ public class ObservedSample
 {
 	
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(ObservedSample.class);
 	//--Fields
 	private String sampleID;
 	private String gridboxID;
@@ -81,7 +85,7 @@ public class ObservedSample
 		try{
 		String tagName=element.getTagName();
 		if(!OBS_SAMPLE.equals(tagName)){
-			LOGGER.warning("Expecting node name of ObservedSample - but this is "+tagName);
+			LOGGER.warn("Expecting node name of ObservedSample - but this is "+tagName);
 		}
 		if(element.hasAttribute("namespace")){
 			//TODO test right namespace
@@ -134,7 +138,7 @@ public class ObservedSample
 			ExceptionDialog ld = new ExceptionDialog("Parse Error Observed Sample!", 
 					"Can not parse given observed sample from ome file",e);
 			ld.setVisible(true);
-			LOGGER.severe("Can not parse OBSERVED SAMPLE");
+			LOGGER.error("Can not parse OBSERVED SAMPLE");
 		}
 	}
 	

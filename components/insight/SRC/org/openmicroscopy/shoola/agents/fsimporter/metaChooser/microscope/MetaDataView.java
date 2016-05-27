@@ -15,6 +15,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import jdk.internal.org.xml.sax.SAXParseException;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -32,6 +33,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.slf4j.LoggerFactory;
 
 /**
  * Gui for metadata for selected node of filetree.
@@ -44,7 +46,9 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDia
 public class MetaDataView extends JPanel
 {
 	 /** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 private static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(MetaDataUI.class);
     
     private OME ome;
     private File srcFile;
@@ -70,7 +74,7 @@ public class MetaDataView extends JPanel
      * @param fName
      */
 	public MetaDataView(CustomViewProperties sett,String fName,
-			ImportUserData importData, MetaDataModel parentData)
+			ImportUserData importData, MetaDataModel parentData) throws Exception
 	{
 		super(new BorderLayout());
 		this.setBorder(BorderFactory.createEmptyBorder());
@@ -79,7 +83,7 @@ public class MetaDataView extends JPanel
 		
 		ImageReader reader = new ImageReader();
 		IMetadata data=null;
-		try {
+		
 
 			data = readMetadataFromFile(fName, reader);
 			if(data==null) return ;
@@ -90,13 +94,7 @@ public class MetaDataView extends JPanel
 			OMEXMLService service = factory.getInstance(OMEXMLService.class);
 			String xml = service.getOMEXML((MetadataRetrieve) data);
 			ome = (OME) service.createOMEXMLRoot(xml);
-		} catch (DependencyException | ServiceException e) {
-			LOGGER.severe("[DATA] CAN'T read METADATA");
-			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-					"Can't read given metadata of "+fName,e);
-			ld.setVisible(true);
-			return;
-		}
+		
 
 		srcFile=new File(fName);
 
@@ -183,7 +181,7 @@ public class MetaDataView extends JPanel
 			try {
 				singleView.addData(dirData);
 			} catch (Exception e) {
-				LOGGER.warning("[DATA] -- Can't add metadata from dir model");
+				LOGGER.warn("[DATA] -- Can't add metadata from dir model");
 				e.printStackTrace();
 			}
 		}
@@ -204,7 +202,7 @@ public class MetaDataView extends JPanel
 			try {
 				pane.addData(parentData);
 			} catch (Exception e) {
-				LOGGER.warning("[DATA] -- Can't add metadata from parent model");
+				LOGGER.warn("[DATA] -- Can't add metadata from parent model");
 				e.printStackTrace();
 			}
 		}else{
@@ -229,7 +227,7 @@ public class MetaDataView extends JPanel
 		try{
 			reader.setId(file);
 		}catch(FormatException | IOException e){
-			LOGGER.severe("Error read file");
+			LOGGER.error("Error read file");
 			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
 					"Can't read metadata of "+file,e);
 			ld.setVisible(true);
@@ -276,17 +274,21 @@ public class MetaDataView extends JPanel
 				saver.save();
 				
 			}else{
-				LOGGER.info("[SAVE] -- save model for single data");
-				LOGGER.info("[SAVE] -- save to "+srcFile.getAbsolutePath());
-				SaveMetadata saver=new SaveMetadata(ome, singleView.getModel(), null, srcFile);
-				
-				saver.save();
+				if(singleView!=null){
+					LOGGER.info("[SAVE] -- save model for single data");
+					LOGGER.info("[SAVE] -- save to "+srcFile.getAbsolutePath());
+					SaveMetadata saver=new SaveMetadata(ome, singleView.getModel(), null, srcFile);
+
+					saver.save();
+				}
 			}
 			
 		}else{
 			//dir
-			LOGGER.info("[SAVE] -- save model for directory");
-			singleView.getModel();
+			if(singleView!=null){
+				LOGGER.info("[SAVE] -- save model for directory");
+				singleView.getModel();
+			}
 		}
 	}
 	
@@ -300,7 +302,7 @@ public class MetaDataView extends JPanel
 				try {
 					((MetaDataUI) ((JTabbedPane)view).getComponentAt(i)).showData();
 				} catch (Exception e) {
-					LOGGER.severe("[DATA] CAN'T load METADATA gui");
+					LOGGER.error("[DATA] CAN'T load METADATA gui");
 					ExceptionDialog ld = new ExceptionDialog("Metadata GUI Error!", 
 							"Can't load metadata gui",e);
 					ld.setVisible(true);
@@ -310,7 +312,7 @@ public class MetaDataView extends JPanel
 			try {
 				singleView.showData();
 			} catch (Exception e) {
-				LOGGER.severe("[DATA] CAN'T load METADATA gui");
+				LOGGER.error("[DATA] CAN'T load METADATA gui");
 				ExceptionDialog ld = new ExceptionDialog("Metadata GUI Error!", 
 						"Can't load metadata gui",e);
 				ld.setVisible(true);

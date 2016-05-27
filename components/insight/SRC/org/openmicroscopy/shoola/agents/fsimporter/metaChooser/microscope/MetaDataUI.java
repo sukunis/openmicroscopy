@@ -77,6 +77,8 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotation;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+//import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactory;
 
 public class MetaDataUI extends JPanel
 {
@@ -154,7 +156,9 @@ public class MetaDataUI extends JPanel
 	private CustomViewProperties customSett;
 	
 	 /** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+    private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(MetaDataUI.class);
 	
 	public MetaDataUI(CustomViewProperties sett)
 	{
@@ -422,7 +426,8 @@ public class MetaDataUI extends JPanel
 					//TODO: no referenced instrument? -> createDummy
 					Instrument instrument=image.getLinkedInstrument();
 					if(instrument==null){
-						LOGGER.warning("[DATA] NO INSTRUMENTS available, create new");
+//						LOGGER.warning("[DATA] NO INSTRUMENTS available, create new");
+						LOGGER.warn("[DATA] NO INSTRUMENTS available, create new");
 						model.createAndLinkNewInstrument(ome); 
 					}else{
 						objectives=instrument.copyObjectiveList();
@@ -438,7 +443,7 @@ public class MetaDataUI extends JPanel
 					//TODO: no Pixel data -> dummies ??
 					Pixels pixels=image.getPixels();
 					if(pixels==null){
-						LOGGER.warning("[DATA] NO PIXEL object available");
+						LOGGER.warn("[DATA] NO PIXEL object available");
 					}else{
 						channels=pixels.copyChannelList();
 						planes=pixels.copyPlaneList();
@@ -453,18 +458,18 @@ public class MetaDataUI extends JPanel
 						readExperimentData(image);
 					}
 				}else{
-					LOGGER.warning("[DATA] NO IMAGE object available");
+					LOGGER.warn("[DATA] NO IMAGE object available");
 					
 				}
 
 			}catch(Exception e){
-				LOGGER.severe("[DATA] CAN'T read METADATA");
+				LOGGER.error("[DATA] CAN'T read METADATA");
 				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
 						"Can't read given metadata  from "+file.getAbsolutePath(),e);
 				ld.setVisible(true);
 			}
 		}else{
-			LOGGER.warning("[DATA] NOT available METADATA ");
+			LOGGER.warn("[DATA] NOT available METADATA ");
 			model.setImageOMEData(null);
 		}
 	}
@@ -489,7 +494,7 @@ public class MetaDataUI extends JPanel
 				}
 				LOGGER.info("[DATA] -- load PLANE");
 			}catch(Exception e){
-				LOGGER.severe("[DATA] -- PLANE data load failed");
+				LOGGER.error("[DATA] -- PLANE data load failed");
 				ExceptionDialog ld = new ExceptionDialog("Plane Data Error!", 
 						"Can't read plane data from file "+file.getAbsolutePath(),e);
 				ld.setVisible(true);
@@ -512,6 +517,7 @@ public class MetaDataUI extends JPanel
 	{
 		if(initExperimentUI)
 		{
+			// load image linked experiment and experimenter
 			Experiment e=image.getLinkedExperiment();
 			Experimenter exper=image.getLinkedExperimenter();
 			ExperimentCompUI eUI=model.getExpModul();
@@ -521,6 +527,14 @@ public class MetaDataUI extends JPanel
 //			if(exper!=null){
 //				eUI.addData(exper, false);
 //			}
+			
+			//if there are more than one experimenter?
+			if(ome.sizeOfExperimenterList()>1){
+				List<Experimenter> eList=ome.copyExperimenterList();
+				for(Experimenter anotherExp : eList){
+					eUI.setName(anotherExp, ElementsCompUI.REQUIRED);
+				}
+			}
 		}
 	}
 
@@ -814,7 +828,7 @@ public class MetaDataUI extends JPanel
 			ExperimentCompUI e=model.getExpModul();
 			if(e!=null){
 //				e.setName(importUserData.getUser(), ElementsCompUI.OPTIONAL);
-				e.setName(importUserData.getUserFullName(), ElementsCompUI.OPTIONAL);
+				e.setName(importUserData.getUser(), ElementsCompUI.OPTIONAL);
 				e.setGroupName(importUserData.getGroup(), ElementsCompUI.OPTIONAL);
 				e.setProjectName(importUserData.getProject(), ElementsCompUI.OPTIONAL);
 				e.setFieldsExtern(true);
@@ -826,18 +840,23 @@ public class MetaDataUI extends JPanel
 	public void showData() throws Exception
 	{
 		initLayout();
-		// global buttons
-//		initBtnElements();
 		
 		showExperimentData();
 		showImageData();
 		showChannelData();
 		showSampleData();
 		
-//		addToPlaceholder(getButtonPane(), GUIPlaceholder.Pos_Bottom, 2);
+//		revalidateTableLayout();
 		revalidate();
 		repaint();
 	}
+
+	// hide empty col or empty row
+//	private void revalidateTableLayout() 
+//	{
+//		TableLayout layout=(TableLayout) getLayout();
+//		layout.
+//	}
 
 	private void showExperimentData() {
 		if(initExperimentUI){
@@ -1015,18 +1034,26 @@ public class MetaDataUI extends JPanel
 	private void initLayout()
 	{
 		//layout
-		gbl = new GridBagLayout();
-		setLayout( gbl );
-
-		gbl.columnWidths = new int[] {50, 50,50,50};
-		
+//		gbl = new GridBagLayout();
+//		setLayout( gbl );
+//
+//		gbl.columnWidths = new int[] {50, 50,50,50};
+//		
+//		double[][] layoutDesign=new double[][]{
+//				//X-achse
+//				{0.25,0.25,0.25,TableLayout.FILL},
+//				//Y-Achse
+//				{0.5,0.5}
+//		};
 		double[][] layoutDesign=new double[][]{
 				//X-achse
-				{0.25,0.25,0.25,TableLayout.FILL},
+				{TableLayout.FILL},
 				//Y-Achse
-				{0.5,0.5}
+//				{0.5,0.5}
+				{TableLayout.FILL}
 		};
 		TableLayout layout=new TableLayout(layoutDesign);
+	
 //		GridLayout layout=new GridLayout(4,4);
 		setLayout(layout);
 	}
@@ -1076,33 +1103,71 @@ public class MetaDataUI extends JPanel
 	private void addToPlaceholder(JComponent comp1,GUIPlaceholder place, int width )
 	{
 		JScrollPane comp=new JScrollPane(comp1);
+		TableLayout layout=(TableLayout) getLayout();
 		switch (place) {
 		case Pos_A:
 			add(comp,"0,0");
 			break;
 		case Pos_B:
+			if(layout.getNumRow()<1)
+				layout.insertRow(1, TableLayout.FILL);
+			
+			if(layout.getNumColumn()<2)
+				layout.insertColumn(1, TableLayout.FILL);
+			
 			add(comp,"1,0");
 			break;
 		case Pos_C:
+			if(layout.getNumRow()<1)
+				layout.insertRow(1, TableLayout.FILL);
+			
+			if(layout.getNumColumn()<3)
+				layout.insertColumn(2, TableLayout.FILL);
+			
 			add(comp,"2,0");
 			break;
 		case Pos_D:
+			if(layout.getNumRow()<1)
+				layout.insertRow(1, TableLayout.FILL);
+			
+			if(layout.getNumColumn()<4)
+				layout.insertColumn(3, TableLayout.FILL);
+			
 			add(comp,"3,0");
 			break;
-		case Pos_E:			
+			//----------------------------------------------
+		case Pos_E:
+			if(layout.getNumRow()<2)
+				layout.insertRow(1, TableLayout.FILL);
+			
 			add(comp,"0,1");
 			break;
 		case Pos_F:
+			if(layout.getNumRow()<2)
+				layout.insertRow(1, TableLayout.FILL);
+			
+			if(layout.getNumColumn()<2)
+				layout.insertColumn(1, TableLayout.FILL);
 			add(comp,"1,1");
 			break;
 		case Pos_G:
+			if(layout.getNumRow()<2)
+				layout.insertRow(1, TableLayout.FILL);
+			
+			if(layout.getNumColumn()<3)
+				layout.insertColumn(2, TableLayout.PREFERRED);
 			add(comp,"2,1");
 			break;
 		case Pos_H:
+			if(layout.getNumRow()<2)
+				layout.insertRow(1, TableLayout.FILL);
+			
+			if(layout.getNumColumn()<4)
+				layout.insertColumn(3, TableLayout.PREFERRED);
 			add(comp,"3,1");
 			break;
 		default:
-			LOGGER.severe("[GUI] Unknown position for element");
+			LOGGER.error("[GUI] Unknown position for element");
 			ExceptionDialog ld = new ExceptionDialog("Property File Error!", 
 					"Use unknown position ["+place+"] in given property file.");
 			ld.setVisible(true);
@@ -1188,7 +1253,7 @@ public class MetaDataUI extends JPanel
 					if(model.getImgEnvModel()!=null){ 
 						imgEnvDialog=createImgEnvDialog(model.getImgEnvModel(), "Imaging Environment",350,150);	
 					}else{
-						LOGGER.warning("[DATA] IMAGE ENVIRONMENT not available");
+						LOGGER.warn("[DATA] IMAGE ENVIRONMENT not available");
 					}
 				}
 				imgEnvDialog.setVisible(true);
@@ -1256,7 +1321,8 @@ public class MetaDataUI extends JPanel
 					SaveMetadata saver=new SaveMetadata(ome, model, null, file);
 					saver.save();
 				}else{
-					LOGGER.severe("[SAVE] -- no destination file is given");
+//					LOGGER.severe("[SAVE] -- no destination file is given");
+					LOGGER.error("[SAVE] -- no destination file is given");
 					ExceptionDialog ld = new ExceptionDialog("Save File Error!", 
 							"No file is given!");
 					ld.setVisible(true);
@@ -1265,7 +1331,7 @@ public class MetaDataUI extends JPanel
 				String b1=(ome!=null) ? "available": "not available";
 				String b2=(model!=null) ? "available": "not available";
 				String fileName=file!=null ? file.getName() : "";
-				LOGGER.severe("--CAN'T SAVE "+fileName+" : OME = "+b1+", MODEL = "+b2);
+				LOGGER.error("--CAN'T SAVE "+fileName+" : OME = "+b1+", MODEL = "+b2);
 				ExceptionDialog ld = new ExceptionDialog("Can't save "+fileName+"!",
 						"OME = "+b1+", MODEL = "+b2); 
 

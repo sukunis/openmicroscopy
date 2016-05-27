@@ -204,13 +204,13 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 		try{
 			lightSrc.setWavelength(parseToLength(waveLength.getTagValue(),waveLength.getTagUnit()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC SETT wavelength input");
+			LOGGER.error("[DATA] can't read LIGHTSRC SETT wavelength input");
 		}
 		try{
 			//TODO input format hint: percentvalue elem of [0,100] or [0,1]
 			lightSrc.setAttenuation(parseAttenuation(attenuation.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read LIGHTSRC SETT attenuation input");
+			LOGGER.error("[DATA] can't read LIGHTSRC SETT attenuation input");
 		}
 	}
 	
@@ -322,7 +322,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 					}
 					attenuation.setVisible(true);
 					break;
-				default: LOGGER.warning("[CONF] LIGHTSRC SETT unknown tag: "+name );break;
+				default: LOGGER.warn("[CONF] LIGHTSRC SETT unknown tag: "+name );break;
 				}
 			}
 		}

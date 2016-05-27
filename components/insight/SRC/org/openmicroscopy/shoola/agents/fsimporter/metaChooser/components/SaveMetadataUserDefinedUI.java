@@ -103,6 +103,8 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightPathElem;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.slf4j.LoggerFactory;
 
 import sun.swing.plaf.GTKKeybindings;
 
@@ -111,8 +113,9 @@ import com.sun.java.swing.plaf.windows.WindowsFileChooserUI;
 public class SaveMetadataUserDefinedUI extends JPanel implements  ListSelectionListener, ActionListener
 {
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-	
+//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 private static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(SaveMetadataUserDefinedUI.class);
 	private JList<String> objList;
 //	private JPanel cardPane;
 	private JButton saveBtn;
@@ -360,7 +363,7 @@ public class SaveMetadataUserDefinedUI extends JPanel implements  ListSelectionL
 			break;
 
 		default:
-			LOGGER.warning("[SAVE] Component not found: "+prefs.getName());
+			LOGGER.warn("[SAVE] Component not found: "+prefs.getName());
 			break;
 		}
 		

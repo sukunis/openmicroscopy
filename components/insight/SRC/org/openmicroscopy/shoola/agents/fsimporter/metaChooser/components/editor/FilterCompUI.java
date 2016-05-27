@@ -112,38 +112,38 @@ public class FilterCompUI extends LightPathElem
 				((Filter) filter).setManufacturer(manufact.getTagValue().equals("")?
 						null : manufact.getTagValue());
 			}catch(Exception e){
-				LOGGER.severe("[DATA] can't read FILTER manufacturer input");
+				LOGGER.error("[DATA] can't read FILTER manufacturer input");
 			}
 			try{
 				((Filter) filter).setModel(model.getTagValue().equals("")?
 						null : model.getTagValue());
 			}catch(Exception e){
-				LOGGER.severe("[DATA] can't read FILTER model input");
+				LOGGER.error("[DATA] can't read FILTER model input");
 			}
 			try{
 				((Filter) filter).setFilterWheel(filterwheel.getTagValue().equals("")?
 						null : filterwheel.getTagValue());
 			}catch(Exception e){
-				LOGGER.severe("[DATA] can't read FILTER filter wheel input");
+				LOGGER.error("[DATA] can't read FILTER filter wheel input");
 			}
 			try{
 				((Filter) filter).setType(type.getTagValue().equals("")?
 						null : FilterType.fromString(type.getTagValue()));
 			}catch(Exception e){
-				LOGGER.severe("[DATA] can't read FILTER type input");
+				LOGGER.error("[DATA] can't read FILTER type input");
 			}
 		}else{
 			try{
 				((Dichroic) filter).setManufacturer(manufact.getTagValue().equals("")?
 						null : manufact.getTagValue());
 			}catch(Exception e){
-				LOGGER.severe("[DATA] can't read DICHROIC manufacturer input");
+				LOGGER.error("[DATA] can't read DICHROIC manufacturer input");
 			}
 			try{
 				((Dichroic) filter).setModel(model.getTagValue().equals("")?
 						null : model.getTagValue());
 			}catch(Exception e){
-				LOGGER.severe("[DATA] can't read DICHROIC model input");
+				LOGGER.error("[DATA] can't read DICHROIC model input");
 			}
 		}
 		

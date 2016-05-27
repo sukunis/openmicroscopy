@@ -3,6 +3,7 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
@@ -18,12 +19,16 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -31,7 +36,9 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.JToggleButton;
 import javax.swing.JTree;
+import javax.swing.border.Border;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -73,6 +80,7 @@ import org.openmicroscopy.shoola.env.data.model.FileObject;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.util.ui.ClosableTabbedPaneComponent;
 import org.openmicroscopy.shoola.util.ui.UIUtilities;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -85,8 +93,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 {
 	
 	 /** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-    
+//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	 private static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(MetaDataDialog.class);
     
 	private boolean DEBUG=false;
 	
@@ -130,6 +139,10 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	/** save data for all image files in selected directory*/
 	private JButton saveAllDataButton;
 	
+	
+	private JToggleButton viewFileDataButton;
+	private JToggleButton viewDirDataButton;
+	
 	/** Test text area*/
 	public JTextArea textArea; 
 	
@@ -168,8 +181,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 
 	private FileFilter fileFilter;
 
-
-	
+	private static final String VIEWFILE ="View File Data";
+	private static final String VIEWDIR ="View File and Dir Data";
 
 	
 	
@@ -183,20 +196,18 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	private static final int CMD_REFRESH = 3;
 	private static final int LOAD_MIC_SETTINGS=4;
 
-
 	private static final int CMD_SAVEALL = 5;
-
 
 	private static final int CMD_RESET = 6;
 
-
 	private static final int CMD_SAVE = 7;
-
 
 	private static final int CMD_SPECIFICATION = 8;
 
-
 	private static final int CMD_PROFILE = 9;
+	
+	private static final int CMD_VIEWFILE=10;
+	private static final int CMD_VIEWDIR=11;
 	
 	
 	
@@ -223,7 +234,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		super(1, TITLE, TITLE);
 		
 		// init logger
-		UOSMetadataLogger.init();
+//		UOSMetadataLogger.init();
 		
 		this.owner = owner;
 		this.type = type;
@@ -443,6 +454,24 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    saveAllDataButton.setActionCommand("" + CMD_SAVEALL);
 	    saveAllDataButton.addActionListener(this);
 	    
+	    viewFileDataButton=new JToggleButton("File Data",false);
+	    viewFileDataButton.setBackground(UIUtilities.BACKGROUND);
+	    viewFileDataButton.setName(VIEWFILE);
+	    viewFileDataButton.setActionCommand("" + CMD_VIEWFILE);
+	    viewFileDataButton.addActionListener(this);
+	    viewFileDataButton.setEnabled(false);
+	    
+	    viewDirDataButton=new JToggleButton("File + Directory Data",true);
+	    viewDirDataButton.setBackground(UIUtilities.BACKGROUND);
+	    viewDirDataButton.setName(VIEWDIR);
+	    viewDirDataButton.setActionCommand("" + CMD_VIEWFILE);
+	    viewDirDataButton.addActionListener(this);
+	    viewDirDataButton.setEnabled(false);
+	   
+	    
+	    ButtonGroup bg = new ButtonGroup();
+	    bg.add(viewDirDataButton);
+	    bg.add(viewFileDataButton);
 	    
 	    UOSProfileReader propReader=new UOSProfileReader(new File("profileUOSImporter.xml"));
 	    UOSHardwareReader hardwareDef=new UOSHardwareReader(new File("hardwareUOSImporter.xml"));
@@ -547,8 +576,13 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		barL.add(loadHardwareSpecButton);
 		barL.add(Box.createHorizontalStrut(10));
 		
-		
-		
+		JPanel barM=new JPanel(new FlowLayout(FlowLayout.LEFT));
+		barM.add(new JLabel("View: "));
+		barM.add(Box.createHorizontalStrut(5));
+		barM.add(viewFileDataButton);
+		barM.add(Box.createHorizontalStrut(5));
+		barM.add(viewDirDataButton);
+		barM.add(Box.createHorizontalStrut(10));
 		
 		JPanel barR = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		//reset
@@ -562,6 +596,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		barR.add(Box.createHorizontalStrut(10));
 		
 		bar.add(barL);
+		bar.add(barM);
 		bar.add(barR);
 		return bar;
 	}
@@ -614,9 +649,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		if(fileTree.getLastSelectedPathComponent()==null || getSelectedFile()==null)
 			return;
 		
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
+		
 		LOGGER.info("[TREE] -- Node: "+((FNode)fileTree.getLastSelectedPathComponent()).toString()+" ##############################################");
 		
 		saveModel();
@@ -630,24 +663,42 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 		//get parent dir model data
 		MetaDataModel parentModel=getParentMetaDataModel();
+		if(parentModel!=null)
+			viewDirDataButton.setSelected(true);
+		else
+			viewFileDataButton.setSelected(true);
 		
-		
+		MetaDataView view=null;
 		// is selection a file or directory
 		if(file.equals("")){
 			lastSelectionType=DIR;
 			
 			MetaDataModel dirModel=getCurrentSelectionMetaDataModel();
-			MetaDataView view = new MetaDataView(customSettings, file, importData, parentModel, dirModel);
-			view.setVisible();
-			panel=view;
-			
+			try {
+				view = new MetaDataView(customSettings, file, importData, parentModel, dirModel);
+				view.setVisible();
+			} catch (Exception e) {
+//				catch (DependencyException | ServiceException e) {
+				LOGGER.error("[DATA] CAN'T read METADATA");
+				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+						"Can't read given metadata of "+file,e);
+				ld.setVisible(true);
+			}
 		}else{
 			lastSelectionType=FILE;
-			MetaDataView view=new MetaDataView(customSettings, file, importData, parentModel);
-			view.setVisible();
-			panel=view;
+			
+			try {
+				view = new MetaDataView(customSettings, file, importData, parentModel);
+				view.setVisible();
+			} catch (Exception e) {
+//				catch (DependencyException | ServiceException e) {
+				LOGGER.error("[DATA] CAN'T read METADATA");
+				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+						"Can't read given metadata of "+file,e);
+				ld.setVisible(true);
+			}
 		}
-		
+		panel=view;
 		// notice last selection for save user input as model
 		lastNode=(FNode)fileTree.getLastSelectedPathComponent();
 		
@@ -677,7 +728,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 				parentModel.noticUserInput();
 				
 			} catch (Exception e) {
-				LOGGER.severe("can't read model of "+lastNode.getAbsolutePath());
+				LOGGER.error("can't read model of "+lastNode.getAbsolutePath());
 				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
 						"Can't read model of "+lastNode.getAbsolutePath(),e);
 				ld.setVisible(true);
@@ -700,7 +751,18 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 //		}catch(IOException e){
 //			LOGGER.warning("Can't read/access "+node.getAbsolutePath());
 //		}
-		return new MetaDataView(customSettings, node.getAbsolutePath(), importData, parentModel);
+		MetaDataView dataView=null;
+		try {
+			dataView=new MetaDataView(customSettings, node.getAbsolutePath(), importData, parentModel);
+		} catch (Exception e) {
+//			catch (DependencyException | ServiceException e) {
+			LOGGER.error("[DATA] CAN'T read METADATA");
+			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+					"Can't read given metadata of "+node.getAbsolutePath(),e);
+			ld.setVisible(true);
+			return null;
+		}
+		return dataView;
 	}
 
 
@@ -709,26 +771,28 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		if(lastNode!=null){
 			LOGGER.info("[DEBUG] -- SAVE MODEL FOR: "+lastNode.getAbsolutePath());
 			LOGGER.info("[DEBUG] components metaPanel: "+metaPanel.getComponentCount());
-			Component c=metaPanel.getComponent(0);
-			if(c instanceof MetaDataView)
-				lastNode.setModelObject(((MetaDataView) c).getModelObject());
-			else
-				LOGGER.info("[DEBUG] metaPanel Component class: "+metaPanel.getComponent(0).getClass());
-			//TODO: save to file if there are some changes
-//			if(dataView.getModel().noticUserInput())
-//			{
-//				
-//			}
+			if(metaPanel.getComponentCount()>0){
+				Component c=metaPanel.getComponent(0);
+				if(c instanceof MetaDataView)
+					lastNode.setModelObject(((MetaDataView) c).getModelObject());
+				else
+					LOGGER.info("[DEBUG] metaPanel Component class: "+metaPanel.getComponent(0).getClass());
+				//TODO: save to file if there are some changes
+				//			if(dataView.getModel().noticUserInput())
+				//			{
+				//				
+				//			}
+			}
+			//		if(dataView..getModel().noticUserInput() ) 
+			//		{
+			//			if(lastSelectionType==FILE)
+			//			{
+			//				dataView.saveViewData();
+			//			}else{
+			//				System.out.println("DIRECTORY USER INPUT");
+			//			}
+			//		}
 		}
-//		if(dataView..getModel().noticUserInput() ) 
-//		{
-//			if(lastSelectionType==FILE)
-//			{
-//				dataView.saveViewData();
-//			}else{
-//				System.out.println("DIRECTORY USER INPUT");
-//			}
-//		}
 	}
 
 
@@ -747,7 +811,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 				LOGGER.info("[DEBUG]--- No parent model ");
 			}
 		} catch (Exception e) {
-			LOGGER.warning("[DATA] -- Can't add metadata from parent model");
+			LOGGER.warn("[DATA] -- Can't add metadata from parent model");
 			e.printStackTrace();
 		}
 	}
@@ -933,7 +997,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			}
 			data=node.getImportData();
 		}catch(Exception e){
-			LOGGER.warning("No import data available");
+			LOGGER.warn("No import data available");
 			return null;
 		}
 		return data;
@@ -945,7 +1009,6 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	{
 		this.fileFilter=fileFilter;
 		createNodes(files);
-		System.out.println("######################################");
 	}
 	
 	
@@ -1056,6 +1119,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			break;
 		case CMD_RESET:
 			LOGGER.info("[GUI-ACTION] -- reset");
+			
 			JComponent panel=null;
 			//TODO: profile default data eliminate
 //			dataView=new MetaDataUI(customSettings);
@@ -1083,11 +1147,24 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			//file
 			String file = getSelectedFile(); 
 			if(!file.equals("")){
-				MetaDataView view = new MetaDataView(customSettings, file, null, null);
-				view.setVisible();
+				viewFileDataButton.setSelected(true);
+				MetaDataView view=null;
+				try {
+					view = new MetaDataView(customSettings, file, null, null);
+					view.setVisible();
+				} catch (Exception e) {
+//					catch (DependencyException | ServiceException e) {
+					LOGGER.error("[DATA] CAN'T read METADATA");
+					ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+							"Can't read given metadata of "+file,e);
+					ld.setVisible(true);
+				}
+				
 				metaPanel.removeAll();
-				if(view!=null)
+				if(view!=null){
 					metaPanel.add(view,BorderLayout.CENTER);
+					viewFileDataButton.setSelected(true);	
+				}
 				
 				revalidate();
 				repaint();
@@ -1101,6 +1178,24 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		case CMD_SPECIFICATION:
 			LOGGER.info("[GUI-ACTION] -- load specification file");
 			break;
+		case CMD_VIEWFILE:
+			Border redline = BorderFactory.createLineBorder(Color.red);
+			Border compound= BorderFactory.createRaisedBevelBorder();
+			if(((JToggleButton)evt.getSource()).getName().equals(VIEWFILE)){
+//				viewFileDataButton.setBorder(BorderFactory.createCompoundBorder(redline, compound));
+//				viewDirDataButton.setBorder(compound);
+				viewFileDataButton.setBackground(Color.GREEN);
+				viewDirDataButton.setBackground(Color.gray);
+			}else{
+				viewFileDataButton.setBackground(Color.gray);
+				viewDirDataButton.setBackground(Color.GREEN);
+				
+//				viewFileDataButton.setBorder(compound);
+//				viewDirDataButton.setBorder(BorderFactory.createCompoundBorder(redline, compound));
+			}
+				
+			break;
+		
 		}
 		
 		

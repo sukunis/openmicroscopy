@@ -327,13 +327,13 @@ public class ImageCompUI extends ElementsCompUI
 		try{
 			image.setName(name.getTagValue());
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read IMAGE name input");
+			LOGGER.error("[DATA] can't read IMAGE name input");
 		}
 		try{
 			image.setAcquisitionDate(acqTime.getTagValue().equals("") ? 
 					null : Timestamp.valueOf(acqTime.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read IMAGE acquisition date input");
+			LOGGER.error("[DATA] can't read IMAGE acquisition date input");
 		}
 		try{
 			image.getPixels().setSizeX(dimXY.getTagValue(0).equals("") ?
@@ -342,13 +342,13 @@ public class ImageCompUI extends ElementsCompUI
 			image.getPixels().setSizeY(dimXY.getTagValue(1).equals("") ?
 					null : PositiveInteger.valueOf(dimXY.getTagValue(1)));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read IMAGE dimension x,y input");
+			LOGGER.error("[DATA] can't read IMAGE dimension x,y input");
 		}
 		try{
 			image.getPixels().setType(pixelType.getTagValue().equals("") ?
 					null : PixelType.fromString(pixelType.getTagValue()));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read IMAGE pixel type input");
+			LOGGER.error("[DATA] can't read IMAGE pixel type input");
 		}
 		try{
 			image.getPixels().setPhysicalSizeX(pixelSize.getTagValue(0).equals("") ?
@@ -356,7 +356,7 @@ public class ImageCompUI extends ElementsCompUI
 			image.getPixels().setPhysicalSizeY(pixelSize.getTagValue(1).equals("") ?
 					null : new Length(Double.valueOf(pixelSize.getTagValue(1)),sizeUnit));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read IMAGE pixel size input");
+			LOGGER.error("[DATA] can't read IMAGE pixel size input");
 		}
 		try{
 
@@ -367,13 +367,13 @@ public class ImageCompUI extends ElementsCompUI
 			image.getPixels().setSizeC(dimZTC.getTagValue(2).equals("")?
 					null : PositiveInteger.valueOf(dimZTC.getTagValue(2)));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read IMAGE dimension z,t,c input");
+			LOGGER.error("[DATA] can't read IMAGE dimension z,t,c input");
 		}
 		try{
 			image.getPixels().setTimeIncrement(timeIncrement.getTagValue().equals("")?
 					null : new Time(Double.valueOf(timeIncrement.getTagValue()),timeUnit));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read IMAGE time increment input");
+			LOGGER.error("[DATA] can't read IMAGE time increment input");
 		}
 		
 		//TODO: stagePos,wellNr,stepSize
@@ -385,7 +385,7 @@ public class ImageCompUI extends ElementsCompUI
 	{
 		if(imageOME==null ){
 			if(in==null){
-				LOGGER.severe("failed to merge IMAGE data");
+				LOGGER.error("failed to merge IMAGE data");
 			}else{
 				imageOME=in;
 			}
@@ -541,7 +541,7 @@ public class ImageCompUI extends ElementsCompUI
 						wellNr.setVisible(true);
 						break;
 					default:
-						LOGGER.warning("[CONF] unknown tag: "+name );break;
+						LOGGER.warn("[CONF] unknown tag: "+name );break;
 					}
 				}
 			}

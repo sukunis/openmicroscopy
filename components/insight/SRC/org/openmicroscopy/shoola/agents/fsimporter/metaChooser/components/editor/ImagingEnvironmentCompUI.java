@@ -121,26 +121,26 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		env.setTemperature(temperature.getTagValue().equals("") ?
 				null : new Temperature(Double.valueOf(temperature.getTagValue()), temperatureUnit));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read IMAGE ENV temperature input");
+			LOGGER.error("[DATA] can't read IMAGE ENV temperature input");
 		}
 		try{
 		env.setAirPressure(airPressure.getTagValue().equals("") ? 
 				null : new Pressure(Double.valueOf(airPressure.getTagValue()),airPressureUnit));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read IMAGE ENV air pressure input");
+			LOGGER.error("[DATA] can't read IMAGE ENV air pressure input");
 		}
 		try{
 		//TODO input format hint: percentvalue elem of [0,100] or [0,1]
 		env.setHumidity(humidity.getTagValue().equals("")? 
 				null : new PercentFraction(Float.valueOf(humidity.getTagValue())/100));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read IMAGE ENV humidity input");
+			LOGGER.error("[DATA] can't read IMAGE ENV humidity input");
 		}
 		try{
 		env.setCO2Percent(co2Percent.getTagValue().equals("")?
 				null : new PercentFraction(Float.valueOf(co2Percent.getTagValue())/100));
 		}catch(Exception e){
-			LOGGER.severe("[DATA] can't read IMAGE ENV co2 percent input");
+			LOGGER.error("[DATA] can't read IMAGE ENV co2 percent input");
 		}
 	}
 	
@@ -221,7 +221,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 					co2Percent.setVisible(true);
 					break;
 				default:
-					LOGGER.warning("[CONF] unknown tag: "+name );break;
+					LOGGER.warn("[CONF] unknown tag: "+name );break;
 				}
 			}
 		}

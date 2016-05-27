@@ -12,6 +12,8 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -33,8 +35,9 @@ public class SampleAnnotation extends XMLAnnotation
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2015-01";
 
 	/** Logger for this class. */
-    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-    
+//    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+    private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(SampleAnnotation.class);
 	// StructuredAnnotations_BackReference back reference
 	private StructuredAnnotations structuredAnnotations;
 	
@@ -99,7 +102,7 @@ public class SampleAnnotation extends XMLAnnotation
 
 			obSample.appendChild(obj);
 		}else{
-			LOGGER.warning("[SAVE] given OBSERVED SAMPLE is null");
+			LOGGER.warn("[SAVE] given OBSERVED SAMPLE is null");
 		}
 		xmlAnnotElem.appendChild(obSample);
 	}
@@ -108,7 +111,7 @@ public class SampleAnnotation extends XMLAnnotation
 			Element gridBox=doc.createElement(GridBox.GRID);
 			GridBox box=sample.getGridBox();
 			if(box==null)
-				box=new GridBox("", 0, "");
+				box=new GridBox("", "0", "");
 			gridBox.setAttribute(GridBox.GRID_ID, box.getId());
 			gridBox.setAttribute(GridBox.GRID_NR, String.valueOf(box.getNr()));
 			gridBox.setAttribute(GridBox.GRID_TYPE, box.getType());
