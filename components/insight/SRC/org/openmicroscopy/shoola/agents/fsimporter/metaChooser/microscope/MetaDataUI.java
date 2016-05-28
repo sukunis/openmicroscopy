@@ -1109,62 +1109,69 @@ public class MetaDataUI extends JPanel
 			add(comp,"0,0");
 			break;
 		case Pos_B:
-			if(layout.getNumRow()<1)
-				layout.insertRow(1, TableLayout.FILL);
-			
-			if(layout.getNumColumn()<2)
-				layout.insertColumn(1, TableLayout.FILL);
-			
-			add(comp,"1,0");
+//			if(layout.getNumRow()<1)
+//				layout.insertRow(1, TableLayout.FILL);
+//			
+//			if(layout.getNumColumn()<2)
+//				layout.insertColumn(1, TableLayout.FILL);
+//			
+//			add(comp,"1,0");
+			insertModule(0,1,comp);
 			break;
 		case Pos_C:
-			if(layout.getNumRow()<1)
-				layout.insertRow(1, TableLayout.FILL);
-			
-			if(layout.getNumColumn()<3)
-				layout.insertColumn(2, TableLayout.FILL);
-			
-			add(comp,"2,0");
+//			if(layout.getNumRow()<1)
+//				layout.insertRow(1, TableLayout.FILL);
+//			
+//			if(layout.getNumColumn()<3)
+//				layout.insertColumn(2, TableLayout.FILL);
+//			
+//			add(comp,"2,0");
+			insertModule(0,2,comp);
 			break;
 		case Pos_D:
-			if(layout.getNumRow()<1)
-				layout.insertRow(1, TableLayout.FILL);
-			
-			if(layout.getNumColumn()<4)
-				layout.insertColumn(3, TableLayout.FILL);
-			
-			add(comp,"3,0");
+//			if(layout.getNumRow()<1)
+//				layout.insertRow(1, TableLayout.FILL);
+//			
+//			if(layout.getNumColumn()<4)
+//				layout.insertColumn(3, TableLayout.FILL);
+//			
+//			add(comp,"3,0");
+			insertModule(0,3,comp);
 			break;
 			//----------------------------------------------
 		case Pos_E:
-			if(layout.getNumRow()<2)
-				layout.insertRow(1, TableLayout.FILL);
-			
-			add(comp,"0,1");
+//			if(layout.getNumRow()<2)
+//				layout.insertRow(1, TableLayout.FILL);
+//			
+//			add(comp,"0,1");
+			insertModule(1,0,comp);
 			break;
 		case Pos_F:
-			if(layout.getNumRow()<2)
-				layout.insertRow(1, TableLayout.FILL);
-			
-			if(layout.getNumColumn()<2)
-				layout.insertColumn(1, TableLayout.FILL);
-			add(comp,"1,1");
+//			if(layout.getNumRow()<2)
+//				layout.insertRow(1, TableLayout.FILL);
+//			
+//			if(layout.getNumColumn()<2)
+//				layout.insertColumn(1, TableLayout.FILL);
+//			add(comp,"1,1");
+			insertModule(1,1,comp);
 			break;
 		case Pos_G:
-			if(layout.getNumRow()<2)
-				layout.insertRow(1, TableLayout.FILL);
-			
-			if(layout.getNumColumn()<3)
-				layout.insertColumn(2, TableLayout.PREFERRED);
-			add(comp,"2,1");
+//			if(layout.getNumRow()<2)
+//				layout.insertRow(1, TableLayout.FILL);
+//			
+//			if(layout.getNumColumn()<3)
+//				layout.insertColumn(2, TableLayout.PREFERRED);
+//			add(comp,"2,1");
+			insertModule(1,2,comp);
 			break;
 		case Pos_H:
-			if(layout.getNumRow()<2)
-				layout.insertRow(1, TableLayout.FILL);
-			
-			if(layout.getNumColumn()<4)
-				layout.insertColumn(3, TableLayout.PREFERRED);
-			add(comp,"3,1");
+//			if(layout.getNumRow()<2)
+//				layout.insertRow(1, TableLayout.FILL);
+//			
+//			if(layout.getNumColumn()<4)
+//				layout.insertColumn(3, TableLayout.PREFERRED);
+//			add(comp,"3,1");
+			insertModule(1,3,comp);
 			break;
 		default:
 			LOGGER.error("[GUI] Unknown position for element");
@@ -1175,6 +1182,22 @@ public class MetaDataUI extends JPanel
 		}
 	}
 
+	private void insertModule(int rowIdx, int columnIdx, JComponent comp)
+	{
+		LOGGER.info("Insert Module at col: "+columnIdx+", row: "+rowIdx);
+		TableLayout layout=(TableLayout) getLayout();
+		//expand rows?
+		int numRow=layout.getNumRow();
+		for(int i=numRow;i<rowIdx+1;i++ ){
+			layout.insertRow(i, TableLayout.FILL);
+		}
+		
+		int numCol=layout.getNumColumn();
+		for(int i=numCol; i<columnIdx+1; i++){
+			layout.insertColumn(i, TableLayout.FILL);
+		}
+		add(comp,columnIdx+","+rowIdx);
+	}
 
 
 	protected int getObjectiveByID(List<Objective> list,String id)
