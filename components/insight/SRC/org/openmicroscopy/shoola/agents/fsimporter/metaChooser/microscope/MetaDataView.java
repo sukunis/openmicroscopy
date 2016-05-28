@@ -198,7 +198,7 @@ public class MetaDataView extends JPanel
 	 */
 	private void loadParentData(MetaDataModel parentData,MetaDataUI pane) 
 	{
-		if(parentData!=null && parentData.noticUserInput()){
+		if(parentData!=null){
 			try {
 				pane.addData(parentData);
 			} catch (Exception e) {

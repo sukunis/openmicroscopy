@@ -598,7 +598,7 @@ public class TagData
 			// parse to yyyy-MM-ddT00:00:00
 			String date = DateTools.formatDate(creationDate, DATE_FORMATS_TAGS);
 			
-			if(creationDate != null && date ==null){
+			if(creationDate!= null && !creationDate.equals(datePattern) && date ==null){
 				String formats="";
 				for(String s: DATE_FORMATS_TAGS){
 					formats=formats+s+"\n";

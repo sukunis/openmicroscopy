@@ -57,15 +57,17 @@ public class ExperimenterListModel extends DefaultListModel<String>
 	
 	public static String getExperimenterName(Experimenter e)
 	{
-		String res=null;
-		String fName= (e.getFirstName()!=null && !e.getFirstName().equals("")) ? e.getFirstName():"";
-		String lName=(e.getLastName()!=null && !e.getLastName().equals("")) ? e.getLastName() : "";
-
-		if(fName.equals(""))
-			res=lName;
-		else
-			res=fName+" "+lName;
 		
+		String res=null;
+		if(e!=null){
+			String fName= (e.getFirstName()!=null && !e.getFirstName().equals("")) ? e.getFirstName():"";
+			String lName=(e.getLastName()!=null && !e.getLastName().equals("")) ? e.getLastName() : "";
+
+			if(fName.equals(""))
+				res=lName;
+			else
+				res=fName+" "+lName;
+		}
 		return res;
 	}
 	
