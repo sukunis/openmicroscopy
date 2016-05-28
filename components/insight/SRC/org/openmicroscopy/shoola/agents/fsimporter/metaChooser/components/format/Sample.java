@@ -174,7 +174,7 @@ public class Sample
 		Timestamp timestamp=null;
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		
-		if(date!=null){
+		if(date!=null && !date.equals("")){
 				timestamp = new Timestamp(date);
 		}
 		
