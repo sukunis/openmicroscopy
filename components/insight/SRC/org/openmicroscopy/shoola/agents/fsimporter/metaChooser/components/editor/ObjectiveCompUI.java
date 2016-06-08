@@ -312,7 +312,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 		box.add(globalPane);
 		
 		
-		JButton editBtn=new JButton("Select");
+		JButton editBtn=new JButton("Selection");
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		editBtn.setEnabled(true);
 		editBtn.addActionListener(new ActionListener() {

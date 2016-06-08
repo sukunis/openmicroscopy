@@ -318,13 +318,14 @@ public class SaveMetadata
 	 * Set link to experiment in model::image. 
 	 * @throws Exception
 	 */
-	private void saveExperiment(Image i,MetaDataModel m) throws Exception {
+	private void saveExperiment(Image i,MetaDataModel m) throws Exception 
+	{
 		//--- save Experiment and Experimenter data
 		Experiment e = m.getExperiment();
 		
 		if(e!=null){
 			omeStore.storeExperiment(e);
-			omeStore.storeExperimenter(((ExperimentCompUI)m.getExpModul()).getProjectPartnerAsExp()); 
+//			omeStore.storeExperimenter(((ExperimentCompUI)m.getExpModul()).getProjectPartnerAsExp()); 
 			// update refs
 			i.linkExperiment(e);
 			i.linkExperimenter(e.getLinkedExperimenter());
@@ -332,9 +333,13 @@ public class SaveMetadata
 			//if there are more than one experimenter?
 			ExperimentCompUI eUI = m.getExpModul();
 			List<Experimenter> eList=eUI.getExperimenterList();
-				for(int index=1; index<eList.size();index++){
-					omeStore.storeExperimenter(eList.get(index));
-				}
+			for(int index=1; index<eList.size();index++){
+				omeStore.storeExperimenter(eList.get(index));
+			}
+			
+			// store experiment type, desc and project partner in mapAnnotations of image
+			omeStore.appendExperimentToMap(e,i);
+			omeStore.appendProjectPartnerToMap(eUI.getProjectPartnerAsExp(),i);
 		}
 		//TODO: refs update
 		//Refs to experimenter: Dataset, ExperimenterGroup, Image, MicrobeamManipulation, Project

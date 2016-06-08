@@ -1,12 +1,16 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ChannelCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ExperimentCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotation;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotationXML;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
@@ -25,6 +29,9 @@ import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Instrument;
 import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
+import ome.xml.model.MapAnnotation;
+import ome.xml.model.MapPair;
+import ome.xml.model.MapPairs;
 import ome.xml.model.OME;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
@@ -37,9 +44,17 @@ import loci.formats.meta.IMetadata;
 public class OMEStore 
 {
 	/** Logger for this class. */
-//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-	 private static final org.slf4j.Logger LOGGER =
-	    	    LoggerFactory.getLogger(OMEStore.class);
+	private static final org.slf4j.Logger LOGGER =
+			LoggerFactory.getLogger(OMEStore.class);
+
+	//** Namespaces for parsing from xml */
+	public static final String NS_2016_06_07="uos.de/omero/metadata/cellnanos/2015-06-07";
+
+
+	public static final String CELLNANOS_NS="uos.de/omero/metadata/cellnanos/2015-06-07";
+
+	public static final String MAP_ANNOT_ID = "Annotation:CellNanOs";
+	
 	private OME ome;
 //	private IMetadata data;
 	
@@ -156,45 +171,201 @@ public class OMEStore
 			//rewrite
 			ome.setExperiment(idxExperiment, e);
 		}
+		
 	}
 	
-
-	public void storeSample(Sample s,Image i) 
+	/** append experiment values (project partner, type and description)
+	 *  to the CellNanOs MapAnnotation. If MapAnnotation doesn't exists, 
+	 * create new one and link it to the image
+	 * @param s
+	 * @param i
+	 */
+	public void appendExperimentToMap(Experiment e, Image i)
 	{
-		LOGGER.info("[SAVE] -- save SAMPLE data");
+		if(e==null)
+			return;
+		
+		LOGGER.info("[SAVE] -- save Experiment data to mapAnnotation");
+		CellNanOsAnnotation cAnnot=getCellNanOsAnnotation();
+		MapAnnotation mapAnnot=cAnnot.map;
+
+		addMapPair(cAnnot.valueList, ExperimentCompUI.EXPERIMENT_DESC_MAPLABEL,e.getDescription());
+		addMapPair(cAnnot.valueList,ExperimentCompUI.EXPERIMENT_TYPE_MAPLABEL,e.getType().getValue());
+		mapAnnot.setValue(new MapPairs(cAnnot.valueList));
+
+		cAnnot.save(mapAnnot);
+		ome.setStructuredAnnotations(cAnnot.annot);
+
+		i.linkAnnotation(cAnnot.map);
+	}
+	
+	public void appendSampleToMap(Sample s, Image i)
+	{
+		if(s==null)
+			return;
+		
+		LOGGER.info("[SAVE] -- save Sample data to mapAnnotation");
+		CellNanOsAnnotation cAnnot=getCellNanOsAnnotation();
+		MapAnnotation mapAnnot=cAnnot.map;
+		
+		addMapPair(cAnnot.valueList, Sample.PREP_DATE_MAPLABEL,s.getDateAsString());
+		addMapPair(cAnnot.valueList,Sample.PREP_DESCRIPTION_MAPLABEL,s.getPrepDescription());
+		addMapPair(cAnnot.valueList,Sample.RAW_CODE_MAPLABEL,s.getRawMaterialCode());
+		addMapPair(cAnnot.valueList,Sample.RAW_DESC_MAPLABEL,s.getRawMaterialDesc());
+		GridBox gb=s.getGridBox();
+		addMapPair(cAnnot.valueList,GridBox.GRID_NR_MAPLABEL,gb.getNr());
+		addMapPair(cAnnot.valueList,GridBox.GRID_TYPE_MAPLABEL,gb.getType());
+		List<ObservedSample> list =s.getObservedSampleList();
+		for(ObservedSample o: list){
+			addMapPair(cAnnot.valueList,ObservedSample.GRID_MAPLABEL,o.getGridNumberX()+ObservedSample.GRID_SEPARATOR+o.getGridNumberY());
+			addMapPair(cAnnot.valueList,ObservedSample.OBJECT_TYPE_MAPLABEL,o.getObjectType());
+			addMapPair(cAnnot.valueList,ObservedSample.OBJECT_NUMBER_MAPLABEL,o.getObjectNumber());
+		}
+		
+		mapAnnot.setValue(new MapPairs(cAnnot.valueList));
+
+		cAnnot.save(mapAnnot);
+		ome.setStructuredAnnotations(cAnnot.annot);
+
+		i.linkAnnotation(cAnnot.map);
+	}
+	
+	public void appendProjectPartnerToMap(Experimenter p, Image i) 
+	{
+		if(p==null)
+			return;
+		
+		LOGGER.info("[SAVE] -- save Project Partner data to mapAnnotation");
+		
+		CellNanOsAnnotation cAnnot=getCellNanOsAnnotation();
+		MapAnnotation mapAnnot=cAnnot.map;
+
+		addMapPair(cAnnot.valueList, ExperimentCompUI.PROJPARTNER_MAPLABEL,p.getLastName());
+		mapAnnot.setValue(new MapPairs(cAnnot.valueList));
+
+		cAnnot.save(mapAnnot);
+		
+		ome.setStructuredAnnotations(cAnnot.annot);
+		
+		i.linkAnnotation(cAnnot.map);		
+	}
+	
+	private CellNanOsAnnotation getCellNanOsAnnotation() 
+	{
 		StructuredAnnotations annot=ome.getStructuredAnnotations();
+		MapAnnotation mapAnnot;
+		CellNanOsAnnotation cAnnot=new CellNanOsAnnotation();
+		
 		if(annot==null){
 			LOGGER.info("[SAVE] -- Structured Annotation are empty, create new one");
 			annot=new StructuredAnnotations();
 		}
-		int annotationIndex=annot.sizeOfXMLAnnotationList();
 		
-		SampleAnnotation sampleAnnot=new SampleAnnotation();
-		if(sampleAnnot.getID()==null)
-			sampleAnnot.setID(MetadataTools.createLSID(SampleAnnotation.SAMPLE_ANNOT_ID, annotationIndex));
-		sampleAnnot.setSample(s);
+		int annotationListSize=annot.sizeOfMapAnnotationList();
+		int index=getMapAnnotationIndex(annot);
 		
-		// is there still a sample annotation
-		int index=getSampleAnnotationIndex(annot);
+		List<MapPair> valueList=new ArrayList<MapPair>();
 		if(index!=-1){
-			annot.setXMLAnnotation(index, sampleAnnot);
+			mapAnnot=annot.getMapAnnotation(index);
+			valueList.addAll(mapAnnot.getValue().getPairs());
 		}else{
-			annot.addXMLAnnotation(sampleAnnot);
+			mapAnnot=new MapAnnotation();
 		}
 		
-		ome.setStructuredAnnotations(annot);
-		i.linkAnnotation(sampleAnnot);
+		if(mapAnnot.getID()==null)
+			mapAnnot.setID(MetadataTools.createLSID(MAP_ANNOT_ID, annotationListSize));
 		
+		cAnnot.index=index;
+		cAnnot.annot=annot;
+		cAnnot.map=mapAnnot;
+		cAnnot.valueList=valueList;
+		
+		return cAnnot;
+	}
+
+
+
+	public final static void addMapPair(List<MapPair> list,String label, String value)
+	{
+		int idxMap=getMapPairIndexByLabel(list, label);
+		if(idxMap!=-1){
+			list.set(idxMap,new MapPair(label,value));
+		}else{ 
+			list.add(new MapPair(label,value));
+		}
+	}
+	
+	private static int getMapPairIndexByLabel(List<MapPair> list,String label)
+	{
+		int i=0;
+		for(MapPair mp:list){
+			if(mp.getName().equals(label))
+				return i;
+			i++;
+		}
+		return -1;
+	}
+
+//	public void storeSampleAsXML(Sample s,Image i) 
+//	{
+//		LOGGER.info("[SAVE] -- save SAMPLE data");
+//		StructuredAnnotations annot=ome.getStructuredAnnotations();
+//		if(annot==null){
+//			LOGGER.info("[SAVE] -- Structured Annotation are empty, create new one");
+//			annot=new StructuredAnnotations();
+//		}
+//		int annotationIndex=annot.sizeOfXMLAnnotationList();
+//		
+//		SampleAnnotationXML sampleAnnot=new SampleAnnotationXML();
+//		if(sampleAnnot.getID()==null)
+//			sampleAnnot.setID(MetadataTools.createLSID(SampleAnnotationXML.SAMPLE_ANNOT_ID, annotationIndex));
+//		sampleAnnot.setSample(s);
+//		
+//		// is there still a sample annotation
+//		int index=getSampleXMLAnnotationIndex(annot);
+//		if(index!=-1){
+//			annot.setXMLAnnotation(index, sampleAnnot);
+//		}else{
+//			annot.addXMLAnnotation(sampleAnnot);
+//		}
+//		
+//		ome.setStructuredAnnotations(annot);
+//		i.linkAnnotation(sampleAnnot);
+//		
+//	}
+	
+	/** append sample values to the CellNanOs MapAnnotation. If MapAnnotation doesn't exists, 
+	 * create new one and link it to the image
+	 * @param s
+	 * @param i
+	 */
+	public void storeSample(Sample s, Image i)
+	{
+		appendSampleToMap(s, i);
 	}
 	
 	
-	private int getSampleAnnotationIndex(StructuredAnnotations annot) 
+//	private int getSampleXMLAnnotationIndex(StructuredAnnotations annot) 
+//	{
+//		int index=-1;
+//		
+//		for(int i=0; i<annot.sizeOfXMLAnnotationList(); i++){
+//			XMLAnnotation a=annot.getXMLAnnotation(i);
+//			if(a.getID().contains("Annotation:Sample")){
+//				return i;
+//			}
+//		}
+//		return index;
+//	}
+	
+	/** search for the CellNanOs annotation*/
+	private int getMapAnnotationIndex(StructuredAnnotations annot) 
 	{
 		int index=-1;
 		
-		for(int i=0; i<annot.sizeOfXMLAnnotationList(); i++){
-			XMLAnnotation a=annot.getXMLAnnotation(i);
-			if(a.getID().contains("Annotation:Sample")){
+		for(int i=0; i<annot.sizeOfMapAnnotationList(); i++){
+			ome.xml.model.MapAnnotation a=annot.getMapAnnotation(i);
+			if(a.getID().contains(MAP_ANNOT_ID)){
 				return i;
 			}
 		}
@@ -622,24 +793,30 @@ public class OMEStore
 		return ome;
 	}
 
-
-
+	class CellNanOsAnnotation
+	{
+		protected int index=-1;
+		protected MapAnnotation map;
+		protected StructuredAnnotations annot;
+		protected List<MapPair> valueList;
+		
+		public void save(MapAnnotation mapAnnot) 
+		{
+			if( mapAnnot==null)
+				return;
+			
+			if(annot==null)
+				annot=new StructuredAnnotations();
+			
+			if(index!=-1){
+				annot.setMapAnnotation(index, mapAnnot);
+			}else{
+				mapAnnot.setNamespace(OMEStore.CELLNANOS_NS);
+				annot.addMapAnnotation(mapAnnot);
+			}	
+		};
+	}
 	
-
-
-	
-
-
-
-
-
-
-
-
-
-	
-
-
 
 
 }

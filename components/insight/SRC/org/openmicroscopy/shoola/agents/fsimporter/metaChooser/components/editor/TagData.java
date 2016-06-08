@@ -248,7 +248,7 @@ public class TagData
 		
 		
 		inputField = new JTextField(10);
-		inputField.setToolTipText("Format: "+datePattern);
+		inputField.setToolTipText("Format e.g: "+datePattern+" or dd.MM.yyyy");
 		inputField.addKeyListener(fieldKeyListener);
 
 	}
@@ -329,9 +329,12 @@ public class TagData
 			public void keyReleased(KeyEvent e) {
 				valChanged=true;	
 				if(inputField instanceof JTextField){
-					if(inputField.getForeground()==Color.gray && 
-							!((JTextField) inputField).getText().equals(DateTools.TIMESTAMP_FORMAT))
-						inputField.setForeground(Color.black);
+					if(inputField.getForeground()==Color.gray ){
+						if(	!((JTextField) inputField).getText().equals(datePattern)){
+							inputField.setForeground(Color.black);
+						}
+					}
+					
 				}
 			}
 			@Override
@@ -622,10 +625,11 @@ public class TagData
 
 	private void setValTimestamp(String val) 
 	{
-		if(val==null || val.equals("")){
-			((JTextField) inputField).setText(DateTools.TIMESTAMP_FORMAT.toLowerCase());
-			((JTextField) inputField).setForeground(Color.gray);
-		}else{
+//		if(val==null || val.equals("")){
+//			((JTextField) inputField).setText(datePattern.toLowerCase());
+//			((JTextField) inputField).setForeground(Color.gray);
+//		}else{
+		if(val!=null && !val.equals("")){
 			((JTextField) inputField).setForeground(Color.black);
 			String dateformat= DateTools.ISO8601_FORMAT_MS;
 			String s=DateTools.formatDate(val,dateformat);

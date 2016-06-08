@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import loci.formats.MetadataTools;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import ome.xml.model.MapAnnotation;
+import ome.xml.model.MapPair;
+import ome.xml.model.MapPairs;
+import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -58,10 +63,14 @@ public class Sample
 	public static final String SAMPLE="Sample";
 	public static final String RAW="RawMaterial";
 	public static final String RAW_CODE="Code";
+	public static final String RAW_CODE_MAPLABEL="Raw Material Code";
 	public static final String RAW_DESC="Description";
+	public static final String RAW_DESC_MAPLABEL="Raw Material Desc";
 	public static final String PREP="Preparation";
 	public static final String PREP_DATE="Date";
+	public static final String PREP_DATE_MAPLABEL="Preparation Date";
 	public static final String PREP_DESCRIPTION="Description";
+	public static final String PREP_DESCRIPTION_MAPLABEL="Preparation Desc";
 	
 	
 	
@@ -102,6 +111,65 @@ public class Sample
 		readGridBoxDataFromXML(element);
 		readObservedSampleDataFromXML(element);
 	}
+
+	public Sample(MapAnnotation annot) 
+	{
+		MapPairs mp=annot.getValue();
+		List<MapPair> listMP=mp.getPairs();
+		switch (annot.getNamespace()) {
+		case OMEStore.NS_2016_06_07:
+			parseFromMapAnnotation2016_06_07(listMP);
+			break;
+
+		default:
+			LOGGER.warn("[DATA] Namespace is not supported for parsing sample data");
+			break;
+		}
+	}
+
+	
+	private void parseFromMapAnnotation2016_06_07(List<MapPair> listMP)
+	{
+		ObservedSample oSample=new ObservedSample();
+		GridBox g=new GridBox("", "", "");
+		for(MapPair obj:listMP){
+			switch (obj.getName()) {
+			case PREP_DATE_MAPLABEL:
+				setPrepDate(obj.getValue());
+				break;
+			case PREP_DESCRIPTION_MAPLABEL:
+				setPrepDescription(obj.getValue());
+				break;
+			case RAW_CODE_MAPLABEL:
+				setRawMaterialCode(obj.getValue());
+				break;
+			case RAW_DESC_MAPLABEL:
+				setRawMaterialDesc(obj.getValue());
+				break;
+			case ObservedSample.GRID_MAPLABEL:
+				oSample.setGridNumber(obj.getValue());
+				break;
+			case ObservedSample.OBJECT_NUMBER_MAPLABEL:
+				oSample.setObjectNumber(obj.getValue());
+				break;
+			case ObservedSample.OBJECT_TYPE_MAPLABEL:
+				oSample.setObjectType(obj.getValue());
+				break;
+			case GridBox.GRID_NR_MAPLABEL:
+				g.setNr(obj.getValue());
+				break;
+			case GridBox.GRID_TYPE_MAPLABEL:
+				g.setType(obj.getValue());
+				break;
+			default:
+				LOGGER.info("[DATA] unknown Label for Sample MapAnnotation: "+obj.getName());
+				break;
+			}
+		}
+		addObservedSample(oSample);
+		addGridBox(g);
+	}
+
 
 	private void readObservedSampleDataFromXML(Element element) {
 		NodeList list;
@@ -344,73 +412,130 @@ public class Sample
 	
 	//-- xml
 	
-	public String toXMLAnnotation()
-	{
-		StringBuffer xml=new StringBuffer("<Sample namespace=\"uos/Schemas/Additions/2016-02\">");
-		
-		xml=appendPreparation(xml);
-		appendRawMaterial(xml);
-		
-		xml.append(gridBox.toXMLAnnotation());
-		
-		for(int i=0; i<obSampleList.size(); i++){
-			xml.append(obSampleList.get(i).toXMLAnnotation());
-		}
-		
-		xml.append("</Sample>");
-		
-		return xml.toString();
-	}
+//	public String toXMLAnnotation()
+//	{
+//		StringBuffer xml=new StringBuffer("<Sample namespace=\"uos/Schemas/Additions/2016-02\">");
+//		
+//		xml=appendPreparation(xml);
+//		appendRawMaterial(xml);
+//		
+//		xml.append(gridBox.toXMLAnnotation());
+//		
+//		for(int i=0; i<obSampleList.size(); i++){
+//			xml.append(obSampleList.get(i).toXMLAnnotation());
+//		}
+//		
+//		xml.append("</Sample>");
+//		
+//		return xml.toString();
+//	}
 	
-	private StringBuffer appendPreparation(StringBuffer xml)
-	{
-		boolean writePrep=false;
-		if(preparationDate!=null || preparationDescription!=null){
-			xml.append("<"+PREP);
-			writePrep=true;
-		}
-			
-		if(preparationDate!=null){
-			xml.append(" "+PREP_DATE+"=\"");
-			xml.append(preparationDate.getValue());
-			xml.append("\"");
-		}
-		
-		if(preparationDescription!=null){
-			xml.append(" "+PREP_DESCRIPTION+"=\"");
-			xml.append(preparationDescription);
-			xml.append("\"");
-		}
-		
-		if(writePrep)
-			xml.append("/>");
-		return xml;
-	}
+
+//	public MapAnnotation toMapAnnotation()
+//	{
+//		MapAnnotation ma = new MapAnnotation();
+////		ma.setNs(NAMESPACE);
+//		ma.setDescription("Sample");
+//		
+//		List<MapPair> valueList=new ArrayList<MapPair>();
+//		
+//		valueList.add(new MapPair(PREP_DATE_MAPLABEL,getDateAsString()));
+//		valueList.add(new MapPair(PREP_DESCRIPTION_MAPLABEL,getPrepDescription()));
+//		valueList.add(new MapPair(RAW_CODE_MAPLABEL,getRawMaterialCode()));
+//		valueList.add(new MapPair(RAW_DESC_MAPLABEL,getRawMaterialDesc()));
+//		GridBox gb=getGridBox();
+//		valueList.add(new MapPair(GridBox.GRID_NR_MAPLABEL,gb.getNr()));
+//		valueList.add(new MapPair(GridBox.GRID_TYPE_MAPLABEL,gb.getType()));
+//		List<ObservedSample> list =getObservedSampleList();
+//		for(ObservedSample o: list){
+//			valueList.add(new MapPair(o.GRID_MAPLABEL,o.getGridNumberX()+o.GRID_SEPARATOR+o.getGridNumberY()));
+//			valueList.add(new MapPair(o.OBJECT_TYPE_MAPLABEL,o.getObjectType()));
+//			valueList.add(new MapPair(o.OBJECT_NUMBER_MAPLABEL,o.getObjectNumber()));
+//		}
+//		
+//		ma.setValue(new MapPairs(valueList));
+//		
+//		return ma;
+//	}
 	
-	private StringBuffer appendRawMaterial(StringBuffer xml)
-	{
-		boolean writePrep=false;
-		if(rawMaterialCode!=null || rawMaterialDesc!=null){
-			xml.append("<"+PREP);
-			writePrep=true;
-		}
-			
-		if(rawMaterialCode!=null){
-			xml.append(" "+RAW_CODE+"=\"");
-			xml.append(rawMaterialCode);
-			xml.append("\"");
-		}
-		
-		if(rawMaterialDesc!=null){
-			xml.append(" "+RAW_DESC+"=\"");
-			xml.append(rawMaterialDesc);
-			xml.append("\"");
-		}
-		
-		if(writePrep)
-			xml.append("/>");
-		return xml;
-	}
+//	public MapAnnotation appendToMapAnnotation(MapAnnotation ma)
+//	{
+//		List<MapPair> valueList;
+//		if(ma == null){
+//			 ma = new MapAnnotation();
+//			 ma.setNamespace(OMEStore.CELLNANOS_NS);
+//			 valueList=new ArrayList<MapPair>();
+//		}else{
+//			valueList=ma.getValue().getPairs();
+//		}
+//		
+//		OMEStore.addMapPair(valueList, PREP_DATE_MAPLABEL,getDateAsString());
+//		OMEStore.addMapPair(valueList,PREP_DESCRIPTION_MAPLABEL,getPrepDescription());
+//		OMEStore.addMapPair(valueList,RAW_CODE_MAPLABEL,getRawMaterialCode());
+//		OMEStore.addMapPair(valueList,RAW_DESC_MAPLABEL,getRawMaterialDesc());
+//		GridBox gb=getGridBox();
+//		OMEStore.addMapPair(valueList,GridBox.GRID_NR_MAPLABEL,gb.getNr());
+//		OMEStore.addMapPair(valueList,GridBox.GRID_TYPE_MAPLABEL,gb.getType());
+//		List<ObservedSample> list =getObservedSampleList();
+//		for(ObservedSample o: list){
+//			OMEStore.addMapPair(valueList,o.GRID_MAPLABEL,o.getGridNumberX()+o.GRID_SEPARATOR+o.getGridNumberY());
+//			OMEStore.addMapPair(valueList,o.OBJECT_TYPE_MAPLABEL,o.getObjectType());
+//			OMEStore.addMapPair(valueList,o.OBJECT_NUMBER_MAPLABEL,o.getObjectNumber());
+//		}
+//		
+//		ma.setValue(new MapPairs(valueList));
+//		return ma;
+//	}
+	
+//	private StringBuffer appendPreparation(StringBuffer xml)
+//	{
+//		boolean writePrep=false;
+//		if(preparationDate!=null || preparationDescription!=null){
+//			xml.append("<"+PREP);
+//			writePrep=true;
+//		}
+//			
+//		if(preparationDate!=null){
+//			xml.append(" "+PREP_DATE+"=\"");
+//			xml.append(preparationDate.getValue());
+//			xml.append("\"");
+//		}
+//		
+//		if(preparationDescription!=null){
+//			xml.append(" "+PREP_DESCRIPTION+"=\"");
+//			xml.append(preparationDescription);
+//			xml.append("\"");
+//		}
+//		
+//		if(writePrep)
+//			xml.append("/>");
+//		return xml;
+//	}
+	
+//	private StringBuffer appendRawMaterial(StringBuffer xml)
+//	{
+//		boolean writePrep=false;
+//		if(rawMaterialCode!=null || rawMaterialDesc!=null){
+//			xml.append("<"+PREP);
+//			writePrep=true;
+//		}
+//			
+//		if(rawMaterialCode!=null){
+//			xml.append(" "+RAW_CODE+"=\"");
+//			xml.append(rawMaterialCode);
+//			xml.append("\"");
+//		}
+//		
+//		if(rawMaterialDesc!=null){
+//			xml.append(" "+RAW_DESC+"=\"");
+//			xml.append(rawMaterialDesc);
+//			xml.append("\"");
+//		}
+//		
+//		if(writePrep)
+//			xml.append("/>");
+//		return xml;
+//	}
 	
 	
 	
@@ -423,6 +548,8 @@ public class Sample
 		public static String GRID="GridBox";
 		public static String GRID_ID="ID";
 		public static String GRID_NR="NR";
+		public static final String GRID_NR_MAPLABEL="Grid Number";
+		public static final String GRID_TYPE_MAPLABEL="Grid Type";
 		public static String GRID_TYPE="Type";
 		
 		public GridBox(String id,String nr, String type)

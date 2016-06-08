@@ -229,7 +229,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		box.add(Box.createVerticalStrut(5));
 		box.add(globalPane);
 		
-		JButton editBtn=new JButton("Select");
+		JButton editBtn=new JButton("Selection");
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		editBtn.setEnabled(true);
 		editBtn.addActionListener(new ActionListener() {

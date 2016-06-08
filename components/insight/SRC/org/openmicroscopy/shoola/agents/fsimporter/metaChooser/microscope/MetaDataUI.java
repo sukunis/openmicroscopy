@@ -61,6 +61,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataControl;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.DetectorCompUI;
@@ -75,7 +76,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.PlaneSliderCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.SampleCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotation;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotationXML;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 //import org.slf4j.LoggerFactory;
 import org.slf4j.LoggerFactory;
@@ -749,23 +750,51 @@ public class MetaDataUI extends JPanel
 			Sample s=getSampleAnnotation(image,annot);
 			if(s!=null){
 				sUI.addData(s, false);
+			}else{
+				LOGGER.info("[DATA] Sample data not available!");
 			}
 		}
 	}
 
+//	private Sample getSampleAnnotation(Image image,StructuredAnnotations annot) 
+//	{
+//		List<Annotation> list=image.copyLinkedAnnotationList();
+//		String sampleID=null;
+//		for(int i=0; i<list.size(); i++){
+//			if(image.getLinkedAnnotation(i).getID().contains(SampleAnnotationXML.SAMPLE_ANNOT_ID))
+//				sampleID= image.getLinkedAnnotation(i).getID();
+//		}
+//		if(sampleID!=null){
+//			for(int i=0; i<annot.sizeOfXMLAnnotationList();i++){
+//				if(sampleID.equals(annot.getXMLAnnotation(i).getID())){
+//					SampleAnnotationXML s=new SampleAnnotationXML();
+//					return s.getSample(annot.getXMLAnnotation(i).getValue());
+//				}
+//			}
+//		}
+//		return null;
+//	}
+	
+	/**
+	 * Read sample data from *.ome file. Sample data should be stored as MapAnnotation of id <MAP_ANNOT_ID>
+	 * and linked o current image.
+	 * @param image
+	 * @param annot
+	 * @return
+	 */
 	private Sample getSampleAnnotation(Image image,StructuredAnnotations annot) 
 	{
 		List<Annotation> list=image.copyLinkedAnnotationList();
 		String sampleID=null;
 		for(int i=0; i<list.size(); i++){
-			if(image.getLinkedAnnotation(i).getID().contains(SampleAnnotation.SAMPLE_ANNOT_ID))
+			if(image.getLinkedAnnotation(i).getID().contains(OMEStore.MAP_ANNOT_ID))
 				sampleID= image.getLinkedAnnotation(i).getID();
 		}
 		if(sampleID!=null){
-			for(int i=0; i<annot.sizeOfXMLAnnotationList();i++){
-				if(sampleID.equals(annot.getXMLAnnotation(i).getID())){
-					SampleAnnotation s=new SampleAnnotation();
-					return s.getSample(annot.getXMLAnnotation(i).getValue());
+			for(int i=0; i<annot.sizeOfMapAnnotationList();i++){
+				if(sampleID.equals(annot.getMapAnnotation(i).getID())){
+					Sample s= new Sample(annot.getMapAnnotation(i)); 
+					return s;
 				}
 			}
 		}
@@ -1116,6 +1145,7 @@ public class MetaDataUI extends JPanel
 //				layout.insertColumn(1, TableLayout.FILL);
 //			
 //			add(comp,"1,0");
+//			System.out.println("PosB: ");
 			insertModule(0,1,comp);
 			break;
 		case Pos_C:
@@ -1126,6 +1156,7 @@ public class MetaDataUI extends JPanel
 //				layout.insertColumn(2, TableLayout.FILL);
 //			
 //			add(comp,"2,0");
+//			System.out.println("PosC: ");
 			insertModule(0,2,comp);
 			break;
 		case Pos_D:
@@ -1136,6 +1167,7 @@ public class MetaDataUI extends JPanel
 //				layout.insertColumn(3, TableLayout.FILL);
 //			
 //			add(comp,"3,0");
+//			System.out.println("PosD: ");
 			insertModule(0,3,comp);
 			break;
 			//----------------------------------------------
@@ -1144,6 +1176,7 @@ public class MetaDataUI extends JPanel
 //				layout.insertRow(1, TableLayout.FILL);
 //			
 //			add(comp,"0,1");
+//			System.out.println("PosE: ");
 			insertModule(1,0,comp);
 			break;
 		case Pos_F:
@@ -1153,6 +1186,7 @@ public class MetaDataUI extends JPanel
 //			if(layout.getNumColumn()<2)
 //				layout.insertColumn(1, TableLayout.FILL);
 //			add(comp,"1,1");
+//			System.out.println("PosF: ");
 			insertModule(1,1,comp);
 			break;
 		case Pos_G:
@@ -1162,6 +1196,7 @@ public class MetaDataUI extends JPanel
 //			if(layout.getNumColumn()<3)
 //				layout.insertColumn(2, TableLayout.PREFERRED);
 //			add(comp,"2,1");
+//			System.out.println("PosG: ");
 			insertModule(1,2,comp);
 			break;
 		case Pos_H:
@@ -1171,6 +1206,7 @@ public class MetaDataUI extends JPanel
 //			if(layout.getNumColumn()<4)
 //				layout.insertColumn(3, TableLayout.PREFERRED);
 //			add(comp,"3,1");
+//			System.out.println("PosH: ");
 			insertModule(1,3,comp);
 			break;
 		default:
@@ -1185,6 +1221,7 @@ public class MetaDataUI extends JPanel
 	private void insertModule(int rowIdx, int columnIdx, JComponent comp)
 	{
 		LOGGER.info("Insert Module at col: "+columnIdx+", row: "+rowIdx);
+//		System.out.println("Insert Module at col: "+columnIdx+", row: "+rowIdx);
 		TableLayout layout=(TableLayout) getLayout();
 		//expand rows?
 		int numRow=layout.getNumRow();

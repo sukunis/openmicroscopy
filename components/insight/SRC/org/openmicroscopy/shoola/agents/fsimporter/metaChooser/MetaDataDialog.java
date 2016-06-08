@@ -62,6 +62,8 @@ import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Experimenter;
 import ome.xml.model.Project;
 import omero.gateway.model.ExperimenterData;
+import omero.gateway.model.ProjectData;
+import omero.gateway.model.ScreenData;
 
 import org.apache.commons.io.FilenameUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
@@ -256,9 +258,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 		if(fileObj!=null){
 			createParentOME(fileObj);
-			prop="[Group: "+fileObj.getGroup().getName()+", Project: "+
-			fileObj.getParent().asProject().getName().getValue()+"]";
-			data = new ImportUserData(fileObj.getGroup(), fileObj.getParent().asProject(), fileObj.getUser());
+//			prop="[Group: "+fileObj.getGroup().getName()+", Project: "+
+//			fileObj.getParent().asProject().getName().getValue()+"]";
+			data = new ImportUserData(fileObj.getGroup(), fileObj.getParent(), fileObj.getUser());
 		}else{
 //			copyParentOME(f.getParentName());
 		}
@@ -299,7 +301,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 		
 		//import project
-		if(fileObj.isFolderAsContainer()){
+		if(fileObj.isFolderAsContainer() && fileObj.getParent() instanceof ProjectData){
 			Project p=new Project();//==import project
 			p.setName(fileObj.getParent().asProject().getName().getValue());
 			p.setDescription(fileObj.getParent().asProject().getDescription().toString());
@@ -339,9 +341,16 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			while (j.hasNext()) {
 				f = j.next();
 				addNode(root,f.getFile(),f);
+				
+				String name="";
+				if(f.getParent() instanceof ProjectData)
+					name=f.getParent().asProject().getName().getValue();
+				else if(f.getParent() instanceof ScreenData)
+					name=f.getParent().asScreen().getName().getValue();
+				
 				LOGGER.info("BUILD FILE TREE: add "+f.getFile().getAbsolutePath()+
 						"[group: "+f.getGroup().getName()+", project: "+
-						f.getParent().asProject().getName().getValue()+"]");
+						name+"]");
 			}
 			treeModel.reload();
 		}else{

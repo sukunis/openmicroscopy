@@ -175,6 +175,10 @@ class EditorUI
 	{
 		addTab("General", generalPane, "General Information.");
 		addTab("Acquisition", acquisitionPane, "Acquisition Metadata.");
+		
+		JPanel myMetaPane = new JPanel();
+		addTab("Metadata",myMetaPane,"MetaData Editor.");
+		
 		if (init) {
 			if (model.getRndIndex() == MetadataViewer.RND_SPECIFIC) {
 				addTab(RENDERER_NAME_SPECIFIC, dummyPanel, 
@@ -184,6 +188,7 @@ class EditorUI
 						RENDERER_DESCRIPTION);
 			}
 		}	
+		
 	}
 	
 	/**

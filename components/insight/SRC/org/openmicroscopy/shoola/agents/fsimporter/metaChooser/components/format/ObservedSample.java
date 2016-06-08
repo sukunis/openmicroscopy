@@ -43,12 +43,17 @@ public class ObservedSample
 	public static String OBS_ID="ID";
 	public static String SAMPLE_REF="SampleRef";
 	public static String GRID="Grid";
+	public static final String GRID_MAPLABEL="Grid";
 	public static String GRID_REF="GridBoxRefID";
 	public static String GRID_NUMBERX="NumberX";
 	public static String GRID_NUMBERY="NumberY";
 	public static String OBJECT="Object";
 	public static String OBJECT_TYPE="Type";
+	public static final String OBJECT_TYPE_MAPLABEL="Object Type";
 	public static String OBJECT_NUMBER="Number";
+	public static final String OBJECT_NUMBER_MAPLABEL="Object Number";
+	public static final String GRID_SEPARATOR=" - ";
+	
 	
 	public ObservedSample()
 	{
@@ -279,6 +284,19 @@ public class ObservedSample
 	public final static String getTagName()
 	{
 		return OBS_SAMPLE;
+	}
+
+	/** parse string "x - y" to x and y*/
+	public void setGridNumber(String value) 
+	{
+		String[] parts=value.split(GRID_SEPARATOR);
+		if(parts!=null){
+			if( parts.length>0){
+				setGridNumberX(parts[0]);
+			}
+			if(parts.length>1)
+				setGridNumberY(parts[1]);
+		}
 	}
 	
 	

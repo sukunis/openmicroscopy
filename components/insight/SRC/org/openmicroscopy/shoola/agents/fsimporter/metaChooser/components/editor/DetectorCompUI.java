@@ -171,7 +171,7 @@ public class DetectorCompUI extends ElementsCompUI
 		box=Box.createVerticalBox();
 		box.add(globalPane);
 		
-		JButton editBtn=new JButton("Select");
+		JButton editBtn=new JButton("Selection");
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		editBtn.setEnabled(true);
 		editBtn.addActionListener(new ActionListener() {

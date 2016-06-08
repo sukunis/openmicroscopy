@@ -3,20 +3,27 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser;
 import com.sun.xml.internal.fastinfoset.util.StringArray;
 
 import ome.xml.model.Experimenter;
+import omero.gateway.model.DataObject;
 import omero.gateway.model.ExperimenterData;
 import omero.gateway.model.GroupData;
+import omero.gateway.model.ProjectData;
+import omero.gateway.model.ScreenData;
 import omero.model.Project;
 
 public class ImportUserData 
 {
 	private GroupData group;
-	private Project project;
+	/** name of project or screen */
+	private String name;
 	private ExperimenterData experimenter;
 	
-	public ImportUserData(GroupData group,Project project,ExperimenterData experimenter)
+	public ImportUserData(GroupData group,DataObject parent,ExperimenterData experimenter)
 	{
 		this.group=group;
-		this.project=project;
+		if(parent instanceof ProjectData)
+			this.name=parent.asProject().getName().getValue();
+		else if(parent instanceof ScreenData)
+			this.name=parent.asScreen().getName().getValue();
 		this.experimenter=experimenter;
 		
 	}
@@ -28,7 +35,7 @@ public class ImportUserData
 	
 	public String getProject()
 	{
-		return project.getName().getValue();
+		return name;
 		
 	}
 	

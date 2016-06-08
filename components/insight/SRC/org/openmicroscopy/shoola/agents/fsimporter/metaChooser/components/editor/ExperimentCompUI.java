@@ -56,6 +56,9 @@ public class ExperimentCompUI extends ElementsCompUI
 	private boolean setFields;
 	
 
+	public static final String PROJPARTNER_MAPLABEL="Project Partner";
+	public static final String EXPERIMENT_DESC_MAPLABEL="Experiment Desc";
+	public static final String EXPERIMENT_TYPE_MAPLABEL="Experiment Type";
 	
 	public ExperimentCompUI(ModuleConfiguration objConf)
 	{
@@ -87,6 +90,8 @@ public class ExperimentCompUI extends ElementsCompUI
 			createDummyPane(false);
 		}
 	}
+	
+	
 	
 	public void createNewExperiment(String idxExp,String idxExper)
 	{
