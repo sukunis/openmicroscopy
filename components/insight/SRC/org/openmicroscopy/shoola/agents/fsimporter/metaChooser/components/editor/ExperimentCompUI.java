@@ -21,11 +21,15 @@ import javax.swing.SwingConstants;
 
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
+import ome.xml.model.MapAnnotation;
+import ome.xml.model.MapPair;
+import ome.xml.model.MapPairs;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.ExperimentType;
 import ome.xml.model.enums.handlers.ExperimentTypeEnumHandler;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
@@ -637,6 +641,35 @@ public class ExperimentCompUI extends ElementsCompUI
 	    public boolean getScrollableTracksViewportHeight() {
 	        return false;
 	    }
+	}
+
+	public void parseProjectPartner(MapAnnotation map) 
+	{
+		MapPairs mp=map.getValue();
+		List<MapPair> listMP=mp.getPairs();
+		switch (map.getNamespace()) {
+		case OMEStore.NS_2016_06_07:
+			parseFromMapAnnotation2016_06_07(listMP);
+			break;
+
+		default:
+			LOGGER.warn("[DATA] Namespace is not supported for parsing sample data");
+			break;
+		}
+	}
+
+	private void parseFromMapAnnotation2016_06_07(List<MapPair> listMP) 
+	{
+		for(MapPair obj:listMP){
+			switch (obj.getName()) {
+			case PROJPARTNER_MAPLABEL:
+				setProjectPartner(obj.getValue(), OPTIONAL);
+				break;		
+			default:
+				LOGGER.info("[DATA] unknown Label for Project Partner MapAnnotation: "+obj.getName());
+				break;
+			}
+		}
 	}
 
 

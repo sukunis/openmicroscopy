@@ -217,7 +217,12 @@ public class OMEStore
 		addMapPair(cAnnot.valueList,GridBox.GRID_TYPE_MAPLABEL,gb.getType());
 		List<ObservedSample> list =s.getObservedSampleList();
 		for(ObservedSample o: list){
-			addMapPair(cAnnot.valueList,ObservedSample.GRID_MAPLABEL,o.getGridNumberX()+ObservedSample.GRID_SEPARATOR+o.getGridNumberY());
+			String x=""; String y="";
+			if(o.getGridNumberX()!=null )
+				x=o.getGridNumberX();
+			if(o.getGridNumberY()!=null)
+				y=o.getGridNumberY();
+			addMapPair(cAnnot.valueList,ObservedSample.GRID_MAPLABEL,x+ObservedSample.GRID_SEPARATOR+y);
 			addMapPair(cAnnot.valueList,ObservedSample.OBJECT_TYPE_MAPLABEL,o.getObjectType());
 			addMapPair(cAnnot.valueList,ObservedSample.OBJECT_NUMBER_MAPLABEL,o.getObjectNumber());
 		}

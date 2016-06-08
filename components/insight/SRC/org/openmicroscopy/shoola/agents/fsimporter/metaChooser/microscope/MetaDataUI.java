@@ -48,6 +48,7 @@ import ome.xml.model.Laser;
 import ome.xml.model.LightPath;
 import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
+import ome.xml.model.MapAnnotation;
 import ome.xml.model.OME;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
@@ -536,6 +537,11 @@ public class MetaDataUI extends JPanel
 					eUI.setName(anotherExp, ElementsCompUI.REQUIRED);
 				}
 			}
+			
+			MapAnnotation map=getLinkedCellNanOsAnnotation(image, ome.getStructuredAnnotations());
+			if(map!=null){
+				eUI.parseProjectPartner(map); 
+			}
 		}
 	}
 
@@ -784,6 +790,17 @@ public class MetaDataUI extends JPanel
 	 */
 	private Sample getSampleAnnotation(Image image,StructuredAnnotations annot) 
 	{
+		MapAnnotation map=getLinkedCellNanOsAnnotation(image, annot);
+		Sample s=null;
+		if(map!=null)
+			s= new Sample(map);
+		
+		return s;
+	}
+	
+	private MapAnnotation getLinkedCellNanOsAnnotation(Image image, StructuredAnnotations annot)
+	{
+		MapAnnotation map =null;
 		List<Annotation> list=image.copyLinkedAnnotationList();
 		String sampleID=null;
 		for(int i=0; i<list.size(); i++){
@@ -793,12 +810,11 @@ public class MetaDataUI extends JPanel
 		if(sampleID!=null){
 			for(int i=0; i<annot.sizeOfMapAnnotationList();i++){
 				if(sampleID.equals(annot.getMapAnnotation(i).getID())){
-					Sample s= new Sample(annot.getMapAnnotation(i)); 
-					return s;
+					map= annot.getMapAnnotation(i);
 				}
 			}
 		}
-		return null;
+		return map;
 	}
 
 	private void readObjectiveData(Image image, List<Objective> objList) 
