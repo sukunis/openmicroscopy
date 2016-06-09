@@ -560,7 +560,7 @@ public class ChannelCompUI extends ElementsCompUI
 						}
 						fluorophore.setVisible(true);
 						break;
-					case TagNames.IILUMTYPE:
+					case TagNames.ILLUMTYPE:
 						try{
 							IlluminationType value=parseIllumType(val);
 							setIllumType(value, prop);
@@ -719,7 +719,7 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(illumType == null) 
-			illumType = new TagData(TagNames.IILUMTYPE+": ",val,prop,TagData.COMBOBOX,getNames(IlluminationType.class));
+			illumType = new TagData(TagNames.ILLUMTYPE+": ",val,prop,TagData.COMBOBOX,getNames(IlluminationType.class));
 		else 
 			illumType.setTagValue(val,prop);
 	}

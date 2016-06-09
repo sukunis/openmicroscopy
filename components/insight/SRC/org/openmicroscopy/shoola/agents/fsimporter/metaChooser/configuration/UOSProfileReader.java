@@ -74,7 +74,7 @@ public class UOSProfileReader
 	public UOSProfileReader(File file)
 	{
 		view=new CustomViewProperties();
-		if(file==null){
+		if(file==null || !file.exists()){
 			return;
 		}
 		

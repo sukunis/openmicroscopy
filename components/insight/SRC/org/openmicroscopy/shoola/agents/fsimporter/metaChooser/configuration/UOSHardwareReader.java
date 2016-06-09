@@ -127,7 +127,7 @@ public class UOSHardwareReader
     
 	public UOSHardwareReader(File file)
 	{
-		if(file==null){
+		if(file==null || !file.exists()){
 			return;
 		}
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

@@ -29,11 +29,15 @@ import ome.xml.model.enums.FilterType;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightPathTable.LightPathTableModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
+import org.slf4j.LoggerFactory;
 
 public class LightPathCompUI extends ElementsCompUI 
 {
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(LightPathCompUI.class);
 	
 	private LightPath lightPath;
 	private int chIdx;
@@ -196,7 +200,7 @@ public class LightPathCompUI extends ElementsCompUI
 					if(primDNotExists){
 						lightPath.linkDichroic((Dichroic) f);
 					}else{
-						LOGGER.warning("primary Dichroic still exists! [LightPathCompUI::createLightPath]");
+						LOGGER.warn("primary Dichroic still exists! [LightPathCompUI::createLightPath]");
 					}
 
 				}else{

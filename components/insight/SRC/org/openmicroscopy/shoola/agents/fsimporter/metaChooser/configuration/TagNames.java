@@ -34,7 +34,7 @@ public class TagNames
 	public static final String CH_NAME="Name";
 	public static final String COLOR="Color";
 	public static final String FLUOROPHORE="Fluorophore";
-	public static final String IILUMTYPE="Illumination Type";
+	public static final String ILLUMTYPE="Illumination Type";
 	public static final String EXPOSURETIME="Exposure Time";
 	public static final String EXCITWAVELENGTH="Excitation Wavelength";
 	public static final String EMMISIONWAVELENGTH="Emission Wavelength";

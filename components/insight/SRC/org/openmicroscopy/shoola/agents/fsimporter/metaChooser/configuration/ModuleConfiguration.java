@@ -70,6 +70,15 @@ public class ModuleConfiguration
 		
 	}
 	
+	public void setTag(String name, String val,String unit, String prop) 
+	{
+		setTag(name, val, unit,prop, tagConfList) ;
+	}
+	
+	public void setSettingTag(String name, String val,String unit, String prop) 
+	{
+		setTag(name, val, unit, prop, settingsTagConfList);
+	}
 	
 
 	public void loadTags(Element node)
