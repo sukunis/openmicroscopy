@@ -35,14 +35,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+
 import javax.swing.Icon;
 import javax.swing.JFrame;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.openmicroscopy.shoola.util.CommonsLangUtils;
 
+import omero.model.MapAnnotation;
 import omero.model.OriginalFile;
 import omero.model.PlaneInfo;
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.metadata.AcquisitionDataLoader;
 import org.openmicroscopy.shoola.agents.metadata.AnalysisResultsFileLoader;
 import org.openmicroscopy.shoola.agents.metadata.FileAnnotationChecker;
@@ -92,9 +96,13 @@ import org.openmicroscopy.shoola.env.data.model.DownloadArchivedActivityParam;
 import org.openmicroscopy.shoola.env.data.model.EnumerationObject;
 import org.openmicroscopy.shoola.env.data.model.SaveAsParam;
 import org.openmicroscopy.shoola.env.data.model.ScriptObject;
+
 import omero.gateway.SecurityContext;
+
 import org.openmicroscopy.shoola.env.data.util.StructuredDataResults;
+
 import omero.log.LogMessage;
+
 import org.openmicroscopy.shoola.env.rnd.RenderingControl;
 import org.openmicroscopy.shoola.env.ui.UserNotifier;
 import org.openmicroscopy.shoola.util.file.modulo.ModuloInfo;
@@ -3731,6 +3739,24 @@ class EditorModel
 	 */
 	InstrumentData getInstrumentData() { return instrumentData; }
 	
+	Sample getSampleObj()
+	{
+		Sample s=null;
+		List<MapAnnotationData> mList=new ArrayList<MapAnnotationData>();
+		mList.addAll(getMapAnnotations(MapAnnotationType.USER));
+		for(MapAnnotationData mad:mList){
+			 if(Sample.validAnnot(mad.getNameSpace())){
+				 System.out.println("Valid sample annotation");
+				 return new Sample(mad);
+			 }else{
+				 System.out.println("Sample ns is not valid: "+mad.getNameSpace());
+			 }
+			 
+		}
+		return s;
+		
+	}
+	
 	/** 
      * Sorts the passed collection of data objects by ID.
      * 
@@ -4644,4 +4670,6 @@ class EditorModel
         }
         return imgSize <= maxSize;
     }
+
+	
 }

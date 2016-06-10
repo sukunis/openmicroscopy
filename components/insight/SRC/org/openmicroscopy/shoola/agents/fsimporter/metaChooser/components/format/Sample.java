@@ -22,6 +22,8 @@ import ome.xml.model.MapPair;
 import ome.xml.model.MapPairs;
 import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.primitives.Timestamp;
+import omero.gateway.model.MapAnnotationData;
+import omero.model.NamedValue;
 
 /**
  * Object for sample preparation metadata like
@@ -118,7 +120,7 @@ public class Sample
 		List<MapPair> listMP=mp.getPairs();
 		switch (annot.getNamespace()) {
 		case OMEStore.NS_2016_06_07:
-			parseFromMapAnnotation2016_06_07(listMP);
+			parseFromXMLMapAnnotation2016_06_07(listMP);
 			break;
 
 		default:
@@ -128,7 +130,62 @@ public class Sample
 	}
 
 	
-	private void parseFromMapAnnotation2016_06_07(List<MapPair> listMP)
+	public Sample(MapAnnotationData anno) 
+	{
+		switch (anno.getNameSpace()) {
+		case OMEStore.NS_2016_06_07:
+			parseFromOMEROMapAnnotation2016_06_07((List<NamedValue>) anno.getContent());
+			break;
+
+		default:
+			LOGGER.warn("[DATA] Namespace is not supported for parsing sample data");
+			break;
+		}
+	}
+
+	private void parseFromOMEROMapAnnotation2016_06_07(List<NamedValue> listMP) 
+	{
+		ObservedSample oSample=new ObservedSample();
+		GridBox g=new GridBox("", "", "");
+		
+		for(NamedValue obj:listMP){
+			switch (obj.name) {
+			case PREP_DATE_MAPLABEL:
+				setPrepDate(obj.value);
+				break;
+			case PREP_DESCRIPTION_MAPLABEL:
+				setPrepDescription(obj.value);
+				break;
+			case RAW_CODE_MAPLABEL:
+				setRawMaterialCode(obj.value);
+				break;
+			case RAW_DESC_MAPLABEL:
+				setRawMaterialDesc(obj.value);
+				break;
+			case ObservedSample.GRID_MAPLABEL:
+				oSample.setGridNumber(obj.value);
+				break;
+			case ObservedSample.OBJECT_NUMBER_MAPLABEL:
+				oSample.setObjectNumber(obj.value);
+				break;
+			case ObservedSample.OBJECT_TYPE_MAPLABEL:
+				oSample.setObjectType(obj.value);
+				break;
+			case GridBox.GRID_NR_MAPLABEL:
+				g.setNr(obj.value);
+				break;
+			case GridBox.GRID_TYPE_MAPLABEL:
+				g.setType(obj.value);
+				break;
+			default:
+				LOGGER.info("[DATA] unknown Label for Sample MapAnnotation: "+obj.name);
+				break;
+			}
+		}
+		
+	}
+
+	private void parseFromXMLMapAnnotation2016_06_07(List<MapPair> listMP)
 	{
 		ObservedSample oSample=new ObservedSample();
 		GridBox g=new GridBox("", "", "");
@@ -657,6 +714,17 @@ public class Sample
 			return xml.toString();
 		}
 		
+	}
+
+	public static boolean validAnnot(String annoNS) 
+	{
+		switch (annoNS) {
+		case OMEStore.NS_2016_06_07:
+			return true;
+
+		default:
+			return false;
+		}
 	}
 
 

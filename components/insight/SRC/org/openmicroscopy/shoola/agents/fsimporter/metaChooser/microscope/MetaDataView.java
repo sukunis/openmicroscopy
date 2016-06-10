@@ -33,6 +33,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -86,7 +87,10 @@ public class MetaDataView extends JPanel
 		
 
 			data = readMetadataFromFile(fName, reader);
-			if(data==null) return ;
+			if(data==null){ 
+				singleView=new MetaDataUI(sett);
+				return ;
+			}
 
 			LOGGER.info("### read "+ fName+" ###");
 
@@ -227,9 +231,12 @@ public class MetaDataView extends JPanel
 		try{
 			reader.setId(file);
 		}catch(FormatException | IOException e){
-			LOGGER.error("Error read file");
-			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-					"Can't read metadata of "+file,e);
+//			LOGGER.error("Error read file");
+//			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+//					"Can't read metadata of "+file,e);
+//			ld.setVisible(true);
+			WarningDialog ld=new WarningDialog("Not supported file format for MetaData Editor!", 
+					"Can't read metadata of "+file+"! Format is not supported.");
 			ld.setVisible(true);
 			setCursor(cursor);
 			return null;
