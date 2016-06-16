@@ -34,6 +34,7 @@ import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.Immersion;
+import ome.xml.model.enums.LaserMedium;
 
 /**
  * Implements the objectiv data panel. Define here default values for input.
@@ -372,15 +373,13 @@ public class ObjectiveCompUI extends ElementsCompUI
 			LOGGER.error("[DATA] can't read OBJECTIVE lensNa input");
 		}
 		try{
-			objective.setImmersion(immersion.getTagValue().equals("")?
-					null : Immersion.fromString(immersion.getTagValue()));
+			objective.setImmersion(parseImmersion(immersion.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read OBJECTIVE immersion input");
 		}
 		try{
 
-			objective.setCorrection(correction.getTagValue().equals("") ?
-					null : Correction.fromString(correction.getTagValue()));
+			objective.setCorrection(parseCorrection(correction.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read OBJECTIVE correction input");
 		}
@@ -390,6 +389,34 @@ public class ObjectiveCompUI extends ElementsCompUI
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read OBJECTIVE working distance input");
 		}
+	}
+	
+	private Immersion parseImmersion(String c) 
+	{
+		if(c==null || c.equals(""))
+			return null;
+		Immersion m=null;
+		try{
+			m=Immersion.fromString(c);
+		}catch(EnumerationException e){
+			LOGGER.warn("Immersion: "+c+" is not supported");
+			m=Immersion.OTHER;
+		}
+		return m;
+	}
+	
+	private Correction parseCorrection(String c) 
+	{
+		if(c==null || c.equals(""))
+			return null;
+		Correction m=null;
+		try{
+			m=Correction.fromString(c);
+		}catch(EnumerationException e){
+			LOGGER.warn("Correction: "+c+" is not supported");
+			m=Correction.OTHER;
+		}
+		return m;
 	}
 	
 	private void createNewElement() {

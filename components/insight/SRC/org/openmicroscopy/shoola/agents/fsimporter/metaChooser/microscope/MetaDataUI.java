@@ -422,6 +422,8 @@ public class MetaDataUI extends JPanel
 					List<Objective> objectives=null;
 					List<Detector> detectors=null;
 					List<LightSource> lightSources=null;
+					List<Filter> filters=null;
+					List<Dichroic> dichroics=null;
 					List<Channel> channels=null;
 					List<Plane> planes=null;
 
@@ -435,6 +437,8 @@ public class MetaDataUI extends JPanel
 						objectives=instrument.copyObjectiveList();
 						detectors=instrument.copyDetectorList();
 						lightSources=instrument.copyLightSourceList();
+						filters=instrument.copyFilterList();
+						dichroics=instrument.copyDichroicList();
 						List<Filter> filterList=instrument.copyFilterList();
 						model.setFilterList(filterList);
 						List<Dichroic> dichroicList=instrument.copyDichroicList();
@@ -453,7 +457,7 @@ public class MetaDataUI extends JPanel
 					
 					if(componentsInit){
 						readImageData(image,objectives,annot);
-						readChannelData(channels,lightSources,detectors);
+						readChannelData(channels,lightSources,detectors,filters,dichroics);
 						
 						readPlaneData(planes);
 						readImageEnvData(image);
@@ -546,7 +550,8 @@ public class MetaDataUI extends JPanel
 	}
 
 	private void readChannelData(List<Channel> channels,
-			List<LightSource> lightSources, List<Detector> detectors) 
+			List<LightSource> lightSources, List<Detector> detectors, 
+			List<Filter> filters, List<Dichroic> dichroics) 
 	{
 		if(initChannelUI)
 		{
@@ -567,13 +572,13 @@ public class MetaDataUI extends JPanel
 					
 					LOGGER.info("[DATA] -- load CHANNEL data "+cUI.getName());
 
-					readLightPathData(channels.get(i),i);
+					readLightPathData(channels.get(i),i,filters,dichroics);
 					readLightSource(channels.get(i),i,lightSources);
 					readDetectorData(channels.get(i),i,detectors);
 				}
 			}
 		}else{
-			readLightPathData(channels.get(0),0);
+			readLightPathData(channels.get(0),0,filters,dichroics);
 			readLightSource(channels.get(0),0,lightSources);
 			readDetectorData(channels.get(0),0,detectors);
 		}
@@ -582,34 +587,81 @@ public class MetaDataUI extends JPanel
 	
 	
 
-	private void readLightPathData(Channel channel, int i) 
+//	private void readLightPathData(Channel channel, int i) 
+//	{
+//		if(initLightPathUI){
+//			boolean dataAvailable=false;
+//			LightPath lp=channel.getLightPath();
+//			LightPathCompUI lpUI=null;
+//			
+//			if(i<model.getNumberOfLightPath()){
+//				lpUI =model.getLightPathModul(i);
+//
+//			}else{
+//				lpUI = new LightPathCompUI();
+//				model.setLightPath(lpUI, i);
+//			}
+//			
+//			if(lp!=null &&(
+//					lp.sizeOfLinkedEmissionFilterList()!=0 || 
+//					lp.sizeOfLinkedExcitationFilterList()!=0 ||
+//					lp.getLinkedDichroic()!=null)){
+//				dataAvailable=true;
+//			}
+//			
+//			if(!dataAvailable){
+//				LOGGER.info("[DATA] -- LIGHTPATH data not available");
+//			}else{
+//				lpUI.setModel(model); 
+//				lpUI.addData(lp,false);
+//				lpUI.buildComponents();
+//			}
+//		}
+//	}
+	
+	private void readLightPathData(Channel channel, int i, List<Filter> filters, List<Dichroic> dichroics) 
 	{
 		if(initLightPathUI){
-			boolean dataAvailable=false;
-			LightPath lp=channel.getLightPath();
-			LightPathCompUI lpUI=null;
-			
-			if(i<model.getNumberOfLightPath()){
-				lpUI =model.getLightPathModul(i);
+			if((filters!=null && !filters.isEmpty()) || (dichroics!=null && !dichroics.isEmpty()))
+			{
+				boolean dataAvailable=false;
+				String[] linkedObj=null;
+				
+				// get linked lightpath for current channel
+				LightPath lp=channel.getLightPath();
+				LightPathCompUI lpUI=null;
 
+				if(lp!=null &&(
+						lp.sizeOfLinkedEmissionFilterList()!=0 || 
+						lp.sizeOfLinkedExcitationFilterList()!=0 ||
+						lp.getLinkedDichroic()!=null)){
+					dataAvailable=true;
+				}
+				
+				if(i<model.getNumberOfLightPath()){
+					lpUI =model.getLightPathModul(i);
+					if(!dataAvailable){
+						LOGGER.info("[DATA] -- LIGHTPATH  data not available");
+					}else{
+						lpUI.addData(lp,false);
+					}
+				}else{
+					lpUI = new LightPathCompUI();
+					if(!dataAvailable){
+						LOGGER.info("[DATA] -- LIGHTPATH  data not available");
+					}else{
+						lpUI.addData(lp,false);
+					}
+					model.setLightPath(lpUI, i);
+				}
+
+				lpUI.clearList();
+				lpUI.addFilterToList(customSett.getMicLightPathFilterList());
+				lpUI.addFilterToList(filters);
+				lpUI.addDichroicToList(dichroics);
+				
 			}else{
-				lpUI = new LightPathCompUI();
-				model.setLightPath(lpUI, i);
-			}
-			
-			if(lp!=null &&(
-					lp.sizeOfLinkedEmissionFilterList()!=0 || 
-					lp.sizeOfLinkedExcitationFilterList()!=0 ||
-					lp.getLinkedDichroic()!=null)){
-				dataAvailable=true;
-			}
-			
-			if(!dataAvailable){
-				LOGGER.info("[DATA] -- LIGHTPATH data not available");
-			}else{
-				lpUI.setModel(model); 
-				lpUI.addData(lp,false);
-				lpUI.buildComponents();
+				LOGGER.info("[DATA] -- LIGHTPATH  data not available");
 			}
 		}
 	}
@@ -623,10 +675,11 @@ public class MetaDataUI extends JPanel
 				boolean dataAvailable=false;
 				String linkedObj=null;
 				
+				// get linked lightSrc for current channel
 				LightSourceSettings ls=channel.getLightSourceSettings();
 				LightSource l=null;
 
-				// get linked lightSource
+				// get linked lightSource from lightSrc list
 				if(ls!=null){
 					linkedObj=ls.getID();
 					int idx=getLightSrcByID(lightSources, linkedObj);
@@ -644,6 +697,7 @@ public class MetaDataUI extends JPanel
 					}
 				}
 
+				// visualization data
 				LightSourceCompUI lUI=null;
 				if(i<model.getNumberOfLightSrc()){
 					lUI =model.getLightSourceModul(i);
@@ -664,6 +718,7 @@ public class MetaDataUI extends JPanel
 					}
 					model.addLightSrcModul(lUI);
 				}
+				// fill selection list
 				lUI.clearList();
 				lUI.addToList(customSett.getMicLightSrcList());
 				lUI.addToList(lightSources);

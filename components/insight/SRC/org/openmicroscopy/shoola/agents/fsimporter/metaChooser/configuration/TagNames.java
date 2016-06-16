@@ -90,9 +90,9 @@ public class TagNames
 //	private final String L_MANUFAC="Manufacturer";
 	public static final String POWER="Power";
 	
-	public static final String L_TYPE="L Type";
-	public static final String A_TYPE="A Type";
-	public static final String F_TYPE="F Type";
+	public static final String L_TYPE="L_Type";
+	public static final String A_TYPE="A_Type";
+	public static final String F_TYPE="F_Type";
 	
 	public static final String MEDIUM="Medium";
 	public static final String FREQMUL="Frequency Multiplication";
@@ -126,4 +126,18 @@ public class TagNames
 	public static final String EXPGRID="Grid (XY)";
 	public static final String EXPOBJNR="Observed Object Nr";
 	public static final String EXPOBJTYPE="Observed Object Type";
+	
+	//LightPath
+	public static final String FILTER = "Filter";
+	public static final String FILTER_CLASS="Class";
+	public static final String FILTER_CLASS_EM="Emission Filter";
+	public static final String FILTER_CLASS_EX="Exitation Filter";
+	public static final String FILTER_CLASS_D="Dichroic";
+	
+	
+//	public static final String MODEL="Model";
+//	public static final String MANUFAC="Manufacturer";
+//	public static final String TYPE="Type";
+	public static final String FILTERWHEEL="Filterwheel";
+	
 }

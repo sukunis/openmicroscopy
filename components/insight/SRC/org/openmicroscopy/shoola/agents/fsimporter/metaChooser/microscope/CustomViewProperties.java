@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import ome.xml.model.Detector;
+import ome.xml.model.Filter;
+import ome.xml.model.LightPath;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
 
@@ -58,6 +60,7 @@ public class CustomViewProperties
 	private List<Objective> micObjList;
 	private List<Detector> micDetectorList;
 	private List<LightSource> micLightSrcList;
+	private List<Filter> micLightPathFilterList;
 	
 	public CustomViewProperties()
 	{
@@ -436,6 +439,13 @@ public class CustomViewProperties
 
 	public void setMicLightSrcList(List<LightSource> micLightSrcList) {
 		this.micLightSrcList = micLightSrcList;
+	}
+
+	public List<Filter> getMicLightPathFilterList() {
+		return micLightPathFilterList;
+	}
+	public void setMicLightPathFilterList(List<Filter> miclightPathFilterList) {
+		this.micLightPathFilterList = miclightPathFilterList;
 	}
 
 

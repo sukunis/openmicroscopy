@@ -20,6 +20,7 @@ import loci.formats.meta.IMetadata;
 import ome.xml.model.Image;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.LaserType;
 import ome.xml.model.enums.Medium;
 
 
@@ -226,7 +227,14 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 		if(c==null || c.equals(""))
 			return null;
 		
-		return Medium.fromString(c);
+		Medium a=null;
+		try{
+			a=Medium.fromString(c);
+		}catch(EnumerationException e){
+			LOGGER.warn("Medium: "+c+" is not supported");
+			a=Medium.OTHER;
+		}
+		return a;
 	}
 	
 	private void createNewElement() {

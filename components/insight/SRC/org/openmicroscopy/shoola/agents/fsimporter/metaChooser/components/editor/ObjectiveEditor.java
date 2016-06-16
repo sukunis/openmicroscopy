@@ -171,38 +171,38 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 			((ObjectiveTableModel) getModel()).addRow(o);
 		}
 		
-		/**
-	     * Return a row from the table as a array of strings
-	     * @param rowIndex The index of the row you would like
-	     * @return Returns the row from the table as an array of strings or null if
-	     * the index is invalid
-	     */
-		public String[] getRowData(int rowIndex)
-	    {
-	        //test the index
-	        if ( (rowIndex  >  getRowCount()) || rowIndex  <  0)
-	            return null;
-
-	        ArrayList<String> data = new ArrayList<String>();
-	        for (int c = 0; c  <  getColumnCount(); c++)
-	        {
-	            data.add((String) getValueAt(rowIndex, c));
-	        }
-	        String[] retVal = new String[data.size()];
-	        for (int i = 0; i  <  retVal.length; i++)
-	        {
-	            retVal[i] = data.get(i);
-	        }
-	        return retVal;
-	    }
-		
-		public void clearData()
-		{
-			ObjectiveTableModel model = (ObjectiveTableModel)getModel();
-			for(int i=0; i<model.getRowCount(); i++){
-				model.removeRow(i);
-			}
-		}
+//		/**
+//	     * Return a row from the table as a array of strings
+//	     * @param rowIndex The index of the row you would like
+//	     * @return Returns the row from the table as an array of strings or null if
+//	     * the index is invalid
+//	     */
+//		public String[] getRowData(int rowIndex)
+//	    {
+//	        //test the index
+//	        if ( (rowIndex  >  getRowCount()) || rowIndex  <  0)
+//	            return null;
+//
+//	        ArrayList<String> data = new ArrayList<String>();
+//	        for (int c = 0; c  <  getColumnCount(); c++)
+//	        {
+//	            data.add((String) getValueAt(rowIndex, c));
+//	        }
+//	        String[] retVal = new String[data.size()];
+//	        for (int i = 0; i  <  retVal.length; i++)
+//	        {
+//	            retVal[i] = data.get(i);
+//	        }
+//	        return retVal;
+//	    }
+//		
+//		public void clearData()
+//		{
+//			ObjectiveTableModel model = (ObjectiveTableModel)getModel();
+//			for(int i=0; i<model.getRowCount(); i++){
+//				model.removeRow(i);
+//			}
+//		}
 	}
 	
 	class ObjectiveTableModel extends DefaultTableModel
@@ -280,6 +280,7 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 					o[8]=val;
 				}catch(Exception err){
 					LOGGER.severe("[EDITOR] Can't parse objective::workingDist");
+					System.out.println("[EDITOR] Can't parse objective::workingDist");
 				}
 			}
 			return o;

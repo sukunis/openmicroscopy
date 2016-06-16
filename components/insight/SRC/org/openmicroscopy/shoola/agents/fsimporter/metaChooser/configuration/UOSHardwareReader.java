@@ -31,6 +31,7 @@ import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.FilamentType;
+import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
@@ -54,6 +55,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -83,7 +85,6 @@ import org.xml.sax.SAXException;
  *  <LightPaths>
  *  	<Filter>
  *  	<Dichroic>
- *  	<LightPath>
  *  </LightPaths>		
  * <\Hardware>
  * 
@@ -118,9 +119,7 @@ public class UOSHardwareReader
     private List<Objective> objectiveList;
     private List<Detector> detectorList;
     private List<LightSource> lightSrcList;
-    private List<Filter> filterList;
-    private List<Dichroic> dichroicList;
-    private List<LightPath> lightPathList;
+    private List<Filter> lightPathFilterList;
     
     private Unit unit;
     
@@ -147,7 +146,10 @@ public class UOSHardwareReader
 		} 
 	}
 	
-	
+	/**
+	 * Read the hardware element from given document.
+	 * @param doc
+	 */
 	private void readConfiguration(Document doc) 
 	{
 		NodeList root=doc.getElementsByTagName(HARDWARE);
@@ -172,7 +174,11 @@ public class UOSHardwareReader
 		}
 	}
 
-
+	/**
+	 * Extract subNodes of names nodeName from given nodeList list
+	 * @param list given list of elements
+	 * @param nodeName name of node that should be extract from list
+	 */
 	private void loadElements(NodeList list, String nodeName) 
 	{
 		if(list!=null && list.getLength()>0)
@@ -185,6 +191,9 @@ public class UOSHardwareReader
 	}
 
 
+	/**
+	 * Call the parser for elements of given node type
+	 */
 	private void parseElements(NodeList subNodes, String nodeName) 
 	{
 		switch(nodeName){
@@ -195,7 +204,7 @@ public class UOSHardwareReader
 			parseDetectors(subNodes);
 			break;
 		case LIGHTPATH:
-			
+			parseLightPaths(subNodes);
 			break;
 		case LIGHTSRC_L:
 			parseLightSources(subNodes,new Laser());
@@ -218,6 +227,39 @@ public class UOSHardwareReader
 		}
 	}
 
+	/**
+	 * Parse LightPath elements of structure
+	 * <LightPath>
+	 * 	<Filter>
+	 * 	</Filter>
+	 * 	<Dichroic>
+	 *  </Dichroic>
+	 * </LightPath>
+	 * A lightpath element can contains one or more elements of dichroic and/or filter.
+	 * @param subNodes list of <LightPath> elements
+	 */
+	private void parseLightPaths(NodeList subNodes) 
+	{
+		if(lightPathFilterList==null)
+			lightPathFilterList=new ArrayList<Filter>();
+		
+		for(int i=0; i<subNodes.getLength(); i++)
+		{
+			Element node=(Element) subNodes.item(i);
+			
+			List<Filter> fL=parseLightPath(node);
+			if(fL!=null && !fL.isEmpty()){
+				lightPathFilterList.addAll(fL);
+				LOGGER.info("[HARDWARE] mic available lightPath");
+			}
+		}
+		
+	}
+
+
+
+
+
 	private void parseLightSources(NodeList subNodes,LightSource l) 
 	{
 		if(lightSrcList==null)
@@ -229,7 +271,7 @@ public class UOSHardwareReader
 			LightSource o=parseLightSource(node,l);
 			if(o!=null){
 				lightSrcList.add(o);
-				LOGGER.info("[HARDWARE] mic available laser "+o.getModel());
+				LOGGER.info("[HARDWARE] mic available lightSrc "+o.getModel());
 			}
 		}
 	}
@@ -259,7 +301,7 @@ public class UOSHardwareReader
 		for(int i=0; i<subNodes.getLength(); i++){
 			Element node=(Element) subNodes.item(i);
 			
-			Objective o=parseObject(node);
+			Objective o=parseObjective(node);
 			if(o!=null){
 				objectiveList.add(o);
 				LOGGER.info("[HARDWARE] mic available objective "+o.getModel());
@@ -268,7 +310,7 @@ public class UOSHardwareReader
 	}
 
 
-	private Objective parseObject(Element node) 
+	private Objective parseObjective(Element node) 
 	{
 		Objective o=null;
 		NodeList tags=node.getElementsByTagName("Tag");
@@ -280,7 +322,6 @@ public class UOSHardwareReader
 				String name=null;String value=null;
 				if(attr!=null && attr.getLength()>0)
 				{
-					
 					if(attr.getNamedItem(ModuleConfiguration.TAG_NAME)!=null){
 						name=attr.getNamedItem(ModuleConfiguration.TAG_NAME).getNodeValue();
 					}
@@ -303,30 +344,98 @@ public class UOSHardwareReader
 		return o;
 	}
 	
+	/**
+	 * 
+	 * @param node
+	 * @return empty detector if no tags available
+	 */
 	private Detector parseDetector(Element node) 
 	{
 		Detector d=new Detector();
 		NodeList tags=node.getElementsByTagName("Tag");
-		if(tags!=null && tags.getLength()>0){
-			d=new Detector();
-			for(int i=0; i<tags.getLength(); i++)
+		
+		if(tags==null || !(tags.getLength()>0))
+			return d;
+
+		for(int i=0, len=tags.getLength(); i<len; i++)
+		{
+			NamedNodeMap attr=tags.item(i).getAttributes();
+			String name=null;String value=null; 
+			if(attr!=null && attr.getLength()>0)
 			{
-				NamedNodeMap attr=tags.item(i).getAttributes();
-				String name=null;String value=null; 
-				if(attr!=null && attr.getLength()>0)
-				{
-					if(attr.getNamedItem(ModuleConfiguration.TAG_NAME)!=null){
-						name=attr.getNamedItem(ModuleConfiguration.TAG_NAME).getNodeValue();
-					}
-					if(attr.getNamedItem(ModuleConfiguration.TAG_VALUE)!=null){
-						value=attr.getNamedItem(ModuleConfiguration.TAG_VALUE).getNodeValue();
-					}
-					d=setDetectorVal(d,name,value);
-				}	
-			}
+				if(attr.getNamedItem(ModuleConfiguration.TAG_NAME)!=null){
+					name=attr.getNamedItem(ModuleConfiguration.TAG_NAME).getNodeValue();
+				}
+				if(attr.getNamedItem(ModuleConfiguration.TAG_VALUE)!=null){
+					value=attr.getNamedItem(ModuleConfiguration.TAG_VALUE).getNodeValue();
+				}
+				d=setDetectorVal(d,name,value);
+			}	
 		}
 		return d;
 	}
+	
+	/**
+	 * @param node <LightPath> element
+	 * @return empty list if no filter for the lightPath available.
+	 */
+	private List<Filter> parseLightPath(Element node) 
+	{
+		NodeList filterList=node.getElementsByTagName(TagNames.FILTER);
+		
+		if(filterList==null || !(filterList.getLength()>0))
+			return null;
+		
+		List<Filter> fList=new ArrayList<Filter>();
+		
+		for (int i = 0, len = filterList.getLength(); i < len; i++){
+	        Node currentNode = filterList.item(i);
+	        if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
+	        	Element elem=(Element) currentNode;
+	        	Filter f=parseFilter(elem);
+	        	if(f!=null)
+	        		fList.add(f);
+//	        	String fClass=elem.getAttribute(TagNames.FILTER_CLASS);
+//	        	if(fClass.equals(TagNames.FILTER_CLASS_EX)){
+//	        	}else{
+//	        	}
+	        }
+	    }
+		return fList;
+	}
+
+	/**
+	 * Parse <Filter> element of lightPath
+	 * @param node <Filter> element
+	 * @return 
+	 */
+	private Filter parseFilter(Element node) 
+	{
+		Filter filter=new Filter();
+		NodeList tags=node.getElementsByTagName("Tag");
+		
+		if(tags==null || !(tags.getLength()>0)){
+			return null;
+		}
+		for(int i=0, len=tags.getLength(); i<len; i++)
+		{
+			NamedNodeMap attr=tags.item(i).getAttributes();
+			String name=null;String value=null; 
+			if(attr!=null && attr.getLength()>0)
+			{
+				if(attr.getNamedItem(ModuleConfiguration.TAG_NAME)!=null){
+					name=attr.getNamedItem(ModuleConfiguration.TAG_NAME).getNodeValue();
+				}
+				if(attr.getNamedItem(ModuleConfiguration.TAG_VALUE)!=null){
+					value=attr.getNamedItem(ModuleConfiguration.TAG_VALUE).getNodeValue();
+				}
+				filter=setFilterVal(filter,name,value);
+			}	
+		}
+		return filter;
+	}
+
+	
 
 	private LightSource parseLightSource(Element node, LightSource l)
 	{
@@ -377,7 +486,34 @@ public class UOSHardwareReader
 	}
 
 
-	
+	private Filter setFilterVal(Filter filter, String name, String val) 
+	{
+		if(name!=null && !name.equals("") && val!=null && !val.equals("")){
+			LOGGER.info("[DEBUG] add mic lightpath tag "+name+" = "+val);
+			try{
+				switch (name) {
+				case TagNames.MODEL:
+					filter.setModel(val);
+					break;
+				case TagNames.MANUFAC:
+					filter.setManufacturer(val);
+					break;
+				case TagNames.TYPE:
+					filter.setType(val.equals("")? null : FilterType.fromString(val));
+					break;
+				case TagNames.FILTERWHEEL:
+					filter.setFilterWheel(val);
+					break;
+				default:
+					LOGGER.warn("[CONF] unknown tag: "+name );break;
+				}
+			}catch(Exception e){
+				LOGGER.warn("[HARDWARE] can't parse filter tag "+name);
+				e.printStackTrace();
+			}
+		}
+		return filter;
+	}
 
 
 	private LightSource setLightSourceVal(LightSource lightSrc, String name, String val) 
@@ -394,15 +530,18 @@ public class UOSHardwareReader
 					break;
 				case TagNames.L_TYPE:
 					LaserType l=LightSourceCompUI.parseLaserType(val);
-					((Laser)lightSrc).setType(l);
+					if(l!=null)
+						((Laser)lightSrc).setType(l);
 					break;
 				case TagNames.A_TYPE:
 					ArcType a=LightSourceCompUI.parseArcType(val);
-					((Arc)lightSrc).setType(a);
+					if(a!=null)
+						((Arc)lightSrc).setType(a);
 					break;
 				case TagNames.F_TYPE:
 					FilamentType value=LightSourceCompUI.parseFilamentType(val);
-					((Filament)lightSrc).setType(value);
+					if(value!=null)
+						((Filament)lightSrc).setType(value);
 					break;
 				case TagNames.POWER:
 					Power p = LightSourceCompUI.parsePower(val, unit);
@@ -519,6 +658,7 @@ public class UOSHardwareReader
 					break;
 				case TagNames.LENSNA:
 					o.setLensNA(Double.valueOf(value));
+					
 					break;
 				case TagNames.IMMERSION:
 					Immersion im=Immersion.fromString(value);
@@ -529,7 +669,7 @@ public class UOSHardwareReader
 					o.setCorrection(co);
 					break;
 				case TagNames.WORKDIST:
-					Length l= new Length(new Double(value), unit);
+					Length l= new Length(Double.valueOf(value), unit);
 					o.setWorkingDistance(l);
 					break;
 				default:
@@ -569,6 +709,16 @@ public class UOSHardwareReader
 		return lightSrcList;
 	}
 	
+	public List<Filter> getLightPathFilters() 
+	{
+		if(lightPathFilterList!=null)
+			LOGGER.info("[HARDWARE] hardware definition of lightPath "+lightPathFilterList.size());
+		else
+			LOGGER.info("[HARDWARE] hardware definition of lightPath : null");
+		
+		return lightPathFilterList;
+	}
+	
 	
 	
 	
@@ -603,5 +753,7 @@ public class UOSHardwareReader
 		}
 		return unit;
 	}
+
+	
 
 }

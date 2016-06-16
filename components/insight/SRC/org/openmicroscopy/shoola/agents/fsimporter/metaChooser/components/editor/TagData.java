@@ -28,6 +28,7 @@ import javafx.util.StringConverter;
 import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -38,6 +39,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.text.JTextComponent;
 
 import loci.common.DateTools;
@@ -65,7 +69,8 @@ public class TagData
     	    LoggerFactory.getLogger(TagData.class);
 
 	Color fillInfo=new Color(240,240,240);//Color.LIGHT_GRAY;
-	Color noInfo=new Color(217,229,220);//Color.blue;
+//	Color noInfo=new Color(217,229,220);//green;
+	Color noInfo=Color.white;
 	Color resetInfo=Color.white;
 	
 	public static final String[] DATE_FORMATS_TAGS = {
@@ -301,7 +306,16 @@ public class TagData
 		}else{
 			inputField = new JComboBox<String>();
 		}
-
+		
+//		 UIManager.put("ComboBox.background", new ColorUIResource(noInfo));
+//		  UIManager.put("JTextField.background", new ColorUIResource(noInfo));
+//		  ((JComboBox<String>) inputField).getEditor().getEditorComponent().setBackground(noInfo);
+//		((JTextField) ((JComboBox<String>) inputField).getEditor().getEditorComponent()).setBackground(noInfo);
+//		Color[] colors={noInfo};
+//		DefaultComboBoxModel model = new DefaultComboBoxModel(colors);
+//		((JComboBox<String>) inputField).setModel(model);
+//		((JComboBox<String>) inputField).setRenderer(new CBoxRenderer());
+		
 		((JComboBox<String>) inputField).addActionListener(fieldActionListener);
 		//			((JComboBox<String>) inputField).addActionListener(new ActionListener(){
 		//				public void actionPerformed(ActionEvent evt) 
@@ -480,6 +494,11 @@ public class TagData
 
 	public void setTagValue(Experimenter val)
 	{
+		if(val==null || val.equals("")){
+			inputField.setBackground(noInfo);
+		}else{
+			inputField.setBackground(fillInfo);
+		}
 		if(type==LIST){
 			((ExperimenterBox) inputField).addElement(val);
 		}
@@ -717,6 +736,9 @@ public class TagData
 		{
 			if(((JComboBox<String>) inputField).getItemAt(c).equals(val)){
 				((JComboBox<String>) inputField).setSelectedIndex(c);
+//				  UIManager.put("ComboBox.background", new ColorUIResource(fillInfo));
+//				  UIManager.put("JTextField.background", new ColorUIResource(fillInfo));
+//				((JTextField) ((JComboBox<String>) inputField).getEditor().getEditorComponent()).setBackground(fillInfo); 
 			}
 		}
 	}
@@ -836,5 +858,33 @@ public class TagData
 		
 
 	}
+	
+//	class CBoxRenderer extends JButton implements ListCellRenderer
+//	{
+//		boolean b=false;
+//		
+//		public CBoxRenderer() {  
+//			setOpaque(true); 
+//		}
+//	
+//
+//		@Override
+//		public void setBackground(Color bg) {
+//			// TODO Auto-generated method stub
+//			if(!b)
+//				return;
+//
+//			super.setBackground(bg);
+//		}
+//
+//		 @Override
+//		 public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)  
+//		 {  
+//		     b=true;
+//		     setBackground((Color)value);        
+//		     b=false;
+//		     return this;  
+//		 }  
+//	}
 
 }

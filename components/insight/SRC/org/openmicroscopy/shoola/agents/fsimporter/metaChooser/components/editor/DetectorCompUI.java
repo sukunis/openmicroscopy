@@ -39,6 +39,7 @@ import javax.swing.border.TitledBorder;
 
 
 
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
@@ -53,6 +54,8 @@ import ome.xml.model.Image;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
 import ome.xml.model.enums.DetectorType;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.LaserMedium;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 
@@ -357,8 +360,7 @@ public class DetectorCompUI extends ElementsCompUI
 			LOGGER.error("[DATA] can't read DETECTOR manufacturer input");
 		}
 		try{
-		detector.setType(type.getTagValue().equals("")?
-				null : DetectorType.fromString(type.getTagValue()));
+		detector.setType(parseDetectorType(type.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read DETECTOR type input");
 		}
@@ -383,6 +385,21 @@ public class DetectorCompUI extends ElementsCompUI
 //		detector.setOffset(offset.getTagValue().equals("")?
 //				null : Double.valueOf(offset.getTagValue()));
 		
+	}
+	
+	private DetectorType parseDetectorType(String c) 
+	{
+		if(c==null || c.equals(""))
+			return null;
+		
+		DetectorType m=null;
+		try{
+			m=DetectorType.fromString(c);
+		}catch(EnumerationException e){
+			LOGGER.warn("DetectorType: "+c+" is not supported");
+			m=DetectorType.OTHER;
+		}
+		return m;
 	}
 	
 	private void createNewElement() {

@@ -993,39 +993,73 @@ public class LightSourceCompUI extends ElementsCompUI
 //		}
 	}
 	
-	public static Pulse parsePulse(String c) throws EnumerationException
+	public static Pulse parsePulse(String c) 
 	{
 		if(c==null || c.equals(""))
 			return null;
-		
-		return Pulse.fromString(c);
+		Pulse m=null;
+		try{
+			m=Pulse.fromString(c);
+		}catch(EnumerationException e){
+			LOGGER.warn("Pulse: "+c+" is not supported");
+			m=Pulse.OTHER;
+		}
+		return m;
 	}
 	
-	public static LaserMedium parseMedium(String c) throws EnumerationException
+	public static LaserMedium parseMedium(String c) 
+	{
+		if(c==null || c.equals(""))
+			return null;
+		LaserMedium m=null;
+		try{
+			m=LaserMedium.fromString(c);
+		}catch(EnumerationException e){
+			LOGGER.warn("LaserMedium: "+c+" is not supported");
+			m=LaserMedium.OTHER;
+		}
+		return m;
+	}
+	public static LaserType parseLaserType(String c) 
 	{
 		if(c==null || c.equals(""))
 			return null;
 		
-		return LaserMedium.fromString(c);
+		LaserType a=null;
+		try{
+			a=LaserType.fromString(c);
+		}catch(EnumerationException e){
+			LOGGER.warn("LaserType: "+c+" is not supported");
+			a=LaserType.OTHER;
+		}
+		return a;
 	}
-	public static LaserType parseLaserType(String c) throws EnumerationException
-	{
+	
+	public static FilamentType parseFilamentType(String c) {
 		if(c==null || c.equals(""))
 			return null;
 		
-		return LaserType.fromString(c);
+		FilamentType a=null;
+		try{
+			a=FilamentType.fromString(c);
+		}catch(EnumerationException e){
+			LOGGER.warn("FilamentType: "+c+" is not supported");
+			a=FilamentType.OTHER;
+		}
+		return a;
 	}
-	public static FilamentType parseFilamentType(String c) throws EnumerationException {
+	public static ArcType parseArcType(String c)  {
 		if(c==null || c.equals(""))
 			return null;
 		
-		return FilamentType.fromString(c);
-	}
-	public static ArcType parseArcType(String c) throws EnumerationException {
-		if(c==null || c.equals(""))
-			return null;
-		
-		return ArcType.fromString(c);
+		ArcType a=null;
+		try{
+			a=ArcType.fromString(c);
+		}catch(EnumerationException e){
+			LOGGER.warn("ArcType: "+c+" is not supported");
+			a=ArcType.OTHER;
+		}
+		return a;
 	}
 	
 	public static Power parsePower(String c,Unit<Power> unit) throws Exception

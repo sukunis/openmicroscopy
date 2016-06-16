@@ -1,5 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,9 +43,6 @@ public class ExperimenterBox extends Box implements KeyListener
 		txtField = new JTextField();
 		txtField.addKeyListener(this);
 		txtField.setToolTipText("<FirstName LastName> \n Please type enter after input!");
-		
-		
-		
 		
 		list=new JList(m);
 		list.setVisibleRowCount(4);
@@ -153,7 +151,13 @@ public class ExperimenterBox extends Box implements KeyListener
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+	}
+	
+	@Override
+	public void setBackground(Color c)
+	{
+		txtField.setBackground(c);
+		list.setBackground(c);
 	}
 
 	

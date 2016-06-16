@@ -490,6 +490,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    customSettings.setMicObjList(hardwareDef.getObjectives());
 	    customSettings.setMicDetectorList(hardwareDef.getDetectors());
 	    customSettings.setMicLightSrcList(hardwareDef.getLightSources());
+	    customSettings.setMicLightPathFilterList(hardwareDef.getLightPathFilters());
 	    
 	    
 	    micName=customSettings.getMicName();

@@ -24,6 +24,7 @@ import javax.swing.border.EmptyBorder;
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
 import ome.xml.model.LightPath;
+import ome.xml.model.LightSource;
 import ome.xml.model.enums.FilterType;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
@@ -45,6 +46,7 @@ public class LightPathCompUI extends ElementsCompUI
 	
 	private MetaDataModel model;
 	private LightPathTableSmall lightPathTable;
+	private List<Object> availableFilterList;
 	
 	public LightPathCompUI(LightPath _lightPath, int _chIdx, MetaDataModel _model) 
 	{
@@ -85,7 +87,7 @@ public class LightPathCompUI extends ElementsCompUI
 			public void actionPerformed(ActionEvent e) 
 			{
 				LightPathEditor creator = new LightPathEditor(new JFrame(),"Edit LightPath",
-						model.getFilterAndDichroics(),lightPath);
+						availableFilterList,lightPath);
 				List<Object> newList=creator.getLightPathList(); 
 				if(newList!=null && !newList.isEmpty()){
 					createLightPath(model.updateLightPathElems(newList,chIdx));
@@ -267,6 +269,7 @@ public class LightPathCompUI extends ElementsCompUI
 	public void clearDataValues() 
 	{
 		lightPathTable.clearData();
+		availableFilterList=null;
 	}
 
 	@Override
@@ -304,4 +307,39 @@ public class LightPathCompUI extends ElementsCompUI
 			readGUIInput();
 		return lightPath;
 	}
+
+	public void clearList() {
+		availableFilterList=null;
+	}
+
+	
+	public void addFilterToList(List<Filter> list)
+	{
+		if(list==null || list.size()==0)
+			return;
+		
+		if(availableFilterList==null){
+
+			availableFilterList=new ArrayList<Object>();
+		}
+		for(int i=0; i<list.size(); i++){
+			availableFilterList.add(list.get(i));
+		}
+	}
+	
+	public void addDichroicToList(List<Dichroic> list)
+	{
+		if(list==null || list.size()==0)
+			return;
+		
+		if(availableFilterList==null){
+
+			availableFilterList=new ArrayList<Object>();
+		}
+		for(int i=0; i<list.size(); i++){
+			availableFilterList.add(list.get(i));
+		}
+	}
+	
+	
 }

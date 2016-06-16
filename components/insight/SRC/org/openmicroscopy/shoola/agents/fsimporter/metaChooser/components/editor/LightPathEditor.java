@@ -13,6 +13,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -33,10 +34,12 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.FilterCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightPathTable;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveEditor.ObjectiveTableModel;
 
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
 import ome.xml.model.LightPath;
+import ome.xml.model.Objective;
 import ome.xml.model.enums.FilterType;
 
 import java.awt.Font;
@@ -49,23 +52,26 @@ public class LightPathEditor extends JDialog implements ActionListener
 	/** Logger for this class. */
     private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
     
-	//	private final JPanel contentPanel = new JPanel();
+    /**output: selected filter for lightPath */
 	private List<Object> lightPathList;
+	
 	private LightPath lightPath;
 	
 	private FilterCompUI filterUI;
 
-
+	/** input: list for selection*/
 	private List<Object> availableFilter;
+	
 	private LightPathTable lightPathTable;
+	private AvailableFilterTable avFilterTable;
 	
 
-
 	
-	public LightPathEditor(JFrame parent,String title, List<Object> _availableFilter,LightPath l)
+	public LightPathEditor(JFrame parent,String title, List<Object> _availableFilter,
+			LightPath l)
 	{
 		super(parent,title);
-		availableFilter=_availableFilter;
+		this.availableFilter=_availableFilter;
 		lightPath=l;
 		lightPathList=new ArrayList<Object>();
 		
@@ -166,35 +172,17 @@ public class LightPathEditor extends JDialog implements ActionListener
 		label.setFont(new Font("Tahoma", Font.BOLD, 11));
 		
 		JScrollPane scrollPane = new JScrollPane();
-		
 
-		final JTable avFTable = new JTable(){  
-		       public boolean isCellEditable(int row,int column){  
-		           return false;  
-		         }  };
-		scrollPane.setViewportView(avFTable);
-		avFTable.setPreferredScrollableViewportSize(avFTable.getPreferredSize());
-		avFTable.setFillsViewportHeight(true);
-		avFTable.setModel(new DefaultTableModel(
-				new Object[][] {
-				},
-				new String[] {
-						"ID","Model", "Type",
-				}
-				) {
-			Class[] columnTypes = new Class[] {
-					String.class, String.class, String.class
-			};
-			public Class getColumnClass(int columnIndex) {
-				return columnTypes[columnIndex];
-			}
-		});
+		avFilterTable = new AvailableFilterTable();  
+		scrollPane.setViewportView(avFilterTable);
+//		avFTable.setPreferredScrollableViewportSize(avFTable.getPreferredSize());
+//		avFTable.setFillsViewportHeight(true);
 		
 		//load data
 		if(availableFilter!=null)
 		{
 			for(Object f: availableFilter){
-				((DefaultTableModel)avFTable.getModel()).addRow(parseFromFilterShort(f));
+				avFilterTable.appendElem(f);
 			}
 		}
 		
@@ -202,23 +190,21 @@ public class LightPathEditor extends JDialog implements ActionListener
 		addBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				int[] rows = avFTable.getSelectedRows();
+				int[] rows = avFilterTable.getSelectedRows();
 				for(int i=0; i<rows.length; i++){
 					String cat="";
 					Object o;
 					//test if prim dichroic still exists:
-					if(availableFilter.get(rows[i]) instanceof Dichroic){
+					Object selectedObj=availableFilter.get(rows[i]);
+					o=selectedObj;
+					if( selectedObj instanceof Dichroic){
 						if(lightPath!=null && lightPath.getLinkedDichroic()!=null){
-							o=MetaDataModel.convertDichroicToFilter((Dichroic) availableFilter.get(rows[i]));
-						}else{
-							o=availableFilter.get(rows[i]);
+							o=MetaDataModel.convertDichroicToFilter((Dichroic) selectedObj);
 						}
 						cat="Dichroic";
 					}else{
 						if(lightPath!=null && lightPath.getLinkedDichroic()==null){
-							o=MetaDataModel.convertFilterToDichroic((Filter) availableFilter.get(rows[i]));
-						}else{
-							o=availableFilter.get(rows[i]);
+							o=MetaDataModel.convertFilterToDichroic((Filter) selectedObj);
 						}
 					}
 					
@@ -251,6 +237,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 	
 	private JPanel createGUIEditor()
 	{
+		
 		JPanel top=new JPanel();
 		top.setLayout(new BoxLayout(top,BoxLayout.X_AXIS));
 		top.setBorder(new EmptyBorder(5,5,5,5));
@@ -258,13 +245,10 @@ public class LightPathEditor extends JDialog implements ActionListener
 		top.add(Box.createHorizontalStrut(5));
 		top.add(availableFilterPane());
 		
-		
 		JPanel panel=new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		
 		panel.add(top);
-		
 		
 		
 		panel.add(Box.createVerticalStrut(10));
@@ -302,10 +286,6 @@ public class LightPathEditor extends JDialog implements ActionListener
 				try{lightPathTable.appendElem(f, "Emission");}catch(Exception e){e.printStackTrace();};
 			}
 		}
-
-		
-	      
-	     
 	 
 	      JMenu insert= new JMenu("Insert Filter before");
 	    createFilterListMenu(insert,availableFilter);
@@ -320,26 +300,35 @@ public class LightPathEditor extends JDialog implements ActionListener
 
 	private void createFilterListMenu(JMenu insert,	List<Object> list) 
 	{
-		if(list!=null && !list.isEmpty()){
-			int i=0;
-		for(Object f: list){
-			JMenuItem item;
-			if(f instanceof Filter){
-				item=new JMenuItem(
-						((Filter) f).getID()+"["+((Filter) f).getModel()+", "+
-								((Filter) f).getType()+"]");
-			}else{
-				item=new JMenuItem(
-						((Dichroic) f).getID()+"["+((Dichroic) f).getModel()+", Dichroic]");
-			}
-			item.addActionListener(this);
-			insert.add(item);
-			i++;
-		}
-		}else{
+		if(list==null || list.isEmpty()){
 			JMenuItem item=new JMenuItem("Empty Filter list");
 			insert.add(item);
+			return;
 		}
+		
+		int i=0;
+		for(Object f: list){
+			if(f!=null){
+				JMenuItem item;
+
+				if(f instanceof Dichroic){
+					String id=((Dichroic) f).getID()!=null ? ((Dichroic) f).getID() : "#"+i;
+					item=new JMenuItem(
+							id+"["+((Dichroic) f).getModel()+", Dichroic]");
+				}else{ //if(f instanceof Filter){
+
+
+					String id=((Filter) f).getID()!=null ? ((Filter) f).getID() : "#"+i;
+					item=new JMenuItem(
+							id+"["+((Filter) f).getModel()+", "+
+									((Filter) f).getType()+"]");
+				}
+				item.addActionListener(this);
+				insert.add(item);
+				i++;
+			}
+		}
+		
 	}
 
 	
@@ -378,24 +367,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 		
 	}
 	
-	private Object[] parseFromFilterShort(Object e)
-	{
-		Object[] o=new Object[3];
-		if(e!=null){
-			if(e instanceof Filter){
-				Filter f=(Filter) e;
-				o[0]=f.getID()!=null ? f.getID() : "";
-				o[1]=f.getModel()!=null ? f.getModel() : "";
-				o[2]=f.getType()!=null ? f.getType().toString() : "";
-			}else if (e instanceof Dichroic){
-				Dichroic f=(Dichroic) e;
-				o[0]=f.getID()!=null ? f.getID() : "";
-				o[1]=f.getModel()!=null ? f.getModel() : "";
-				o[2]="Dichroic";
-			}
-		}
-		return o;
-	}
+	
 	
 	
 	private void createLightPathListFromJTable() throws Exception
@@ -432,6 +404,72 @@ public class LightPathEditor extends JDialog implements ActionListener
 		    }
 	}
 
+	
+	class AvailableFilterTable extends JTable
+	{
+		public AvailableFilterTable()
+		{
+			setModel(new AvailableFilterTableModel());
+		}
+		public boolean isCellEditable(int row,int column){  
+	        return false;  
+	      }
+		
+		public void appendElem(Object f)
+		{
+			((AvailableFilterTableModel) getModel()).addRow(f);
+		}
+		
+	}
+	
+	class AvailableFilterTableModel extends DefaultTableModel
+	{
+		Class[] columnTypes = new Class[] {
+				String.class, String.class, String.class
+		};
+		
+		private ArrayList<TableColumn> tableColumns;
+		
+		public AvailableFilterTableModel()
+		{
+			super(new Object[][] {},
+					new String[] {"ID","Model", "Type"}	); 
+		}
+		
+		public Class getColumnClass(int columnIndex) {
+			return columnTypes[columnIndex];
+		}
+		
+		public void addRow(Object f)
+		{
+			super.addRow(parseFromFilterShort(f));
+		}
+		
+		public void insertRow(int index, Object f)
+		{
+			super.insertRow(index, parseFromFilterShort(f));
+		}
+		
+		private Object[] parseFromFilterShort(Object e)
+		{
+			Object[] o=new Object[3];
+			if(e!=null){
+				if(e instanceof Filter){
+					Filter f=(Filter) e;
+					o[0]=f.getID()!=null ? f.getID() : "";
+					o[1]=f.getModel()!=null ? f.getModel() : "";
+					o[2]=f.getType()!=null ? f.getType().toString() : "";
+				}else if (e instanceof Dichroic){
+					Dichroic f=(Dichroic) e;
+					o[0]=f.getID()!=null ? f.getID() : "";
+					o[1]=f.getModel()!=null ? f.getModel() : "";
+					o[2]="Dichroic";
+				}
+			}
+			return o;
+		}
+		
+	}
 	
 }
 
