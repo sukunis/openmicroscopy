@@ -442,12 +442,14 @@ public class LightPathEditor extends JDialog implements ActionListener
 		
 		public void addRow(Object f)
 		{
-			super.addRow(parseFromFilterShort(f));
+			Object[] o=parseFromFilterShort(f);
+			super.addRow(o);
 		}
 		
 		public void insertRow(int index, Object f)
 		{
-			super.insertRow(index, parseFromFilterShort(f));
+			Object[] o=parseFromFilterShort(f);
+			super.insertRow(index, o);
 		}
 		
 		private Object[] parseFromFilterShort(Object e)
@@ -466,6 +468,11 @@ public class LightPathEditor extends JDialog implements ActionListener
 					o[2]="Dichroic";
 				}
 			}
+			
+			//empty element?
+			if(o[0].equals("") && o[1].equals("") && o[2].equals(""))
+				return null;
+			
 			return o;
 		}
 		

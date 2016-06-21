@@ -89,9 +89,6 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	private String classification;
 	
-	private static Unit<Power> powerUnit=UNITS.MW;
-	private static Unit<Length> waveLengthUnit=UNITS.NM;
-	private static Unit<Frequency> repRateUnit=UNITS.HZ;
 	
 //	private JPanel globalPane;
 	private Box box;
@@ -1793,7 +1790,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setPower(Power value, boolean prop)
 	{
 		String val= (value != null)? String.valueOf(value.value()) : "";
-		Unit unit=(value!=null) ? value.unit() :powerUnit;
+		Unit unit=(value!=null) ? value.unit() :TagNames.POWER_UNIT;
 		if(power == null) 
 //			power = new TagData(TagNames.POWER+" ["+powerUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 			power = new TagData(TagNames.POWER,val,unit,prop,TagData.TEXTFIELD);
@@ -1867,7 +1864,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setRepititationRate(Frequency value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		Unit unit=(value!=null) ? value.unit():repRateUnit;
+		Unit unit=(value!=null) ? value.unit():TagNames.REPRATE_UNIT_HZ;
 		if(repRate == null) {
 //			repRate = new TagData(TagNames.REPRATE+" ["+repRateUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 			repRate = new TagData(TagNames.REPRATE,val,unit,prop,TagData.TEXTFIELD);
@@ -1887,7 +1884,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setWavelength(Length value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		Unit unit=(value!=null) ? value.unit() :waveLengthUnit;
+		Unit unit=(value!=null) ? value.unit() :TagNames.WAVELENGTH_UNIT;
 		if(waveLength == null) 
 //			waveLength = new TagData(TagNames.WAVELENGTH+" ["+waveLengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 			waveLength = new TagData(TagNames.WAVELENGTH,val,unit,prop,TagData.TEXTFIELD);

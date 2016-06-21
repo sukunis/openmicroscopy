@@ -222,7 +222,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 		}
 	}
 	
-	private Medium parseMedium(String c) throws EnumerationException
+	private Medium parseMedium(String c) 
 	{
 		if(c==null || c.equals(""))
 			return null;

@@ -388,13 +388,13 @@ public class MetaDataModel
 	}
 	
 	
-	public void setDetectorData(DetectorCompUI d, int chIdx)
-	{
-		if(detectorList!=null)
-			detectorList.add(chIdx,d);
-		else
-			LOGGER.warn("[Model] detector list not available");
-	}
+//	public void setDetectorData(DetectorCompUI d, int chIdx)
+//	{
+//		if(detectorList!=null)
+//			detectorList.add(chIdx,d);
+//		else
+//			LOGGER.warn("[Model] detector list not available");
+//	}
 	
 	public void addDetectorData(DetectorCompUI d)
 	{
@@ -490,19 +490,19 @@ public class MetaDataModel
 		return ((DetectorCompUI)detectorList.get(index)).getSettings().getData();
 	}
 	
-	public void setLightPath(LightPathCompUI lpUI, int chIdx) 
-	{
-		if(lightPathList!=null)
-			lightPathList.add(chIdx, lpUI);
-		else
-			LOGGER.warn("[Model] light path not available");
-		
-		// set linked Channel for Filter and dichroic list
-		LightPath lP=lpUI.getLightPath();
-		if(lP!=null){
-			setLinkedChannel(lP,chIdx);
-		}
-	}
+//	public void setLightPath(LightPathCompUI lpUI, int chIdx) 
+//	{
+//		if(lightPathList!=null)
+//			lightPathList.add(chIdx, lpUI);
+//		else
+//			LOGGER.warn("[Model] light path not available");
+//		
+//		// set linked Channel for Filter and dichroic list
+//		LightPath lP=lpUI.getLightPath();
+//		if(lP!=null){
+//			setLinkedChannel(lP,chIdx);
+//		}
+//	}
 	public void addLightPath(LightPathCompUI lpUI) 
 	{
 		if(lightPathList!=null){
@@ -515,11 +515,20 @@ public class MetaDataModel
 		}else{
 			LOGGER.warn("[Model] light path not available");
 		}
+		
+		
 	}
 
 	public LightPath getLightPath(int index) throws Exception
 	{
-		return lightPathList!=null ?((LightPathCompUI)lightPathList.get(index)).getData() : null;
+		if(lightPathList==null || index>=lightPathList.size()){
+			LOGGER.info("No lightPath available for channel "+index);
+			return null;
+		}
+		
+//		updateLightPathElems( lightPathObjectList, chIdx);
+		
+		return ((LightPathCompUI)lightPathList.get(index)).getData();
 	}
 	
 	public LightPathCompUI getLightPathModul(int index)
@@ -798,12 +807,61 @@ public class MetaDataModel
 		linkedChannelForDichroic=new ArrayList<Integer>(Collections.nCopies(dichroicList.size(), -1));
 	}
 	
+//	/** TODO: if no primD exists convert first emF of type dichroic to primD
+//	 *  Add elements of list to the list of filter and dichroics of this image.
+//	 Note: set ID for new elements and return list completed by ID
+//	 @return input list completed by id's
+//	 **/
+//	public List<Object> updateLightPathElems(List<Object> list,int channelIdx)
+//	{
+//		System.out.println("updateLightPathElem");
+//		if(imageIndex!=-1){
+//			int id1=imageIndex;
+//			int id2=channelIdx;
+//			boolean primDExists=true;
+//
+//			int idxList=0;
+//			for(int i=0; i<list.size(); i++){
+//				Object o=list.get(i);
+//				if(o instanceof Dichroic){
+//					Dichroic f= (Dichroic) o;
+//					// new Dichroic elem
+//					if(f.getID()==null || f.getID().equals("")){
+//						appendNewDichroic(f, id1, dichroicList.size(), channelIdx);
+//					}else{
+//						int listIndex=identifyDichroic(f, channelIdx);
+//						if(listIndex!=-1){
+//							dichroicList.set(listIndex, f);
+//						}else{
+//							appendNewDichroic(f,id1,dichroicList.size(),channelIdx);
+//						}
+//					}
+//				}// end dichroic
+//
+//				if(o instanceof Filter){
+//					Filter f=(Filter) o;
+//					if(f.getID()==null || f.getID().equals("")){
+//						appendNewFilter(f,id1,filterList.size(),channelIdx);
+//					}else{
+//						int listIndex=identifyFilter(f, channelIdx);
+//						if(listIndex!=-1){
+//							filterList.set(listIndex, f);
+//						}else{
+//							appendNewFilter(f,id1,filterList.size(),channelIdx);
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return list;
+//	}
+	
 	/** TODO: if no primD exists convert first emF of type dichroic to primD
 	 *  Add elements of list to the list of filter and dichroics of this image.
 	 Note: set ID for new elements and return list completed by ID
 	 @return input list completed by id's
 	 **/
-	public List<Object> updateLightPathElems(List<Object> list,int channelIdx)
+	public LightPath updateLightPathElems(LightPath lP,int channelIdx)
 	{
 		if(imageIndex!=-1){
 			int id1=imageIndex;
@@ -811,58 +869,86 @@ public class MetaDataModel
 			boolean primDExists=true;
 
 			int idxList=0;
-			for(int i=0; i<list.size(); i++){
-				Object o=list.get(i);
-				if(o instanceof Dichroic){
-					Dichroic f= (Dichroic) o;
-					// new Dichroic elem
-					if(f.getID()==null || f.getID().equals("")){
-						appendNewDichroic(f, id1, dichroicList.size(), channelIdx);
+			Dichroic d=lP.getLinkedDichroic();
+			
+			if(d!=null){
+				if(d.getID()==null || d.getID().equals("")){
+					String id=appendNewDichroic(d, id1, dichroicList.size(), channelIdx);
+					d.setID(id);
+				}else{
+					int listIndex=identifyDichroic(d, channelIdx);
+					if(listIndex!=-1){
+						dichroicList.set(listIndex, d);
 					}else{
-						int listIndex=identifyDichroic(f, channelIdx);
-						if(listIndex!=-1){
-							dichroicList.set(listIndex, f);
-						}else{
-							appendNewDichroic(f,id1,dichroicList.size(),channelIdx);
-						}
-					}
-				}// end dichroic
-
-				if(o instanceof Filter){
-					Filter f=(Filter) o;
-					if(f.getID()==null || f.getID().equals("")){
-						appendNewFilter(f,id1,filterList.size(),channelIdx);
-					}else{
-						int listIndex=identifyFilter(f, channelIdx);
-						if(listIndex!=-1){
-							filterList.set(listIndex, f);
-						}else{
-							appendNewFilter(f,id1,filterList.size(),channelIdx);
-						}
+						String id=appendNewDichroic(d,id1,dichroicList.size(),channelIdx);
+						d.setID(id);
 					}
 				}
+				lP.linkDichroic(d);
 			}
+			
+			List<Filter> emF=lP.copyLinkedEmissionFilterList();
+			
+			for(int i=0; i<emF.size(); i++){
+				Filter f=emF.get(i);
+				if(f.getID()==null || f.getID().equals("")){
+					String id=appendNewFilter(f,id1,filterList.size(),channelIdx);
+					f.setID(id);
+				}else{
+					int listIndex=identifyFilter(f, channelIdx);
+					if(listIndex!=-1){
+						filterList.set(listIndex, f);
+					}else{
+						String id=appendNewFilter(f,id1,filterList.size(),channelIdx);
+						f.setID(id);
+					}
+				}
+				lP.setLinkedEmissionFilter(i, f);
+			}
+			
+			List<Filter> exF=lP.copyLinkedExcitationFilterList();
+			
+			for(int i=0; i<exF.size(); i++){
+				Filter f=exF.get(i);
+				if(f.getID()==null || f.getID().equals("")){
+					String id=appendNewFilter(f,id1,filterList.size(),channelIdx);
+					f.setID(id);
+				}else{
+					int listIndex=identifyFilter(f, channelIdx);
+					if(listIndex!=-1){
+						filterList.set(listIndex, f);
+					}else{
+						String id=appendNewFilter(f,id1,filterList.size(),channelIdx);
+						f.setID(id);
+					}
+				}
+				lP.setLinkedExcitationFilter(i, f);
+			}
+			
 		}
-		return list;
+		return lP;
 	}
-	
 
 	
 	
 	
 	
-	private void appendNewFilter(Filter f, int id1, int id2, int chIdx)
+	private String appendNewFilter(Filter f, int id1, int id2, int chIdx)
 	{
 		f.setID(MetadataTools.createLSID("Filter", id1,	id2));
 		filterList.add(f);
 		linkedChannelForFilter.add(chIdx);
+		
+		return f.getID();
 	}
 	
-	private void appendNewDichroic(Dichroic f, int id1, int id2, int chIdx)
+	private String appendNewDichroic(Dichroic f, int id1, int id2, int chIdx)
 	{
 		f.setID(MetadataTools.createLSID("Dichroic", id1,	id2));
 		dichroicList.add(f);
 		linkedChannelForDichroic.add(chIdx);
+		
+		return f.getID();
 	}
 	
 	private int identifyFilter(Filter f, int chIdx)
@@ -978,7 +1064,7 @@ public class MetaDataModel
 	public static final Dichroic convertFilterToDichroic(Filter f)
 	{
 		Dichroic d=new Dichroic();
-		d.setID("");
+		d.setID(f.getID());
 		d.setModel(f.getModel());
 		d.setManufacturer(f.getManufacturer());
 		d.setLotNumber(f.getLotNumber());
@@ -994,7 +1080,7 @@ public class MetaDataModel
 	public static final Filter convertDichroicToFilter(Dichroic d)
 	{
 		Filter f=new Filter();
-		f.setID("");
+		f.setID(d.getID());
 		f.setModel(d.getModel());
 		f.setManufacturer(d.getManufacturer());
 		f.setLotNumber(d.getLotNumber());

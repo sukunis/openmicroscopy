@@ -27,6 +27,7 @@ import ome.xml.model.Filter;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Instrument;
+import ome.xml.model.LightPath;
 import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.MapAnnotation;
@@ -547,6 +548,11 @@ public class OMEStore
 		return result;
 	}
 
+	public void storeLightPath(LightPath thisLightPath, Channel c) 
+	{
+		LOGGER.info("[SAVE] -- save LIGHTPATH ");
+		c.setLightPath(thisLightPath);
+	}
 	
 	public void storeLightSrcSettings(LightSourceSettings lSett,Channel c) 
 	{
@@ -821,6 +827,8 @@ public class OMEStore
 			}	
 		};
 	}
+
+	
 	
 
 

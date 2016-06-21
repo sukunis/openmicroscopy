@@ -698,7 +698,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			lastSelectionType=FILE;
 			
 			try {
-				view = new MetaDataView(customSettings, file, importData, parentModel);
+				view = new MetaDataView(customSettings, file, importData, parentModel,this);
 				view.setVisible();
 			} catch (Exception e) {
 //				catch (DependencyException | ServiceException e) {
@@ -763,7 +763,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 //		}
 		MetaDataView dataView=null;
 		try {
-			dataView=new MetaDataView(customSettings, node.getAbsolutePath(), importData, parentModel);
+			dataView=new MetaDataView(customSettings, node.getAbsolutePath(), importData, parentModel,this);
 		} catch (Exception e) {
 //			catch (DependencyException | ServiceException e) {
 			LOGGER.error("[DATA] CAN'T read METADATA");
@@ -1160,7 +1160,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 				viewFileDataButton.setSelected(true);
 				MetaDataView view=null;
 				try {
-					view = new MetaDataView(customSettings, file, null, null);
+					view = new MetaDataView(customSettings, file, null, null,this);
 					view.setVisible();
 				} catch (Exception e) {
 //					catch (DependencyException | ServiceException e) {

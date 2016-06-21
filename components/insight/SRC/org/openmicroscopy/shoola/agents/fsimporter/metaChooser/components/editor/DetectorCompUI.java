@@ -40,6 +40,7 @@ import javax.swing.border.TitledBorder;
 
 
 
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
@@ -62,25 +63,18 @@ import loci.formats.meta.IMetadata;
 public class DetectorCompUI extends ElementsCompUI
 {
 	
-//	private final String L_GAIN="Gain";
-//	private final String L_VOLTAGE="Voltage";
-//	private final String L_OFFSET="Offset";
-	
-	
-	
 	private TagData model;
 	private TagData manufact;
 	private TagData type;
 	/** fixed zoom */
 	private TagData zoom;
 	private TagData amplGain;//==emGain
-//	private TagData gain;
-//	private TagData offset;
-//	private TagData voltage;
+	private TagData gain;
+	private TagData offset;
+	private TagData voltage;
 	
 	private List<TagData> tagList;
 	
-	private Unit<ElectricPotential> voltageUnit;
 	private String detectorId;
 	
 	private Detector detector;
@@ -100,9 +94,9 @@ public class DetectorCompUI extends ElementsCompUI
 		tagList.add(type);
 		tagList.add(zoom);
 		tagList.add(amplGain);
-//		tagList.add(gain);
-//		tagList.add(offset);
-//		tagList.add(voltage);
+		tagList.add(gain);
+		tagList.add(offset);
+		tagList.add(voltage);
 		
 	}
 	
@@ -122,7 +116,7 @@ public class DetectorCompUI extends ElementsCompUI
 	
 	public DetectorCompUI(ModuleConfiguration objConf) 
 	{	
-		voltageUnit=UNITS.V;
+//		voltageUnit=UNITS.V;
 		detectorSettUI=new DetectorSettingsCompUI(objConf);
 		initGUI();
 		if(objConf==null)
@@ -131,10 +125,7 @@ public class DetectorCompUI extends ElementsCompUI
 			createDummyPane(objConf.getTagList(),false);
 	}
 
-//	public void setList(List<Detector> _list)
-//	{
-//		availableDetectors=_list;
-//	}
+
 	
 	public void clearList()
 	{
@@ -194,60 +185,10 @@ public class DetectorCompUI extends ElementsCompUI
 			}
 		});
 		
-//		add(new TitledSeparator("Detector", 3, TitledBorder.DEFAULT_POSITION),BorderLayout.NORTH);
 		add(box,BorderLayout.NORTH);
 		add(editBtn,BorderLayout.SOUTH);
 	}
 	
-//	public boolean addData(Detector d, boolean overwrite) 
-//	{
-//		boolean conflicts=false;
-//		if(detector!=null)
-//		{
-//			if(d!=null){
-//				String mo=d.getModel();
-//				String ma=d.getManufacturer();
-//				DetectorType t=d.getType();
-//				ElectricPotential v=d.getVoltage();
-//				Double o = d.getOffset();
-//				Double z=d.getZoom();
-//				Double a=d.getAmplificationGain();
-//				Double g=d.getGain();
-//				if(overwrite){
-//					if(d.getID()!=null && !d.getID().equals(""))
-//						detector.setID(d.getID());
-//					if(mo!=null && !mo.equals("")) detector.setModel(mo);
-//					if(ma!=null && !ma.equals("")) detector.setManufacturer(ma);
-//					if(t!=null) detector.setType(t);
-//					if(v!=null) detector.setVoltage(v);
-//					if(o!=null) detector.setOffset(o);
-//					if(z!=null) detector.setZoom(z);
-//					if(a!=null) detector.setAmplificationGain(a);
-//					if(g!=null) detector.setGain(g);
-//					LOGGER.info("[DATA] overwrite DETECTOR data");
-//				}else{
-//					if(detector.getID()==null || detector.getID().equals(""))
-//						detector.setID(d.getID());
-//					if(detector.getModel()==null || detector.getModel().equals("") )
-//						detector.setModel(mo);
-//					if(detector.getManufacturer()==null || detector.getManufacturer().equals(""))
-//						detector.setManufacturer(ma);
-//					if(detector.getType()==null)detector.setType(t);
-//					if(detector.getVoltage()==null) detector.setVoltage(v);
-//					if(detector.getOffset()==null) detector.setOffset(o);
-//					if(detector.getZoom()==null) detector.setZoom(z);
-//					if(detector.getAmplificationGain()==null) detector.setAmplificationGain(a);
-//					if(detector.getGain()==null) detector.setGain(g);
-//					LOGGER.info("[DATA] complete DETECTOR data");
-//				}
-//			}
-//		}else if(d!=null){
-//			detector=d;
-//			LOGGER.info("[DATA] add DETECTOR data");
-//		}
-//		setGUIData();
-//		return conflicts;
-//	}
 	
 	public boolean addData(Detector d, boolean overwrite)
 	{
@@ -316,7 +257,6 @@ public class DetectorCompUI extends ElementsCompUI
 	}
 	
 	
-	
 	private void setGUIData()
 	{
 		if(detector!=null){
@@ -326,17 +266,16 @@ public class DetectorCompUI extends ElementsCompUI
 			} catch (NullPointerException e) { }
 			try{setType(detector.getType(),  ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
-//			try{setVoltage(detector.getVoltage(),  ElementsCompUI.REQUIRED);
-//			} catch (NullPointerException e) { }
-//			try{setOffset(detector.getOffset(),  ElementsCompUI.REQUIRED);
-//			} catch (NullPointerException e) { }
+			try{setVoltage(detector.getVoltage(),  ElementsCompUI.REQUIRED);
+			} catch (NullPointerException e) { }
+			try{setOffset(detector.getOffset(),  ElementsCompUI.REQUIRED);
+			} catch (NullPointerException e) { }
 			try{setZoom(detector.getZoom(), ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 			try{setAmplGain(detector.getAmplificationGain(),  ElementsCompUI.REQUIRED);
-			//TODO: richtiger Gain????
 			} catch (NullPointerException e) { }
-//			try{ setGain(detector.getGain(), ElementsCompUI.REQUIRED);
-//			} catch (NullPointerException e) { }
+			try{ setGain(detector.getGain(), ElementsCompUI.REQUIRED);
+			} catch (NullPointerException e) { }
 		}
 	}
 	
@@ -376,15 +315,33 @@ public class DetectorCompUI extends ElementsCompUI
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read DETECTOR amplification gain input");
 		}
-//		detector.setGain(gain.getTagValue().equals("")?
-//				null : Double.valueOf(gain.getTagValue()));
-//	
-//		detector.setVoltage(voltage.getTagValue().equals("")?
-//				null : new ElectricPotential(Double.valueOf(voltage.getTagValue()), voltageUnit));
-//	
-//		detector.setOffset(offset.getTagValue().equals("")?
-//				null : Double.valueOf(offset.getTagValue()));
+		try{
+		detector.setGain(gain.getTagValue().equals("")?
+				null : Double.valueOf(gain.getTagValue()));
+		}catch(Exception e){
+			LOGGER.error("[DATA] can't read DETECTOR  gain input");
+		}
+		try{
+		detector.setVoltage(parseElectricPotential(voltage.getTagValue(), voltage.getTagUnit()));
+		}catch(Exception e){
+			LOGGER.error("[DATA] can't read DETECTOR voltage input");
+		}
+		try{
+		detector.setOffset(offset.getTagValue().equals("")?
+				null : Double.valueOf(offset.getTagValue()));
+		}catch(Exception e){
+			LOGGER.error("[DATA] can't read DETECTOR offset input");
+		}
+	}
+	
+	private ElectricPotential parseElectricPotential(String c, Unit unit) 
+	{
+		if(c==null || c.equals(""))
+			return null;
 		
+		ElectricPotential p=null;
+
+		return new ElectricPotential(Double.valueOf(c), unit);
 	}
 	
 	private DetectorType parseDetectorType(String c) 
@@ -433,9 +390,9 @@ public class DetectorCompUI extends ElementsCompUI
 		addTagToGUI(type);
 		addTagToGUI(zoom);
 		addTagToGUI(amplGain);
-//		addTagToGUI(gain);
-//		addTagToGUI(voltage);
-//		addTagToGUI(offset);
+		addTagToGUI(gain);
+		addTagToGUI(voltage);
+		addTagToGUI(offset);
 		
 		addLabelTextRows(labels, comp, gridbag, globalPane);
 		
@@ -468,20 +425,20 @@ public class DetectorCompUI extends ElementsCompUI
 		setModel(null, OPTIONAL);
 		setManufact(null, OPTIONAL);
 		setType(null, OPTIONAL);
-//		setVoltage(null,  OPTIONAL);
-//		setOffset(null, OPTIONAL);
+		setVoltage(null,  OPTIONAL);
+		setOffset(null, OPTIONAL);
 		setZoom(null,OPTIONAL);
 		setAmplGain(null,  OPTIONAL);
-//		setGain(null, OPTIONAL);
+		setGain(null, OPTIONAL);
 		
 		if(inactive){
 			model.setEnable(false);
 			manufact.setEnable(false);
 			type.setEnable(false);
 			amplGain.setEnable(false);
-//			gain.setEnable(false);
-//			voltage.setEnable(false);
-//			offset.setEnable(false);
+			gain.setEnable(false);
+			voltage.setEnable(false);
+			offset.setEnable(false);
 			zoom.setEnable(false);
 		}
 	}
@@ -561,36 +518,36 @@ public class DetectorCompUI extends ElementsCompUI
 						}
 						amplGain.setVisible(true);
 						break;
-//					case L_GAIN:
-//						try{
-//							setGain(Double.valueOf(val), prop);
-//							detector.setGain(Double.valueOf(val));
-//						}
-//						catch(Exception e){
-//							setGain(null,OPTIONAL);
-//						}
-//						gain.setVisible(true);
-//						break;
-//					case L_VOLTAGE:
-//						try{
-//							ElectricPotential value=new ElectricPotential(Double.valueOf(val), voltageUnit);
-//							detector.setVoltage(value);
-//						}
-//						catch(Exception e){
-//							setVoltage(null, OPTIONAL);
-//						}
-//						voltage.setVisible(true);
-//						break;
-//					case L_OFFSET:
-//						try{
-//							setOffset(Double.valueOf(val), prop);
-//							detector.setOffset(Double.valueOf(val));
-//						}
-//						catch(Exception e){
-//							setOffset(null, OPTIONAL);
-//						}
-//						offset.setVisible(true);
-//						break;
+					case TagNames.GAIN:
+						try{
+							setGain(Double.valueOf(val), prop);
+							setFields=true;
+						}
+						catch(Exception e){
+							setGain(null,OPTIONAL);
+						}
+						gain.setVisible(true);
+						break;
+					case TagNames.VOLTAGE:
+						try{
+							setVoltage(parseElectricPotential(val,t.getUnit()),prop);
+							setFields=true;
+						}
+						catch(Exception e){
+							setVoltage(null, OPTIONAL);
+						}
+						voltage.setVisible(true);
+						break;
+					case TagNames.OFFSET:
+						try{
+							setOffset(Double.valueOf(val), prop);
+							setFields=true;
+						}
+						catch(Exception e){
+							setOffset(null, OPTIONAL);
+						}
+						offset.setVisible(true);
+						break;
 					default: LOGGER.warn("[CONF] unknown tag: "+name );break;
 					}
 				}
@@ -598,15 +555,17 @@ public class DetectorCompUI extends ElementsCompUI
 		}
 	}
 
+	
+
 	public void clearDataValues()
 	{
 		clearTagValue(model);
 		clearTagValue(manufact);
 		clearTagValue(type);
 		clearTagValue(amplGain);
-//		clearTagValue(gain);
-//		clearTagValue(voltage);
-//		clearTagValue(offset);
+		clearTagValue(gain);
+		clearTagValue(voltage);
+		clearTagValue(offset);
 		clearTagValue(zoom);
 		if(detectorSettUI!=null) detectorSettUI.clearDataValues();
 		if(availableDetectors!=null) availableDetectors.clear();
@@ -620,9 +579,9 @@ public class DetectorCompUI extends ElementsCompUI
 		if(isActive(type)) list.add(type);
 		if(isActive(zoom)) list.add(zoom);
 		if(isActive(amplGain)) list.add(amplGain);
-//		if(isActive(gain)) list.add(gain);
-//		if(isActive(offset)) list.add(offset);
-//		if(isActive(voltage)) list.add(voltage);
+		if(isActive(gain)) list.add(gain);
+		if(isActive(offset)) list.add(offset);
+		if(isActive(voltage)) list.add(voltage);
 		
 		return list;
 	}
@@ -677,35 +636,34 @@ public class DetectorCompUI extends ElementsCompUI
 			amplGain.setTagValue(val,prop);
 	}
 	
-	//TODO
-//	public void setGain(Double value, boolean prop)
-//	{
-//		String val= (value != null) ? String.valueOf(value):"";
-//		if(gain == null) 
-//			gain = new TagData("Gain: ",val,prop,TagData.TEXTFIELD);
-//		else 
-//			gain.setTagValue(val,prop);
-//	}
+	public void setGain(Double value, boolean prop)
+	{
+		String val= (value != null) ? String.valueOf(value):"";
+		if(gain == null) 
+			gain = new TagData(TagNames.GAIN+": ",val,prop,TagData.TEXTFIELD);
+		else 
+			gain.setTagValue(val,prop);
+	}
 	
 	
-//	public void setVoltage(ElectricPotential value, boolean prop)
-//	{
-//		String val= (value != null)? String.valueOf(value.value()) : "";
-//		voltageUnit=(value!=null) ? value.unit() :voltageUnit;
-//		if(voltage == null) 
-//			voltage = new TagData("Voltage ["+voltageUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
-//		else 
-//			voltage.setTagValue(val,prop);
-//	}
+	public void setVoltage(ElectricPotential value, boolean prop)
+	{
+		String val= (value != null)? String.valueOf(value.value()) : "";
+		Unit unit=(value!=null) ? value.unit() :TagNames.VOLTAGE_UNIT;
+		if(voltage == null) 
+			voltage = new TagData(TagNames.VOLTAGE,val,unit,prop,TagData.TEXTFIELD);
+		else 
+			voltage.setTagValue(val,unit,prop);
+	}
 	
-//	public void setOffset(Double value, boolean prop)
-//	{
-//		String val= (value != null) ? String.valueOf(value):"";
-//		if(offset == null) 
-//			offset = new TagData("Offset: ",val,prop,TagData.TEXTFIELD);
-//		else 
-//			offset.setTagValue(val,prop);
-//	}
+	public void setOffset(Double value, boolean prop)
+	{
+		String val= (value != null) ? String.valueOf(value):"";
+		if(offset == null) 
+			offset = new TagData(TagNames.OFFSET+": ",val,prop,TagData.TEXTFIELD);
+		else 
+			offset.setTagValue(val,prop);
+	}
 	
 	public void setZoom(Double value, boolean prop)
 	{

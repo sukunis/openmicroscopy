@@ -280,7 +280,6 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 					o[8]=val;
 				}catch(Exception err){
 					LOGGER.severe("[EDITOR] Can't parse objective::workingDist");
-					System.out.println("[EDITOR] Can't parse objective::workingDist");
 				}
 			}
 			return o;

@@ -75,30 +75,45 @@ public class MetaDataView extends JPanel
      * @param fName
      */
 	public MetaDataView(CustomViewProperties sett,String fName,
-			ImportUserData importData, MetaDataModel parentData) throws Exception
+			ImportUserData importData, MetaDataModel parentData, JPanel view) throws Exception
 	{
 		super(new BorderLayout());
 		this.setBorder(BorderFactory.createEmptyBorder());
 
 		LOGGER.info("### build view and load data for "+ fName+" ###");
-		
+
 		ImageReader reader = new ImageReader();
 		IMetadata data=null;
+
+		
+		Cursor cursor=view.getCursor();
+		view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		
+		data = readMetadataFromFile(fName, reader);
+		
+//		ServiceFactory factory = new ServiceFactory();
+//		OMEXMLService service = factory.getInstance(OMEXMLService.class);
+//		IMetadata metadata = service.createOMEXMLMetadata();
+//		reader = new ImageReader();
+//		reader.setMetadataStore(metadata);
+//		reader.setId(file);
+		
 		
 
-			data = readMetadataFromFile(fName, reader);
-			if(data==null){ 
-				singleView=new MetaDataUI(sett);
-				return ;
-			}
+		view.setCursor(cursor);
+		if(data==null){ 
+			singleView=new MetaDataUI(sett);
+			return ;
+		}
 
-			LOGGER.info("### read "+ fName+" ###");
+		LOGGER.info("### read "+ fName+" ###");
 
-			ServiceFactory factory = new ServiceFactory();
-			OMEXMLService service = factory.getInstance(OMEXMLService.class);
-			String xml = service.getOMEXML((MetadataRetrieve) data);
-			ome = (OME) service.createOMEXMLRoot(xml);
+		ServiceFactory factory = new ServiceFactory();
+		OMEXMLService service = factory.getInstance(OMEXMLService.class);
 		
+		String xml = service.getOMEXML((MetadataRetrieve) data);
+		ome = (OME) service.createOMEXMLRoot(xml);
+
 
 		srcFile=new File(fName);
 
@@ -219,8 +234,8 @@ public class MetaDataView extends JPanel
 	private IMetadata readMetadataFromFile(String file, 
 			ImageReader reader) throws DependencyException, ServiceException 
 	{
-		Cursor cursor=getCursor();
-		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		
+	
 		
 		//record metadata to ome-xml format
 		ServiceFactory factory=new ServiceFactory();
@@ -238,10 +253,9 @@ public class MetaDataView extends JPanel
 			WarningDialog ld=new WarningDialog("Not supported file format for MetaData Editor!", 
 					"Can't read metadata of "+file+"! Format is not supported.");
 			ld.setVisible(true);
-			setCursor(cursor);
 			return null;
 		}
-		setCursor(cursor);
+		
 		LOGGER.info("[DATA] -- use READER: "+reader.getReader().getClass().getName());
 		return metadata;
 	}

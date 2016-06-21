@@ -369,6 +369,14 @@ public class UOSHardwareReader
 				if(attr.getNamedItem(ModuleConfiguration.TAG_VALUE)!=null){
 					value=attr.getNamedItem(ModuleConfiguration.TAG_VALUE).getNodeValue();
 				}
+				if(attr.getNamedItem(ModuleConfiguration.TAG_UNIT)!=null){
+					try {
+						unit=parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue(),name);
+					} catch (Exception e) {
+						LOGGER.warn("[HARDWARE] wrong format of parameters of tag "+name);
+						LOGGER.warn("[HARDWARE] "+e.getMessage());
+					}
+				}
 				d=setDetectorVal(d,name,value);
 			}	
 		}
@@ -417,6 +425,7 @@ public class UOSHardwareReader
 		if(tags==null || !(tags.getLength()>0)){
 			return null;
 		}
+		int fieldCounter=0;
 		for(int i=0, len=tags.getLength(); i<len; i++)
 		{
 			NamedNodeMap attr=tags.item(i).getAttributes();
@@ -429,9 +438,16 @@ public class UOSHardwareReader
 				if(attr.getNamedItem(ModuleConfiguration.TAG_VALUE)!=null){
 					value=attr.getNamedItem(ModuleConfiguration.TAG_VALUE).getNodeValue();
 				}
-				filter=setFilterVal(filter,name,value);
+				if(name!=null && !name.equals("") && value!=null && !value.equals("")){
+					filter=setFilterVal(filter,name,value);
+					fieldCounter++;
+				}
 			}	
 		}
+		//Check filter is not empty
+		if(fieldCounter==0)
+			return null;
+		
 		return filter;
 	}
 
@@ -488,7 +504,8 @@ public class UOSHardwareReader
 
 	private Filter setFilterVal(Filter filter, String name, String val) 
 	{
-		if(name!=null && !name.equals("") && val!=null && !val.equals("")){
+		{
+			
 			LOGGER.info("[DEBUG] add mic lightpath tag "+name+" = "+val);
 			try{
 				switch (name) {
@@ -744,6 +761,9 @@ public class UOSHardwareReader
 				UnitsLength uL2=UnitsLength.fromString(unitSymbol);
 				unit = UnitsLengthEnumHandler.getBaseUnit(uL2);
 				break;
+			case TagNames.VOLTAGE:
+				UnitsLength uV=UnitsLength.fromString(unitSymbol);
+				unit=UnitsLengthEnumHandler.getBaseUnit(uV);
 			default:
 				LOGGER.warn("[HARDWARE] no unit available for tag "+name);
 				break;

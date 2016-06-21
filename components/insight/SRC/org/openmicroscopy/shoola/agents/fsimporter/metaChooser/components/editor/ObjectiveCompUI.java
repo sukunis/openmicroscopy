@@ -340,7 +340,6 @@ public class ObjectiveCompUI extends ElementsCompUI
 	
 	private void readGUIInput() throws Exception
 	{
-		
 		if(objective==null)
 			createNewElement();
 
@@ -602,42 +601,23 @@ public class ObjectiveCompUI extends ElementsCompUI
 						break;
 					case TagNames.IMMERSION:
 						try {
-							if(val!=null){
-								Immersion im=Immersion.fromString(val);
-								setImmersion(im, prop);
-							}else{
-								setImmersion(null, prop);
-							}
-							//							objective.setImmersion(im);
-						} catch (EnumerationException e) {
+							setImmersion(parseImmersion(val), prop);
+						} catch (Exception e) {
 							setImmersion(null, prop);
 						}
 						immersion.setVisible(true);
 						break;
 					case TagNames.CORRECTION:
 						try {
-							if(val!=null){
-								Correction co = Correction.fromString(val);
-								setCorrection(co, prop);
-							}else{
-								setCorrection(null, prop);
-							}
-							//							objective.setCorrection(co);
-						} catch (EnumerationException e) {
+							setCorrection(parseCorrection(val), prop);
+						} catch (Exception e) {
 							setCorrection(null, prop);
 						}
 						correction.setVisible(true);
 						break;
 					case TagNames.WORKDIST:
 						try{
-
-							if(val!=null){
-								Length l= new Length(new Double(val), t.getUnit());
-								setWorkingDist(l, prop);
-							}else{
-								setWorkingDist(null,prop);
-							}
-							//							objective.setWorkingDistance(l);
+							setWorkingDist(parseToLength(val, t.getUnit()), prop);
 						}catch(Exception e){
 							setWorkingDist(null,prop);
 						}

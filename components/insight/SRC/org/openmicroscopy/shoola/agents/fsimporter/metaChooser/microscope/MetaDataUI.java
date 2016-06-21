@@ -227,7 +227,8 @@ public class MetaDataUI extends JPanel
 				case LIGHTPATH_DATA:
 					LOGGER.info("[GUI] -- init LIGHTPATH modul");
 					LightPathCompUI lpUI=new LightPathCompUI();
-					model.setLightPath(lpUI, 0);
+					lpUI.addFilterToList(customSett.getMicLightPathFilterList());
+					model.addLightPath(lpUI);
 					initLightPathUI=true;
 					lightPModul=subm;
 					break;
@@ -296,7 +297,7 @@ public class MetaDataUI extends JPanel
 			
 			for(int i=0; i<model.getNumberOfChannels();i++){
 				addChannelData(i,m.getChannel(i),true);
-//				addLightPathData(i,m.getLightPath(i),true);
+				addLightPathData(i,m.getLightPath(i),true);
 			}
 			for(int i=0; i<model.getNumberOfDetectors();i++){
 				addDetectorData(i, m.getDetector(i),m.getDetectorSettings(i), true);
@@ -306,11 +307,15 @@ public class MetaDataUI extends JPanel
 				addLightSrcData(i,m.getLightSourceData(i),m.getLightSourceSettings(i),true); 
 			}
 			
+			
+			
 			addSampleData(m.getSample(),true);
 			addImageEnvData(m.getImgagingEnv(),true);
 //			addPlaneData();
 		}
 	}
+	
+
 	private void addImageEnvData(ImagingEnvironment i, boolean overwrite)
 	{
 		ImagingEnvironmentCompUI iUI=model.getImgEnvModel();
@@ -367,6 +372,17 @@ public class MetaDataUI extends JPanel
 			}
 			if(ds!=null){
 				dUI.addData(ds, overwrite);
+			}
+		}
+	}
+	
+	private void addLightPathData(int i, LightPath lightPath, boolean b) 
+	{
+		LightPathCompUI lUI=model.getLightPathModul(i);
+		if(lUI!=null){
+			if(lightPath!=null){
+				lUI.addData(lightPath, b);
+				lUI.setFieldsExtern(true);
 			}
 		}
 	}
@@ -652,7 +668,7 @@ public class MetaDataUI extends JPanel
 					}else{
 						lpUI.addData(lp,false);
 					}
-					model.setLightPath(lpUI, i);
+					model.addLightPath(lpUI);
 				}
 
 				lpUI.clearList();
@@ -1441,35 +1457,35 @@ public class MetaDataUI extends JPanel
 	/**
 	 * 
 	 */
-	public void save() 
-	{
-			if(ome!=null && model!=null){
-				model.save();
-				//					SaveMetadataUserDefinedUI pane = new SaveMetadataUserDefinedUI(ome,model,null,file);
-				//					JDialog diag=createSaveDialog(pane,"Save MetaData", 600,600);
-				if(file!=null){
-					LOGGER.info("[SAVE] -- save to "+file.getAbsolutePath());
-					SaveMetadata saver=new SaveMetadata(ome, model, null, file);
-					saver.save();
-				}else{
-//					LOGGER.severe("[SAVE] -- no destination file is given");
-					LOGGER.error("[SAVE] -- no destination file is given");
-					ExceptionDialog ld = new ExceptionDialog("Save File Error!", 
-							"No file is given!");
-					ld.setVisible(true);
-				}
-			}else{
-				String b1=(ome!=null) ? "available": "not available";
-				String b2=(model!=null) ? "available": "not available";
-				String fileName=file!=null ? file.getName() : "";
-				LOGGER.error("--CAN'T SAVE "+fileName+" : OME = "+b1+", MODEL = "+b2);
-				ExceptionDialog ld = new ExceptionDialog("Can't save "+fileName+"!",
-						"OME = "+b1+", MODEL = "+b2); 
-
-				ld.setVisible(true);
-			}
-		
-	}
+//	public void save() 
+//	{
+//			if(ome!=null && model!=null){
+//				model.save();
+//				//					SaveMetadataUserDefinedUI pane = new SaveMetadataUserDefinedUI(ome,model,null,file);
+//				//					JDialog diag=createSaveDialog(pane,"Save MetaData", 600,600);
+//				if(file!=null){
+//					LOGGER.info("[SAVE] -- save to "+file.getAbsolutePath());
+//					SaveMetadata saver=new SaveMetadata(ome, model, null, file);
+//					saver.save();
+//				}else{
+////					LOGGER.severe("[SAVE] -- no destination file is given");
+//					LOGGER.error("[SAVE] -- no destination file is given");
+//					ExceptionDialog ld = new ExceptionDialog("Save File Error!", 
+//							"No file is given!");
+//					ld.setVisible(true);
+//				}
+//			}else{
+//				String b1=(ome!=null) ? "available": "not available";
+//				String b2=(model!=null) ? "available": "not available";
+//				String fileName=file!=null ? file.getName() : "";
+//				LOGGER.error("--CAN'T SAVE "+fileName+" : OME = "+b1+", MODEL = "+b2);
+//				ExceptionDialog ld = new ExceptionDialog("Can't save "+fileName+"!",
+//						"OME = "+b1+", MODEL = "+b2); 
+//
+//				ld.setVisible(true);
+//			}
+//		
+//	}
 	
 	
 	

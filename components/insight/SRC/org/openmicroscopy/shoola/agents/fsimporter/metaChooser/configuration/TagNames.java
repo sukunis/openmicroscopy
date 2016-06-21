@@ -1,6 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration;
 
 import ome.units.UNITS;
+import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Power;
@@ -57,6 +58,8 @@ public class TagNames
 	public static final String CONFZOOM="Confocal Zoom";
 	public static final String BINNING="Binning";
 	public static final String SUBARRAY="Subarray";
+	
+	public static final Unit<ElectricPotential> VOLTAGE_UNIT=UNITS.V;
 	
 	//Experiment
 //	private final String TYPE="Type";

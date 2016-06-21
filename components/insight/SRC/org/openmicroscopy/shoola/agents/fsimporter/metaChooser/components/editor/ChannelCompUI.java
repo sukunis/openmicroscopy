@@ -373,12 +373,7 @@ public class ChannelCompUI extends ElementsCompUI
 			LOGGER.error("[DATA] can't read CHANNEL ndfilter input");
 		}
 
-		//TODO: new one?
-		try{
-		if(lightPath!=null) channel.setLightPath(lightPath.getData());
-		}catch(Exception e){
-			LOGGER.error("[DATA] can't read CHANNEL lightPath input");
-		}
+	
 	}
 
 	public Channel getData() throws Exception

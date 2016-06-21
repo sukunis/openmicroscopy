@@ -1,5 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -44,15 +45,15 @@ public class LightPathCompUI extends ElementsCompUI
 	private int chIdx;
 	private JButton editBtn;
 	
-	private MetaDataModel model;
 	private LightPathTableSmall lightPathTable;
 	private List<Object> availableFilterList;
+	
+	private boolean useEditor;
 	
 	public LightPathCompUI(LightPath _lightPath, int _chIdx, MetaDataModel _model) 
 	{
 		lightPath=_lightPath;
 		chIdx=_chIdx;
-		model=_model;
 		
 		initGUI();
 		if(lightPath!=null)
@@ -66,7 +67,7 @@ public class LightPathCompUI extends ElementsCompUI
 		createDummyPane(false);
 	}
 	public boolean userInput(){
-		return false;
+		return useEditor;
 	}
 	
 	
@@ -82,15 +83,18 @@ public class LightPathCompUI extends ElementsCompUI
 		
 		editBtn=new JButton("Edit");
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		editBtn.setEnabled(false);
+		
+		editBtn.setEnabled(true);
 		editBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
 				LightPathEditor creator = new LightPathEditor(new JFrame(),"Edit LightPath",
 						availableFilterList,lightPath);
+				useEditor=true;
 				List<Object> newList=creator.getLightPathList(); 
 				if(newList!=null && !newList.isEmpty()){
-					createLightPath(model.updateLightPathElems(newList,chIdx));
+					createLightPath(newList);
+//					createLightPath(model.updateLightPathElems(newList,chIdx));
 					setGUIData();
 					buildComponents();   
 					revalidate();
@@ -181,12 +185,14 @@ public class LightPathCompUI extends ElementsCompUI
 	{
 		List<Object> lightPathList=lightPathTable.getLightPathList();
 		
-		model.updateLightPathElems( lightPathList, chIdx);
-		
 		createLightPath(lightPathList);
 	}
 	
 	//TODO: optimize
+	/**
+	 * LightPath order is Exitation Filter -> Dichroic -> Dichroic/Emission filter
+	 * @param list
+	 */
 	private void createLightPath(List<Object> list)
 	{
 		if(list!=null && !list.isEmpty()){
@@ -197,22 +203,25 @@ public class LightPathCompUI extends ElementsCompUI
 				Dichroic pD=lightPath.getLinkedDichroic();
 				boolean primDNotExists= pD==null ? true : false ;
 
+				// Dichroic
 				if(f instanceof Dichroic){
 					linkType=2;
+					// primary dichroic exists?
 					if(primDNotExists){
 						lightPath.linkDichroic((Dichroic) f);
 					}else{
 						LOGGER.warn("primary Dichroic still exists! [LightPathCompUI::createLightPath]");
+						lightPath.linkEmissionFilter(MetaDataModel.convertDichroicToFilter((Dichroic)f));
 					}
 
 				}else{
 
 					String	type= ((Filter) f).getType()!=null ? ((Filter) f).getType().toString() : "";
-					//add to lightPath order by given, first exF, then primary dichroic and dichroics and emF
+					//filters that comes before and dichroic are exitation filters by definition
 					if(	!type.equals(FilterType.DICHROIC.getValue()) && 
 							linkType==1){
 						lightPath.linkExcitationFilter((Filter) f);
-					}else{
+					}else{// link additional dichroic as emission filter
 						linkType=2;
 
 						if( primDNotExists){
@@ -241,7 +250,7 @@ public class LightPathCompUI extends ElementsCompUI
 //		globalPane.add(lightPathTable,BorderLayout.NORTH);
 //		buildComp=true;
 //		}
-		
+		useEditor=false;
 		revalidate();
 		repaint();
 	}
@@ -277,10 +286,7 @@ public class LightPathCompUI extends ElementsCompUI
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public void setModel(MetaDataModel model2) 
-	{
-		model=model2;
-	}
+	
 	
 	/**
 	 * 
@@ -305,6 +311,8 @@ public class LightPathCompUI extends ElementsCompUI
 	{
 		if(userInput())
 			readGUIInput();
+		
+		
 		return lightPath;
 	}
 
@@ -339,6 +347,11 @@ public class LightPathCompUI extends ElementsCompUI
 		for(int i=0; i<list.size(); i++){
 			availableFilterList.add(list.get(i));
 		}
+	}
+
+	public void setFieldsExtern(boolean b) 
+	{
+		useEditor = useEditor || b;
 	}
 	
 	

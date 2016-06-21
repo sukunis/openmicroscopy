@@ -346,7 +346,7 @@ public class CustomViewProperties
 		detectorConf.setTag(TagNames.ZOOM,null,null,null);
 		detectorConf.setTag(TagNames.AMPLGAIN,null,null,null);
 		detectorConf.setSettingTag(TagNames.GAIN,null,null,null);
-		detectorConf.setSettingTag(TagNames.VOLTAGE,null,null,null);
+		detectorConf.setSettingTag(TagNames.VOLTAGE,null,TagNames.VOLTAGE_UNIT.getSymbol(),null);
 		detectorConf.setSettingTag(TagNames.OFFSET,null,null,null);
 		detectorConf.setSettingTag(TagNames.CONFZOOM,null,null,null);
 		detectorConf.setSettingTag(TagNames.BINNING,null,null,null);

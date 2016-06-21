@@ -131,6 +131,8 @@ public class SaveMetadata
 
 			//TODO extra store of detector and lightSrc necessary?? see bottum
 			saveDetector(i,m);
+			
+			
 
 			//--- LightSources
 			//TODO update two lists
@@ -141,13 +143,15 @@ public class SaveMetadata
 
 			saveImage(i,m);
 
-			//			saveFilter(i); 
+						saveFilter(i,m); 
 			//			
-			//			saveDichroic(i); 
+						saveDichroic(i,m); 
 		}
 		
 	}
 	
+	
+
 	private void writeDataToOME() throws Exception
 	{
 		if(modelObj==null){
@@ -200,6 +204,7 @@ public class SaveMetadata
 			Channel thisChannel=m.getChannel(cNr);
 			LightSource thisLightSrc=m.getLightSourceData(cNr);
 			Detector thisDetector=m.getDetector(cNr);
+			LightPath thisLightPath = m.getLightPath(cNr);
 			
 			if(thisChannel!=null){
 				//link
@@ -247,9 +252,11 @@ public class SaveMetadata
 					}
 				}
 
-				LightPath thisLightPath=thisChannel.getLightPath();
 				if(thisLightPath==null){
 					LOGGER.warn("[SAVE] could not save LIGHTPATH- not specified for CHANNEL "+thisChannel.getName());
+				}else{
+					m.updateLightPathElems(thisLightPath, cNr);
+					omeStore.storeLightPath(thisLightPath,thisChannel);
 				}
 			}
 
@@ -290,6 +297,8 @@ public class SaveMetadata
 				omeStore.storeDetector(d,i,m.getImageIndex());
 		}
 	}
+	
+	
 
 	private void saveImageEnv(Image i,MetaDataModel m) throws Exception {
 		ImagingEnvironment iEnv=m.getImgagingEnv();
