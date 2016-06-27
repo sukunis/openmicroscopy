@@ -45,8 +45,18 @@ public class FilterCompUI extends LightPathElem
 	private TitledBorder tb;
 	
 	private Object filter;
+	private boolean setFields;
+	private List<TagData> tagList;
 	
-	
+	private void initTagList()
+	{
+		tagList=new ArrayList<TagData>();
+		tagList.add(model);
+		tagList.add(manufact);
+		tagList.add(type);
+		tagList.add(filterwheel);
+		tagList.add(classification);
+	}
 	
 	public FilterCompUI(Object _filter)
 	{
@@ -108,6 +118,7 @@ public class FilterCompUI extends LightPathElem
 			filter=new Filter();
 		}
 		if(filter instanceof Filter){
+			System.out.println("FilterCompUI::getData: read filter data");
 			try{
 				((Filter) filter).setManufacturer(manufact.getTagValue().equals("")?
 						null : manufact.getTagValue());
@@ -133,6 +144,7 @@ public class FilterCompUI extends LightPathElem
 				LOGGER.error("[DATA] can't read FILTER type input");
 			}
 		}else{
+			System.out.println("FilterCompUI::getData: read Dichroic data");
 			try{
 				((Dichroic) filter).setManufacturer(manufact.getTagValue().equals("")?
 						null : manufact.getTagValue());
@@ -154,8 +166,12 @@ public class FilterCompUI extends LightPathElem
 
 	public Object getData() throws Exception
 	{
-		if(userInput())
+		if(userInput()){
+			System.out.println("FilterCompUI::getData: read input");
 			readGUIInput();
+		}else{
+			System.out.println("FilterCompUI::getData: no input");
+		}
 		return filter;
 	}
 	
@@ -196,6 +212,8 @@ public class FilterCompUI extends LightPathElem
 		c.weightx = 1.0;
 		
 		buildComp=true;
+		initTagList();
+		setFields=false;
 	}
 
 	public void buildExtendedComponents() 
@@ -327,8 +345,14 @@ public class FilterCompUI extends LightPathElem
 
 	@Override
 	public boolean userInput() {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result=false;
+		if(tagList!=null){
+			for(int i=0; i<tagList.size();i++){
+				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
+				result= result || val;
+			}
+		}
+		return (result || setFields);
 	}
 
 	

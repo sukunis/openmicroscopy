@@ -114,7 +114,7 @@ public class MetaDataView extends JPanel
 		String xml = service.getOMEXML((MetadataRetrieve) data);
 		ome = (OME) service.createOMEXMLRoot(xml);
 
-
+System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName());
 		srcFile=new File(fName);
 
 		if(reader.getSeriesCount()<2){

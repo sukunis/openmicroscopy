@@ -64,7 +64,8 @@ public class ModuleConfiguration
 			u = UOSHardwareReader.parseUnit(unit,name);
 			thisList.add(new TagConfiguration(name, val,u, prop));
 		} catch (Exception e) {
-			LOGGER.warn("[HARDWARE] can't parse unit of tag "+name);
+			LOGGER.warn("[HARDWARE] can't parse unit of tag "+name+" ("+unit+")");
+			e.printStackTrace();
 		}
 	
 		

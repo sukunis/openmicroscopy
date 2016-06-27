@@ -361,7 +361,8 @@ public class MetaDataUI extends JPanel
 			cUI.setFieldsExtern(true);
 		}
 	}
-
+	
+	/** add parent data*/
 	private void addDetectorData(int index,Detector d,DetectorSettings ds, boolean overwrite)
 	{
 		DetectorCompUI dUI=model.getDetectorModul(index);
@@ -412,7 +413,7 @@ public class MetaDataUI extends JPanel
 		this.file=file;
 	}
 	
-	/** read data from metadata container 
+	/** read data from given metadata container 
 	 * @param imageIndex TODO*/
 	public void readData(OME o, int imageIndex)
 	{

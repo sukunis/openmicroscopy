@@ -178,19 +178,17 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	{
 		if(d!=null){
 			detectorSett=d;
-			
 		}
 	}
 	
 	private void completeData(DetectorSettings d) throws Exception
 	{
-		//copy input fields
+		//copy gui input fields
 		DetectorSettings copyIn=null;
 		if(detectorSett!=null){
 			getData();
 			copyIn=new DetectorSettings(detectorSett);
 		}
-
 		replaceData(d);
 
 		// set input field values again
@@ -252,21 +250,22 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		}
 		//TODO input checker
 		try{
-		detectorSett.setGain(parseToDouble(gain.getTagValue()));
+			detectorSett.setGain(parseToDouble(gain.getTagValue()));
 		}catch(Exception e){
-			LOGGER.error("[DATA] can't read DETECTOR SETT gain input");
+			LOGGER.error("[DATA] can't read DETECTOR SETT  gain input");
 		}
 		try{
-		detectorSett.setVoltage(voltage.getTagValue().equals("") ? 
-				null : new ElectricPotential(Double.valueOf(voltage.getTagValue()), voltage.getTagUnit()) );
+			detectorSett.setVoltage(parseElectricPotential(voltage.getTagValue(), voltage.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read DETECTOR SETT voltage input");
 		}
 		try{
-		detectorSett.setOffset(parseToDouble(offset.getTagValue()));
+			detectorSett.setOffset(parseToDouble(offset.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read DETECTOR SETT offset input");
 		}
+
+
 		try{
 		detectorSett.setZoom(parseToDouble(confocalZoom.getTagValue()));
 		}catch(Exception e){
@@ -280,7 +279,16 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		//TODO set subarray
 //		detectorSett.setSubarray
 	}
-	
+
+	private ElectricPotential parseElectricPotential(String c, Unit unit) 
+	{
+		if(c==null || c.equals(""))
+			return null;
+		
+		ElectricPotential p=null;
+
+		return new ElectricPotential(Double.valueOf(c), unit);
+	}
 	private Binning parseBinning(String c) throws EnumerationException
 	{
 		if(c==null || c.equals(""))
@@ -374,13 +382,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 				switch (name) {
 				case TagNames.GAIN:
 					try{
-						if(val!=null){
-						Double value=parseToDouble(val);
-						setGain(value, prop);
-//						detectorSett.setGain(value);
-						}else{
-							setGain(null,OPTIONAL);
-						}
+						setGain(parseToDouble(val), prop);
 					}
 					catch(Exception e){
 						setGain(null,OPTIONAL);
@@ -389,13 +391,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					break;
 				case TagNames.VOLTAGE:
 					try{
-						if(val!=null){
-							ElectricPotential value=new ElectricPotential(Double.valueOf(val), t.getUnit());
-							setVoltage(value, prop);
-						}else{
-							setVoltage(null, OPTIONAL);
-						}
-//						detectorSett.setVoltage(value);
+							setVoltage(parseElectricPotential(val,t.getUnit()), prop);
 					}
 					catch(Exception e){
 						setVoltage(null, OPTIONAL);
@@ -404,12 +400,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 					break;
 				case TagNames.OFFSET:
 					try{
-						if(val!=null){
 						setOffset(Double.valueOf(val), prop);
-						}else{
-							setOffset(null, OPTIONAL);
-						}
-//						detectorSett.setOffset(Double.valueOf(val));
 					}
 					catch(Exception e){
 						setOffset(null, OPTIONAL);
@@ -475,7 +466,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(gain == null) 
-			gain = new TagData("Gain: ",val,prop,TagData.TEXTFIELD);
+			gain = new TagData(TagNames.GAIN+": ",val,prop,TagData.TEXTFIELD);
 		else 
 			gain.setTagValue(val,prop);
 	}
@@ -491,7 +482,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		public void setVoltage(ElectricPotential value, boolean prop)
 		{
 			String val= (value != null)? String.valueOf(value.value()) : "";
-			Unit unit=(value!=null) ? value.unit() :voltageUnit;
+			Unit unit=(value!=null) ? value.unit() :TagNames.VOLTAGE_UNIT;
 			if(voltage == null) 
 				voltage = new TagData(TagNames.VOLTAGE,val,unit,prop,TagData.TEXTFIELD);
 			else 
@@ -534,7 +525,9 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 
 		@Override
 		public List<TagData> getActiveTags() {
-			// TODO Auto-generated method stub
+//			if(isActive(gain)) list.add(gain);
+//			if(isActive(offset)) list.add(offset);
+//			if(isActive(voltage)) list.add(voltage);
 			return null;
 		}
 

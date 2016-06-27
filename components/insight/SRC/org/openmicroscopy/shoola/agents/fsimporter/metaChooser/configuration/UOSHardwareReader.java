@@ -36,9 +36,11 @@ import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.enums.Pulse;
+import ome.xml.model.enums.UnitsElectricPotential;
 import ome.xml.model.enums.UnitsFrequency;
 import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.enums.UnitsPower;
+import ome.xml.model.enums.handlers.UnitsElectricPotentialEnumHandler;
 import ome.xml.model.enums.handlers.UnitsFrequencyEnumHandler;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
@@ -762,8 +764,8 @@ public class UOSHardwareReader
 				unit = UnitsLengthEnumHandler.getBaseUnit(uL2);
 				break;
 			case TagNames.VOLTAGE:
-				UnitsLength uV=UnitsLength.fromString(unitSymbol);
-				unit=UnitsLengthEnumHandler.getBaseUnit(uV);
+				UnitsElectricPotential uV=UnitsElectricPotential.fromString(unitSymbol);
+				unit=UnitsElectricPotentialEnumHandler.getBaseUnit(uV);
 			default:
 				LOGGER.warn("[HARDWARE] no unit available for tag "+name);
 				break;
