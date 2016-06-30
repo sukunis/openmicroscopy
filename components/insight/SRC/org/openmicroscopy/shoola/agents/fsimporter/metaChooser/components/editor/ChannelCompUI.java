@@ -58,6 +58,8 @@ public class ChannelCompUI extends ElementsCompUI
 	private TagData contrastMethod;
 	/**specify the combined effect of any neutral density filter used*/
 	private TagData ndFilter;
+	/** specifying adjustable pin hole diameter for confocal microscopes. Unit are set by PinholeSizeUnit*/
+	private TagData pinholeSize;
 	
 	private List<TagData> tagList;
 	
@@ -91,6 +93,7 @@ public class ChannelCompUI extends ElementsCompUI
 		tagList.add(imagingMode);
 		tagList.add(contrastMethod);
 		tagList.add(ndFilter);
+		tagList.add(pinholeSize);
 		
 	}
 	
@@ -125,8 +128,8 @@ public class ChannelCompUI extends ElementsCompUI
 	
 	public ChannelCompUI(ModuleConfiguration objConf) 
 	{
-		excitWavelengthUnit=UNITS.NM;
-		emissionWavelengthUnit=UNITS.NM;
+		excitWavelengthUnit=TagNames.EXCITATIONWL_UNIT;
+		emissionWavelengthUnit=TagNames.EMISSIONWL_UNIT;
 		initGUI();
 		if(objConf==null)
 			createDummyPane(false);
@@ -189,6 +192,8 @@ public class ChannelCompUI extends ElementsCompUI
 			} catch (NullPointerException e) { }
 			try{ setNDFilter(channel.getNDFilter(), ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
+			try {setPinholeSize(channel.getPinholeSize(), REQUIRED);
+			} catch (NullPointerException e) {}
 		}
 	}
 //	
@@ -345,12 +350,12 @@ public class ChannelCompUI extends ElementsCompUI
 		}
 		//		TODO channel.setExpTime;
 		try{
-			channel.setExcitationWavelength(parseToLength(excitWavelength.getTagValue(), excitWavelengthUnit));
+			channel.setExcitationWavelength(parseToLength(excitWavelength.getTagValue(), excitWavelength.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read CHANNEL excitation wavelength input");
 		}
 		try{
-			channel.setEmissionWavelength(parseToLength(emissionWavelength.getTagValue(),emissionWavelengthUnit));
+			channel.setEmissionWavelength(parseToLength(emissionWavelength.getTagValue(),emissionWavelength.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read CHANNEL emission wavelength input");
 		}
@@ -371,6 +376,12 @@ public class ChannelCompUI extends ElementsCompUI
 			channel.setNDFilter(parseToDouble(ndFilter.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read CHANNEL ndfilter input");
+		}
+		
+		try{
+			channel.setPinholeSize(parseToLength(pinholeSize.getTagValue(),pinholeSize.getTagUnit()));
+		}catch(Exception e){
+			LOGGER.error("[DATA] can't read CHANNEL pinhole size input");
 		}
 
 	
@@ -463,6 +474,7 @@ public class ChannelCompUI extends ElementsCompUI
 		
 		addTagToGUI(contrastMethod);
 		addTagToGUI(ndFilter);
+		addTagToGUI(pinholeSize);
 		
 		addLabelTextRows(labels, comp, gridbag, globalPane);
 		
@@ -494,6 +506,7 @@ public class ChannelCompUI extends ElementsCompUI
 		setIlluminationMode(null, OPTIONAL);
 		setContrastMethod(null, OPTIONAL);
 		setNDFilter(null, OPTIONAL);
+		setPinholeSize(null, OPTIONAL);
 		
 		if(inactive){
 			name.setEnable(false);
@@ -508,6 +521,7 @@ public class ChannelCompUI extends ElementsCompUI
 			illuminationMode.setEnable(false);
 			contrastMethod.setEnable(false);
 			ndFilter.setEnable(false);
+			pinholeSize.setEnable(false);
 		}
 	}
 	
@@ -576,7 +590,7 @@ public class ChannelCompUI extends ElementsCompUI
 						break;
 					case TagNames.EXCITWAVELENGTH:
 						try{
-							Length value=parseToLength(val, excitWavelengthUnit);
+							Length value=parseToLength(val, t.getUnit());
 							setExcitWavelength(value, prop);
 							//						channel.setExcitationWavelength(value);
 						}catch(Exception e){
@@ -584,9 +598,9 @@ public class ChannelCompUI extends ElementsCompUI
 						}
 						excitWavelength.setVisible(true);
 						break;
-					case TagNames.EMMISIONWAVELENGTH:
+					case TagNames.EMISSIONWAVELENGTH:
 						try{
-							Length value=parseToLength(val, emissionWavelengthUnit);
+							Length value=parseToLength(val, t.getUnit());
 							setEmissionWavelength(value, prop);
 							//						channel.setEmissionWavelength(value);
 						}catch(Exception e){
@@ -634,6 +648,14 @@ public class ChannelCompUI extends ElementsCompUI
 						}
 						ndFilter.setVisible(true);
 						break;
+					case TagNames.PINHOLESIZE:
+						try{
+							setPinholeSize(parseToLength(val, t.getUnit()),prop);
+						}catch(Exception e){
+							setPinholeSize(null,prop);
+						}
+						pinholeSize.setVisible(true);
+						break;
 					default:
 						LOGGER.warn("[CONF] unknown tag: "+name );break;
 					}
@@ -658,6 +680,7 @@ public class ChannelCompUI extends ElementsCompUI
 		clearTagValue(illuminationMode);
 		clearTagValue(contrastMethod);
 		clearTagValue(ndFilter);
+		clearTagValue(pinholeSize);
 		
 		if(lightPath!=null) lightPath.clearDataValues();
 		lightPathOrdered=false;
@@ -728,21 +751,30 @@ public class ChannelCompUI extends ElementsCompUI
 	public void setExcitWavelength(Length value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		excitWavelengthUnit= (value!=null) ? value.unit() : excitWavelengthUnit;
+		Unit unit=(value!=null)? value.unit(): TagNames.EXCITATIONWL_UNIT;
 		if(excitWavelength == null) 
-			excitWavelength = new TagData(TagNames.EXCITWAVELENGTH+" ["+excitWavelengthUnit.getSymbol()
-					+"]: ",val,prop,TagData.TEXTFIELD);
+			excitWavelength = new TagData(TagNames.EXCITWAVELENGTH,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			excitWavelength.setTagValue(val,prop);
+			excitWavelength.setTagValue(val,unit,prop);
 	}
 	public void setEmissionWavelength(Length value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		emissionWavelengthUnit=(value!=null) ? value.unit() :emissionWavelengthUnit;
+		Unit unit=(value!=null)? value.unit(): TagNames.EMISSIONWL_UNIT;
 		if(emissionWavelength == null) 
-			emissionWavelength = new TagData(TagNames.EMMISIONWAVELENGTH+" ["+emissionWavelengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			emissionWavelength = new TagData(TagNames.EMISSIONWAVELENGTH,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			emissionWavelength.setTagValue(val,prop);
+			emissionWavelength.setTagValue(val,unit,prop);
+	}
+	
+	public void setPinholeSize(Length value, boolean prop)
+	{
+		String val = (value!=null) ? String.valueOf(value.value()) : "";
+		Unit unit=(value!=null)? value.unit(): TagNames.PINHOLESIZE_UNIT;
+		if(pinholeSize==null)
+			pinholeSize=new TagData(TagNames.PINHOLESIZE,val,unit,prop,TagData.TEXTFIELD);
+		else
+			pinholeSize.setTagValue(val, unit, prop);
 	}
 //	public void setAcquisitionMode(AcquisitionMode value, boolean prop)
 //	{
@@ -817,6 +849,7 @@ public class ChannelCompUI extends ElementsCompUI
 		if(isActive(illuminationMode)) list.add(illuminationMode);
 		if(isActive(contrastMethod)) list.add(contrastMethod);
 		if(isActive(ndFilter)) list.add(ndFilter);
+		if(isActive(pinholeSize)) list.add(pinholeSize);
 		
 		return list;
 	}

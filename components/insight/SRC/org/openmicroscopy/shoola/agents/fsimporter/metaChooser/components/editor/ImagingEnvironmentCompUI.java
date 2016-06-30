@@ -56,19 +56,19 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		return result || setFields;
 	}
 	
-	public ImagingEnvironmentCompUI(ImagingEnvironment _env,int i)
-	{
-		env=_env;
-		temperatureUnit=UNITS.DEGREEC;
-		airPressureUnit=UNITS.MBAR;
-		initGUI();
-		if(env!=null){
-			setGUIData();
-		}else{
-			env=new ImagingEnvironment();
-			createDummyPane(false);
-		}
-	}
+//	public ImagingEnvironmentCompUI(ImagingEnvironment _env,int i)
+//	{
+//		env=_env;
+//		temperatureUnit=UNITS.DEGREEC;
+//		airPressureUnit=UNITS.MBAR;
+//		initGUI();
+//		if(env!=null){
+//			setGUIData();
+//		}else{
+//			env=new ImagingEnvironment();
+//			createDummyPane(false);
+//		}
+//	}
 
 	
 	public ImagingEnvironmentCompUI(ModuleConfiguration objConf) 

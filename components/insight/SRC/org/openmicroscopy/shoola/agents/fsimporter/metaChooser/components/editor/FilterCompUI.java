@@ -118,7 +118,6 @@ public class FilterCompUI extends LightPathElem
 			filter=new Filter();
 		}
 		if(filter instanceof Filter){
-			System.out.println("FilterCompUI::getData: read filter data");
 			try{
 				((Filter) filter).setManufacturer(manufact.getTagValue().equals("")?
 						null : manufact.getTagValue());
@@ -144,7 +143,6 @@ public class FilterCompUI extends LightPathElem
 				LOGGER.error("[DATA] can't read FILTER type input");
 			}
 		}else{
-			System.out.println("FilterCompUI::getData: read Dichroic data");
 			try{
 				((Dichroic) filter).setManufacturer(manufact.getTagValue().equals("")?
 						null : manufact.getTagValue());
@@ -167,10 +165,7 @@ public class FilterCompUI extends LightPathElem
 	public Object getData() throws Exception
 	{
 		if(userInput()){
-			System.out.println("FilterCompUI::getData: read input");
 			readGUIInput();
-		}else{
-			System.out.println("FilterCompUI::getData: no input");
 		}
 		return filter;
 	}

@@ -94,21 +94,21 @@ public class ImageCompUI extends ElementsCompUI
 			createDummyPane(objConf.getTagList(),false);
 	}
 	
-	public ImageCompUI(Image _image,int i)
-	{
-		image=_image;
-		
-		sizeUnit=UNITS.MICROM;
-		timeUnit=UNITS.SECOND;
-		
-		initGUI();
-		if(image!=null)
-			setGUIData();
-		else{
-			createNewElement();
-			createDummyPane(false);
-		}
-	}
+//	public ImageCompUI(Image _image,int i)
+//	{
+//		image=_image;
+//		
+//		sizeUnit=UNITS.MICROM;
+//		timeUnit=UNITS.SECOND;
+//		
+//		initGUI();
+//		if(image!=null)
+//			setGUIData();
+//		else{
+//			createNewElement();
+//			createDummyPane(false);
+//		}
+//	}
 	
 	private void createNewElement()
 	{

@@ -12,12 +12,16 @@ import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 
 
+
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import loci.formats.meta.IMetadata;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.xml.model.Plane;
 import ome.xml.model.primitives.NonNegativeInteger;
 
@@ -74,11 +78,6 @@ public class PlaneCompUI extends ElementsCompUI
 		return result;
 	}
 	
-	public PlaneCompUI() 
-	{
-		initGUI();
-		createDummyPane(false);
-	}
 	
 	public PlaneCompUI(Plane _plane)
 	{
@@ -86,8 +85,8 @@ public class PlaneCompUI extends ElementsCompUI
 		initGUI();
 		if(plane!=null){
 			setGUIData();
-		
 		}else{
+			plane=new Plane();
 			createDummyPane(false);
 		}
 	}
@@ -145,22 +144,21 @@ public class PlaneCompUI extends ElementsCompUI
 		}
 	}
 	
-	public JDialog getWindow()
-	{
-		JDialog d=new JDialog();
-		d.setTitle("Plane/Stage Position");
-		d.setSize(400,250);
-		d.setModal(true);
-		//TODO init position
-		d.add(this);
-		return d;
-		
-	}
+	
 	
 	@Override
 	public void buildComponents() {
 		labels.clear();
 		comp.clear();
+		
+		planePosC.setVisible(true);
+		planePosT.setVisible(true);
+		planePosZ.setVisible(true);
+		deltaT.setVisible(true);
+		exposureTime.setVisible(true);
+		posX.setVisible(true);
+		posY.setVisible(true);
+		posZ.setVisible(true);
 		
 		addTagToGUI(planePosZ);
 		addTagToGUI(planePosT);
@@ -181,8 +179,15 @@ public class PlaneCompUI extends ElementsCompUI
 		if(planePosT!=null)planePosT.setEnable(false);
 		if(planePosC!=null)planePosC.setEnable(false);
 		
+		deltaT.setEnable(false);
+		exposureTime.setEnable(false);
+		posX.setEnable(false);
+		posY.setEnable(false);
+		posZ.setEnable(false);
+		
 		buildComp=true;		
 		initTagList();
+		
 	}
 	@Override
 	public void buildExtendedComponents() {
@@ -200,14 +205,16 @@ public class PlaneCompUI extends ElementsCompUI
 		setPosY(null,OPTIONAL);
 		setPosZ(null,OPTIONAL);
 		
-		planePosZ.setEnable(false);
-		planePosT.setEnable(false);
-		planePosC.setEnable(false);
-		deltaT.setEnable(false);
-		exposureTime.setEnable(false);
-		posX.setEnable(false);
-		posY.setEnable(false);
-		posZ.setEnable(false);
+		
+		
+//		planePosZ.setEnable(false);
+//		planePosT.setEnable(false);
+//		planePosC.setEnable(false);
+//		deltaT.setEnable(false);
+//		exposureTime.setEnable(false);
+//		posX.setEnable(false);
+//		posY.setEnable(false);
+//		posZ.setEnable(false);
 	}
 	@Override
 	public void clearDataValues() {
@@ -248,47 +255,47 @@ public class PlaneCompUI extends ElementsCompUI
 	public void setDeltaT(Time value, boolean prop)
 	{
 		String val = (value != null) ? String.valueOf(value.value()) : "";
-		String unit=(value!=null) ? value.unit().getSymbol() :"?";
+		Unit unit=(value!=null) ? value.unit() : TagNames.DELTA_T_UNIT;
 		if(deltaT == null) 
-			deltaT = new TagData("Delta T ["+unit+"]: ",val,prop,TagData.TEXTFIELD);
+			deltaT = new TagData(TagNames.DELTA_T,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			deltaT.setTagValue(val,prop);
+			deltaT.setTagValue(val,unit,prop);
 	}
 	public void setExposureTime(Time value, boolean prop)
 	{
 		String val = (value != null) ? String.valueOf(value.value()) : "";
-		String unit=(value!=null) ? value.unit().getSymbol() :"?";
+		Unit unit=(value!=null) ? value.unit() :TagNames.EXPOSURETIME_UNIT;
 		if(exposureTime == null) 
-			exposureTime = new TagData("Exposure Time ["+unit+"]: ",val,prop,TagData.TEXTFIELD);
+			exposureTime = new TagData(TagNames.EXPOSURETIME,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			exposureTime.setTagValue(val,prop);
+			exposureTime.setTagValue(val,unit,prop);
 	}
 	public void setPosX(Length value, boolean prop)
 	{
 		String val = (value != null) ? String.valueOf(value.value()) : "";
-		String unit=(value!=null) ? value.unit().getSymbol() :"?";
+		Unit unit=(value!=null) ? value.unit() :TagNames.STAGE_POS_X_UNIT;
 		if(posX == null) 
-			posX = new TagData("Position X ["+unit+"]: ",val,prop,TagData.TEXTFIELD);
+			posX = new TagData(TagNames.STAGE_POS_X,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			posX.setTagValue(val,prop);
+			posX.setTagValue(val,unit,prop);
 	}
 	public void setPosY(Length value, boolean prop)
 	{
 		String val = (value != null) ? String.valueOf(value.value()) : "";
-		String unit=(value!=null) ? value.unit().getSymbol() :"?";
+		Unit unit=(value!=null) ? value.unit():TagNames.STAGE_POS_Y_UNIT;
 		if(posY == null) 
-			posY = new TagData("Position Y ["+unit+"]: ",val,prop,TagData.TEXTFIELD);
+			posY = new TagData(TagNames.STAGE_POS_Y,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			posY.setTagValue(val,prop);
+			posY.setTagValue(val,unit,prop);
 	}
 	public void setPosZ(Length value, boolean prop)
 	{
 		String val = (value != null) ? String.valueOf(value.value()) : "";
-		String unit=(value!=null) ? value.unit().getSymbol() :"?";
+		Unit unit=(value!=null) ? value.unit():TagNames.STAGE_POS_Z_UNIT;
 		if(posZ == null) 
-			posZ = new TagData("Position Z ["+unit+"]: ",val,prop,TagData.TEXTFIELD);
+			posZ = new TagData(TagNames.STAGE_POS_Z,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			posZ.setTagValue(val,prop);
+			posZ.setTagValue(val,unit,prop);
 	}
 
 	@Override
@@ -299,9 +306,7 @@ public class PlaneCompUI extends ElementsCompUI
 
 	public void addData(Plane p) 
 	{
-		if(plane!=null){
-			
-		}else if(p!=null){
+		if(p!=null){
 			plane=p;
 		}
 		setGUIData();

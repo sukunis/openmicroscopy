@@ -35,6 +35,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveSettingsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.PlaneCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.PlaneSliderCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.SampleCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
@@ -72,6 +73,7 @@ public class MetaDataModel
 	private ElementsCompUI experimentUI;
 	private ElementsCompUI objectiveUI;
 	private ElementsCompUI imgEnvUI;
+	private ElementsCompUI planeSliderUI;
 	private ElementsCompUI sampleUI;
 	
 	// list of lightPaths for channel of current image. List index== channelIndex
@@ -130,6 +132,7 @@ public class MetaDataModel
 		sampleUI=null;
 		objectiveUI=null;
 		imgEnvUI=null;
+		planeSliderUI=null;
 		
 		filterList=null;
 		dichroicList=null;
@@ -400,7 +403,6 @@ public class MetaDataModel
 	{
 		if(detectorList!=null){
 			detectorList.add(d);
-			int size=lightSrcList.size();
 			try {
 				Detector l=((DetectorCompUI) d).getData();
 			} catch (Exception err) {
@@ -612,7 +614,6 @@ public class MetaDataModel
 	{
 		if(lightSrcList!=null){
 			lightSrcList.add(e);
-			int size=lightSrcList.size();
 			try {
 				LightSource l=((LightSourceCompUI) e).getData();
 			} catch (Exception err) {
@@ -708,6 +709,16 @@ public class MetaDataModel
 	}
 	
 
+	public PlaneSliderCompUI getPlaneModel()
+	{
+		return (PlaneSliderCompUI)planeSliderUI;
+	}
+	
+	public void setPlaneModel(PlaneSliderCompUI p)
+	{
+		planeSliderUI=p;
+	}
+	
 	public ImagingEnvironmentCompUI getImgEnvModel() 
 	{
 		return (ImagingEnvironmentCompUI)imgEnvUI;
@@ -720,6 +731,8 @@ public class MetaDataModel
 		else
 			return ((ImagingEnvironmentCompUI) imgEnvUI).getData();
 	}
+	
+	
 	
 	public void createAndLinkNewInstrument(OME o)
 	{
@@ -803,7 +816,6 @@ public class MetaDataModel
 	
 	public void setDichroicList(List<Dichroic> list)
 	{
-		System.out.println("setDichroicList: size: "+list.size());
 		dichroicList=list;
 //		linkedChannelForDichroic=new ArrayList<Integer>(Collections.nCopies(dichroicList.size(), -1));
 	}
@@ -892,7 +904,6 @@ public class MetaDataModel
 			
 			for(int i=0; i<emF.size(); i++){
 				Filter f=emF.get(i);
-				System.out.println("updateLightPathElems: Channel: "+channelIdx+" :: "+f.getID());
 				if(f.getID()==null || f.getID().equals("")){
 					String id=appendNewFilter(f,id1,filterList.size(),channelIdx);
 					f.setID(id);
@@ -905,7 +916,6 @@ public class MetaDataModel
 						f.setID(id);
 					}
 				}
-				System.out.println("updateLightPathElems: Channel: "+channelIdx+" :: "+f.getID());
 				lP.setLinkedEmissionFilter(i, f);
 			}
 			

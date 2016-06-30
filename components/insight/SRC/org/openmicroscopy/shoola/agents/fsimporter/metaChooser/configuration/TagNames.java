@@ -5,6 +5,7 @@ import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Power;
+import ome.units.quantity.Time;
 import ome.units.unit.Unit;
 
 public class TagNames 
@@ -38,11 +39,18 @@ public class TagNames
 	public static final String ILLUMTYPE="Illumination Type";
 	public static final String EXPOSURETIME="Exposure Time";
 	public static final String EXCITWAVELENGTH="Excitation Wavelength";
-	public static final String EMMISIONWAVELENGTH="Emission Wavelength";
+	public static final String EMISSIONWAVELENGTH="Emission Wavelength";
 	public static final String IMAGINGMODE="Imaging Mode";
 	public static final String ILLUMINATIONMODE="Illumination Mode";
 	public static final String CONTRASTMETHOD="Contrast Method";
 	public static final String NDFILTER="ND Filter";
+	public static final String PINHOLESIZE="Pinhole Size";
+	
+	public static final Unit<Length> PINHOLESIZE_UNIT=UNITS.MICROM;
+	public static final Unit<Length> EXCITATIONWL_UNIT=UNITS.NM;
+	public static final Unit<Length> EMISSIONWL_UNIT=UNITS.NM;
+	public static final Unit<Time> EXPOSURETIME_UNIT=UNITS.S;
+	
 	
 	//Detector
 //	private final String L_MODEL="Model";
@@ -137,10 +145,20 @@ public class TagNames
 	public static final String FILTER_CLASS_EX="Exitation Filter";
 	public static final String FILTER_CLASS_D="Dichroic";
 	
-	
 //	public static final String MODEL="Model";
 //	public static final String MANUFAC="Manufacturer";
 //	public static final String TYPE="Type";
 	public static final String FILTERWHEEL="Filterwheel";
+	
+	//Plane
+	public static final String DELTA_T="Delta T";
+	public static final String STAGE_POS_X="Stage Pos X";
+	public static final String STAGE_POS_Y="Stage Pos Y";
+	public static final String STAGE_POS_Z="Stage Pos Z";
+	
+	public static final Unit<Time> DELTA_T_UNIT=UNITS.S;
+	public static final Unit<Length> STAGE_POS_X_UNIT=UNITS.REFERENCEFRAME;
+	public static final Unit<Length> STAGE_POS_Y_UNIT=UNITS.REFERENCEFRAME;
+	public static final Unit<Length> STAGE_POS_Z_UNIT=UNITS.REFERENCEFRAME;
 	
 }

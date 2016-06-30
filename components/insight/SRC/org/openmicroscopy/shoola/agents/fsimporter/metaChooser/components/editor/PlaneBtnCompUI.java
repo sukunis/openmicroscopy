@@ -52,7 +52,7 @@ public class PlaneBtnCompUI extends JPanel
 	{
 		setLayout(new BorderLayout());
 		List<PlaneCompUI> list=new ArrayList<PlaneCompUI>();
-		PlaneCompUI plane=new PlaneCompUI();
+		PlaneCompUI plane=new PlaneCompUI(null);
 		plane.createDummyPane(true);
 		list.add(plane);
 		createGUI(list,1,1,1);

@@ -241,8 +241,8 @@ public class MetaDataUI extends JPanel
 					break;
 				case PLANE_DATA:
 					LOGGER.info("[GUI] -- init PLANE modul");
-					PlaneCompUI pUI=new PlaneCompUI();
-					//				model.setPlane(pUI);
+					PlaneCompUI pUI=new PlaneCompUI(null);
+					model.addPlaneModul(pUI);
 					initPlanesUI=true;
 					planeModul=subm;
 					break;
@@ -515,7 +515,7 @@ public class MetaDataUI extends JPanel
 					}
 					
 				}
-				LOGGER.info("[DATA] -- load PLANE");
+				LOGGER.info("[DATA] -- load PLANE ("+planes.size()+")");
 			}catch(Exception e){
 				LOGGER.error("[DATA] -- PLANE data load failed");
 				ExceptionDialog ld = new ExceptionDialog("Plane Data Error!", 
@@ -687,6 +687,7 @@ public class MetaDataUI extends JPanel
 			List<LightSource> lightSources) 
 	{
 		if(initLightSrcUI){
+			
 			if(	lightSources!=null && !lightSources.isEmpty())
 			{
 				boolean dataAvailable=false;
@@ -815,6 +816,7 @@ public class MetaDataUI extends JPanel
 		if(initImageUI){
 			ImageCompUI ui=model.getImageModul();
 			ui.addData(image, false);
+			
 		}
 			readObjectiveData(image,objList);
 			readSampleData(image,annot);
@@ -1059,7 +1061,7 @@ public class MetaDataUI extends JPanel
 			for(int i=0; i<model.getNumberOfChannels();i++)
 			{
 				String name= model.getChannel(i)!=null ? model.getChannel(i).getName() : "Channel";
-				name=name==null ? "Channel" : name;
+				name= (name==null || name.isEmpty()) ? ((i==0 ? "Channel " : "# ")+String.valueOf(i)) : name;
 				detectorPane.add(control.activateDetectorModulView(i,name,customSett.getDetectorConf()),name);
 				
 				lightSrcPane.add(control.activateLightSrcModulView(i,name,customSett.getLightSrcConf()),name);
@@ -1379,9 +1381,10 @@ public class MetaDataUI extends JPanel
 								model.getPixelsDimT(),model.getPixelsDimZ(),model.getPixelsDimC());
 						//Tab of planes
 						planeDialog=createPlaneDialog(plane,"Plane/Stage Positions",400,800);
-						planeDialog.setVisible(true);
+						
 					}
 				}
+				planeDialog.setVisible(true);
 			}
 		});
 		return btnPlanePos;

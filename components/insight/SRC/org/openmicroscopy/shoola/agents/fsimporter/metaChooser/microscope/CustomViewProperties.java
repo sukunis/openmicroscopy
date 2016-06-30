@@ -317,13 +317,14 @@ public class CustomViewProperties
 		channelConf.setTag(TagNames.COLOR,null,null,null);
 		channelConf.setTag(TagNames.FLUOROPHORE,null,null,null);
 		channelConf.setTag(TagNames.ILLUMTYPE,null,null,null);
-		channelConf.setTag(TagNames.EXPOSURETIME,null,null,null);
-		channelConf.setTag(TagNames.EXCITWAVELENGTH,null,null,null);
-		channelConf.setTag(TagNames.EMMISIONWAVELENGTH,null,null,null);
+		channelConf.setTag(TagNames.EXPOSURETIME,null,TagNames.EMISSIONWL_UNIT.getSymbol(),null);
+		channelConf.setTag(TagNames.EXCITWAVELENGTH,null,TagNames.EXCITATIONWL_UNIT.getSymbol(),null);
+		channelConf.setTag(TagNames.EMISSIONWAVELENGTH,null,null,null);
 		channelConf.setTag(TagNames.IMAGINGMODE,null,null,null);
 		channelConf.setTag(TagNames.ILLUMINATIONMODE,null,null,null);
 		channelConf.setTag(TagNames.CONTRASTMETHOD,null,null,null);
 		channelConf.setTag(TagNames.NDFILTER,null,null,null);
+		channelConf.setTag(TagNames.PINHOLESIZE,null,TagNames.PINHOLESIZE_UNIT.getSymbol(),null);
 		
 		oConf=new ModuleConfiguration();
 		oConf.setTag(TagNames.MODEL,null,null,null);

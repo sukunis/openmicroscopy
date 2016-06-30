@@ -137,9 +137,6 @@ public class LightPathEditor extends JDialog implements ActionListener
 		addBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				try{
-				System.out.println("new Filter: "+((Filter)filterUI.getData()).getModel());
-				}catch(Exception ex){ex.printStackTrace();}
 				lightPathTable.appendElem(filterUI, "");
 			}
 		});

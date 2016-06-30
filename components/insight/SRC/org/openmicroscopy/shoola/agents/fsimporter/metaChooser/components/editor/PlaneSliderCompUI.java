@@ -8,10 +8,13 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -33,19 +36,23 @@ public class PlaneSliderCompUI extends ElementsCompUI
 	
 	private int numT,numZ,numC;
 	
+	private JTextField posT;
+	
 	
 	public PlaneSliderCompUI(List<ElementsCompUI> plist,int t,int z,int c)
 	{
 		setLayout(new BorderLayout());
 		if(plist==null){
 			List<ElementsCompUI> list=new ArrayList<ElementsCompUI>();
-			PlaneCompUI plane=new PlaneCompUI();
+			PlaneCompUI plane=new PlaneCompUI(null);
 			plane.createDummyPane(true);
 			list.add(plane);
 			createGUI(list,1,1,1);
 		}else{
 			createGUI(plist,t,z,c);
 		}
+		revalidate();
+		repaint();
 	}
 	
 	private void createGUI(List<ElementsCompUI> list,int t,int z,int c)
@@ -54,7 +61,16 @@ public class PlaneSliderCompUI extends ElementsCompUI
 		numZ=z;
 		numC=c;
 		
+		
+		JPanel editT=new JPanel();
+		editT.setLayout(new BoxLayout(editT,BoxLayout.X_AXIS));
+		posT = new JTextField("");
+		JButton minusTBtn= new JButton("<");
+		JButton plusTBtn= new JButton(">");
+		
+		
 		JLabel labelT=new JLabel("T: ");
+		int maxTickSpace= t < 10 ? 2 : (t < 20 ? 5 : 10);
 		if(t>0){
 			sliderT = new JSlider( 0, t-1, 0 );
 		}else{
@@ -70,12 +86,20 @@ public class PlaneSliderCompUI extends ElementsCompUI
 			public void stateChanged(ChangeEvent e) {
 				int cardID=(numZ*numC)*(sliderT.getValue())+numC*(sliderZ.getValue())+sliderC.getValue();
 				cl.show(cardP,String.valueOf(cardID));
+				posT.setText(String.valueOf(numT));
 			}
 		});
 		labelT.setLabelFor(sliderT);
-
+		
+		editT.add(sliderT);
+		editT.add(minusTBtn);
+		editT.add(posT);
+		editT.add(plusTBtn);
+		
+		
 		
 		JLabel labelZ=new JLabel("Z: ");
+		maxTickSpace= z < 10 ? 2 : (z < 20 ? 5 : 10);
 		if(z>0){
 			sliderZ = new JSlider( 0, z-1, 0 );
 		}else{
@@ -96,6 +120,7 @@ public class PlaneSliderCompUI extends ElementsCompUI
 		labelZ.setLabelFor(sliderZ);
 
 		JLabel labelC = new JLabel("C: ");
+		maxTickSpace= c < 10 ? 2 : (c < 20 ? 5 : 10);
 		if(c>0){
 			sliderC = new JSlider( 0, c-1, 0 );
 		}else{
@@ -103,7 +128,7 @@ public class PlaneSliderCompUI extends ElementsCompUI
 		}
 
 		sliderC.setPaintTicks( true );
-		sliderC.setMajorTickSpacing( 10 );
+		sliderC.setMajorTickSpacing( maxTickSpace );
 		sliderC.setMinorTickSpacing( 1 );
 		//		sliderC.setPaintTrack( false );
 		sliderC.createStandardLabels(1);
@@ -122,7 +147,13 @@ public class PlaneSliderCompUI extends ElementsCompUI
 		
 		cl = new CardLayout();
 		cardP=new JPanel(cl);
-		addToCardPane(cardP,list, idList);
+//		addToCardPane(cardP,list, idList);
+		if(list==null) return;
+		for(int i=0; i< list.size(); i++){
+			PlaneCompUI pUI=(PlaneCompUI) list.get(i);
+			pUI.buildComponents();
+    		cardP.add(pUI,idList.get(i));
+		}
 		
 		List<JLabel> myLabels=new ArrayList<JLabel>();
 		myLabels.add(labelT);
@@ -131,6 +162,7 @@ public class PlaneSliderCompUI extends ElementsCompUI
 		
 		List<JComponent> myFields=new ArrayList<JComponent>();
 		myFields.add(sliderT);
+//		myFields.add(editT);
 		myFields.add(sliderZ);
 		myFields.add(sliderC);
 		
@@ -138,6 +170,7 @@ public class PlaneSliderCompUI extends ElementsCompUI
 		JPanel btnPane=new JPanel();
 		btnPane.setLayout(myGridbag);
 		addLabelTextRows(myLabels,myFields,myGridbag,btnPane);
+		
 		
 		this.add(btnPane,BorderLayout.NORTH);
 		this.add(cardP,BorderLayout.CENTER);
