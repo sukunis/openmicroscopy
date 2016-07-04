@@ -25,6 +25,7 @@ import ome.units.unit.Unit;
 import ome.xml.model.Channel;
 import ome.xml.model.Image;
 import ome.xml.model.Pixels;
+import ome.xml.model.StageLabel;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -44,10 +45,6 @@ public class ImageCompUI extends ElementsCompUI
 	private TagData timeIncrement;
 	private TagData wellNr;
 	private List<TagData> tagList;
-	
-	private Unit<Length> sizeUnit;
-	private Unit<Time> timeUnit;
-	
 	
 	
 	private Image image;
@@ -85,8 +82,6 @@ public class ImageCompUI extends ElementsCompUI
 	
 	public ImageCompUI(ModuleConfiguration objConf)
 	{
-		sizeUnit=UNITS.MICROM;
-		timeUnit=UNITS.SECOND;
 		initGUI();
 		if(objConf==null)
 			createDummyPane(false);
@@ -235,7 +230,8 @@ public class ImageCompUI extends ElementsCompUI
 			Timestamp stamp=copyIn.getAcquisitionDate();
 			Length pixelSizeX=copyIn.getPixels().getPhysicalSizeX();
 			Length pixelSizeY=copyIn.getPixels().getPhysicalSizeY();
-//			//TODO stagePos,wellNr,expRef
+//			//TODO wellNr,expRef
+			StageLabel stageLabel=copyIn.getStageLabel();
 			Pixels p=image.getPixels();
 			
 			if(name!=null && !name.equals("")) image.setName(name);
@@ -250,6 +246,7 @@ public class ImageCompUI extends ElementsCompUI
 			if(stamp!=null) image.setAcquisitionDate(stamp);
 			if(pixelSizeX!=null) p.setPhysicalSizeX(pixelSizeX);
 			if(pixelSizeY!=null) p.setPhysicalSizeY(pixelSizeY);
+			if(stageLabel!=null) image.setStageLabel(stageLabel);
 			
 			
 		}
@@ -279,7 +276,9 @@ public class ImageCompUI extends ElementsCompUI
 			} catch (NullPointerException e) { }
 			//TODO
 
-			try{setStagePos(new String[2], ElementsCompUI.REQUIRED);
+			try{
+				StageLabel stage=image.getStageLabel();
+				setStagePos(stage.getX(),stage.getY(), ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 
 			try{setTimeIncrement(image.getPixels().getTimeIncrement(), ElementsCompUI.REQUIRED);
@@ -351,10 +350,8 @@ public class ImageCompUI extends ElementsCompUI
 			LOGGER.error("[DATA] can't read IMAGE pixel type input");
 		}
 		try{
-			image.getPixels().setPhysicalSizeX(pixelSize.getTagValue(0).equals("") ?
-					null : new Length(Double.valueOf(pixelSize.getTagValue(0)),sizeUnit));
-			image.getPixels().setPhysicalSizeY(pixelSize.getTagValue(1).equals("") ?
-					null : new Length(Double.valueOf(pixelSize.getTagValue(1)),sizeUnit));
+			image.getPixels().setPhysicalSizeX(parseToLength(pixelSize.getTagValue(0),pixelSize.getTagUnit()));
+			image.getPixels().setPhysicalSizeY(parseToLength(pixelSize.getTagValue(1),pixelSize.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE pixel size input");
 		}
@@ -371,16 +368,21 @@ public class ImageCompUI extends ElementsCompUI
 		}
 		try{
 			image.getPixels().setTimeIncrement(timeIncrement.getTagValue().equals("")?
-					null : new Time(Double.valueOf(timeIncrement.getTagValue()),timeUnit));
+					null : new Time(Double.valueOf(timeIncrement.getTagValue()),timeIncrement.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE time increment input");
 		}
 		
-		//TODO: stagePos,wellNr,stepSize
-
-//		image.setObjectiveSettings(objectiveSett.getData());
-		
+		//TODO: wellNr,stepSize
+		try {
+			image.getStageLabel().setX(parseToLength(stagePos.getTagValue(0),stagePos.getTagUnit()));
+			image.getStageLabel().setY(parseToLength(stagePos.getTagValue(1),stagePos.getTagUnit()));
+		} catch (Exception e) {
+			LOGGER.error("[DATA] can't read IMAGE stage position input");
+		}
 	}
+	
+	
 	public static void mergeData(Image in, Image imageOME) 
 	{
 		if(imageOME==null ){
@@ -435,7 +437,7 @@ public class ImageCompUI extends ElementsCompUI
 		if(stepSize!=null) stepSize.setEnable(false);
 		addTagToGUI(timeIncrement);
 		addTagToGUI(stagePos);
-		if(stagePos!=null) stagePos.setEnable(false);
+//		if(stagePos!=null) stagePos.setEnable(false);
 		addTagToGUI(wellNr);
 		if(wellNr!=null) wellNr.setEnable(false);
 		
@@ -465,7 +467,7 @@ public class ImageCompUI extends ElementsCompUI
 		setPixelType(null, ElementsCompUI.OPTIONAL);
 		setPixelSizeXY(null, null, ElementsCompUI.OPTIONAL);
 		setDimZTC(new String[3], ElementsCompUI.OPTIONAL);
-		setStagePos(new String[2], ElementsCompUI.OPTIONAL);
+		setStagePos(null,null, ElementsCompUI.OPTIONAL);
 		setStepSize(null,ElementsCompUI.OPTIONAL);
 		setTimeIncrement(null, ElementsCompUI.OPTIONAL);
 		setWellNr(null, ElementsCompUI.OPTIONAL);
@@ -525,7 +527,7 @@ public class ImageCompUI extends ElementsCompUI
 						dimZTC.setVisible(true);
 						break;
 					case TagNames.STAGEPOS:
-						setStagePos(new String[2], prop);
+						setStagePos(null,null, prop);
 						stagePos.setVisible(true);
 						break;
 					case TagNames.STEPSIZE:
@@ -601,14 +603,15 @@ public class ImageCompUI extends ElementsCompUI
 	{
 		String valX = (valueX != null) ? String.valueOf(valueX.value()) : "";
 		String valY = (valueY != null) ? String.valueOf(valueY.value()) : "";
-		sizeUnit=(valueX!=null) ? valueX.unit() : sizeUnit;
+		Unit unit=(valueX!=null) ? valueX.unit() : TagNames.PIXELSIZE_UNIT;
 		String[] val= {valX,valY};
 		if(pixelSize == null) 
-			pixelSize = new TagData(TagNames.PIXELSIZE+"["+sizeUnit.getSymbol()+"]: ",val,prop,TagData.ARRAYFIELDS);
+			pixelSize = new TagData(TagNames.PIXELSIZE+"["+unit.getSymbol()+"]: ",val,prop,TagData.ARRAYFIELDS);
 		else {
 			pixelSize.setTagValue(valX,0,prop);
 			pixelSize.setTagValue(valY,1,prop);
 		}
+		pixelSize.setTagUnit(unit);
 	}
 	public void setDimZTC(String[] value, boolean prop)
 	{
@@ -622,14 +625,20 @@ public class ImageCompUI extends ElementsCompUI
 	}
 	
 	//TODO
-	public void setStagePos(String[] value, boolean prop)
+	public void setStagePos(Length valueX, Length valueY, boolean prop)
 	{
-		if(stagePos == null) 
-			stagePos = new TagData(TagNames.STAGEPOS+": ",value,prop,TagData.ARRAYFIELDS);
-		else {
-			stagePos.setTagValue(value[0],0,prop);
-			stagePos.setTagValue(value[1],1,prop);
+		String valX = (valueX != null) ? String.valueOf(valueX.value()) : "";
+		String valY = (valueY != null) ? String.valueOf(valueY.value()) : "";
+		Unit unit=(valueX!=null) ? valueX.unit() : TagNames.STAGEPOS_UNIT;
+		String symbol = unit==UNITS.REFERENCEFRAME ? "rf" : unit.getSymbol();
+		String[] val= {valX,valY};
+		if(stagePos == null){ 
+			stagePos = new TagData(TagNames.STAGEPOS+"["+symbol+"]: ",val,prop,TagData.ARRAYFIELDS);
+		}else {
+			stagePos.setTagValue(valX,0,prop);
+			stagePos.setTagValue(valY,1,prop);
 		}
+		stagePos.setTagUnit(unit);
 	}
 	
 
@@ -652,11 +661,11 @@ For example in a video stream.
 	public void setTimeIncrement(Time value, boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value.value()) :"";
-		timeUnit=(value!=null) ? value.unit() : timeUnit;
+		Unit unit=(value!=null) ? value.unit() : TagNames.TIMEINC_UNIT;
 		if(timeIncrement == null) 
-			timeIncrement = new TagData(TagNames.TIMEINC+" ["+timeUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			timeIncrement = new TagData(TagNames.TIMEINC,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			timeIncrement.setTagValue(val,prop);
+			timeIncrement.setTagValue(val,unit,prop);
 	}
 	public void setWellNr(String value, boolean prop)
 	{

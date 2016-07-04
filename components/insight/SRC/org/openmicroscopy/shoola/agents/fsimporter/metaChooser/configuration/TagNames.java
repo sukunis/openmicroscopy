@@ -90,6 +90,11 @@ public class TagNames
 	public static final String TIMEINC="Time Increment";
 	public static final String WELLNR="Well #";
 	
+	public static final Unit<Length> STAGEPOS_UNIT=UNITS.REFERENCEFRAME;
+	public static final Unit<Length> PIXELSIZE_UNIT=UNITS.MICROM;
+	public static final Unit<Time> TIMEINC_UNIT=UNITS.S;
+	
+	
 	//ImageEnv
 	public static final String TEMP="Temperature";
 	public static final String AIRPRESS="Air Pressure";
