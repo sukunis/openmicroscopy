@@ -436,7 +436,7 @@ public class ChannelCompUI extends ElementsCompUI
 		if(c.equals(""))
 			return null;
 		
-		return new Color(Integer.valueOf(c));
+		return new Color(Integer.valueOf(c, 16).intValue());//Integer.valueOf(c));
 	}
 	private IlluminationType parseIllumType(String c) throws EnumerationException 
 	{
@@ -720,7 +720,8 @@ public class ChannelCompUI extends ElementsCompUI
 	
 	public void setColor(Color value, boolean prop)
 	{
-		String val= (value != null) ? value.toString():"";
+		String val= (value != null) ? Integer.toHexString(value.getValue()):"";
+		
 		if(color == null) 
 			color = new TagData(TagNames.COLOR+": ",val,prop,TagData.TEXTFIELD);
 		else 
