@@ -45,6 +45,7 @@ import javax.swing.plaf.ColorUIResource;
 import javax.swing.text.JTextComponent;
 
 import loci.common.DateTools;
+import ome.units.UNITS;
 import ome.units.unit.Unit;
 import ome.xml.model.Experimenter;
 import ome.xml.model.primitives.Timestamp;
@@ -492,6 +493,11 @@ public class TagData
 		return unit;
 	}
 
+	public void setTagUnit(Unit u)
+	{
+		unit=u;
+	}
+	
 	public void setTagValue(Experimenter val)
 	{
 		if(val==null || val.equals("")){
@@ -507,7 +513,8 @@ public class TagData
 	public void setTagValue(String val,Unit unit, boolean property)
 	{
 		if(this.unit!=unit){
-			label.setText(this.name+" ["+unit.getSymbol()+"]:");
+			String unitSymbol=unit.equals(UNITS.REFERENCEFRAME)? "rf" : unit.getSymbol();
+			label.setText(this.name+" ["+unitSymbol+"]:");
 			this.unit=unit;
 		}
 		setTagValue(val);
