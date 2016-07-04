@@ -1,5 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -19,12 +20,11 @@ import org.slf4j.LoggerFactory;
 
 public class CustomViewProperties 
 {
-	public static final String[] MICLIST={"Unspecified","DeltaVision Elite","Leica LSM SP5","Olympus LSM Fluoview",
-		"Olympus TIRF 3-Line","Olympus TIRF 4-Line","Olympus TIRF 4-Line LCI","Zeiss Cell Observer SD",
-		"Zeiss LSM 510 META NLO","Zeiss TIRF 3"};
+//	public static final String[] MICLIST={"Unspecified","DeltaVision Elite","Leica LSM SP5","Olympus LSM Fluoview",
+//		"Olympus TIRF 3-Line","Olympus TIRF 4-Line","Olympus TIRF 4-Line LCI","Zeiss Cell Observer SD",
+//		"Zeiss LSM 510 META NLO","Zeiss TIRF 3"};
 	
 	/** Logger for this class. */
-//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
 	 private static final org.slf4j.Logger LOGGER =
 	    	    LoggerFactory.getLogger(CustomViewProperties.class);
     
@@ -61,6 +61,8 @@ public class CustomViewProperties
 	private List<Detector> micDetectorList;
 	private List<LightSource> micLightSrcList;
 	private List<Filter> micLightPathFilterList;
+
+	private File file;
 	
 	public CustomViewProperties()
 	{
@@ -241,20 +243,7 @@ public class CustomViewProperties
 		return moduleList;
 	}
 	
-//	private void loadGeneralView()
-//	{
-//		moduleList.add(new Submodule(MicSubmodule.IMAGE_DATA,GUIPlaceholder.Pos_A,1));
-//		moduleList.add(new Submodule(MicSubmodule.IMAGEENVIRONMENT_DATA,GUIPlaceholder.Pos_A,1));
-//		moduleList.add(new Submodule(MicSubmodule.PLANE_DATA, GUIPlaceholder.Pos_A, 1));
-//		
-//		moduleList.add(new Submodule(MicSubmodule.OBJECTIVE_DATA,GUIPlaceholder.Pos_B,1));
-//		moduleList.add(new Submodule(MicSubmodule.DETECTOR_DATA,GUIPlaceholder.Pos_C,1));
-//		moduleList.add(new Submodule(MicSubmodule.LIGHTSOURCE_DATA,GUIPlaceholder.Pos_D,1));
-//		moduleList.add(new Submodule(MicSubmodule.CHANNEL_DATA,GUIPlaceholder.Pos_E,1));
-//		moduleList.add(new Submodule(MicSubmodule.LIGHTPATH_DATA,GUIPlaceholder.Pos_F,1));
-//		moduleList.add(new Submodule(MicSubmodule.SAMPLE_DATA,GUIPlaceholder.Pos_G,1));
-//		moduleList.add(new Submodule(MicSubmodule.EXPERIMENT_DATA,GUIPlaceholder.Pos_H,1));
-//	}
+
 	
 	private void loadGeneralView()
 	{
@@ -447,6 +436,15 @@ public class CustomViewProperties
 	}
 	public void setMicLightPathFilterList(List<Filter> miclightPathFilterList) {
 		this.micLightPathFilterList = miclightPathFilterList;
+	}
+
+	public void setFile(File file) {
+		this.file=file;
+	}
+	
+	public File getFile()
+	{
+		return file;
 	}
 
 

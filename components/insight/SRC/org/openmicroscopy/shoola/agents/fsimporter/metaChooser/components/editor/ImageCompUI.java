@@ -500,7 +500,7 @@ public class ImageCompUI extends ElementsCompUI
 				String val=t.getValue();
 				boolean prop=t.getProperty()!= null ? Boolean.parseBoolean(t.getProperty()):
 					OPTIONAL;
-				if(name!=null){
+				if(name!=null && t.isVisible()){
 					switch (name) {
 					case TagNames.IMG_NAME:
 						setName(null,prop);

@@ -77,6 +77,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileWriterUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
@@ -442,7 +443,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    loadProfileButton.setToolTipText("Load another profile file ");
 	    loadProfileButton.setActionCommand("" + CMD_PROFILE);
 	    loadProfileButton.addActionListener(this);
-	    loadProfileButton.setEnabled(false);
+//	    loadProfileButton.setEnabled(false);
 	    
 	    loadHardwareSpecButton=new JButton("Load Specification");
 	    loadHardwareSpecButton.setBackground(UIUtilities.BACKGROUND);
@@ -1237,6 +1238,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			break;
 		case CMD_PROFILE:
 			LOGGER.info("[GUI-ACTION] -- load profile file");
+			UOSProfileWriterUI profileWriter=new UOSProfileWriterUI(customSettings);
+			profileWriter.setVisible(true);
 			break;
 		case CMD_SPECIFICATION:
 			LOGGER.info("[GUI-ACTION] -- load specification file");

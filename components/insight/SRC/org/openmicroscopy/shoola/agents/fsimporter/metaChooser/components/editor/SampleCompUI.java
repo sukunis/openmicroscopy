@@ -248,7 +248,7 @@ public class SampleCompUI extends ElementsCompUI
 				String val=t.getValue();
 				boolean prop=t.getProperty()!= null ? Boolean.parseBoolean(t.getProperty()):
 					OPTIONAL;
-				if(name!=null){
+				if(name!=null && t.isVisible()){
 					switch (name) {
 					case TagNames.PREPDATE:// no pre value possible
 						setPreparationDate(null, prop);

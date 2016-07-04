@@ -22,7 +22,11 @@ import org.w3c.dom.NodeList;
 
 import com.drew.metadata.Tag;
 
-
+/**
+ * Holds a list of visible tags and their configuration
+ * @author Kunis
+ *
+ */
 public class ModuleConfiguration 
 {
 	/** Logger for this class. */
@@ -57,12 +61,12 @@ public class ModuleConfiguration
 		return settingsTagConfList;
 	}
 	
-	private void setTag(String name, String val,String unit, String prop, List<TagConfiguration> thisList) 
+	private void setTag(String name, String val,String unit, String prop, List<TagConfiguration> thisList, boolean visible) 
 	{
 		Unit u=null;
 		try {
 			u = UOSHardwareReader.parseUnit(unit,name);
-			thisList.add(new TagConfiguration(name, val,u, prop));
+			thisList.add(new TagConfiguration(name, val,u, prop, visible));
 		} catch (Exception e) {
 			LOGGER.warn("[HARDWARE] can't parse unit of tag "+name+" ("+unit+")");
 			e.printStackTrace();
@@ -73,12 +77,12 @@ public class ModuleConfiguration
 	
 	public void setTag(String name, String val,String unit, String prop) 
 	{
-		setTag(name, val, unit,prop, tagConfList) ;
+		setTag(name, val, unit,prop, tagConfList, true) ;
 	}
 	
 	public void setSettingTag(String name, String val,String unit, String prop) 
 	{
-		setTag(name, val, unit, prop, settingsTagConfList);
+		setTag(name, val, unit, prop, settingsTagConfList, true);
 	}
 	
 
@@ -127,8 +131,8 @@ public class ModuleConfiguration
 		
 		
 
-		if(visible)
-			setTag(name,value,unitStr,prop,list);
+//		if(visible)
+			setTag(name,value,unitStr,prop,list, visible);
 	}
 	
 	

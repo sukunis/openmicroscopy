@@ -78,6 +78,8 @@ public class UOSProfileReader
 			return;
 		}
 		
+		view.setFile(file);
+		
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db;
 		try {
