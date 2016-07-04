@@ -1,6 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -11,7 +12,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -53,15 +56,18 @@ public class MetaDataView extends JPanel
     
     private OME ome;
     private File srcFile;
-//    private JComponent view;
     private MetaDataUI singleView;
     
-    private JTabbedPane seriesView;
+    private DefaultListModel seriesListModel;
+    private JPanel cardPane;
+    private CardLayout seriesCard; 
     
     private boolean seriesData;
     
     
-    
+    /**
+     * Constructor for place holder / dummy component
+     */
     public MetaDataView() 
     {
     	super(new BorderLayout());
@@ -69,13 +75,15 @@ public class MetaDataView extends JPanel
 	}
     
     /**
-     * Metadataview for file
-     * @param sett
-     * @param data
-     * @param fName
+     * Metadata GUI for file.
+     * @param sett GUI properties
+     * @param fName file name
+     * @param importData given import information for this data.
+	 * @param parentData given parent information for this data.
+	 * @param parentPanel parent JPanel of this component.
      */
 	public MetaDataView(CustomViewProperties sett,String fName,
-			ImportUserData importData, MetaDataModel parentData, JPanel view) throws Exception
+			ImportUserData importData, MetaDataModel parentData, JPanel parentPanel) throws Exception
 	{
 		super(new BorderLayout());
 		this.setBorder(BorderFactory.createEmptyBorder());
@@ -84,23 +92,13 @@ public class MetaDataView extends JPanel
 
 		ImageReader reader = new ImageReader();
 		IMetadata data=null;
-
 		
-		Cursor cursor=view.getCursor();
-		view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		Cursor cursor=parentPanel.getCursor();
+		parentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		
 		data = readMetadataFromFile(fName, reader);
-		
-//		ServiceFactory factory = new ServiceFactory();
-//		OMEXMLService service = factory.getInstance(OMEXMLService.class);
-//		IMetadata metadata = service.createOMEXMLMetadata();
-//		reader = new ImageReader();
-//		reader.setMetadataStore(metadata);
-//		reader.setId(file);
-		
-		
 
-		view.setCursor(cursor);
+		parentPanel.setCursor(cursor);
 		if(data==null){ 
 			singleView=new MetaDataUI(sett);
 			return ;
@@ -108,13 +106,6 @@ public class MetaDataView extends JPanel
 
 		LOGGER.info("### read "+ fName+" ###");
 
-		ServiceFactory factory = new ServiceFactory();
-		OMEXMLService service = factory.getInstance(OMEXMLService.class);
-		
-		String xml = service.getOMEXML((MetadataRetrieve) data);
-		ome = (OME) service.createOMEXMLRoot(xml);
-
-System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName());
 		srcFile=new File(fName);
 
 		if(reader.getSeriesCount()<2){
@@ -134,7 +125,11 @@ System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName())
 			
 		}else{
 			seriesData=true;
-			seriesView=new JTabbedPane();
+			
+			seriesListModel=new DefaultListModel();
+			seriesCard = new CardLayout();
+			cardPane=new JPanel(seriesCard);
+			
 			for(int j=0; j< reader.getSeriesCount(); j++){
 				LOGGER.info("[SERIE] ------------ read SERIE "+j+" of "+reader.getSeriesCount()+
 						": "+data.getImageName(j)+"---------------------" );
@@ -151,20 +146,30 @@ System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName())
 				//load data from file
 				loadFileData(fName, ome, j, metaUI);
 
-				seriesView.addTab("#"+j+": "+data.getImageName(j),(Component) metaUI);
+				// add series to cardPane
+				seriesListModel.addElement(data.getImageName(j));
+				cardPane.add(metaUI,data.getImageName(j));
 			}
-			add(seriesView,BorderLayout.CENTER);
+			add(cardPane,BorderLayout.CENTER);
 		}
 		
 	}
 	
-	
+	/**
+	 * 
+	 * @return listModel with names of series of given ome model
+	 */
+	public DefaultListModel getSeries()
+	{
+		return seriesListModel;
+	}
 
 	/**
-	 * @param fName
-	 * @param data
-	 * @param j
-	 * @param metaUI
+	 * Read data from OME o into given MetaDataUI component metaUI and link given metaUI to the OME own file.
+	 * @param fName given file
+	 * @param o OME of the given file
+	 * @param j series index
+	 * @param metaUI gui for filedata
 	 */
 	private void loadFileData(String fName, OME o, int j,
 			MetaDataUI metaUI) 
@@ -173,10 +178,14 @@ System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName())
 		metaUI.readData(o, j);
 	}
 	
+	
 	/**
-	 * Metadataview for directory
-	 * @param sett
-	 * @param name
+	 * Metadata GUI for directory.
+	 * @param sett GUI properties
+	 * @param name directory name
+	 * @param importData given import information for this dataset.
+	 * @param parentData given parent information for this dataset.
+	 * @param dirData metadata model for current directory
 	 */
 	public MetaDataView(CustomViewProperties sett, String name, 
 			ImportUserData importData, MetaDataModel parentData, MetaDataModel dirData)
@@ -200,7 +209,7 @@ System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName())
 			try {
 				singleView.addData(dirData);
 			} catch (Exception e) {
-				LOGGER.warn("[DATA] -- Can't add metadata from dir model");
+				LOGGER.warn("[DATA] -- Can't add metadata from dir model "+name);
 				e.printStackTrace();
 			}
 		}
@@ -213,7 +222,9 @@ System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName())
 	
 
 	/**
-	 * @param parentData
+	 * Add parent metadata to given metaData GUI.
+	 * @param parentData parent data model
+	 * @param pane metaData GUI
 	 */
 	private void loadParentData(MetaDataModel parentData,MetaDataUI pane) 
 	{
@@ -230,13 +241,18 @@ System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName())
 	}
 	
 	
-	
+	/**
+	 * Read meta data from given file into OMEXMLMetadata format and set it as the MetadataStore 
+	 * for given reader. Set global ome as MetadataRetrieve OMEXMLRoot. 
+	 * @param file source file
+	 * @param reader of the source file
+	 * @return metadata as OMEXMLMetadata format
+	 * @throws DependencyException
+	 * @throws ServiceException
+	 */
 	private IMetadata readMetadataFromFile(String file, 
 			ImageReader reader) throws DependencyException, ServiceException 
 	{
-		
-	
-		
 		//record metadata to ome-xml format
 		ServiceFactory factory=new ServiceFactory();
 		OMEXMLService service = factory.getInstance(OMEXMLService.class);
@@ -246,10 +262,6 @@ System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName())
 		try{
 			reader.setId(file);
 		}catch(FormatException | IOException e){
-//			LOGGER.error("Error read file");
-//			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-//					"Can't read metadata of "+file,e);
-//			ld.setVisible(true);
 			WarningDialog ld=new WarningDialog("Not supported file format for MetaData Editor!", 
 					"Can't read metadata of "+file+"! Format is not supported.");
 			ld.setVisible(true);
@@ -257,17 +269,24 @@ System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName())
 		}
 		
 		LOGGER.info("[DATA] -- use READER: "+reader.getReader().getClass().getName());
+		System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName());
+		
+		String xml = service.getOMEXML((MetadataRetrieve) metadata);
+		ome = (OME) service.createOMEXMLRoot(xml);
+		
 		return metadata;
 	}
 	
+	/**
+	 * 
+	 * @return component that holds a list of all serieModels of this data.
+	 */
 	public MetaDataModelObject getModelObject()
 	{
-		
 		List<MetaDataModel> list=new ArrayList<MetaDataModel>();
 		if(seriesData){
-			int series=seriesView.getTabCount();
-			for(int i=0; i<series; i++){
-				list.add(((MetaDataUI) seriesView.getComponentAt(i)).getModel());
+			for(Component comp:cardPane.getComponents()){
+				list.add(((MetaDataUI) comp).getModel());
 			}
 		}else{
 			list.add(singleView.getModel());
@@ -277,18 +296,18 @@ System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName())
 		return obj;
 	}
 	
+	/**
+	 * Save data from GUI to file.
+	 */
 	public void save()
 	{
 		if(ome!=null){
 			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
 			//file
 			if(seriesData){
-				JTabbedPane view=(JTabbedPane) getComponent(0);
-				int series=((JTabbedPane)view).getTabCount();
-				for(int i=0; i<series; i++){
-					list.add(((MetaDataUI) ((JTabbedPane)view).getComponentAt(i)).getModel());
+				for(Component comp:cardPane.getComponents()){
+					list.add(((MetaDataUI) comp).getModel());
 				}
-				MetaDataModelObject obj=new MetaDataModelObject(seriesData,list);
 				LOGGER.info("[SAVE] -- save model for series data");
 				LOGGER.info("[SAVE] -- save to "+srcFile.getAbsolutePath());
 				SaveMetadata saver=new SaveMetadata(ome, getModelObject(), null, srcFile);
@@ -313,21 +332,23 @@ System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName())
 		}
 	}
 	
+	/**
+	 * Shows all GUI data.
+	 */
 	public void setVisible()
 	{
-		
 		if(seriesData){
-			JTabbedPane view=(JTabbedPane) getComponent(0);
-			int series=((JTabbedPane)view).getTabCount();
-			for(int i=0; i<series; i++){
+			int i=0;
+			for(Component comp : cardPane.getComponents()){
 				try {
-					((MetaDataUI) ((JTabbedPane)view).getComponentAt(i)).showData();
+					((MetaDataUI) comp).showData();
 				} catch (Exception e) {
 					LOGGER.error("[DATA] CAN'T load METADATA gui");
 					ExceptionDialog ld = new ExceptionDialog("Metadata GUI Error!", 
-							"Can't load metadata gui",e);
+							"Can't load metadata gui for series "+i,e);
 					ld.setVisible(true);
 				}
+				i++;
 			}
 		}else{
 			try {
@@ -341,5 +362,14 @@ System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName())
 		}
 		revalidate();
 		repaint();
+	}
+	
+	/**
+	 * Shows card pane of given name on the top.
+	 * @param name
+	 */
+	public void showSeries(String name)
+	{
+		seriesCard.show(cardPane,name);
 	}
 }

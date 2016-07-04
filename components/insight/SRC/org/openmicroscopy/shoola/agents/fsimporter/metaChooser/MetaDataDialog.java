@@ -24,11 +24,13 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -38,7 +40,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -91,7 +96,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  */
 public class MetaDataDialog extends ClosableTabbedPaneComponent
-	implements ActionListener, PropertyChangeListener, TreeSelectionListener, TreeExpansionListener
+	implements ActionListener, PropertyChangeListener, TreeSelectionListener, TreeExpansionListener, ListSelectionListener
 {
 	
 	 /** Logger for this class. */
@@ -149,6 +154,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	public JTextArea textArea; 
 	
 	private JTree fileTree;
+	private JList seriesList;
 	
 	private JPanel metaPanel;
 //	private MetaDataUI dataView;
@@ -513,6 +519,12 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		fileTree.addTreeSelectionListener(this);
 		fileTree.addTreeExpansionListener(this);
 		
+		seriesList = new JList();
+        seriesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        seriesList.setSelectedIndex(0);
+        seriesList.addListSelectionListener(this);
+        seriesList.setVisibleRowCount(5);
+		
 		lastSelectionType=DIR;
 	}
 	
@@ -531,7 +543,32 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 		return fileView;
 	}
-
+	/**
+	 * Builds and lays out file view right side and the seriesbrowser
+	 * @return JPanel
+	 */
+	private JPanel buildFileViewExtended()
+	{
+		 //Create the list and put it in a scroll pane.
+        JPanel pane=new JPanel();
+        pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+        
+        
+		JScrollPane listScrollPane=new JScrollPane(seriesList);
+		pane.add(new JLabel("Series:"));
+		pane.add(listScrollPane);
+		
+		JSplitPane splitPane;		
+		splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,buildFileView(),pane);
+		splitPane.setResizeWeight(0.5);
+		splitPane.setDividerLocation(200);
+		JPanel fileView=new JPanel();
+		fileView.setLayout(new BorderLayout(0,0));
+		
+		fileView.add(splitPane);
+		
+		return fileView;
+	}
 	
 	
 	/**
@@ -616,7 +653,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	{
 		setLayout(new BorderLayout(0,0));
 		JSplitPane splitPane;		
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,buildFileView(),metaPanel);
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,buildFileViewExtended(),metaPanel);
 		splitPane.setResizeWeight(0.5);
 		splitPane.setDividerLocation(150);
 		
@@ -713,8 +750,16 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		lastNode=(FNode)fileTree.getLastSelectedPathComponent();
 		
 		metaPanel.removeAll();
-		if(panel!=null)
+		if(panel!=null){
 			metaPanel.add(panel,BorderLayout.CENTER);
+			DefaultListModel list=view.getSeries();
+			if(list!=null){
+				seriesList.setModel(list);
+				seriesList.setSelectedIndex(0);
+			}else{
+				seriesList.setModel(new DefaultListModel());
+			}
+		}
 		revalidate();
 		repaint();
 	}
@@ -1161,6 +1206,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 				MetaDataView view=null;
 				try {
 					view = new MetaDataView(customSettings, file, null, null,this);
+					
 					view.setVisible();
 				} catch (Exception e) {
 //					catch (DependencyException | ServiceException e) {
@@ -1174,6 +1220,13 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 				if(view!=null){
 					metaPanel.add(view,BorderLayout.CENTER);
 					viewFileDataButton.setSelected(true);	
+					DefaultListModel list=view.getSeries();
+					if(list!=null){
+						seriesList.setModel(list);
+						seriesList.setSelectedIndex(0);
+					}else{
+						seriesList.setModel(new DefaultListModel());
+					}
 				}
 				
 				revalidate();
@@ -1283,6 +1336,23 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	{
 //		System.out.println("[DEBUG] tree expand"+	
 //		fileTree.getLastSelectedPathComponent());
+	}
+
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) 
+	{
+		 if (e.getValueIsAdjusting() == false) {
+			 
+	            if (seriesList.getSelectedIndex() != -1) {
+	            	if(metaPanel.getComponentCount()>0){
+	            		Component c=metaPanel.getComponent(0);
+	            		if(c instanceof MetaDataView){
+	            			((MetaDataView) c).showSeries((String)seriesList.getSelectedValue());
+	            		}
+	            	}
+	            }
+		 }
 	} 
 
 
