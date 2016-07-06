@@ -77,7 +77,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileWriterUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileEditorUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
@@ -438,9 +438,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    refreshFilesButton.setActionCommand("" + CMD_REFRESH);
 	    refreshFilesButton.addActionListener(this);
 	    
-	    loadProfileButton=new JButton("Load Profile");
+	    loadProfileButton=new JButton("Customize...");
 	    loadProfileButton.setBackground(UIUtilities.BACKGROUND);
-	    loadProfileButton.setToolTipText("Load another profile file ");
+	    loadProfileButton.setToolTipText("Load/Save/Edit profile file to customize view.");
 	    loadProfileButton.setActionCommand("" + CMD_PROFILE);
 	    loadProfileButton.addActionListener(this);
 //	    loadProfileButton.setEnabled(false);
@@ -493,6 +493,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    UOSHardwareReader hardwareDef=new UOSHardwareReader(new File("hardwareUOSImporter.xml"));
 //	    dataView=new MicroscopeDataView(propReader.getViewProperties());
 	    customSettings=propReader.getViewProperties();
+	    if(customSettings==null)
+	    	customSettings=propReader.getDefaultProperties();
 	    
 	    customSettings.setMicObjList(hardwareDef.getObjectives());
 	    customSettings.setMicDetectorList(hardwareDef.getDetectors());
@@ -1238,8 +1240,11 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			break;
 		case CMD_PROFILE:
 			LOGGER.info("[GUI-ACTION] -- load profile file");
-			UOSProfileWriterUI profileWriter=new UOSProfileWriterUI(customSettings);
+			UOSProfileEditorUI profileWriter=new UOSProfileEditorUI(customSettings);
 			profileWriter.setVisible(true);
+			
+			customSettings=profileWriter.getProperties();
+			loadAndShowDataForSelection();
 			break;
 		case CMD_SPECIFICATION:
 			LOGGER.info("[GUI-ACTION] -- load specification file");

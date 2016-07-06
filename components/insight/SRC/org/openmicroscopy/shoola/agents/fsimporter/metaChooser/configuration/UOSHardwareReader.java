@@ -124,13 +124,18 @@ public class UOSHardwareReader
     private List<Filter> lightPathFilterList;
     
     private Unit unit;
+    private File file;
+    private String micName;
+    private boolean hasRead;
     
     
 	public UOSHardwareReader(File file)
 	{
+		hasRead=false;
 		if(file==null || !file.exists()){
 			return;
 		}
+		this.file=file;
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db;
 		try {
@@ -140,30 +145,41 @@ public class UOSHardwareReader
 			
 			readConfiguration(doc);
 			
-		} catch (ParserConfigurationException | SAXException | IOException e) {
+		} catch (Exception e) {
 			LOGGER.error("[VIEW_PROP] Can't read hardware file");
 			ExceptionDialog ld = new ExceptionDialog("Hardware File Error!", 
 					"Can't read given hardware file "+file.getAbsolutePath(),e);
 			ld.setVisible(true);
+			hasRead=false;
 		} 
+	}
+	
+	public boolean readSpecification()
+	{
+		return hasRead;
+	}
+	public File getFile()
+	{
+		return file;
+	}
+	
+	public String getMicName()
+	{
+		return micName;
 	}
 	
 	/**
 	 * Read the hardware element from given document.
 	 * @param doc
 	 */
-	private void readConfiguration(Document doc) 
+	private void readConfiguration(Document doc) throws Exception
 	{
 		NodeList root=doc.getElementsByTagName(HARDWARE);
 		if(root.getLength() >0){
 			Element node=(Element) root.item(0);
 
-			try{
-				UOSProfileReader.readMicName((Element)(node.getElementsByTagName(
+			micName=UOSProfileReader.readMicName((Element)(node.getElementsByTagName(
 						UOSProfileReader.MICROSCOPE)).item(0));
-			}catch(Exception e){
-				//				LOGGER.info("No MICROSCOPE NAME given");
-			}
 
 			loadElements(node.getElementsByTagName(SET_OBJECTIVE),OBJECTIVE);
 			loadElements(node.getElementsByTagName(SET_DETECTOR),DETECTOR);
@@ -173,6 +189,9 @@ public class UOSHardwareReader
 			loadElements(node.getElementsByTagName(SET_LIGHTSRC),LIGHTSRC_F);
 			loadElements(node.getElementsByTagName(SET_LIGHTSRC),LIGHTSRC_G);
 			loadElements(node.getElementsByTagName(SET_LIGHTSRC),LIGHTSRC_LED);
+			hasRead=true;
+		}else{
+			throw new Exception("unknown xml scheme!");
 		}
 	}
 

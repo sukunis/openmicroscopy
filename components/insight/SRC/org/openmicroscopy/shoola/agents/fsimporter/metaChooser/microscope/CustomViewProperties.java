@@ -20,9 +20,6 @@ import org.slf4j.LoggerFactory;
 
 public class CustomViewProperties 
 {
-//	public static final String[] MICLIST={"Unspecified","DeltaVision Elite","Leica LSM SP5","Olympus LSM Fluoview",
-//		"Olympus TIRF 3-Line","Olympus TIRF 4-Line","Olympus TIRF 4-Line LCI","Zeiss Cell Observer SD",
-//		"Zeiss LSM 510 META NLO","Zeiss TIRF 3"};
 	
 	/** Logger for this class. */
 	 private static final org.slf4j.Logger LOGGER =
@@ -44,7 +41,7 @@ public class CustomViewProperties
 		PLANE_DATA
 	}
 	
-	private List<Submodule> moduleList;
+//	private List<Submodule> moduleList;
 	
 	private ModuleConfiguration oConf;
 	private ModuleConfiguration detectorConf;
@@ -57,6 +54,8 @@ public class CustomViewProperties
 	private ModuleConfiguration imgEnvConf;
 	private ModuleConfiguration planeConf;
 	
+	private boolean init;
+	
 	private List<Objective> micObjList;
 	private List<Detector> micDetectorList;
 	private List<LightSource> micLightSrcList;
@@ -67,74 +66,66 @@ public class CustomViewProperties
 	public CustomViewProperties()
 	{
 		micName="Unspecified";
-		moduleList=new ArrayList<Submodule>();
+		init=false;
+//		moduleList=new ArrayList<Submodule>();
 		LOGGER.info("*** Load Custom View Properties from file ***");
 	}
 	
-//	public CustomViewProperties(String micName)
-//	{
-//		micName="Unspecified";
-//		moduleList=new ArrayList<Submodule>();
-//		LOGGER.info("*** Load Custom View Properties ***");
-//		
-//		loadView(micName);
-//	}
+	public void init()
+	{
+		if(!init)
+			loadCommonView();
+	}
 	
-	
-	
-	//TODO define views for mics
-//	private void loadView(String micName) 
-//	{
-//		switch (micName) {
-//		case "Unspecified":
-//			loadGeneralView();
-//			break;
-//
-//		default:
-//			loadGeneralView();
-//			break;
-//		}
-//		
-//	}
-	
+
 	public void setObjConf(ModuleConfiguration conf)
 	{
 		oConf=conf;
+		init=true;
 	}
 	public void setImageConf(ModuleConfiguration conf) {
 		imageConf=conf;
+		init=true;
 	}
 
 	public void setChannelConf(ModuleConfiguration conf) {
-		channelConf=conf;		
+		channelConf=conf;
+		init=true;
 	}
 
 	public void setExperimenterConf(ModuleConfiguration conf) {
 		expConf = conf;
+		init=true;
 	}
 
 	public void setDetectorConf(ModuleConfiguration conf) {
-		detectorConf=conf;		
+		detectorConf=conf;	
+		init=true;
 	}
 
 	public void setLightPathConf(ModuleConfiguration conf) {
-		lightPathConf=conf;		
+		lightPathConf=conf;	
+		init=true;
 	}
 
 	public void setLightSrcConf(ModuleConfiguration conf) {
-		lightSrcConf=conf;		
+		lightSrcConf=conf;
+		init=true;
 	}
 
 	public void setSampleConf(ModuleConfiguration conf) {
-		sampleConf=conf;		
+		sampleConf=conf;	
+		init=true;
 	}
 
 	public void setPlaneConf(ModuleConfiguration conf) {
-		planeConf=conf;		
+		planeConf=conf;	
+		init=true;
 	}
 
 	public void setImgEnvConf(ModuleConfiguration conf) {
-		imgEnvConf=conf;		
+		imgEnvConf=conf;
+		init=true;
 	}
 	
 	public ModuleConfiguration getObjConf()
@@ -179,117 +170,14 @@ public class CustomViewProperties
 		return planeConf;
 	}
 
-	public void addImageData(GUIPlaceholder pos, String width)
-	{
-		moduleList.add(new Submodule(MicSubmodule.IMAGE_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] -- add image module at "+pos+", "+width);
-		
-		
-	}
-	
-	public void addChannelData(GUIPlaceholder pos, String width)
-	{
-		moduleList.add(new Submodule(MicSubmodule.CHANNEL_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] -- add channel module at "+pos+", "+width);
-	}
-	public void addObjectiveData(GUIPlaceholder pos, String width)
-	{
-		moduleList.add(new Submodule(MicSubmodule.OBJECTIVE_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] -- add objective module at "+pos+", "+width);
-	}
-	public void addDetectorData(GUIPlaceholder pos, String width)
-	{
-		moduleList.add(new Submodule(MicSubmodule.DETECTOR_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] -- add detector module at "+pos+", "+width);
-	}
-	public void addLightSourceData(GUIPlaceholder pos, String width)
-	{
-		moduleList.add(new Submodule(MicSubmodule.LIGHTSOURCE_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] -- add lightSource module at "+pos+", "+width);
-	}
-	public void addLightPathData(GUIPlaceholder pos, String width)
-	{
-		moduleList.add(new Submodule(MicSubmodule.LIGHTPATH_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] -- add lightPath module at "+pos+", "+width);
-	}
-	public void addExperimentData(GUIPlaceholder pos, String width)
-	{
-		moduleList.add(new Submodule(MicSubmodule.EXPERIMENT_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] -- add experiment module at "+pos+", "+width);
-	}
-	public void addSampleData(GUIPlaceholder pos, String width)
-	{
-		moduleList.add(new Submodule(MicSubmodule.SAMPLE_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] -- add sample module at "+pos+", "+width);
-	}
-	public void addPlaneData(GUIPlaceholder pos, String width)
-	{
-		moduleList.add(new Submodule(MicSubmodule.PLANE_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] -- add plane module at "+pos+", "+width);
-	}
-	public void addImageEnvData(GUIPlaceholder pos, String width)
-	{
-		moduleList.add(new Submodule(MicSubmodule.IMAGEENVIRONMENT_DATA,pos,Integer.valueOf(width)));
-		LOGGER.info("[VIEW_PROP] -- add imageEnv module at "+pos+", "+width);
-	}
-	
-	
-	public List<Submodule> getModules()
-	{
-		if(moduleList.isEmpty()){
-//			loadGeneralView();
-			loadCommonView();
-		}
-		return moduleList;
-	}
-	
 
-	
-	private void loadGeneralView()
-	{
-		LOGGER.info("[VIEW_PROP] Load general view");
-		addImageData(GUIPlaceholder.Pos_A,"1");
-		
-		
-		addChannelData(GUIPlaceholder.Pos_E,"1");
-		addObjectiveData(GUIPlaceholder.Pos_B,"1");
-		addDetectorData(GUIPlaceholder.Pos_C,"1");
-		addLightSourceData(GUIPlaceholder.Pos_D,"1");
-		addLightPathData(GUIPlaceholder.Pos_F,"1");
-		addSampleData(GUIPlaceholder.Pos_G,"1");
-		addExperimentData(GUIPlaceholder.Pos_H,"1");
-		addImageEnvData(GUIPlaceholder.Pos_A,"1");
-		addPlaneData(GUIPlaceholder.Pos_A,"1");
-		
-//		moduleList.add(new Submodule(MicSubmodule.IMAGE_DATA,GUIPlaceholder.Pos_A,1));
-//		moduleList.add(new Submodule(MicSubmodule.IMAGEENVIRONMENT_DATA,GUIPlaceholder.Pos_A,1));
-//		moduleList.add(new Submodule(MicSubmodule.PLANE_DATA, GUIPlaceholder.Pos_A, 1));
-//		
-//		moduleList.add(new Submodule(MicSubmodule.OBJECTIVE_DATA,GUIPlaceholder.Pos_B,1));
-//		moduleList.add(new Submodule(MicSubmodule.DETECTOR_DATA,GUIPlaceholder.Pos_C,1));
-//		moduleList.add(new Submodule(MicSubmodule.LIGHTSOURCE_DATA,GUIPlaceholder.Pos_D,1));
-//		moduleList.add(new Submodule(MicSubmodule.CHANNEL_DATA,GUIPlaceholder.Pos_E,1));
-//		moduleList.add(new Submodule(MicSubmodule.LIGHTPATH_DATA,GUIPlaceholder.Pos_F,1));
-//		moduleList.add(new Submodule(MicSubmodule.SAMPLE_DATA,GUIPlaceholder.Pos_G,1));
-//		moduleList.add(new Submodule(MicSubmodule.EXPERIMENT_DATA,GUIPlaceholder.Pos_H,1));
-	}
 	
 	/** TODO: standard view if no profile file is given */
 	private void loadCommonView()
 	{
 		LOGGER.info("[VIEW_PROP] Load general view");
-		addImageData(GUIPlaceholder.Pos_A,"1");
-		addChannelData(GUIPlaceholder.Pos_E,"1");
-		addObjectiveData(GUIPlaceholder.Pos_B,"1");
-		addDetectorData(GUIPlaceholder.Pos_C,"1");
-		addLightSourceData(GUIPlaceholder.Pos_D,"1");
-		addLightPathData(GUIPlaceholder.Pos_F,"1");
-		addSampleData(GUIPlaceholder.Pos_G,"1");
-		addExperimentData(GUIPlaceholder.Pos_H,"1");
-		addImageEnvData(GUIPlaceholder.Pos_A,"1");
-		addPlaneData(GUIPlaceholder.Pos_A,"1");
 		
-		imageConf=new ModuleConfiguration();
+		imageConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_A,"1");
 		imageConf.setTag(TagNames.IMG_NAME,null,null,null);
 		imageConf.setTag(TagNames.ACQTIME,null,null,null);
 		imageConf.setTag(TagNames.DIMXY,null,null,null);
@@ -301,7 +189,7 @@ public class CustomViewProperties
 		imageConf.setTag(TagNames.TIMEINC,null,null,null);
 		imageConf.setTag(TagNames.WELLNR,null,null,null);
 		
-		channelConf=new ModuleConfiguration();
+		channelConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_E,"1");
 		channelConf.setTag(TagNames.CH_NAME,null,null,null);
 		channelConf.setTag(TagNames.COLOR,null,null,null);
 		channelConf.setTag(TagNames.FLUOROPHORE,null,null,null);
@@ -315,7 +203,7 @@ public class CustomViewProperties
 		channelConf.setTag(TagNames.NDFILTER,null,null,null);
 		channelConf.setTag(TagNames.PINHOLESIZE,null,TagNames.PINHOLESIZE_UNIT.getSymbol(),null);
 		
-		oConf=new ModuleConfiguration();
+		oConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_B,"1");
 		oConf.setTag(TagNames.MODEL,null,null,null);
 		oConf.setTag(TagNames.MANUFAC,null,null,null);
 		oConf.setTag(TagNames.NOMMAGN,null,null,null);
@@ -329,7 +217,7 @@ public class CustomViewProperties
 		oConf.setSettingTag(TagNames.OBJ_MEDIUM,null,null,null);
 		oConf.setSettingTag(TagNames.REFINDEX,null,null,null);
 		
-		detectorConf=new ModuleConfiguration();
+		detectorConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_C,"1");
 		detectorConf.setTag(TagNames.MODEL,null,null,null);
 		detectorConf.setTag(TagNames.MANUFAC,null,null,null);
 		detectorConf.setTag(TagNames.TYPE,null,null,null);
@@ -342,7 +230,7 @@ public class CustomViewProperties
 		detectorConf.setSettingTag(TagNames.BINNING,null,null,null);
 		detectorConf.setSettingTag(TagNames.SUBARRAY,null,null,null);
 		
-		expConf=new ModuleConfiguration();
+		expConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_H,"1");
 		expConf.setTag(TagNames.TYPE,null,null,null);
 		expConf.setTag(TagNames.DESC,null,null,null);
 		expConf.setTag(TagNames.EXPNAME,null,null,null);
@@ -350,14 +238,14 @@ public class CustomViewProperties
 		expConf.setTag(TagNames.GROUP,null,null,null);
 		expConf.setTag(TagNames.PROJECTPARTNER,null,null,null);
 		
-		imgEnvConf=new ModuleConfiguration();
+		imgEnvConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_A,"1");
 		imgEnvConf.setTag(TagNames.TEMP,null,null,null);
 		imgEnvConf.setTag(TagNames.AIRPRESS,null,null,null);
 		imgEnvConf.setTag(TagNames.HUMIDITY,null,null,null);
 		imgEnvConf.setTag(TagNames.CO2,null,null,null);
 		
 		// laser module for lightSrc
-		lightSrcConf=new ModuleConfiguration();
+		lightSrcConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_D,"1");
 		lightSrcConf.setTag(TagNames.MODEL,null,null,null);
 		lightSrcConf.setTag(TagNames.MANUFAC,null,null,null);
 		lightSrcConf.setTag(TagNames.POWER,null,TagNames.POWER_UNIT.getSymbol(),null);
@@ -373,7 +261,7 @@ public class CustomViewProperties
 		lightSrcConf.setSettingTag(TagNames.SET_WAVELENGTH,null,null,null);
 		lightSrcConf.setSettingTag(TagNames.ATTENUATION,null,null,null);
 		
-		sampleConf=new ModuleConfiguration();
+		sampleConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_G,"1");
 		sampleConf.setTag(TagNames.PREPDATE,null,null,null);
 		sampleConf.setTag(TagNames.PREPDESC,null,null,null);
 		sampleConf.setTag(TagNames.RAWCODE,null,null,null);
@@ -388,16 +276,6 @@ public class CustomViewProperties
 		
 	}
 	
-	private void loadEMView()
-	{
-		moduleList.add(new Submodule(MicSubmodule.IMAGE_DATA,GUIPlaceholder.Pos_A,1));
-		moduleList.add(new Submodule(MicSubmodule.OBJECTIVE_DATA,GUIPlaceholder.Pos_B,1));
-		moduleList.add(new Submodule(MicSubmodule.DETECTOR_DATA,GUIPlaceholder.Pos_C,1));
-		moduleList.add(new Submodule(MicSubmodule.LIGHTSOURCE_DATA,GUIPlaceholder.Pos_D,1));
-		moduleList.add(new Submodule(MicSubmodule.CHANNEL_DATA,GUIPlaceholder.Pos_E,1));
-		moduleList.add(new Submodule(MicSubmodule.SAMPLE_DATA,GUIPlaceholder.Pos_F,2));
-		moduleList.add(new Submodule(MicSubmodule.EXPERIMENT_DATA,GUIPlaceholder.Pos_H,1));
-	}
 
 	public String getMicName() {
 		return micName;
@@ -447,8 +325,5 @@ public class CustomViewProperties
 		return file;
 	}
 
-
-	
-	
 	
 }

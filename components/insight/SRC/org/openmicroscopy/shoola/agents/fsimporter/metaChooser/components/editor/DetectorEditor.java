@@ -203,7 +203,6 @@ public class DetectorEditor extends JDialog implements ActionListener
 				String.class,String.class,String.class
 		};
 
-		private ArrayList<TableColumn> tableColumns;
 
 		public DetectorTableModel()
 		{

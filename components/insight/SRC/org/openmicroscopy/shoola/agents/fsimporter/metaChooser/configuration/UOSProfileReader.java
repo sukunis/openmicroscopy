@@ -44,7 +44,7 @@ public class UOSProfileReader
 	 private static final org.slf4j.Logger LOGGER =
 	    	    LoggerFactory.getLogger(UOSProfileReader.class);
 	 
-	private static final String PROFILE = "Profile";
+	public static final String PROFILE = "Profile";
 	public static final String MICROSCOPE="Microscope";
 	public static final String MIC_NAME="Name";
 	public static final String MODULE="Submodules";
@@ -73,11 +73,11 @@ public class UOSProfileReader
 	
 	public UOSProfileReader(File file)
 	{
-		view=new CustomViewProperties();
+	
 		if(file==null || !file.exists()){
 			return;
 		}
-		
+		view=new CustomViewProperties();
 		view.setFile(file);
 		
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -85,16 +85,26 @@ public class UOSProfileReader
 		try {
 			db = dbf.newDocumentBuilder();
 			Document doc = db.parse(file);
+			
+			System.out.println("Read "+file.getName());
 			//TODO validation of xml
 			
 			readConfiguration(doc);
 			
-		} catch (ParserConfigurationException | SAXException | IOException e) {
+		} catch (/*ParserConfigurationException | SAXException | IOException*/Exception  e) {
 			LOGGER.error("[VIEW_PROP] Can't read property file");
 			ExceptionDialog ld = new ExceptionDialog("Property File Error!", 
 					"Can't read given property file "+file.getAbsolutePath(),e);
 			ld.setVisible(true);
+			view=null;
 		} 
+	}
+	
+	public CustomViewProperties getDefaultProperties()
+	{
+		view=new CustomViewProperties();
+		view.init();
+		return view;
 	}
 	
 	public CustomViewProperties getViewProperties()
@@ -114,17 +124,14 @@ public class UOSProfileReader
 		return name;
 	}
 	
-	private void readConfiguration(Document doc) 
+	private void readConfiguration(Document doc) throws Exception
 	{
 		NodeList root=doc.getElementsByTagName(PROFILE);
 		if(root.getLength() >0){
 			Element node=(Element) root.item(0);
 			
-			try{
-				view.setMicName(readMicName((Element)(node.getElementsByTagName(MICROSCOPE)).item(0)));
-			}catch(Exception e){
-//				LOGGER.info("No MICROSCOPE NAME given");
-			}
+			view.setMicName(readMicName((Element)(node.getElementsByTagName(MICROSCOPE)).item(0)));
+			
 			NodeList nodes=node.getElementsByTagName(MODULE);
 
 			if(nodes.getLength() >0){
@@ -141,20 +148,24 @@ public class UOSProfileReader
 				loadElement(modules,MODULE_EXPERIMENTER); 
 
 			}else{
-				System.err.println("No submodule specification");
+				throw new Exception("unknown xml scheme!");
 			}
+		}else{
+			throw new Exception("unknown xml scheme!");
 		}
 	}
 
-	private boolean loadElement(Element modules,String moduleName) 
+	private void loadElement(Element modules,String moduleName) 
 	{
-		boolean loaded=false;
 		if(modules.getElementsByTagName(moduleName).getLength()>0)
 		{
 			Element node=(Element) modules.getElementsByTagName(moduleName).item(0);
 			NamedNodeMap imgProp=node.getAttributes();
+			 boolean vis=false;
+			 GUIPlaceholder pos=null;
+			 String width=null;
 			if(imgProp.getLength()>1){
-				GUIPlaceholder pos=null; String width=null; boolean vis=false;
+				 
 				if(imgProp.getNamedItem(M_POSITION)!=null)
 					pos=GUIPlaceholder.valueOf(imgProp.getNamedItem(M_POSITION).getNodeValue());
 				if(imgProp.getNamedItem(M_WIDTH)!=null)
@@ -163,64 +174,71 @@ public class UOSProfileReader
 					vis=BooleanUtils.toBoolean(imgProp.getNamedItem(M_VIS).getNodeValue());
 				
 				if(vis){
-					if( pos!=null && width!=null && !pos.equals("") && !width.equals("")){
-						addProperty(moduleName, pos, width);
-						loaded=true;
-					}else{
+					if( !(pos!=null && width!=null && !pos.equals("") && !width.equals(""))){
+						vis=false;
 						LOGGER.warn("[GUI] module property not complete: "+moduleName);
 					}
 				}else{
 					LOGGER.info("[GUI] hide "+moduleName);
-					return false;
 				}
 				
 			}else{
 				LOGGER.warn("[GUI] module property not complete: "+moduleName);
-				return false;
+				return ;
 			}
 			
-			addTags(node,moduleName);
-			loaded=true;
+			addTags(node,moduleName,vis,pos,width);
 			
 		}else{
 			LOGGER.info("[GUI] module not specified: "+moduleName);
 		}
 		
-		return loaded;
 	}
 
-	private void addTags(Element node, String moduleName) 
+	private void addTags(Element node, String moduleName,boolean visible, GUIPlaceholder position,String width) 
 	{
+		ModuleConfiguration conf=new ModuleConfiguration(visible,position,width);
+		
 		switch (moduleName) {
 		case MODULE_IMG:
-			loadImageTags(node);
+			conf.loadTags(node);
+			view.setImageConf(conf);
 			break;
 		case MODULE_CHANNEL:
-			loadChannelTags(node);
+			conf.loadTags(node);
+			view.setChannelConf(conf);
 			break;
 		case MODULE_EXPERIMENTER:
-			loadExperimenterTags(node);
+			conf.loadTags(node);
+			view.setExperimenterConf(conf);
 			break;
 		case MODULE_OBJECTIVE:
-			loadObjectiveTags(node);
+			conf.loadTags(node);
+			view.setObjConf(conf);
 			break;
 		case MODULE_DETECTOR:
-			loadDetectorTags(node);
+			conf.loadTags(node);
+			view.setDetectorConf(conf);
 			break;
 		case MODULE_LIGHTPATH:
-			loadLightPathTags(node);
+			conf.loadTags(node);
+			view.setLightPathConf(conf);
 			break;
 		case MODULE_LIGHTSRC:
-			loadLightSrcTags(node);
+			conf.loadTags(node);
+			view.setLightSrcConf(conf);	
 			break;
 		case MODULE_SAMPLE:
-			loadSampleTags(node);
+			conf.loadTags(node);
+			view.setSampleConf(conf);
 			break;
 		case MODULE_PLANE:
-			loadPlaneTags(node);
+			conf.loadTags(node);
+			view.setPlaneConf(conf);
 			break;
 		case MODULE_IMGENV:
-			loadImgEnvTags(node);
+			conf.loadTags(node);
+			view.setImgEnvConf(conf);
 			break;
 		default:
 			LOGGER.warn("[VIEW_PROP] Unknown module: "+moduleName);
@@ -228,125 +246,7 @@ public class UOSProfileReader
 		}
 	}
 
-	private void loadImgEnvTags(Element node) 
-	{
-		ModuleConfiguration conf=new ModuleConfiguration();
-		conf.loadTags(node);
-view.setImgEnvConf(conf);		
-	}
 
-	private void loadPlaneTags(Element node) {
-		ModuleConfiguration conf=new ModuleConfiguration();
-		conf.loadTags(node);
-view.setPlaneConf(conf);	
-	}
 
-	private void loadSampleTags(Element node) {
-		ModuleConfiguration conf=new ModuleConfiguration();
-		conf.loadTags(node);
-view.setSampleConf(conf);	
-	}
-
-	private void loadLightSrcTags(Element node) {
-		ModuleConfiguration conf=new ModuleConfiguration();
-		conf.loadTags(node);
-view.setLightSrcConf(conf);	
-	}
-
-	private void loadLightPathTags(Element node) {
-		ModuleConfiguration conf=new ModuleConfiguration();
-		conf.loadTags(node);
-view.setLightPathConf(conf);		
-	}
-
-	private void loadDetectorTags(Element node) {
-		ModuleConfiguration conf=new ModuleConfiguration();
-		conf.loadTags(node);
-view.setDetectorConf(conf);		
-	}
-
-	private void loadObjectiveTags(Element node) {
-		ModuleConfiguration conf=new ModuleConfiguration();
-		conf.loadTags(node);
-		view.setObjConf(conf);
-	}
-
-	private void loadExperimenterTags(Element node) {
-		ModuleConfiguration conf=new ModuleConfiguration();
-		conf.loadTags(node);
-view.setExperimenterConf(conf);		
-	}
-
-	private void loadChannelTags(Element node) 
-	{
-		ModuleConfiguration conf=new ModuleConfiguration();
-		conf.loadTags(node);
-		view.setChannelConf(conf);		
-	}
-
-	private void loadImageTags(Element node) 
-	{
-		ModuleConfiguration conf=new ModuleConfiguration();
-		conf.loadTags(node);
-view.setImageConf(conf);
-	}
-	
-
-//	
-//	private boolean hasElement(Element node, String name)
-//	{
-//		 NodeList nodeList = node.getElementsByTagName(name);
-//		 return nodeList.getLength() != 0 ? true : false;
-//	}
-
-	private void addProperty(String moduleName, GUIPlaceholder pos, String width) 
-	{
-		switch (moduleName) {
-		case MODULE_IMG:
-			view.addImageData(pos,width);
-			break;
-		case MODULE_CHANNEL:
-			view.addChannelData(pos,width);
-			break;
-		case MODULE_EXPERIMENTER:
-			view.addExperimentData(pos, width);
-			break;
-		case MODULE_OBJECTIVE:
-			view.addObjectiveData(pos, width);
-			break;
-		case MODULE_DETECTOR:
-			view.addDetectorData(pos, width);
-			break;
-		case MODULE_LIGHTPATH:
-			view.addLightPathData(pos, width);
-			break;
-		case MODULE_LIGHTSRC:
-			view.addLightSourceData(pos, width);
-			break;
-		case MODULE_SAMPLE:
-			view.addSampleData(pos, width);
-			break;
-		case MODULE_PLANE:
-			view.addPlaneData(pos, width);
-			break;
-		case MODULE_IMGENV:
-			view.addImageEnvData(pos, width);
-			break;
-		default:
-			LOGGER.warn("[VIEW_PROP] Unknown module "+moduleName);
-			break;
-		}
-		
-		
-	}
-
-//	/**
-//	 * @param args
-//	 */
-//	public static void main(String[] args) {
-//		// TODO Auto-generated method stub
-//		new UOSProfileReader(new File("src/profileUOSImporter.xml"));
-//
-//	}
 
 }
