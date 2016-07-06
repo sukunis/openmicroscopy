@@ -39,7 +39,7 @@ public class TagConfiguration
 	}
 
 	public String getUnitSymbol() {
-		return unit.getSymbol();
+		return unit==null ? "" :unit.getSymbol();
 	}
 	
 	public Unit getUnit() {

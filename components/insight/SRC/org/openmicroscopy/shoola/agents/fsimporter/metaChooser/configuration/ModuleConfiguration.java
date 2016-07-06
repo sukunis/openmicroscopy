@@ -14,7 +14,9 @@ import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -39,14 +41,18 @@ public class ModuleConfiguration
 	public static final String TAG_UNIT="Unit";
 	public static final String TAG_PROP="Optional";
 	public static final String TAG_VISIBLE="Visible";
-	// for lightSrc types
-	private String lightSrcType;
 	
 	private List<TagConfiguration> tagConfList; 
 	private List<TagConfiguration> settingsTagConfList;
+	private boolean visible;
+	private GUIPlaceholder position;
+	private String width;
 	
-	public ModuleConfiguration() 
+	public ModuleConfiguration(boolean visible,GUIPlaceholder pos,String width) 
 	{
+		this.position=pos;
+		this.visible=visible;
+		this.width=width;
 		tagConfList=new ArrayList<TagConfiguration>();
 		settingsTagConfList=new ArrayList<TagConfiguration>();
 	}
@@ -86,6 +92,40 @@ public class ModuleConfiguration
 	}
 	
 
+	public Element toXML(Document doc,String moduleName )
+	{
+		Element module = doc.createElement(moduleName);
+		module.setAttribute(UOSProfileReader.M_POSITION, getPosition().name());
+		module.setAttribute(UOSProfileReader.M_WIDTH,"1");
+		module.setAttribute(UOSProfileReader.M_VIS, String.valueOf(isVisible()));
+		
+		for(TagConfiguration tag:tagConfList){
+			module.appendChild(tagToXML(doc, tag));
+		}
+		if(settingsTagConfList!=null && !settingsTagConfList.isEmpty()){
+			Element sett=doc.createElement("Settings");
+			for(TagConfiguration tag:settingsTagConfList){
+				sett.appendChild(tagToXML(doc, tag));
+			}
+			module.appendChild(sett);
+		}
+		
+		return module;
+	}
+	
+	private Element tagToXML(Document doc,TagConfiguration tag)
+	{
+		Element modTag = doc.createElement("Tag");
+		modTag.setAttribute(TAG_NAME, tag.getName());
+		modTag.setAttribute(TAG_PROP, tag.getProperty());
+		modTag.setAttribute(TAG_VISIBLE, String.valueOf(tag.isVisible()));
+		modTag.setAttribute(TAG_VALUE, tag.getValue());
+		if(!tag.getUnitSymbol().equals(""))
+			modTag.setAttribute(TAG_UNIT, tag.getUnitSymbol());
+		
+		return modTag;
+	}
+	
 	public void loadTags(Element node)
 	{
 //		NodeList tagList=node.getChildNodes();
@@ -95,9 +135,9 @@ public class ModuleConfiguration
 			for(int i=0; i<tagList.getLength(); i++){
 				NamedNodeMap attr=tagList.item(i).getAttributes();
 				if(tagList.item(i).getParentNode().getNodeName().equals("Settings")){
-					parseTag(attr,settingsTagConfList,"settings");
+					parseTagFromXML(attr,settingsTagConfList,"settings");
 				}else{
-					parseTag(attr,tagConfList,"");
+					parseTagFromXML(attr,tagConfList,"");
 				}
 			}
 		}	
@@ -105,7 +145,7 @@ public class ModuleConfiguration
 
 
 
-	private void parseTag(NamedNodeMap attr,List<TagConfiguration> list,String sett) 
+	private void parseTagFromXML(NamedNodeMap attr,List<TagConfiguration> list,String sett) 
 	{
 		String name="";String value=null; String prop=null;String unitStr=null;
 		boolean visible=false;
@@ -137,13 +177,29 @@ public class ModuleConfiguration
 	
 	
 
-	public String getLightSrcType() {
-		return lightSrcType;
+	
+
+	public boolean isVisible() {
+		return visible;
 	}
 
-	public void setLightSrcType(String lightSrcType) {
-		this.lightSrcType = lightSrcType;
+	public void setVisible(boolean selected) 
+	{
+		visible=selected;
 	}
 
+	public GUIPlaceholder getPosition() {
+		return position;
+	}
+	
+	public void setPosition(GUIPlaceholder pos)
+	{
+		position=pos;
+	}
+	
+	public int getWidth()
+	{
+		return Integer.valueOf(width);
+	}
 	
 }

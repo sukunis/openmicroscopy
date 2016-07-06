@@ -78,6 +78,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.SampleCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotationXML;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 //import org.slf4j.LoggerFactory;
 import org.slf4j.LoggerFactory;
@@ -128,16 +129,16 @@ public class MetaDataUI extends JPanel
 	
 	
 	/** modul props */
-	private Submodule expModul;
-	private Submodule detModul;
-	private Submodule chModul;
-	private Submodule objModul;
-	private Submodule imgModul;
-	private Submodule imgEnvModul;
-	private Submodule lightSModul;
-	private Submodule lightPModul;
-	private Submodule planeModul;
-	private Submodule sampleModul;
+	private ModuleConfiguration expModul;
+	private ModuleConfiguration detModul;
+	private ModuleConfiguration chModul;
+	private ModuleConfiguration objModul;
+	private ModuleConfiguration imgModul;
+	private ModuleConfiguration imgEnvModul;
+	private ModuleConfiguration lightSModul;
+	private ModuleConfiguration lightPModul;
+	private ModuleConfiguration planeModul;
+	private ModuleConfiguration sampleModul;
 	
 	
 	private boolean initChannelUI;
@@ -183,95 +184,91 @@ public class MetaDataUI extends JPanel
 		
 		// create model
 		model=new MetaDataModel();
-		initModelComponents(sett.getModules());
+		initModelComponents();
 		control=new MetaDataControl(model);
 	}
 	
 	/** init modul components respective to settings*/ 
-	private void initModelComponents(List<Submodule> list) 
+	private void initModelComponents() 
 	{
 		if(!componentsInit){
-			for(Submodule subm:list){
-				switch (subm.getModule()) { 
-				case OBJECTIVE_DATA:
-					LOGGER.info("[GUI] -- init OBJECTIVE modul");
-					ObjectiveCompUI oUI=new ObjectiveCompUI(customSett.getObjConf());
-					oUI.addToList(customSett.getMicObjList());
-					model.setObjectiveData(oUI); 
-					initObjectiveUI=true;
-					objModul=subm;
-					break;
-				case DETECTOR_DATA:
-					LOGGER.info("[GUI] -- init DETECTOR modul");
-					DetectorCompUI dUI=new DetectorCompUI(customSett.getDetectorConf());
-					dUI.addToList(customSett.getMicDetectorList());
-					model.addDetectorData(dUI);
-					initDetectorUI=true;
-					detModul=subm;
-					break;
-				case LIGHTSOURCE_DATA:
-					LOGGER.info("[GUI] -- init LIGHTSRC modul");
-					LightSourceCompUI lUI=new LightSourceCompUI(customSett.getLightSrcConf());
-					lUI.addToList(customSett.getMicLightSrcList());
-					model.addLightSrcModul(lUI);
-					initLightSrcUI=true;
-					lightSModul=subm;
-					break;
-				case CHANNEL_DATA:
-					LOGGER.info("[GUI] -- init CHANNEL modul");
-					ChannelCompUI chUI=new ChannelCompUI(customSett.getChannelConf()); 
-					model.addChannelData(chUI);
-					initChannelUI=true;
-					chModul=subm;
-					break;
-				case LIGHTPATH_DATA:
-					LOGGER.info("[GUI] -- init LIGHTPATH modul");
-					LightPathCompUI lpUI=new LightPathCompUI();
-					lpUI.addFilterToList(customSett.getMicLightPathFilterList());
-					model.addLightPath(lpUI);
-					initLightPathUI=true;
-					lightPModul=subm;
-					break;
-				case IMAGEENVIRONMENT_DATA:
-					LOGGER.info("[GUI] -- init IMAGEENV modul");
-					ImagingEnvironmentCompUI ieUI=new ImagingEnvironmentCompUI(customSett.getImgEnvConf());
-					model.setImagingEnv(ieUI);
-					initImageEnvUI=true;
-					imgEnvModul=subm;
-					break;
-				case PLANE_DATA:
-					LOGGER.info("[GUI] -- init PLANE modul");
-					PlaneCompUI pUI=new PlaneCompUI(null);
-					model.addPlaneModul(pUI);
-					initPlanesUI=true;
-					planeModul=subm;
-					break;
-				case EXPERIMENT_DATA:
-					LOGGER.info("[GUI] -- init EXPERIMENT modul");
-					ExperimentCompUI eUI=new ExperimentCompUI(customSett.getExpConf());
-					model.setExpData(eUI);
-					initExperimentUI=true;
-					expModul=subm;
-					break;
-				case SAMPLE_DATA:
-					LOGGER.info("[GUI] -- init SAMPLE modul");
-					SampleCompUI sUI=new SampleCompUI(customSett.getSampleConf());
-					model.setSampleData(sUI);
-					initSampleUI=true;
-					sampleModul=subm;
-					break;
-				case IMAGE_DATA:
-					LOGGER.info("[GUI] -- init IMAGE modul");
-					ImageCompUI iUI=new ImageCompUI(customSett.getImageConf()); 
-					model.setImageModul(iUI);
-					initImageUI=true;
-					imgModul=subm;
-					break;
-				default:
-					break;
-				}
-				componentsInit=true;
+			if(customSett.getObjConf()!=null && customSett.getObjConf().isVisible()){
+				LOGGER.info("[GUI] -- init OBJECTIVE modul");
+				ObjectiveCompUI oUI=new ObjectiveCompUI(customSett.getObjConf());
+				oUI.addToList(customSett.getMicObjList());
+				model.setObjectiveData(oUI); 
+				initObjectiveUI=true;
+				objModul=customSett.getObjConf();
+
 			}
+			if(customSett.getDetectorConf()!=null && customSett.getDetectorConf().isVisible()){
+				LOGGER.info("[GUI] -- init DETECTOR modul");
+				DetectorCompUI dUI=new DetectorCompUI(customSett.getDetectorConf());
+				dUI.addToList(customSett.getMicDetectorList());
+				model.addDetectorData(dUI);
+				initDetectorUI=true;
+				detModul=customSett.getDetectorConf();
+			}
+			if(customSett.getLightSrcConf()!=null && customSett.getLightSrcConf().isVisible()){
+				LOGGER.info("[GUI] -- init LIGHTSRC modul");
+				LightSourceCompUI lUI=new LightSourceCompUI(customSett.getLightSrcConf());
+				lUI.addToList(customSett.getMicLightSrcList());
+				model.addLightSrcModul(lUI);
+				initLightSrcUI=true;
+				lightSModul=customSett.getLightSrcConf();
+			}
+			if(customSett.getChannelConf()!=null && customSett.getChannelConf().isVisible()){
+				LOGGER.info("[GUI] -- init CHANNEL modul");
+				ChannelCompUI chUI=new ChannelCompUI(customSett.getChannelConf()); 
+				model.addChannelData(chUI);
+				initChannelUI=true;
+				chModul=customSett.getChannelConf();
+			}
+			if(customSett.getLightPathConf()!=null && customSett.getLightPathConf().isVisible()){
+				LOGGER.info("[GUI] -- init LIGHTPATH modul");
+				LightPathCompUI lpUI=new LightPathCompUI();
+				lpUI.addFilterToList(customSett.getMicLightPathFilterList());
+				model.addLightPath(lpUI);
+				initLightPathUI=true;
+				lightPModul=customSett.getLightPathConf();
+			}
+			if(customSett.getImgEnvConf()!=null && customSett.getImgEnvConf().isVisible()){
+				LOGGER.info("[GUI] -- init IMAGEENV modul");
+				ImagingEnvironmentCompUI ieUI=new ImagingEnvironmentCompUI(customSett.getImgEnvConf());
+				model.setImagingEnv(ieUI);
+				initImageEnvUI=true;
+				imgEnvModul=customSett.getImgEnvConf();
+			}
+			if(customSett.getPlaneConf()!=null && customSett.getPlaneConf().isVisible()){
+				LOGGER.info("[GUI] -- init PLANE modul");
+				PlaneCompUI pUI=new PlaneCompUI(null);
+				model.addPlaneModul(pUI);
+				initPlanesUI=true;
+				planeModul=customSett.getPlaneConf();
+			}
+			if(customSett.getExpConf()!=null && customSett.getExpConf().isVisible()){
+				LOGGER.info("[GUI] -- init EXPERIMENT modul");
+				ExperimentCompUI eUI=new ExperimentCompUI(customSett.getExpConf());
+				model.setExpData(eUI);
+				initExperimentUI=true;
+				expModul=customSett.getExpConf();
+			}
+			if(customSett.getSampleConf()!=null && customSett.getSampleConf().isVisible()){
+				LOGGER.info("[GUI] -- init SAMPLE modul");
+				SampleCompUI sUI=new SampleCompUI(customSett.getSampleConf());
+				model.setSampleData(sUI);
+				initSampleUI=true;
+				sampleModul=customSett.getSampleConf();
+			}
+			if(customSett.getImageConf()!=null && customSett.getImageConf().isVisible()){
+				LOGGER.info("[GUI] -- init IMAGE modul");
+				ImageCompUI iUI=new ImageCompUI(customSett.getImageConf()); 
+				model.setImageModul(iUI);
+				initImageUI=true;
+				imgModul=customSett.getImageConf();
+			}
+
+			componentsInit=true;
 		}
 	}
 
