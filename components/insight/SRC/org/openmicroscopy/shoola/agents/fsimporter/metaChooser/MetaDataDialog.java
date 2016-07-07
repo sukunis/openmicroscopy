@@ -78,6 +78,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileEditorUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSSpecificationEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
@@ -160,6 +161,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	private JPanel metaPanel;
 //	private MetaDataUI dataView;
 	private CustomViewProperties customSettings;
+	private UOSHardwareReader hardwareDef;
 	
 	
 	/** debug pane*/
@@ -445,12 +447,12 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    loadProfileButton.addActionListener(this);
 //	    loadProfileButton.setEnabled(false);
 	    
-	    loadHardwareSpecButton=new JButton("Load Specification");
+	    loadHardwareSpecButton=new JButton("Hardware...");
 	    loadHardwareSpecButton.setBackground(UIUtilities.BACKGROUND);
 	    loadHardwareSpecButton.setToolTipText("Load another microscope hardware specification");
 	    loadHardwareSpecButton.setActionCommand("" + CMD_SPECIFICATION);
 	    loadHardwareSpecButton.addActionListener(this);
-	    loadHardwareSpecButton.setEnabled(false);
+//	    loadHardwareSpecButton.setEnabled(false);
 	    
 	    resetFileDataButton=new JButton("Reset/Clear");
 	    resetFileDataButton.setBackground(UIUtilities.BACKGROUND);
@@ -490,7 +492,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	    bg.add(viewFileDataButton);
 	    
 	    UOSProfileReader propReader=new UOSProfileReader(new File("profileUOSImporter.xml"));
-	    UOSHardwareReader hardwareDef=new UOSHardwareReader(new File("hardwareUOSImporter.xml"));
+	     hardwareDef=new UOSHardwareReader(new File("hardwareUOSImporter.xml"));
 //	    dataView=new MicroscopeDataView(propReader.getViewProperties());
 	    customSettings=propReader.getViewProperties();
 	    if(customSettings==null)
@@ -1248,6 +1250,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 			break;
 		case CMD_SPECIFICATION:
 			LOGGER.info("[GUI-ACTION] -- load specification file");
+			UOSSpecificationEditor specEditor=new UOSSpecificationEditor(hardwareDef);
+			specEditor.setVisible(true);
+			
 			break;
 		case CMD_VIEWFILE:
 			Border redline = BorderFactory.createLineBorder(Color.red);

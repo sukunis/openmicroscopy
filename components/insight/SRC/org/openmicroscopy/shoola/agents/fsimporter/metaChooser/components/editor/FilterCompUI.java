@@ -58,6 +58,11 @@ public class FilterCompUI extends LightPathElem
 		tagList.add(classification);
 	}
 	
+	public List<TagData> getTagList()
+	{
+		return tagList;
+	}
+	
 	public FilterCompUI(Object _filter)
 	{
 		filter=_filter;

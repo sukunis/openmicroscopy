@@ -246,8 +246,7 @@ public class SampleCompUI extends ElementsCompUI
 				TagConfiguration t=list.get(i);
 				String name=t.getName();
 				String val=t.getValue();
-				boolean prop=t.getProperty()!= null ? Boolean.parseBoolean(t.getProperty()):
-					OPTIONAL;
+				boolean prop=t.getProperty();
 				if(name!=null && t.isVisible()){
 					switch (name) {
 					case TagNames.PREPDATE:// no pre value possible

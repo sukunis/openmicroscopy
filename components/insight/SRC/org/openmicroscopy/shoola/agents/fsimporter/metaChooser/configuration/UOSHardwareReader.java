@@ -29,6 +29,7 @@ import ome.xml.model.Objective;
 import ome.xml.model.enums.ArcType;
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
+import ome.xml.model.enums.Enumeration;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.FilamentType;
 import ome.xml.model.enums.FilterType;
@@ -793,6 +794,31 @@ public class UOSHardwareReader
 			
 		}
 		return unit;
+	}
+	
+	public static Object[] getUnitList(String name) 
+	{
+		Object[] units=null;
+		switch (name) {
+		case TagNames.REPRATE:
+			units=UnitsFrequency.values();
+			break;
+		case TagNames.POWER:
+			units=UnitsPower.values();
+			break;
+		case TagNames.WAVELENGTH:
+			units = UnitsLength.values();
+			break;
+		case TagNames.WORKDIST:
+			units = UnitsLength.values();
+			break;
+		case TagNames.VOLTAGE:
+			units=UnitsElectricPotential.values();
+		default:
+			LOGGER.warn("[HARDWARE] no unit available for tag "+name);
+			break;
+		}
+		return units;
 	}
 
 	

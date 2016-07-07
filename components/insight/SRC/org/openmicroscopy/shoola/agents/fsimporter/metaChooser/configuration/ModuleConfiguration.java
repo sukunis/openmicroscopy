@@ -1,7 +1,10 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import ome.units.UNITS;
@@ -67,7 +70,7 @@ public class ModuleConfiguration
 		return settingsTagConfList;
 	}
 	
-	private void setTag(String name, String val,String unit, String prop, List<TagConfiguration> thisList, boolean visible) 
+	private void setTag(String name, String val,String unit, Boolean prop, List<TagConfiguration> thisList, boolean visible) 
 	{
 		Unit u=null;
 		try {
@@ -81,12 +84,12 @@ public class ModuleConfiguration
 		
 	}
 	
-	public void setTag(String name, String val,String unit, String prop) 
+	public void setTag(String name, String val,String unit, Boolean prop) 
 	{
 		setTag(name, val, unit,prop, tagConfList, true) ;
 	}
 	
-	public void setSettingTag(String name, String val,String unit, String prop) 
+	public void setSettingTag(String name, String val,String unit, Boolean prop) 
 	{
 		setTag(name, val, unit, prop, settingsTagConfList, true);
 	}
@@ -117,7 +120,7 @@ public class ModuleConfiguration
 	{
 		Element modTag = doc.createElement("Tag");
 		modTag.setAttribute(TAG_NAME, tag.getName());
-		modTag.setAttribute(TAG_PROP, tag.getProperty());
+		modTag.setAttribute(TAG_PROP, String.valueOf(tag.getProperty()));
 		modTag.setAttribute(TAG_VISIBLE, String.valueOf(tag.isVisible()));
 		modTag.setAttribute(TAG_VALUE, tag.getValue());
 		if(!tag.getUnitSymbol().equals(""))
@@ -147,7 +150,7 @@ public class ModuleConfiguration
 
 	private void parseTagFromXML(NamedNodeMap attr,List<TagConfiguration> list,String sett) 
 	{
-		String name="";String value=null; String prop=null;String unitStr=null;
+		String name="";String value=null; boolean prop=false;String unitStr=null;
 		boolean visible=false;
 
 		if(attr!=null && attr.getLength()>0)
@@ -162,7 +165,7 @@ public class ModuleConfiguration
 				unitStr=attr.getNamedItem(TAG_UNIT).getNodeValue();
 			}
 			if(attr.getNamedItem(TAG_PROP)!=null){
-				prop=attr.getNamedItem(TAG_PROP).getNodeValue();
+				prop=stringToBool(attr.getNamedItem(TAG_PROP).getNodeValue());
 			}
 			if(attr.getNamedItem(TAG_VISIBLE)!=null){
 				visible=BooleanUtils.toBoolean(attr.getNamedItem(TAG_VISIBLE).getNodeValue());
@@ -176,7 +179,18 @@ public class ModuleConfiguration
 	}
 	
 	
+	public static boolean stringToBool(String s) {
+        s = s.toLowerCase();
+        Set<String> trueSet = new HashSet<String>(Arrays.asList("1", "true", "yes"));
+        Set<String> falseSet = new HashSet<String>(Arrays.asList("0", "false", "no"));
 
+        if (trueSet.contains(s))
+            return true;
+        if (falseSet.contains(s))
+            return false;
+
+        throw new IllegalArgumentException(s + " is not a boolean.");
+    }
 	
 
 	public boolean isVisible() {

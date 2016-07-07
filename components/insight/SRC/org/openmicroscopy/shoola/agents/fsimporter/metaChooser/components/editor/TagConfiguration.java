@@ -7,10 +7,10 @@ public class TagConfiguration
 	private String name;
 	private String value;
 	private Unit unit;
-	private String property;
+	private Boolean property;
 	private boolean visible;
 	
-	public TagConfiguration(String name, String value, Unit unit,String property, boolean visible)
+	public TagConfiguration(String name, String value, Unit unit,Boolean property, boolean visible)
 	{
 		this.name=name;
 		this.value=value;
@@ -31,10 +31,10 @@ public class TagConfiguration
 	public void setValue(String value) {
 		this.value = value;
 	}
-	public String getProperty() {
+	public Boolean getProperty() {
 		return property;
 	}
-	public void setProperty(String property) {
+	public void setProperty(Boolean property) {
 		this.property = property;
 	}
 

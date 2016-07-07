@@ -303,8 +303,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 			TagConfiguration t=list.get(i);
 			String name=t.getName();
 			String val=t.getValue();
-			boolean prop=t.getProperty()!= null ? Boolean.parseBoolean(t.getProperty()):
-				OPTIONAL;
+			boolean prop=t.getProperty();
 			if(name!=null){
 				switch (name) {
 				case TagNames.CORCOLLAR: 
