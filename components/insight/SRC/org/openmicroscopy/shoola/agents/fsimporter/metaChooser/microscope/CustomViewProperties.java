@@ -18,15 +18,15 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDa
 import org.slf4j.LoggerFactory;
 
 
-public class CustomViewProperties 
+public class CustomViewProperties
 {
-	
+
 	/** Logger for this class. */
 	 private static final org.slf4j.Logger LOGGER =
 	    	    LoggerFactory.getLogger(CustomViewProperties.class);
-    
+
     private String micName;
-    
+
 	static enum MicSubmodule
 	{
 		IMAGE_DATA,
@@ -40,9 +40,9 @@ public class CustomViewProperties
 		IMAGEENVIRONMENT_DATA,
 		PLANE_DATA
 	}
-	
+
 //	private List<Submodule> moduleList;
-	
+
 	private ModuleConfiguration oConf;
 	private ModuleConfiguration detectorConf;
 	private ModuleConfiguration lightSrcConf;
@@ -53,16 +53,16 @@ public class CustomViewProperties
 	private ModuleConfiguration expConf;
 	private ModuleConfiguration imgEnvConf;
 	private ModuleConfiguration planeConf;
-	
+
 	private boolean init;
-	
+
 	private List<Objective> micObjList;
 	private List<Detector> micDetectorList;
 	private List<LightSource> micLightSrcList;
 	private List<Filter> micLightPathFilterList;
 
 	private File file;
-	
+
 	public CustomViewProperties()
 	{
 		micName="Unspecified";
@@ -70,13 +70,13 @@ public class CustomViewProperties
 //		moduleList=new ArrayList<Submodule>();
 		LOGGER.info("*** Load Custom View Properties from file ***");
 	}
-	
+
 	public void init()
 	{
 		if(!init)
 			loadCommonView();
 	}
-	
+
 
 	public void setObjConf(ModuleConfiguration conf)
 	{
@@ -99,12 +99,12 @@ public class CustomViewProperties
 	}
 
 	public void setDetectorConf(ModuleConfiguration conf) {
-		detectorConf=conf;	
+		detectorConf=conf;
 		init=true;
 	}
 
 	public void setLightPathConf(ModuleConfiguration conf) {
-		lightPathConf=conf;	
+		lightPathConf=conf;
 		init=true;
 	}
 
@@ -114,12 +114,12 @@ public class CustomViewProperties
 	}
 
 	public void setSampleConf(ModuleConfiguration conf) {
-		sampleConf=conf;	
+		sampleConf=conf;
 		init=true;
 	}
 
 	public void setPlaneConf(ModuleConfiguration conf) {
-		planeConf=conf;	
+		planeConf=conf;
 		init=true;
 	}
 
@@ -127,7 +127,7 @@ public class CustomViewProperties
 		imgEnvConf=conf;
 		init=true;
 	}
-	
+
 	public ModuleConfiguration getObjConf()
 	{
 		return oConf;
@@ -171,12 +171,14 @@ public class CustomViewProperties
 	}
 
 
-	
-	/** TODO: standard view if no profile file is given */
+
+
+
+/** TODO: standard view if no profile file is given */
 	private void loadCommonView()
 	{
 		LOGGER.info("[VIEW_PROP] Load general view");
-		
+
 		imageConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_A,"1");
 		imageConf.setTag(TagNames.IMG_NAME,null,null,true);
 		imageConf.setTag(TagNames.ACQTIME,null,null,true);
@@ -188,7 +190,8 @@ public class CustomViewProperties
 		imageConf.setTag(TagNames.STEPSIZE,null,null,true);
 		imageConf.setTag(TagNames.TIMEINC,null,null,true);
 		imageConf.setTag(TagNames.WELLNR,null,null,true);
-		
+
+
 		channelConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_E,"1");
 		channelConf.setTag(TagNames.CH_NAME,null,null,true);
 		channelConf.setTag(TagNames.COLOR,null,null,true);
@@ -202,7 +205,8 @@ public class CustomViewProperties
 		channelConf.setTag(TagNames.CONTRASTMETHOD,null,null,true);
 		channelConf.setTag(TagNames.NDFILTER,null,null,true);
 		channelConf.setTag(TagNames.PINHOLESIZE,null,TagNames.PINHOLESIZE_UNIT.getSymbol(),true);
-		
+
+
 		oConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_B,"1");
 		oConf.setTag(TagNames.MODEL,null,null,true);
 		oConf.setTag(TagNames.MANUFAC,null,null,true);
@@ -212,11 +216,13 @@ public class CustomViewProperties
 		oConf.setTag(TagNames.IMMERSION,null,null,true);
 		oConf.setTag(TagNames.CORRECTION,null,null,true);
 		oConf.setTag(TagNames.WORKDIST,null,TagNames.WORKDIST_UNIT.getSymbol(),true);
-		
+
+
 		oConf.setSettingTag(TagNames.CORCOLLAR,null,null,true);
 		oConf.setSettingTag(TagNames.OBJ_MEDIUM,null,null,true);
 		oConf.setSettingTag(TagNames.REFINDEX,null,null,true);
-		
+
+
 		detectorConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_C,"1");
 		detectorConf.setTag(TagNames.MODEL,null,null,true);
 		detectorConf.setTag(TagNames.MANUFAC,null,null,true);
@@ -229,7 +235,7 @@ public class CustomViewProperties
 		detectorConf.setSettingTag(TagNames.CONFZOOM,null,null,true);
 		detectorConf.setSettingTag(TagNames.BINNING,null,null,true);
 		detectorConf.setSettingTag(TagNames.SUBARRAY,null,null,true);
-		
+
 		expConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_H,"1");
 		expConf.setTag(TagNames.TYPE,null,null,true);
 		expConf.setTag(TagNames.DESC,null,null,true);
@@ -237,13 +243,14 @@ public class CustomViewProperties
 		expConf.setTag(TagNames.PROJECTNAME,null,null,true);
 		expConf.setTag(TagNames.GROUP,null,null,true);
 		expConf.setTag(TagNames.PROJECTPARTNER,null,null,true);
-		
+
+
 		imgEnvConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_A,"1");
 		imgEnvConf.setTag(TagNames.TEMP,null,null,true);
 		imgEnvConf.setTag(TagNames.AIRPRESS,null,null,true);
 		imgEnvConf.setTag(TagNames.HUMIDITY,null,null,true);
 		imgEnvConf.setTag(TagNames.CO2,null,null,true);
-		
+
 		// laser module for lightSrc
 		lightSrcConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_D,"1");
 		lightSrcConf.setTag(TagNames.MODEL,null,null,true);
@@ -260,6 +267,7 @@ public class CustomViewProperties
 		lightSrcConf.setTag(TagNames.WAVELENGTH,null,TagNames.WAVELENGTH_UNIT.getSymbol(),true);
 		lightSrcConf.setSettingTag(TagNames.SET_WAVELENGTH,null,null,true);
 		lightSrcConf.setSettingTag(TagNames.ATTENUATION,null,null,true);
+
 		
 		sampleConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_G,"1");
 		sampleConf.setTag(TagNames.PREPDATE,null,null,true);
@@ -271,10 +279,11 @@ public class CustomViewProperties
 		sampleConf.setTag(TagNames.EXPGRID,null,null,true);
 		sampleConf.setTag(TagNames.EXPOBJNR,null,null,true);
 		sampleConf.setTag(TagNames.EXPOBJTYPE,null,null,true);
-		
+
 		//TODO: plane,
-		
+
 	}
+
 	
 
 	public String getMicName() {
@@ -319,11 +328,11 @@ public class CustomViewProperties
 	public void setFile(File file) {
 		this.file=file;
 	}
-	
+
 	public File getFile()
 	{
 		return file;
 	}
 
-	
+
 }

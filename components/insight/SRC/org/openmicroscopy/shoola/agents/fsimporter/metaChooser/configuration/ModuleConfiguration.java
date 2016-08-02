@@ -138,8 +138,10 @@ public class ModuleConfiguration
 			for(int i=0; i<tagList.getLength(); i++){
 				NamedNodeMap attr=tagList.item(i).getAttributes();
 				if(tagList.item(i).getParentNode().getNodeName().equals("Settings")){
+					
 					parseTagFromXML(attr,settingsTagConfList,"settings");
 				}else{
+					
 					parseTagFromXML(attr,tagConfList,"");
 				}
 			}
@@ -148,8 +150,10 @@ public class ModuleConfiguration
 
 
 
+	
 	private void parseTagFromXML(NamedNodeMap attr,List<TagConfiguration> list,String sett) 
 	{
+		
 		String name="";String value=null; boolean prop=false;String unitStr=null;
 		boolean visible=false;
 
