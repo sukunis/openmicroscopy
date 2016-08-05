@@ -126,9 +126,6 @@ class EditorUI
 	/** The UI component displaying the general metadata. */
 	private GeneralPaneUI				generalPane;
 	
-	/** The UI component for edit extended metaData elements.*/
-	private MetaDataUI					metaDataEditPane;
-	
 	/** The UI component displaying the acquisition metadata. */
 	private AcquisitionDataUI			acquisitionPane;
 	
@@ -179,7 +176,6 @@ class EditorUI
 		addTab("General", generalPane, "General Information.");
 		addTab("Acquisition", acquisitionPane, "Acquisition Metadata.");
 		
-		addTab("Metadata",metaDataEditPane,"MetaData Editor.");
 		
 		if (init) {
 			if (model.getRndIndex() == MetadataViewer.RND_SPECIFIC) {
@@ -216,7 +212,6 @@ class EditorUI
 		toolBar = new ToolBar(model, controller);
 		generalPane = new GeneralPaneUI(this, model, controller, toolBar);
 		acquisitionPane = new AcquisitionDataUI(this, model, controller);
-		metaDataEditPane=new MetaDataUI(this, model, controller);
 		tabPane = new JTabbedPane();
 		tabPane.addChangeListener(controller);
 		tabPane.setBackground(UIUtilities.BACKGROUND_COLOR);
@@ -282,7 +277,6 @@ class EditorUI
     	} else {
         	toolBar.buildUI();
         	generalPane.layoutUI();
-        	metaDataEditPane.layoutUI();
         	acquisitionPane.layoutCompanionFiles();
         	component = tabPane;
         	if (model.isMultiSelection()) {
@@ -369,7 +363,6 @@ class EditorUI
 				load = true;
 			}
 			generalPane.setRootObject(oldObject);
-			metaDataEditPane.setRootObject(oldObject);
 			acquisitionPane.setRootObject(load);
 		}
 	}
@@ -439,7 +432,6 @@ class EditorUI
 		userUI.clearData(null);
 		groupUI.clearData(null);
 		generalPane.clearData(null);
-		metaDataEditPane.clearData(null);
 		tabPane.setComponentAt(RND_INDEX, dummyPanel);
 		tabPane.repaint();
 		setCursor(Cursor.getDefaultCursor());
