@@ -279,7 +279,7 @@ public class MetaDataView extends JPanel
 	
 	/**
 	 * 
-	 * @return component that holds a list of all serieModels of this data.
+	 * @return metaData model that holds a list of all series data models of current img data.
 	 */
 	public MetaDataModelObject getModelObject()
 	{

@@ -288,6 +288,7 @@ public class MetaDataUI extends JPanel
 	{
 		if(m!=null && model!=null){
 			addExperimentData(m.getExperiment(), true);
+			addProjectPartner(m.getProjectPartner(),true);
 			
 			addImageData(m.getImageData(),true);
 			addObjectData(m.getObjective(),m.getObjectiveSettings(),true);
@@ -400,6 +401,15 @@ public class MetaDataUI extends JPanel
 		if(eUI!=null && e!=null){
 			eUI.addData(e, overwrite);
 			
+			eUI.setFieldsExtern(true);
+		}
+	}
+	
+	private void addProjectPartner(Experimenter e, boolean overwrite)
+	{
+		ExperimentCompUI eUI=model.getExpModul();
+		if(eUI!=null && e!=null){
+			eUI.addProjectPartner(e,overwrite);
 			eUI.setFieldsExtern(true);
 		}
 	}

@@ -217,6 +217,13 @@ public class ExperimentCompUI extends ElementsCompUI
 		return conflicts;
 	}
 	
+	public void addProjectPartner(Experimenter e, boolean overwrite) 
+	{
+		if(overwrite){
+			setProjectPartner(e.getLastName(), OPTIONAL);
+		}
+	}
+	
 	/**
 	 * Overwrites only tags that are not set
 	 * @param exper
@@ -670,6 +677,8 @@ public class ExperimentCompUI extends ElementsCompUI
 			}
 		}
 	}
+
+	
 
 
 

@@ -11,6 +11,7 @@ import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
 import ome.xml.model.Experiment;
+import ome.xml.model.Experimenter;
 import ome.xml.model.Filter;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
@@ -47,39 +48,51 @@ public class MetaDataModel
 {
 	
 	/** Logger for this class. */
-//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
 	 private static final org.slf4j.Logger LOGGER =
 	    	    LoggerFactory.getLogger(MetaDataModel.class);
+
+	/** module for image data */ 
 	private ElementsCompUI image;
+	/** module for experiment data */
+	private ElementsCompUI experimentUI;
+	/** module for objective data */
+	private ElementsCompUI objectiveUI;
+	/** module for imgEnv data */
+	private ElementsCompUI imgEnvUI;
+	/** module for planeSlider */
+	private ElementsCompUI planeSliderUI;
+	/** module for sample data */
+	private ElementsCompUI sampleUI;
+	/** modules for lightPath data link to channel of current image. List index== channelIndex*/
+	private List<ElementsCompUI> lightPathList;
+	/** modules for channel data*/
+	private List<ElementsCompUI> channelList;
+	/** modules for detector data link to channel of current image */
 	private List<ElementsCompUI> detectorList;
+	/** modules for lightsource data link to channel of current image */
 	private List<ElementsCompUI> lightSrcList;
 	
-	// list of all filter for current image
+	/** list of filter data  of current image*/
 	private List<Filter> filterList;
+	/** list of all dichroics for current image*/
+	private List<Dichroic> dichroicList;
+	/** list of all lightSrc for current image */
+	private List<LightSource> lightSrcOrigList;
+	
 	/** linked Channel for single filter, because there are more than one filter per channel
 	 and maybe two channel have the same kind of filter with differents settings**/
 //	private List<Integer> linkedChannelForFilter;
-	// list of all dichroics for current image
-	private List<Dichroic> dichroicList;
+
 //	private List<Integer> linkedChannelForDichroic;
 	
 	
-
+	/** list of all planes of selected image*/
 	private List<ElementsCompUI> planeList;
+	
 	//TODO
 //	private ElementsCompUI stage;
 	
-	//-----------------------------------
-	private ElementsCompUI experimentUI;
-	private ElementsCompUI objectiveUI;
-	private ElementsCompUI imgEnvUI;
-	private ElementsCompUI planeSliderUI;
-	private ElementsCompUI sampleUI;
-	
-	// list of lightPaths for channel of current image. List index== channelIndex
-	private List<ElementsCompUI> lightPathList;
-	
-	private List<ElementsCompUI> channelList;
+	private Experimenter projectPartner;
 	
 	private Image imageOME;
 	private int imageIndex;
@@ -87,7 +100,7 @@ public class MetaDataModel
 	
 	private OME ome;
 
-	private List<LightSource> lightSrcOrigList;
+	
 	
 	
 	
@@ -302,8 +315,16 @@ public class MetaDataModel
 	{
 		if(experimentUI==null)
 			return null;
-		else
+		else{
+			// save project partner
+			projectPartner = ((ExperimentCompUI) experimentUI).getProjectPartnerAsExp();
 			return ((ExperimentCompUI) experimentUI).getData();
+		}
+	}
+	
+	public Experimenter getProjectPartner()
+	{
+		return projectPartner;
 	}
 	
 	public void setSampleData(ElementsCompUI e)
@@ -379,7 +400,7 @@ public class MetaDataModel
 	
 	public Channel getChannel(int index) throws Exception
 	{
-		if(channelList==null || channelList.get(index)==null)
+		if(channelList==null || channelList.isEmpty() || index >=channelList.size())
 			return null;
 		else
 			return  ((ChannelCompUI)channelList.get(index)).getData(); 
@@ -387,6 +408,9 @@ public class MetaDataModel
 	
 	public ChannelCompUI getChannelModul(int i) 
 	{
+		if(channelList==null || channelList.isEmpty() || i >=channelList.size())
+			return null;
+		
 		return (ChannelCompUI) channelList.get(i);
 	}
 	
@@ -416,8 +440,10 @@ public class MetaDataModel
 	
 	public DetectorCompUI getDetectorModul(int i) 
 	{
-		return (detectorList!=null && !detectorList.isEmpty()) ?
-				(DetectorCompUI) detectorList.get(i) : null;
+		if(detectorList==null || detectorList.isEmpty() || i >=detectorList.size()){
+			return null;
+		}
+		return 	(DetectorCompUI) detectorList.get(i);
 	}
 
 	
@@ -430,23 +456,26 @@ public class MetaDataModel
 	public Detector getDetector(int index) throws Exception
 	{
 		Detector res=null;
-		if(detectorList!=null){
-			DetectorCompUI dUI=((DetectorCompUI)detectorList.get(index));
-			if(dUI!=null){
-				res=dUI.getData();
-				DetectorSettings dSett=getDetectorSettings(index);
-				// check if this detector is linked to channel
-				if(res!=null && !detectorIsLinkedToChannel(dSett, res.getID())){
-					LOGGER.info("[DEBUG] detector is not linked");
-					if(imageOME!=null){
-						if(imageOME.getLinkedInstrument()==null ){
-							createAndLinkNewInstrument(ome);
-						}
-						linkDetector(dSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfDetectorList());
-						//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
-					}else{
-						LOGGER.info("[DEBUG] can't link detector. ");
+		
+		
+		if(detectorList==null || detectorList.isEmpty() || index >=detectorList.size()){
+			return res;
+		}
+		DetectorCompUI dUI=((DetectorCompUI)detectorList.get(index));
+		if(dUI!=null){
+			res=dUI.getData();
+			DetectorSettings dSett=getDetectorSettings(index);
+			// check if this detector is linked to channel
+			if(res!=null && !detectorIsLinkedToChannel(dSett, res.getID())){
+				LOGGER.info("[DEBUG] detector is not linked");
+				if(imageOME!=null){
+					if(imageOME.getLinkedInstrument()==null ){
+						createAndLinkNewInstrument(ome);
 					}
+					linkDetector(dSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfDetectorList());
+					//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
+				}else{
+					LOGGER.info("[DEBUG] can't link detector. ");
 				}
 			}
 		}
@@ -486,7 +515,7 @@ public class MetaDataModel
 	
 	public DetectorSettings getDetectorSettings(int index) throws Exception
 	{
-		if(detectorList==null || index>=detectorList.size())
+		if(detectorList==null || detectorList.isEmpty() || index>=detectorList.size())
 			return null;
 		
 		return ((DetectorCompUI)detectorList.get(index)).getSettings().getData();
@@ -523,11 +552,10 @@ public class MetaDataModel
 
 	public LightPath getLightPath(int index) throws Exception
 	{
-		if(lightPathList==null || index>=lightPathList.size()){
+		if(lightPathList==null || lightPathList.isEmpty() || index>=lightPathList.size()){
 			LOGGER.info("No lightPath available for channel "+index);
 			return null;
 		}
-		
 //		updateLightPathElems( lightPathObjectList, chIdx);
 		
 		return ((LightPathCompUI)lightPathList.get(index)).getData();
@@ -535,7 +563,10 @@ public class MetaDataModel
 	
 	public LightPathCompUI getLightPathModul(int index)
 	{
-		return lightPathList!=null ?((LightPathCompUI)lightPathList.get(index)) : null;
+		if(lightPathList==null || lightPathList.isEmpty() || index >= lightPathList.size())
+			return null;
+		else 
+			return((LightPathCompUI)lightPathList.get(index));
 	}
 	
 	public int getNumberOfLightPath() {
@@ -634,22 +665,23 @@ public class MetaDataModel
 	public LightSource getLightSourceData(int index) throws Exception
 	{
 		LightSource res=null;
-		if(lightSrcList!=null){
-			LightSourceCompUI lUI=((LightSourceCompUI)lightSrcList.get(index));
-			if(lUI!=null){
-				res=lUI.getData();
-				LightSourceSettings lSett=getLightSourceSettings(index);
-				// check if this detector is linked to channel
-				if(res!=null && !lightSrcIsLinkedToChannel(lSett, res.getID())){
-					LOGGER.info("[DEBUG] lightSrc is not linked");
-					if(imageOME!=null){
-						if(imageOME.getLinkedInstrument()==null ){
-							createAndLinkNewInstrument(ome);
-						}
-						linkLightSrc(lSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfLightSourceList());
-					}else{
-						LOGGER.info("[DEBUG] can't link lightSrc. ");
+		if(lightSrcList==null || lightSrcList.isEmpty() || index >=lightSrcList.size()){
+			return res;
+		}
+		LightSourceCompUI lUI=((LightSourceCompUI)lightSrcList.get(index));
+		if(lUI!=null){
+			res=lUI.getData();
+			LightSourceSettings lSett=getLightSourceSettings(index);
+			// check if this detector is linked to channel
+			if(res!=null && !lightSrcIsLinkedToChannel(lSett, res.getID())){
+				LOGGER.info("[DEBUG] lightSrc is not linked");
+				if(imageOME!=null){
+					if(imageOME.getLinkedInstrument()==null ){
+						createAndLinkNewInstrument(ome);
 					}
+					linkLightSrc(lSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfLightSourceList());
+				}else{
+					LOGGER.info("[DEBUG] can't link lightSrc. ");
 				}
 			}
 		}
@@ -689,7 +721,7 @@ public class MetaDataModel
 	
 	public LightSourceSettings getLightSourceSettings(int index) throws Exception
 	{
-		if(lightSrcList==null || index >=lightSrcList.size() ){
+		if(lightSrcList==null ||lightSrcList.isEmpty() || index >=lightSrcList.size() ){
 			return null;
 		}
 		return ((LightSourceCompUI)lightSrcList.get(index)).getSettings().getData(); 
@@ -697,8 +729,9 @@ public class MetaDataModel
 	
 	public LightSourceCompUI getLightSourceModul(int index)
 	{
-		
-		return (lightSrcList!=null && !lightSrcList.isEmpty()) ? ((LightSourceCompUI)lightSrcList.get(index)) : null;
+		if(lightSrcList==null ||lightSrcList.isEmpty() || index >=lightSrcList.size())
+			return null;
+		return (LightSourceCompUI)lightSrcList.get(index);
 	}
 	
 	
@@ -748,24 +781,30 @@ public class MetaDataModel
 		objectiveUI=o;
 	}
 	
+	/**
+	 * Read out GUI data and return data as Objective object.
+	 * @return Objective contains GUI data.
+	 * @throws Exception
+	 */
 	public Objective getObjective() throws Exception
 	{
 		Objective res=null;
-		if(objectiveUI!=null){
-			res=((ObjectiveCompUI) objectiveUI).getData();
-			ObjectiveSettings oSett=getObjectiveSettings();
-			// check if this objective is linked to image
-			if(res!=null && !objectiveIsLinkedToImage(oSett,res.getID())){
-				LOGGER.info("[DEBUG] objective is not linked");
-				if(imageOME!=null){
-					 if(imageOME.getLinkedInstrument()==null ){
-						createAndLinkNewInstrument(ome);
-					 }
-					linkObjective(oSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfObjectiveList());
-//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
-				}else{
-					LOGGER.info("[DEBUG] can't link objective. ");
+		if(objectiveUI==null){
+			return res;
+		}
+		res=((ObjectiveCompUI) objectiveUI).getData();
+		ObjectiveSettings oSett=getObjectiveSettings();
+		// check if this objective is linked to image
+		if(res!=null && !objectiveIsLinkedToImage(oSett,res.getID())){
+			LOGGER.info("[DEBUG] objective is not linked");
+			if(imageOME!=null){
+				if(imageOME.getLinkedInstrument()==null ){
+					createAndLinkNewInstrument(ome);
 				}
+				linkObjective(oSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfObjectiveList());
+				//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
+			}else{
+				LOGGER.info("[DEBUG] can't link objective. ");
 			}
 		}
 		return res;
@@ -1008,9 +1047,6 @@ public class MetaDataModel
 	
 	public List<Filter> getFilterList()
 	{
-//		for(Filter f: filterList){
-//			printFilter("DEBUG return", f);
-//		}
 		return filterList;
 	}
 	
@@ -1122,16 +1158,32 @@ public class MetaDataModel
 	}
 
 
-	//TODO necessary??
+	/**
+	 * Save GUI data 
+	 */
 	public void save() 
 	{
 		LOGGER.info("[MODEL] -- Save model data");
+		System.out.println("[MODEL] -- Save model data");
 		try {
-			if(experimentUI!=null && ((ExperimentCompUI) experimentUI).userInput()){
-				((ExperimentCompUI) experimentUI).getData();
-			}
-			
+//			if(experimentUI!=null && ((ExperimentCompUI) experimentUI).userInput()){
+//				((ExperimentCompUI) experimentUI).getData();
+//			}
+			getExperiment();
 			getObjective();
+			getImageData();
+			getImgagingEnv();
+			for(int i=0; i<getNumberOfDetectors();i++)
+				getDetector(i);
+			for(int i=0; i<getNumberOfLightSrc();i++)
+				getLightSourceData(i);
+			for(int i=0; i<getNumberOfChannels(); i++)
+				getChannel(i);
+			for(int i=0; i<getNumberOfLightPath();i++)
+				getLightPath(i);
+			//TODO: getPlaneData();
+			getSample();
+			
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

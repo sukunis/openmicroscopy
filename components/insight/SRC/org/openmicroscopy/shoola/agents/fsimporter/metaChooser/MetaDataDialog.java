@@ -708,6 +708,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
         
         
         LOGGER.info("[TREE] -- Node: "+((FNode)fileTree.getLastSelectedPathComponent()).toString()+" ##############################################");
+        System.out.println("[TREE] -- Node: "+((FNode)fileTree.getLastSelectedPathComponent()).toString()+" ##############################################");
         
         saveModel();
 
@@ -830,11 +831,15 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
         return dataView;
     }
 
-
+    /**
+     * save data model of last selected node, if any user input available
+     */
     private void saveModel() 
     {
         if(lastNode!=null){
             LOGGER.info("[DEBUG] -- SAVE MODEL FOR: "+lastNode.getAbsolutePath());
+            System.out.println("[DEBUG] -- SAVE MODEL FOR: "+lastNode.getAbsolutePath());
+            
             LOGGER.info("[DEBUG] components metaPanel: "+metaPanel.getComponentCount());
             if(metaPanel.getComponentCount()>0){
                 Component c=metaPanel.getComponent(0);
