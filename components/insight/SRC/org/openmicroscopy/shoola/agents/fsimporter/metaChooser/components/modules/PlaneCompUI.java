@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,9 +14,11 @@ import javax.swing.border.TitledBorder;
 
 
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import loci.formats.meta.IMetadata;
 import ome.units.quantity.Length;

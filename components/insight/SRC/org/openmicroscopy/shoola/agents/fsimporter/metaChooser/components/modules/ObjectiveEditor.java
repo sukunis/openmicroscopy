@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -35,7 +35,7 @@ import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.Immersion;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightPathTable.LightPathTableModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathTable.LightPathTableModel;
 
 public class ObjectiveEditor extends JDialog implements ActionListener 
 {

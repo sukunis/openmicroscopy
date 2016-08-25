@@ -1,6 +1,5 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 
 public class CheckBoxNodeTagData 
 {

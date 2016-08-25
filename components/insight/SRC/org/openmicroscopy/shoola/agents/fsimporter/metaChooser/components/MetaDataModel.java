@@ -25,22 +25,22 @@ import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.FilterType;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ChannelCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.DetectorCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ExperimentCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ImageCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ImagingEnvironmentCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightPathCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightSourceCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveSettingsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.PlaneCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.PlaneSliderCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.SampleCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ImageCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ImagingEnvironmentCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveSettingsCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneSliderCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.SampleCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 //see also ome.xml.model.OME

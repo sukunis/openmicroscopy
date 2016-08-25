@@ -32,12 +32,12 @@ import ome.xml.model.Filter;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.DetectorCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.FilterCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightSourceCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.FilterCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 import edu.emory.mathcs.backport.java.util.Arrays;

@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -41,10 +41,15 @@ import javax.swing.border.TitledBorder;
 
 
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+
+
+
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import ome.units.UNITS;
 import ome.units.quantity.ElectricPotential;
@@ -110,7 +115,6 @@ public class DetectorCompUI extends ElementsCompUI
 	
 	public DetectorCompUI(ModuleConfiguration objConf) 
 	{	
-//		voltageUnit=UNITS.V;
 		detectorSettUI=new DetectorSettingsCompUI(objConf);
 		initGUI();
 		if(objConf==null)
@@ -525,7 +529,7 @@ public class DetectorCompUI extends ElementsCompUI
 	public void setModel(String value, boolean prop)
 	{
 		if(model == null) 
-			model = new TagData(TagNames.MODEL+": ",value,prop,TagData.TEXTFIELD);
+			model = new TagData(TagNames.MODEL,value,prop,TagData.TEXTFIELD);
 		else 
 			model.setTagValue(value,prop);
 	}
@@ -533,7 +537,7 @@ public class DetectorCompUI extends ElementsCompUI
 	public void setManufact(String value, boolean prop)
 	{
 		if(manufact == null) 
-			manufact = new TagData(TagNames.MANUFAC+": ",value,prop,TagData.TEXTFIELD);
+			manufact = new TagData(TagNames.MANUFAC,value,prop,TagData.TEXTFIELD);
 		else 
 			manufact.setTagValue(value,prop);
 	}
@@ -542,7 +546,7 @@ public class DetectorCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(type == null) 
-			type = new TagData(TagNames.TYPE+": ",val,prop,TagData.COMBOBOX,getNames(DetectorType.class));
+			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(DetectorType.class));
 		else 
 			type.setTagValue(val,prop);
 	}
@@ -552,7 +556,7 @@ public class DetectorCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(amplGain == null) 
-			amplGain = new TagData(TagNames.AMPLGAIN+": ",val,prop,TagData.TEXTFIELD);
+			amplGain = new TagData(TagNames.AMPLGAIN,val,prop,TagData.TEXTFIELD);
 		else 
 			amplGain.setTagValue(val,prop);
 	}
@@ -562,7 +566,7 @@ public class DetectorCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(zoom == null) 
-			zoom = new TagData(TagNames.ZOOM+": ",val,prop,TagData.TEXTFIELD);
+			zoom = new TagData(TagNames.ZOOM,val,prop,TagData.TEXTFIELD);
 		else 
 			zoom.setTagValue(val,prop);
 	}

@@ -3,8 +3,8 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ExperimentCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
 
 public class MetaDataModelObject 
 {

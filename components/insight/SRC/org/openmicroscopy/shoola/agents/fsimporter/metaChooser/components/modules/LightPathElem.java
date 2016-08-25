@@ -1,6 +1,5 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
 
 public abstract class LightPathElem extends ElementsCompUI 
 	implements Cloneable

@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
@@ -30,8 +30,9 @@ import ome.xml.model.enums.FilterType;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightPathTable.LightPathTableModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathTable.LightPathTableModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 public class LightPathCompUI extends ElementsCompUI 

@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -30,11 +30,12 @@ import ome.xml.model.enums.handlers.ExperimentTypeEnumHandler;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterListModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
@@ -430,7 +431,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? value.getValue():"";
 		if(type == null) 
-			type = new TagData(TagNames.TYPE+": ",val,prop,TagData.COMBOBOX,getNames(ExperimentType.class));
+			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(ExperimentType.class));
 		else 
 			type.setTagValue(val,prop);	
 	}
@@ -452,7 +453,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	private void setDescription(String value, boolean prop)
 	{
 		if(description == null) 
-			description = new TagData(TagNames.DESC+": ",value,prop,TagData.TEXTAREA);
+			description = new TagData(TagNames.DESC,value,prop,TagData.TEXTAREA);
 		else 
 			description.setTagValue(value,prop);	
 	}
@@ -467,7 +468,7 @@ public class ExperimentCompUI extends ElementsCompUI
 			if(value!=null){
 				m.addElement(value);
 			}
-			expName = new TagData(TagNames.EXPNAME+": ",m,prop,TagData.LIST);
+			expName = new TagData(TagNames.EXPNAME,m,prop,TagData.LIST);
 		}
 		else{ 
 			expName.setTagValue(value);
@@ -477,7 +478,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	public void setProjectName(String value, boolean prop)
 	{
 		if(projectName == null) 
-			projectName = new TagData(TagNames.PROJECTNAME+": ",value,prop,TagData.TEXTFIELD);
+			projectName = new TagData(TagNames.PROJECTNAME,value,prop,TagData.TEXTFIELD);
 		else 
 			projectName.setTagValue(value,prop);
 	}
@@ -485,7 +486,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	public void setGroupName(String value, boolean prop)
 	{
 		if(group == null) 
-			group = new TagData(TagNames.GROUP+": ",value,prop,TagData.TEXTFIELD);
+			group = new TagData(TagNames.GROUP,value,prop,TagData.TEXTFIELD);
 		else 
 			group.setTagValue(value,prop);
 	}
@@ -493,7 +494,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	private void setProjectPartner(String value, boolean prop)
 	{
 		if(projectPartner == null) 
-			projectPartner = new TagData(TagNames.PROJECTPARTNER+": ",value,prop,TagData.TEXTFIELD);
+			projectPartner = new TagData(TagNames.PROJECTPARTNER,value,prop,TagData.TEXTFIELD);
 		else 
 			projectPartner.setTagValue(value,prop);
 	}
@@ -660,6 +661,17 @@ public class ExperimentCompUI extends ElementsCompUI
 			default:
 				LOGGER.info("[DATA] unknown Label for Project Partner MapAnnotation: "+obj.getName());
 				break;
+			}
+		}
+	}
+	
+	public void update(List<TagData> list) 
+	{
+		for(TagData t: list){
+			if(t.valueChanged()){
+				switch(t.getTagName()){
+				
+				}
 			}
 		}
 	}

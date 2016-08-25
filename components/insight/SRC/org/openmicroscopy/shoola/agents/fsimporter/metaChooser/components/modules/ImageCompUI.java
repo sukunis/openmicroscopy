@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -12,11 +12,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TitledSeparator;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
@@ -566,7 +567,7 @@ public class ImageCompUI extends ElementsCompUI
 	public void setName(String value, boolean prop)
 	{
 		if(name == null) 
-			name = new TagData(TagNames.IMG_NAME+": ",value,prop,TagData.TEXTFIELD);
+			name = new TagData(TagNames.IMG_NAME,value,prop,TagData.TEXTFIELD);
 		else 
 			name.setTagValue(value,prop);
 	}
@@ -575,14 +576,14 @@ public class ImageCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? value.getValue():"";
 		if(acqTime == null) 
-			acqTime = new TagData(TagNames.ACQTIME+": ",val,prop,TagData.TIMESTAMP);
+			acqTime = new TagData(TagNames.ACQTIME,val,prop,TagData.TIMESTAMP);
 		else 
 			acqTime.setTagValue(val,prop);
 	}
 	public void setDimXY(String[] value, boolean prop)
 	{
 		if(dimXY == null) 
-			dimXY = new TagData(TagNames.DIMXY+": ",value,prop,TagData.ARRAYFIELDS);
+			dimXY = new TagData(TagNames.DIMXY,value,prop,TagData.ARRAYFIELDS);
 		else{ 
 			dimXY.setTagValue(value[0],0,prop);
 			dimXY.setTagValue(value[1],1,prop);
@@ -592,7 +593,7 @@ public class ImageCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? value.getValue():"";
 		if(pixelType == null) 
-			pixelType = new TagData(TagNames.PIXELTYPE+": ",val,prop,TagData.TEXTFIELD);
+			pixelType = new TagData(TagNames.PIXELTYPE,val,prop,TagData.TEXTFIELD);
 		else 
 			pixelType.setTagValue(val,prop);
 	}
@@ -603,7 +604,8 @@ public class ImageCompUI extends ElementsCompUI
 		Unit unit=(valueX!=null) ? valueX.unit() : TagNames.PIXELSIZE_UNIT;
 		String[] val= {valX,valY};
 		if(pixelSize == null) 
-			pixelSize = new TagData(TagNames.PIXELSIZE+"["+unit.getSymbol()+"]: ",val,prop,TagData.ARRAYFIELDS);
+			pixelSize = new TagData(TagNames.PIXELSIZE,val,unit,prop,TagData.ARRAYFIELDS);
+//			pixelSize = new TagData(TagNames.PIXELSIZE+"["+unit.getSymbol()+"]: ",val,prop,TagData.ARRAYFIELDS);
 		else {
 			pixelSize.setTagValue(valX,0,prop);
 			pixelSize.setTagValue(valY,1,prop);
@@ -613,7 +615,7 @@ public class ImageCompUI extends ElementsCompUI
 	public void setDimZTC(String[] value, boolean prop)
 	{
 		if(dimZTC == null) 
-			dimZTC = new TagData(TagNames.DIMZTC+": ",value,prop,TagData.ARRAYFIELDS);
+			dimZTC = new TagData(TagNames.DIMZTC,value,prop,TagData.ARRAYFIELDS);
 		else{ 
 			dimZTC.setTagValue(value[0],0,prop);
 			dimZTC.setTagValue(value[1],1,prop);
@@ -630,7 +632,7 @@ public class ImageCompUI extends ElementsCompUI
 		String symbol = unit==UNITS.REFERENCEFRAME ? "rf" : unit.getSymbol();
 		String[] val= {valX,valY};
 		if(stagePos == null){ 
-			stagePos = new TagData(TagNames.STAGEPOS+"["+symbol+"]: ",val,prop,TagData.ARRAYFIELDS);
+			stagePos = new TagData(TagNames.STAGEPOS+"["+symbol+"]",val,prop,TagData.ARRAYFIELDS);
 		}else {
 			stagePos.setTagValue(valX,0,prop);
 			stagePos.setTagValue(valY,1,prop);
@@ -643,7 +645,7 @@ public class ImageCompUI extends ElementsCompUI
 		public void setStepSize(String value, boolean prop)
 		{
 			if(stepSize == null) 
-				stepSize = new TagData(TagNames.STEPSIZE+": ",value,prop,TagData.TEXTFIELD);
+				stepSize = new TagData(TagNames.STEPSIZE,value,prop,TagData.TEXTFIELD);
 			else 
 				stepSize.setTagValue(value,prop);
 		}
@@ -667,7 +669,7 @@ For example in a video stream.
 	public void setWellNr(String value, boolean prop)
 	{
 		if(wellNr == null) 
-			wellNr = new TagData(TagNames.WELLNR+": ",value,prop,TagData.TEXTFIELD);
+			wellNr = new TagData(TagNames.WELLNR,value,prop,TagData.TEXTFIELD);
 		else 
 			wellNr.setTagValue(value,prop);
 	}

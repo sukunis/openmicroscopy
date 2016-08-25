@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,10 +10,11 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
@@ -361,7 +362,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value.getNumberValue()):"";
 		if(attenuation == null) 
-			attenuation = new TagData(TagNames.ATTENUATION+": ",val,prop,TagData.TEXTFIELD);
+			attenuation = new TagData(TagNames.ATTENUATION,val,prop,TagData.TEXTFIELD);
 		else 
 			attenuation.setTagValue(val,prop);
 	}

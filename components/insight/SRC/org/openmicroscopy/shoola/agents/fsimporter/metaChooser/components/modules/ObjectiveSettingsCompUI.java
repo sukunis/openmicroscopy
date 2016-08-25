@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,10 +10,11 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
@@ -50,20 +51,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 			createDummyPane(objConf.getSettingList(),false);
 	}
 	
-//	public ObjectiveSettingsCompUI(ObjectiveSettings _oSett, String id)
-//	{
-//		oSett=_oSett;
-//		initGUI();
-//		if(oSett!=null)
-//			setGUIData();
-//		else{
-//			if(id==null)
-//				id=MetadataTools.createLSID("Objective", 0,0);
-//			oSett=new ObjectiveSettings();
-//			oSett.setID(id);
-//			createDummyPane(false);
-//		}
-//	}
+
 	
 	private void initTagList()
 	{
@@ -115,41 +103,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	}
 	
 	
-//	public boolean addData(ObjectiveSettings os, boolean overwrite)
-//	{
-//		boolean conflicts=false;
-//		if(oSett!=null){
-//			if(os!=null){
-//				Double rI=os.getRefractiveIndex();
-//				Medium m=os.getMedium();
-//				Double cc=os.getCorrectionCollar();
-//				if(overwrite){
-//					if(os.getID()!=null && !os.getID().equals(""))
-//						oSett.setID(os.getID());
-//					if(rI!=null)oSett.setRefractiveIndex(rI);
-//					if(m!=null)oSett.setMedium(m);
-//					if(cc!=null)oSett.setCorrectionCollar(cc);
-//					LOGGER.info("[DATA] overwrite OBJECTIVE_SETTINGS data");
-//				}else{
-//					if(oSett.getID()==null || oSett.getID().equals(""))
-//						oSett.setID(os.getID());
-//					if(oSett.getRefractiveIndex()==null)
-//						oSett.setRefractiveIndex(rI);
-//					if(oSett.getMedium()==null)
-//						oSett.setMedium(m);
-//					if(oSett.getCorrectionCollar()==null)
-//						oSett.setCorrectionCollar(cc);
-//					LOGGER.info("[DATA] complete OBJECTIVE_SETTINGS data");
-//				}
-//			}
-//		}else if(os!=null){
-//			oSett=os;
-//			LOGGER.info("[DATA] add OBJECTIVE_SETTINGS data");
-//		}
-//		
-//		setGUIData();
-//		return conflicts;
-//	}
+
 	
 	public boolean addData(ObjectiveSettings objS, boolean overwrite)
 	{
@@ -367,7 +321,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(corCollar == null) 
-			corCollar = new TagData(TagNames.CORCOLLAR+": ",val,prop,TagData.TEXTFIELD);
+			corCollar = new TagData(TagNames.CORCOLLAR,val,prop,TagData.TEXTFIELD);
 		else 
 			corCollar.setTagValue(val,prop);
 	}
@@ -375,7 +329,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(medium == null) 
-			medium = new TagData(TagNames.OBJ_MEDIUM+": ",val,prop,TagData.COMBOBOX,getNames(Medium.class));
+			medium = new TagData(TagNames.OBJ_MEDIUM,val,prop,TagData.COMBOBOX,getNames(Medium.class));
 		else 
 			medium.setTagValue(val,prop);
 	}
@@ -383,7 +337,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(refractIndex == null) 
-			refractIndex = new TagData(TagNames.REFINDEX+": ",val,prop,TagData.TEXTFIELD);
+			refractIndex = new TagData(TagNames.REFINDEX,val,prop,TagData.TEXTFIELD);
 		else 
 			refractIndex.setTagValue(val,prop);
 	}

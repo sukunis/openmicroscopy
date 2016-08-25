@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
 import java.awt.Component;
 
@@ -8,7 +8,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.CheckBoxNodeTagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.CheckBoxNodeTagData;
 
 
 public class CheckBoxNodeRendererTagData extends JCheckBox implements TreeCellRenderer  {

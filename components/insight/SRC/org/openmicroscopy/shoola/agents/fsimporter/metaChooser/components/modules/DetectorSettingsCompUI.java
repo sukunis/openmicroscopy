@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,10 +11,11 @@ import javax.swing.JLabel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
@@ -464,7 +465,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(gain == null) 
-			gain = new TagData(TagNames.GAIN+": ",val,prop,TagData.TEXTFIELD);
+			gain = new TagData(TagNames.GAIN,val,prop,TagData.TEXTFIELD);
 		else 
 			gain.setTagValue(val,prop);
 	}
@@ -473,7 +474,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		{
 			String val= (value != null)? value.getValue() : "";
 			if(binning == null) 
-				binning = new TagData(TagNames.BINNING+": ",val,prop,TagData.COMBOBOX,getNames(Binning.class));
+				binning = new TagData(TagNames.BINNING,val,prop,TagData.COMBOBOX,getNames(Binning.class));
 			else 
 				binning.setTagValue(val,prop);
 		}
@@ -490,7 +491,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		{
 			String val= (value != null) ? String.valueOf(value):"";
 			if(offset == null) 
-				offset = new TagData(TagNames.OFFSET+": ",val,prop,TagData.TEXTFIELD);
+				offset = new TagData(TagNames.OFFSET,val,prop,TagData.TEXTFIELD);
 			else 
 				offset.setTagValue(val,prop);
 		}
@@ -498,14 +499,14 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		{
 			String val= (value != null) ? String.valueOf(value):"";
 			if(confocalZoom == null) 
-				confocalZoom = new TagData(TagNames.CONFZOOM+": ",val,prop,TagData.TEXTFIELD);
+				confocalZoom = new TagData(TagNames.CONFZOOM,val,prop,TagData.TEXTFIELD);
 			else 
 				confocalZoom.setTagValue(val,prop);
 		}
 		public void setSubarray(String value, boolean prop)
 		{
 			if(subarray == null) 
-				subarray = new TagData(TagNames.SUBARRAY+": ",value,prop,TagData.TEXTFIELD);
+				subarray = new TagData(TagNames.SUBARRAY,value,prop,TagData.TEXTFIELD);
 			else 
 				subarray.setTagValue(value,prop);
 		}

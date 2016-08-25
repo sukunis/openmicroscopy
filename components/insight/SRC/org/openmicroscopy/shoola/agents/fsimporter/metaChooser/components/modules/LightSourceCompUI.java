@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -27,11 +27,11 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightSourceEditor;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
@@ -938,7 +938,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			LOGGER.error("[DATA] can't read LIGHTSRC medium input");
 		}
 		try{
-
+			if(!tunable.getTagValue().equals(""))
 			((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(tunable.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC tunable input");
@@ -950,7 +950,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			LOGGER.error("[DATA] can't read LIGHTSRC pulse input");
 		}
 		try{
-
+			if(!pockelCell.getTagValue().equals(""))
 			((Laser)lightSrc).setPockelCell(Boolean.valueOf(pockelCell.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC pockell cell input");
@@ -1290,85 +1290,9 @@ public class LightSourceCompUI extends ElementsCompUI
 
 	}
 	
-//	public void showOptionPane() 
-//	{
-//		globalPane.removeAll();
-//		JButton newBtn=new JButton("New...");
-//		newBtn.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				createNewElem();
-//			}
-//		});
-//		
-//		JButton selectBtn=new JButton("Select from data...");
-//		if(availableLightSrcList==null || availableLightSrcList.isEmpty())
-//			selectBtn.setEnabled(false);
-//		selectBtn.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) 
-//			{
-//				LightSourceEditor editor = new LightSourceEditor(new JFrame(),
-//						"Select From Available LightSource", availableLightSrcList); 
-//				LightSource l=editor.getSelectedLightSource();
-//				if(l!=null){
-//					l.setID("");
-//					lightSrc=l;
-//					createNewElemGUI();
-//				}
-//			}
-//		});
-//		JButton addBtn=new JButton("Select from system...");
-//		addBtn.setEnabled(false);
-//		
-//		GridBagConstraints c = new GridBagConstraints();
-//		c.anchor = GridBagConstraints.WEST;
-//		c.gridwidth = GridBagConstraints.REMAINDER;     //end row
-//		c.fill = GridBagConstraints.HORIZONTAL;
-//		c.weightx = 1.0;
-//		
-//		globalPane.add(newBtn,c);
-//		globalPane.add(selectBtn,c);
-//		globalPane.add(addBtn,c);
-//		
-//	}
-	
-	
 
-//	private void createNewElem() 
-//	{
-////		ImageIcon icon = createImageIcon("images/middle.gif");
-//		Object[] options={LASER,ARC,FILAMENT,GENERIC_EXCITATION,LIGHT_EMITTING_DIODE};
-//		String s=(String) JOptionPane.showInputDialog(
-//				globalPane, 
-//				"Choose the class of LightSource",
-//				"Create new LightSource",
-//				JOptionPane.PLAIN_MESSAGE,
-//				null, options,LASER);
-//		
-//		//If a string was returned, say so.
-//        if ((s != null) && (s.length() > 0)) {
-//        	globalPane.removeAll();
-//        	globalPane.setLayout(gridbag);
-//        	createCustomDummyPane(false,s);
-//        	buildComponents();       
-//        	
-//        	revalidate();
-//        	repaint();
-//            return;
-//        }
-//	}
 	
-//	private void createNewElemGUI()
-//	{
-//		globalPane.removeAll();
-//    	globalPane.setLayout(gridbag);
-//    	setGUIData();
-//    	buildComponents();       
-//    	
-//    	revalidate();
-//    	repaint();
-//	}
-	
-	public void createDummyPane(List<TagConfiguration> list,boolean inactive) 
+	private void createDummyPane(List<TagConfiguration> list,boolean inactive) 
 	{
 		if(list==null)
 			createDummyPane(inactive);
@@ -1753,7 +1677,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setManufact(String value, boolean prop)
 	{
 		if(manufact == null) 
-			manufact = new TagData(TagNames.MANUFAC+": ",value,prop,TagData.TEXTFIELD);
+			manufact = new TagData(TagNames.MANUFAC,value,prop,TagData.TEXTFIELD);
 		else 
 			manufact.setTagValue(value,prop);
 	}
@@ -1762,7 +1686,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(type == null) 
-			type = new TagData(TagNames.TYPE+": ",val,prop,TagData.COMBOBOX,getNames(LaserType.class));
+			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(LaserType.class));
 		else 
 			type.setTagValue(val,prop);
 	}
@@ -1770,7 +1694,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(type == null) 
-			type = new TagData(TagNames.TYPE+": ",val,prop,TagData.COMBOBOX,getNames(ArcType.class));
+			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(ArcType.class));
 		else 
 			type.setTagValue(val,prop);
 	}
@@ -1778,7 +1702,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(type == null) 
-			type = new TagData(TagNames.TYPE+": ",val,prop,TagData.COMBOBOX,getNames(FilamentType.class));
+			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(FilamentType.class));
 		else 
 			type.setTagValue(val,prop);
 	}
@@ -1797,7 +1721,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setModel(String value, boolean prop)
 	{
 		if(model == null) 
-			model = new TagData(TagNames.MODEL+": ",value,prop,TagData.TEXTFIELD);
+			model = new TagData(TagNames.MODEL,value,prop,TagData.TEXTFIELD);
 		else 
 			model.setTagValue(value,prop);
 	}
@@ -1809,7 +1733,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(medium == null) 
-			medium = new TagData(TagNames.MEDIUM+": ",val,prop,TagData.COMBOBOX,getNames(LaserMedium.class));
+			medium = new TagData(TagNames.MEDIUM,val,prop,TagData.COMBOBOX,getNames(LaserMedium.class));
 		else 
 			medium.setTagValue(val,prop);
 	}
@@ -1817,7 +1741,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? String.valueOf(value.getNumberValue()) : "";
 		if(freqMul == null) 
-			freqMul = new TagData(TagNames.FREQMUL+": ",val,prop,TagData.TEXTFIELD);
+			freqMul = new TagData(TagNames.FREQMUL,val,prop,TagData.TEXTFIELD);
 		else 
 			freqMul.setTagValue(val,prop);
 	}
@@ -1825,18 +1749,18 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	public void setTunable(Boolean value, boolean prop)
 	{
-		String val=(value!=null) ? String.valueOf(value): "false";
+		String val=(value!=null) ? String.valueOf(value): "";
 		if(tunable == null) 
-			tunable = new TagData(TagNames.TUNABLE+": ",val,prop,TagData.CHECKBOX);
+			tunable = new TagData(TagNames.TUNABLE,val,prop,TagData.COMBOBOX,TagNames.BOOLEAN_COMBO);
 		else 
 			tunable.setTagValue(val,prop);
 	}
 	
 	public void setTunable(String value, boolean prop)
 	{
-		String val=(value!=null) ? value: "false";
+		String val=(value!=null) ? value: "";
 		if(tunable == null) 
-			tunable = new TagData(TagNames.TUNABLE+": ",val,prop,TagData.CHECKBOX);
+			tunable = new TagData(TagNames.TUNABLE,val,prop,TagData.COMBOBOX,TagNames.BOOLEAN_COMBO);
 		else 
 			tunable.setTagValue(val,prop);
 	}
@@ -1845,16 +1769,16 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(pulse == null) 
-			pulse = new TagData(TagNames.PULSE+": ",val,prop,TagData.COMBOBOX,getNames(Pulse.class));
+			pulse = new TagData(TagNames.PULSE,val,prop,TagData.COMBOBOX,getNames(Pulse.class));
 		else 
 			pulse.setTagValue(val,prop);
 	}
 
 	public void setPocketCell(Boolean value, boolean prop)
 	{
-		String val=(value!=null) ? String.valueOf(value): "false";
+		String val=(value!=null) ? String.valueOf(value): "";
 		if(pockelCell == null) 
-			pockelCell = new TagData(TagNames.POCKELCELL+": ",val,prop,TagData.CHECKBOX);
+			pockelCell = new TagData(TagNames.POCKELCELL,val,prop,TagData.COMBOBOX,TagNames.BOOLEAN_COMBO);
 		else 
 			pockelCell.setTagValue(val,prop);
 	}
@@ -1863,7 +1787,6 @@ public class LightSourceCompUI extends ElementsCompUI
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		Unit unit=(value!=null) ? value.unit():TagNames.REPRATE_UNIT_HZ;
 		if(repRate == null) {
-//			repRate = new TagData(TagNames.REPRATE+" ["+repRateUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 			repRate = new TagData(TagNames.REPRATE,val,unit,prop,TagData.TEXTFIELD);
 		}else {
 			repRate.setTagValue(val,unit,prop);
@@ -1874,7 +1797,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setPump(String value, boolean prop)
 	{
 		if(pump == null) 
-			pump = new TagData(TagNames.PUMP+": ",value,prop,TagData.TEXTFIELD);
+			pump = new TagData(TagNames.PUMP,value,prop,TagData.TEXTFIELD);
 		else 
 			pump.setTagValue(value,prop);
 	}
@@ -1883,7 +1806,6 @@ public class LightSourceCompUI extends ElementsCompUI
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		Unit unit=(value!=null) ? value.unit() :TagNames.WAVELENGTH_UNIT;
 		if(waveLength == null) 
-//			waveLength = new TagData(TagNames.WAVELENGTH+" ["+waveLengthUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
 			waveLength = new TagData(TagNames.WAVELENGTH,val,unit,prop,TagData.TEXTFIELD);
 		else 
 			waveLength.setTagValue(val,unit,prop);
@@ -1895,7 +1817,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void setDescription(String value, boolean prop)
 	{
 		if(description == null) 
-			description = new TagData(TagNames.DESC+": ",value,prop,TagData.TEXTAREA);
+			description = new TagData(TagNames.DESC,value,prop,TagData.TEXTAREA);
 		else 
 			description.setTagValue(value,prop);
 	}
@@ -1905,7 +1827,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	{
 		String val="";
 		if(map == null) 
-			map = new TagData(TagNames.MAP+": ",val,prop,TagData.TEXTFIELD);
+			map = new TagData(TagNames.MAP,val,prop,TagData.TEXTFIELD);
 		else 
 			map.setTagValue(val,prop);
 	}

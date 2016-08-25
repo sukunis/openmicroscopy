@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
@@ -15,9 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightPathElem;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import ome.xml.model.Detector;
 import ome.xml.model.Dichroic;
@@ -36,8 +35,8 @@ public class FilterCompUI extends LightPathElem
 	private TagData filterwheel;
 	private TagData classification; // main Filter, second, tertiary or quanternary
 	
-	final static String[] classificList={"","Main Filter","Secondary Filter","Tertiary Filter","Quaternary Filter"};
-	final static String[] typeList=getNames(FilterType.class); 
+	public final static String[] classificList={"","Main Filter","Secondary Filter","Tertiary Filter","Quaternary Filter"};
+	public final static String[] typeList=getNames(FilterType.class); 
 	
 	//??
 	private TagData width;
@@ -255,7 +254,7 @@ public class FilterCompUI extends LightPathElem
 	public void setModel(String value, boolean prop)
 	{
 		if(model == null) 
-			model = new TagData("Model: ",value,prop,TagData.TEXTFIELD);
+			model = new TagData("Model",value,prop,TagData.TEXTFIELD);
 		else 
 			model.setTagValue(value,prop);
 		model.setVisible(true);
@@ -263,7 +262,7 @@ public class FilterCompUI extends LightPathElem
 	public void setManufact(String value, boolean prop)
 	{
 		if(manufact == null) 
-			manufact = new TagData("Manufacturer: ",value,prop,TagData.TEXTFIELD);
+			manufact = new TagData("Manufacturer",value,prop,TagData.TEXTFIELD);
 		else 
 			manufact.setTagValue(value,prop);
 		manufact.setVisible(true);
@@ -272,7 +271,7 @@ public class FilterCompUI extends LightPathElem
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(type == null) 
-			type = new TagData("Type: ",val,prop,TagData.COMBOBOX,typeList);
+			type = new TagData("Type",val,prop,TagData.COMBOBOX,typeList);
 		else 
 			type.setTagValue(val,prop);
 		
@@ -301,7 +300,7 @@ public class FilterCompUI extends LightPathElem
 	public void setFilterWheel(String value, boolean prop)
 	{
 		if(filterwheel == null) 
-			filterwheel = new TagData("Filterwheel: ",value,prop,TagData.TEXTFIELD);
+			filterwheel = new TagData("Filterwheel",value,prop,TagData.TEXTFIELD);
 		else 
 			filterwheel.setTagValue(value,prop);
 		
@@ -311,7 +310,7 @@ public class FilterCompUI extends LightPathElem
 	{
 	
 		if(classification == null) 
-			classification = new TagData("Classification: ",value,prop,TagData.COMBOBOX,classificList);
+			classification = new TagData("Classification",value,prop,TagData.COMBOBOX,classificList);
 		else 
 			classification.setTagValue(value,prop);
 		
@@ -320,7 +319,7 @@ public class FilterCompUI extends LightPathElem
 	public void setWidth(String value, boolean prop)
 	{
 		if(width == null) 
-			width = new TagData("Width: ",value,prop,TagData.TEXTFIELD);
+			width = new TagData("Width",value,prop,TagData.TEXTFIELD);
 		else 
 			width.setTagValue(value,prop);
 		

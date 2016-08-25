@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -55,10 +55,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ScrollablePanel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterBox;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterListModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 import org.openmicroscopy.shoola.util.ui.UIUtilities;
 import org.slf4j.LoggerFactory;
 
@@ -91,20 +87,20 @@ public class TagData
 	private final String datePattern = DateTools.TIMESTAMP_FORMAT;
 
 	//status of inputfield
-	static final int INACTIVE=0;
-	static final int EMPTY =1;
-	static final int SET=2;
-	static final int OVERWRITE=3;
+	public static final int INACTIVE=0;
+	public static final int EMPTY =1;
+	public static final int SET=2;
+	public static final int OVERWRITE=3;
 
 	// kind of inputfields
-	static final int TEXTFIELD=0;
-	static final int COMBOBOX=1;
-	static final int TEXTPANE=2;
-	static final int CHECKBOX=3;
-	static final int ARRAYFIELDS=4;
-	static final int TIMESTAMP=5;
-	static final int LIST=6;
-	static final int TEXTAREA=7;
+	public static final int TEXTFIELD=0;
+	public static final int COMBOBOX=1;
+	public static final int TEXTPANE=2;
+	public static final int CHECKBOX=3;
+	public static final int ARRAYFIELDS=4;
+	public static final int TIMESTAMP=5;
+	public static final int LIST=6;
+	public static final int TEXTAREA=7;
 
 	private JLabel label;
 	private JComponent inputField;
@@ -137,7 +133,33 @@ public class TagData
 		this.markedToStore=false;
 		this.type=type;
 		this.name=name;
-		label = new JLabel(name);
+		label = new JLabel(name+":");
+		int size=val!=null ? val.length : 1;
+		switch (type) {
+		case ARRAYFIELDS:
+			initArrayTextField(size);
+			break;
+		default:
+			initTextField();
+			break;
+		}
+
+		label.setLabelFor(inputField);
+		setTagValue(val);
+		setTagProp(prop);
+		visible=false;
+	}
+	
+	public TagData(String name, String[] val, Unit unit, boolean prop,
+			int type) {
+		if(val==null)
+			val=new String[1];
+		initListener();
+		this.unit=unit;
+		this.markedToStore=false;
+		this.type=type;
+		this.name=name;
+		label = new JLabel(name+" ["+unit.getSymbol()+"]:");
 		int size=val!=null ? val.length : 1;
 		switch (type) {
 		case ARRAYFIELDS:
@@ -169,7 +191,7 @@ public class TagData
 		this.markedToStore=false;
 		this.type=type;
 		this.name=name;
-		label = new JLabel(name);
+		label = new JLabel(name+":");
 		
 		switch (type) {
 		case LIST:
@@ -204,7 +226,7 @@ public class TagData
 		this.markedToStore=false;
 		this.type=type;
 		this.name=name;
-		label = new JLabel(name);
+		label = new JLabel(name+":");
 		switch (type) {
 		case TEXTFIELD:
 			initTextField();
@@ -423,6 +445,10 @@ public class TagData
 	
 	public JLabel getTagLabel(){
 		return label;
+	}
+	
+	public String getTagName(){
+		return this.name;
 	}
 	
 	public String getTagValue() 

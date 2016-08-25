@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -12,10 +12,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.DichroicCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightPathElem;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DichroicCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
@@ -172,7 +171,7 @@ public class DichroicCompUI extends LightPathElem
 	public void setModel(String value, boolean prop)
 	{
 		if(model == null) 
-			model = new TagData("Model: ",value,prop,TagData.TEXTFIELD);
+			model = new TagData("Model",value,prop,TagData.TEXTFIELD);
 		else 
 			model.setTagValue(value,prop);
 	}
@@ -183,7 +182,7 @@ public class DichroicCompUI extends LightPathElem
 	public void setManufact(String value, boolean prop)
 	{
 		if(manufact == null) 
-			manufact = new TagData("Manufacturer: ",value,prop,TagData.TEXTFIELD);
+			manufact = new TagData("Manufacturer",value,prop,TagData.TEXTFIELD);
 		else 
 			manufact.setTagValue(value,prop);
 	}

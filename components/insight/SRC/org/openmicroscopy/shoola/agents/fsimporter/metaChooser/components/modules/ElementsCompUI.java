@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.Container;
 import java.awt.Font;
@@ -20,8 +20,8 @@ import ome.xml.model.AbstractOMEModelObject;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 public abstract class ElementsCompUI extends JPanel
@@ -59,6 +59,8 @@ public abstract class ElementsCompUI extends JPanel
 	public abstract void clearDataValues();
 	public abstract List<TagData> getActiveTags();
 	public abstract boolean userInput();
+	//TODO to abstract
+	public void update(List<TagData> list){}
 	
 	
 //	public void initController(MetaDataControl _controller){
@@ -70,7 +72,7 @@ public abstract class ElementsCompUI extends JPanel
 	 * @param e Enum.class
 	 * @return 
 	 */
-	static String[] getNames(Class<? extends Enum<?>> e) {
+	public static String[] getNames(Class<? extends Enum<?>> e) {
 		 return Arrays.toString(e.getEnumConstants()).replaceAll("^.|.$", "").split(", ");
 //	    return Arrays.stream(e.getEnumConstants()).map(Enum::name).toArray(String[]::new);
 	}
@@ -204,14 +206,7 @@ public abstract class ElementsCompUI extends JPanel
 		}
 	}
 
-	public void update(List<TagData> list) 
-	{
-		for(TagData t: list){
-			if(t.valueChanged()){
-//				switch(t.getTag)
-			}
-		}
-	}
+	
 
 
 

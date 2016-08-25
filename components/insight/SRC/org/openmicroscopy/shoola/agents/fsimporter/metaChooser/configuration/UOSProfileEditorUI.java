@@ -51,10 +51,10 @@ import javax.swing.table.TableCellRenderer;
 import ome.model.units.UNITS;
 import ome.units.unit.Unit;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagConfiguration;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 /**

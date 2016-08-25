@@ -49,8 +49,8 @@ import ome.xml.model.primitives.PositiveInteger;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightSourceCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
@@ -96,22 +96,22 @@ import org.xml.sax.SAXException;
  */
 public class UOSHardwareReader 
 {
-	private static final String HARDWARE="Hardware";
-	private static final String SET_OBJECTIVE="Objectives";
-	private static final String SET_DETECTOR="Detectors";
-	private static final String SET_LIGHTSRC="LightSources";
-	private static final String SET_LIGHTPATH="LightPaths";
+	public static final String HARDWARE="Hardware";
+	public static final String SET_OBJECTIVE="Objectives";
+	public static final String SET_DETECTOR="Detectors";
+	public static final String SET_LIGHTSRC="LightSources";
+	public static final String SET_LIGHTPATH="LightPaths";
 	
-	private static final String OBJECTIVE="Objective";
-	private static final String DETECTOR="Detector";
-	private static final String LIGHTSRC_L="Laser";
-	private static final String LIGHTSRC_A="Arc";
-	private static final String LIGHTSRC_F="Filament";
-	private static final String LIGHTSRC_G="GES";
-	private static final String LIGHTSRC_LED="LED";
-	private static final String LIGHTPATH="LightPath";
-	private static final String FILTER="Filter";
-	private static final String DICHROIC="Dichroic";
+	public static final String OBJECTIVE="Objective";
+	public static final String DETECTOR="Detector";
+	public static final String LIGHTSRC_L="Laser";
+	public static final String LIGHTSRC_A="Arc";
+	public static final String LIGHTSRC_F="Filament";
+	public static final String LIGHTSRC_G="GES";
+	public static final String LIGHTSRC_LED="LED";
+	public static final String LIGHTPATH="LightPath";
+	public static final String FILTER="Filter";
+	public static final String DICHROIC="Dichroic";
 	
 	
 	/** Logger for this class. */
@@ -814,6 +814,31 @@ public class UOSHardwareReader
 			break;
 		case TagNames.VOLTAGE:
 			units=UnitsElectricPotential.values();
+		default:
+			LOGGER.warn("[HARDWARE] no unit available for tag "+name);
+			break;
+		}
+		return units;
+	}
+
+	public static String[] getUnits(String name) 
+	{
+		String[] units=null;
+		switch (name) {
+		case TagNames.REPRATE:
+			units=ElementsCompUI.getNames(UnitsFrequency.class);
+			break;
+		case TagNames.POWER:
+			units=ElementsCompUI.getNames(UnitsPower.class);
+			break;
+		case TagNames.WAVELENGTH:
+			units =ElementsCompUI.getNames(UnitsLength.class);
+			break;
+		case TagNames.WORKDIST:
+			units =ElementsCompUI.getNames( UnitsLength.class);
+			break;
+		case TagNames.VOLTAGE:
+			units=ElementsCompUI.getNames(UnitsElectricPotential.class);
 		default:
 			LOGGER.warn("[HARDWARE] no unit available for tag "+name);
 			break;

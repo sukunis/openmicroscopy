@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -38,11 +38,17 @@ import javax.swing.border.TitledBorder;
 
 
 
+
+
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TitledSeparator;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import ome.xml.model.Image;
 import ome.xml.model.XMLAnnotation;
@@ -307,90 +313,6 @@ public class SampleCompUI extends ElementsCompUI
 		return sample;
 	}
 	
-//	public boolean addData(Sample s,boolean overwrite)
-//	{
-//		boolean conflict=false;
-//		if(s==null)
-//			return false;
-//		if(sample!=null){
-//				String pdesc=s.getPrepDescription();
-//				Timestamp pdate=s.getPrepDate();
-//				String rc=s.getRawMaterialCode();
-//				String rdesc=s.getRawMaterialDesc();
-//				
-//				GridBox g=s.getGridBox();
-//				Integer gNr=null;
-//				String gT=null;
-//				if(g!=null){
-//					gNr=g.getNr();
-//					gT=g.getType();
-//				}
-//				ObservedSample os=s.getObservedSample(0);
-//				String osgx=null;
-//				String osgy=null;
-//				String ost=null;
-//				String osNr=null;
-//				if(os!=null){
-//					osgx=os.getGridNumberX();
-//					osgy=os.getGridNumberY();
-//					ost=os.getObjectType();
-//					osNr=os.getObjectNumber();
-//				}
-//				
-//				if(overwrite){
-//					if(pdesc!=null && !pdesc.equals("")) sample.setPrepDescription(pdesc);
-//					if(pdate!=null) sample.setPrepDate(pdate);
-//					if(rc!=null && !rc.equals("")) sample.setRawMaterialCode(rc);
-//					if(rdesc!=null && !rdesc.equals("")) sample.setRawMaterialDesc(rdesc);
-//					if(gNr!=null) sample.getGridBox().setNr(gNr);
-//					if(gT!=null && !gT.equals("")) sample.getGridBox().setType(gT);
-//					if(osgx!=null && !osgx.equals("")) sample.getObservedSample(0).setGridNumberY(osgx);
-//					if(osgy!=null && !osgy.equals("")) sample.getObservedSample(0).setGridNumberY(osgy);
-//					if(ost!=null && !ost.equals("")) sample.getObservedSample(0).setObjectType(ost);
-//					if(osNr!=null && !osNr.equals("")) sample.getObservedSample(0).setObjectNumber(osNr);
-//					LOGGER.info("[DATA] overwrite SAMPLE data");
-//				}else{
-//					if(sample.getPrepDescription()==null || sample.getPrepDescription().equals(""))
-//						sample.setPrepDescription(pdesc);
-//					if(sample.getPrepDate()==null )
-//						sample.setPrepDate(pdate);
-//					if(sample.getRawMaterialCode()==null || sample.getRawMaterialCode().equals(""))
-//						sample.setRawMaterialCode(rc);
-//					if(sample.getRawMaterialDesc()==null || sample.getRawMaterialDesc().equals(""))
-//						sample.setRawMaterialDesc(rdesc);
-//					
-//					if(sample.getGridBox()==null){
-//						sample.setGridBoxData(gNr, gT); 
-//					}else{
-//						if(sample.getGridBox().getNr()==null )
-//							sample.getGridBox().setNr(gNr);
-//						if(sample.getGridBox().getType()==null || sample.getGridBox().getType().equals(""))
-//							sample.getGridBox().setType(gT);
-//					}
-//					if(sample.getObservedSample(0)==null){
-//						sample.setObservedSample(os);
-//					}else{
-//						if(sample.getObservedSample(0).getGridNumberX()==null || sample.getObservedSample(0).getGridNumberX().equals(""))
-//							sample.getObservedSample(0).setGridNumberX(osgx);
-//						if(sample.getObservedSample(0).getGridNumberY()==null || sample.getObservedSample(0).getGridNumberY().equals(""))
-//							sample.getObservedSample(0).setGridNumberY(osgy);
-//						if(sample.getObservedSample(0).getObjectType()==null || sample.getObservedSample(0).getObjectType().equals(""))
-//							sample.getObservedSample(0).setObjectType(ost);
-//						if(sample.getObservedSample(0).getObjectNumber()==null || sample.getObservedSample(0).getObjectNumber().equals(""))
-//							sample.getObservedSample(0).setObjectNumber(osNr);
-//					}
-//					LOGGER.info("[DATA] complete SAMPLE data");
-//				}
-//		}else{
-//			sample=s;
-//			
-//			LOGGER.info("[DATA] add SAMPLE data");
-//		}
-//		
-//		setGUIData();
-//		return conflict;
-//	}
-	
 	public boolean addData(Sample s, boolean overwrite)
 	{
 		boolean conflicts=false;
@@ -541,7 +463,7 @@ public class SampleCompUI extends ElementsCompUI
 	private void setRawMaterialDesc(String value, boolean prop) 
 	{
 		if(rawMaterialDesc == null) 
-			rawMaterialDesc = new TagData(TagNames.RAWDESC+": ",value,prop,TagData.TEXTAREA);
+			rawMaterialDesc = new TagData(TagNames.RAWDESC,value,prop,TagData.TEXTAREA);
 		else 
 			rawMaterialDesc.setTagValue(value,prop);
 	}
@@ -549,69 +471,69 @@ public class SampleCompUI extends ElementsCompUI
 	private void setRawMaterialCode(String value, boolean prop) 
 	{
 		if(rawMaterialCode == null) 
-			rawMaterialCode = new TagData(TagNames.RAWCODE+": ",value,prop,TagData.TEXTFIELD);
+			rawMaterialCode = new TagData(TagNames.RAWCODE,value,prop,TagData.TEXTFIELD);
 		else 
 			rawMaterialCode.setTagValue(value,prop);
 	}
 	
-	private void setPreparationDate(Timestamp value, boolean prop)
+	public void setPreparationDate(Timestamp value, boolean prop)
 	{
 		
 		String val= (value != null) ? value.getValue():"";
 		if(preparationDate == null) 
-			preparationDate = new TagData(TagNames.PREPDATE+": ",val,prop,TagData.TIMESTAMP);
+			preparationDate = new TagData(TagNames.PREPDATE,val,prop,TagData.TIMESTAMP);
 		else 
 			preparationDate.setTagValue(val,prop);
 	}
 	
-	private void setPreparationDescription(String value, boolean prop)
+	public void setPreparationDescription(String value, boolean prop)
 	{
 		if(preparationDescription == null) 
-			preparationDescription = new TagData(TagNames.PREPDESC+": ",value,prop,TagData.TEXTAREA);
+			preparationDescription = new TagData(TagNames.PREPDESC,value,prop,TagData.TEXTAREA);
 		else 
 			preparationDescription.setTagValue(value,prop);	
 	}
 	
-	private void setGridBoxNumber(String string, boolean prop)
+	public void setGridBoxNumber(String string, boolean prop)
 	{
 		String val=(string!=null) ? String.valueOf(string):"";
 		if(gridBoxNumber == null) 
-			gridBoxNumber = new TagData(TagNames.GRIDBOXNR+": ",val,prop,TagData.TEXTFIELD);
+			gridBoxNumber = new TagData(TagNames.GRIDBOXNR,val,prop,TagData.TEXTFIELD);
 		else {
 			gridBoxNumber.setTagValue(val,0,prop);
 		}
 	}
 	
-	private void setGridType(String value, boolean prop)
+	public void setGridType(String value, boolean prop)
 	{
 		if(gridBoxType == null) 
-			gridBoxType = new TagData(TagNames.GRIDBOXTYPE+": ",value,prop,TagData.TEXTAREA);
+			gridBoxType = new TagData(TagNames.GRIDBOXTYPE,value,prop,TagData.TEXTAREA);
 		else 
 			gridBoxType.setTagValue(value,prop);	
 	}
 	
-	private void setExpGridNumber(String[] value, boolean prop)
+	public void setExpGridNumber(String[] value, boolean prop)
 	{
 		if(expGrid == null) 
-			expGrid = new TagData(TagNames.EXPGRID+": ",value,prop,TagData.ARRAYFIELDS);
+			expGrid = new TagData(TagNames.EXPGRID,value,prop,TagData.ARRAYFIELDS);
 		else{ 
 			expGrid.setTagValue(value[0],0,prop);
 			expGrid.setTagValue(value[1],1,prop);
 		}
 	}
 	
-	private void setExpObjectNr(String value, boolean prop)
+	public void setExpObjectNr(String value, boolean prop)
 	{
 		if(expObjectNr == null) 
-			expObjectNr = new TagData(TagNames.EXPOBJNR+": ",value,prop,TagData.TEXTFIELD);
+			expObjectNr = new TagData(TagNames.EXPOBJNR,value,prop,TagData.TEXTFIELD);
 		else 
 			expObjectNr.setTagValue(value,prop);	
 	}
 	
-	private void setExpObjectType(String value, boolean prop)
+	public void setExpObjectType(String value, boolean prop)
 	{
 		if(expObjectType == null) 
-			expObjectType = new TagData(TagNames.EXPOBJTYPE+": ",value,prop,TagData.TEXTAREA);
+			expObjectType = new TagData(TagNames.EXPOBJTYPE,value,prop,TagData.TEXTAREA);
 		else 
 			expObjectType.setTagValue(value,prop);	
 	}

@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -28,8 +28,8 @@ import ome.xml.model.Detector;
 import ome.xml.model.Objective;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveEditor.ObjectiveTable;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveEditor.ObjectiveTableModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor.ObjectiveTable;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor.ObjectiveTableModel;
 
 import sun.nio.ch.SelChImpl;
 

@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -32,9 +32,7 @@ import javax.swing.Box;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.FilterCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightPathTable;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ObjectiveEditor.ObjectiveTableModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor.ObjectiveTableModel;
 
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;

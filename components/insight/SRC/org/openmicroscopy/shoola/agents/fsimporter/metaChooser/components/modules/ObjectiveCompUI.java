@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -20,10 +20,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
@@ -665,7 +666,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	public void setModel(String value,boolean prop)
 	{
 		if(model == null) 
-			model = new TagData(TagNames.MODEL+": ",value,prop,TagData.TEXTFIELD);
+			model = new TagData(TagNames.MODEL,value,prop,TagData.TEXTFIELD);
 		else 
 			model.setTagValue(value,prop);
 	}
@@ -677,7 +678,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	public void setManufact(String value,boolean prop)
 	{
 		if(manufact == null) 
-			manufact = new TagData(TagNames.MANUFAC+": ",value,prop,TagData.TEXTFIELD);
+			manufact = new TagData(TagNames.MANUFAC,value,prop,TagData.TEXTFIELD);
 		else 
 			manufact.setTagValue(value,prop);
 	}
@@ -690,7 +691,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(nomMagn == null) 
-			nomMagn = new TagData(TagNames.NOMMAGN+": ",val,prop,TagData.TEXTFIELD);
+			nomMagn = new TagData(TagNames.NOMMAGN,val,prop,TagData.TEXTFIELD);
 		else 
 			nomMagn.setTagValue(val,prop);
 	}
@@ -706,7 +707,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(calMagn == null) 
-			calMagn = new TagData(TagNames.CALMAGN+": ",val,prop,TagData.TEXTFIELD);
+			calMagn = new TagData(TagNames.CALMAGN,val,prop,TagData.TEXTFIELD);
 		else 
 			calMagn.setTagValue(val,prop);
 	}
@@ -719,7 +720,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(lensNA == null) 
-			lensNA = new TagData(TagNames.LENSNA+": ",val,prop,TagData.TEXTFIELD);
+			lensNA = new TagData(TagNames.LENSNA,val,prop,TagData.TEXTFIELD);
 		else 
 			lensNA.setTagValue(val,prop);
 	}
@@ -732,7 +733,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(immersion == null) 
-			immersion = new TagData(TagNames.IMMERSION+": ",val,prop,TagData.COMBOBOX,getNames(Immersion.class));
+			immersion = new TagData(TagNames.IMMERSION,val,prop,TagData.COMBOBOX,getNames(Immersion.class));
 		else 
 			immersion.setTagValue(val,prop);
 	}
@@ -745,7 +746,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(correction == null) 
-			correction = new TagData(TagNames.CORRECTION+": ",val,prop,TagData.COMBOBOX,getNames(Correction.class));
+			correction = new TagData(TagNames.CORRECTION,val,prop,TagData.COMBOBOX,getNames(Correction.class));
 		else 
 			correction.setTagValue(val,prop);
 	}
@@ -759,8 +760,6 @@ public class ObjectiveCompUI extends ElementsCompUI
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		Unit unit=(value!=null) ? value.unit() : workDistUnit;
 		if(workDist == null) 
-//			workDist = new TagData(TagNames.WORKDIST+" ["+workDistUnit.getSymbol()
-//					+"]: ",val,prop,TagData.TEXTFIELD);
 			workDist = new TagData(TagNames.WORKDIST,val,unit,prop,TagData.TEXTFIELD);
 		else 
 			workDist.setTagValue(val,unit,prop);
@@ -774,7 +773,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(iris == null) 
-			iris = new TagData("Iris: ",val,prop,TagData.TEXTFIELD);
+			iris = new TagData("Iris",val,prop,TagData.TEXTFIELD);
 		else 
 			iris.setTagValue(val,prop);
 	}

@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -14,14 +14,15 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.CheckBoxNodeEditor;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.CheckBoxNodeRendererTagData;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.CheckBoxNodeTagData;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.LightPathCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.CheckBoxNodeEditor;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.CheckBoxNodeRendererTagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.CheckBoxNodeTagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
@@ -707,7 +708,7 @@ public class ChannelCompUI extends ElementsCompUI
 	public void setName(String value, boolean prop)
 	{
 		if(name == null) 
-			name = new TagData(TagNames.CH_NAME+": ",value,prop,TagData.TEXTFIELD);
+			name = new TagData(TagNames.CH_NAME,value,prop,TagData.TEXTFIELD);
 		else 
 			name.setTagValue(value,prop);
 	}
@@ -721,14 +722,14 @@ public class ChannelCompUI extends ElementsCompUI
 		String val= (value != null) ? Integer.toHexString(value.getValue()):"";
 		
 		if(color == null) 
-			color = new TagData(TagNames.COLOR+": ",val,prop,TagData.TEXTFIELD);
+			color = new TagData(TagNames.COLOR,val,prop,TagData.TEXTFIELD);
 		else 
 			color.setTagValue(val,prop);
 	}
 	public void setFluorophore(String value, boolean prop)
 	{
 		if(fluorophore == null) 
-			fluorophore = new TagData(TagNames.FLUOROPHORE+": ",value,prop,TagData.TEXTFIELD);
+			fluorophore = new TagData(TagNames.FLUOROPHORE,value,prop,TagData.TEXTFIELD);
 		else 
 			fluorophore.setTagValue(value,prop);
 	}
@@ -736,14 +737,14 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(illumType == null) 
-			illumType = new TagData(TagNames.ILLUMTYPE+": ",val,prop,TagData.COMBOBOX,getNames(IlluminationType.class));
+			illumType = new TagData(TagNames.ILLUMTYPE,val,prop,TagData.COMBOBOX,getNames(IlluminationType.class));
 		else 
 			illumType.setTagValue(val,prop);
 	}
 	public void setExposureTime(String value, boolean prop)
 	{
 		if(exposureTime == null) 
-			exposureTime = new TagData(TagNames.EXPOSURETIME+": ",value,prop,TagData.TEXTFIELD);
+			exposureTime = new TagData(TagNames.EXPOSURETIME,value,prop,TagData.TEXTFIELD);
 		else 
 			exposureTime.setTagValue(value,prop);
 	}
@@ -787,7 +788,7 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(imagingMode == null) 
-			imagingMode = new TagData(TagNames.IMAGINGMODE+": ",val,prop,TagData.COMBOBOX,getNames(AcquisitionMode.class));
+			imagingMode = new TagData(TagNames.IMAGINGMODE,val,prop,TagData.COMBOBOX,getNames(AcquisitionMode.class));
 		else 
 			imagingMode.setTagValue(val,prop);
 	}
@@ -795,7 +796,7 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(illuminationMode == null) 
-			illuminationMode = new TagData(TagNames.ILLUMINATIONMODE+": ",val,prop,TagData.COMBOBOX,getNames(AcquisitionMode.class));
+			illuminationMode = new TagData(TagNames.ILLUMINATIONMODE,val,prop,TagData.COMBOBOX,getNames(AcquisitionMode.class));
 		else 
 			illuminationMode.setTagValue(val,prop);
 	}
@@ -803,7 +804,7 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(contrastMethod == null) 
-			contrastMethod = new TagData(TagNames.CONTRASTMETHOD+": ",val,prop,TagData.COMBOBOX,getNames(ContrastMethod.class));
+			contrastMethod = new TagData(TagNames.CONTRASTMETHOD,val,prop,TagData.COMBOBOX,getNames(ContrastMethod.class));
 		else 
 			contrastMethod.setTagValue(val,prop);
 	}
@@ -811,7 +812,7 @@ public class ChannelCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(ndFilter == null) 
-			ndFilter = new TagData(TagNames.NDFILTER+": ",val,prop,TagData.TEXTFIELD);
+			ndFilter = new TagData(TagNames.NDFILTER,val,prop,TagData.TEXTFIELD);
 		else 
 			ndFilter.setTagValue(val,prop);
 	}

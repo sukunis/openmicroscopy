@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,10 +10,11 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import loci.formats.meta.IMetadata;
 import ome.units.UNITS;
@@ -32,8 +33,6 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 	private TagData humidity;
 	private TagData co2Percent;
 	
-	private Unit<Temperature> temperatureUnit;
-	private Unit<Pressure> airPressureUnit;
 	
 	private ImagingEnvironment env;
 	
@@ -54,25 +53,10 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		return result || setFields;
 	}
 	
-//	public ImagingEnvironmentCompUI(ImagingEnvironment _env,int i)
-//	{
-//		env=_env;
-//		temperatureUnit=UNITS.DEGREEC;
-//		airPressureUnit=UNITS.MBAR;
-//		initGUI();
-//		if(env!=null){
-//			setGUIData();
-//		}else{
-//			env=new ImagingEnvironment();
-//			createDummyPane(false);
-//		}
-//	}
 
 	
 	public ImagingEnvironmentCompUI(ModuleConfiguration objConf) 
 	{
-		temperatureUnit=UNITS.DEGREEC;
-		airPressureUnit=UNITS.MBAR;
 		initGUI();
 		if(objConf==null)
 			createDummyPane(false);
@@ -117,13 +101,13 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		
 		try{
 		env.setTemperature(temperature.getTagValue().equals("") ?
-				null : new Temperature(Double.valueOf(temperature.getTagValue()), temperatureUnit));
+				null : new Temperature(Double.valueOf(temperature.getTagValue()), temperature.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV temperature input");
 		}
 		try{
 		env.setAirPressure(airPressure.getTagValue().equals("") ? 
-				null : new Pressure(Double.valueOf(airPressure.getTagValue()),airPressureUnit));
+				null : new Pressure(Double.valueOf(airPressure.getTagValue()),airPressure.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV air pressure input");
 		}
@@ -237,40 +221,43 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 	public void setTemperature(Temperature value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		temperatureUnit=(value!=null) ? value.unit():temperatureUnit;
+//		temperatureUnit=(value!=null) ? value.unit():temperatureUnit;
+		Unit unit=(value!=null)?value.unit() : TagNames.TEMPERATURE_UNIT;
 		if(temperature == null) 
-			temperature = new TagData(TagNames.TEMP+" ["+temperatureUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			temperature = new TagData(TagNames.TEMP,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			temperature.setTagValue(val,prop);
+			temperature.setTagValue(val,unit,prop);
 	}
 	
 	public void setAirPressure(Pressure value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		airPressureUnit=(value!=null) ? value.unit() :airPressureUnit;
+//		airPressureUnit=(value!=null) ? value.unit() :airPressureUnit;
+		Unit unit= value!=null ? value.unit() : TagNames.PRESSURE_UNIT;
 		if(airPressure == null) 
-			airPressure = new TagData(TagNames.AIRPRESS+" ["+airPressureUnit.getSymbol()+"]: ",val,prop,TagData.TEXTFIELD);
+			airPressure = new TagData(TagNames.AIRPRESS,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			airPressure.setTagValue(val,prop);
+			airPressure.setTagValue(val,unit,prop);
 	}
 	
 	public void setHumidity(PercentFraction value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.getValue()*100) :"";
+		Unit unit=TagNames.PERCENT_UNIT;
 		if(humidity == null) 
-			humidity = new TagData(TagNames.HUMIDITY+" [%]: ",val,prop,TagData.TEXTFIELD);
+			humidity = new TagData(TagNames.HUMIDITY,val,unit,prop,TagData.TEXTFIELD); 
 		else 
-			humidity.setTagValue(val,prop);
+			humidity.setTagValue(val,unit,prop);
 	}
 	
 	public void setCo2Percent(PercentFraction value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.getValue()*100) :"";
-		
+		Unit unit=TagNames.PERCENT_UNIT;
 		if(co2Percent == null) 
-			co2Percent = new TagData(TagNames.CO2+" [%]: ",val,prop,TagData.TEXTFIELD);
+			co2Percent = new TagData(TagNames.CO2,val,unit,prop,TagData.TEXTFIELD);
 		else 
-			co2Percent.setTagValue(val,prop);
+			co2Percent.setTagValue(val,unit,prop);
 	}
 
 
