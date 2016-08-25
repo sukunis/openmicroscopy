@@ -556,7 +556,7 @@ public class SampleCompUI extends ElementsCompUI
 			rawMaterialCode.setTagValue(value,prop);
 	}
 	
-	public void setPreparationDate(Timestamp value, boolean prop)
+	private void setPreparationDate(Timestamp value, boolean prop)
 	{
 		
 		String val= (value != null) ? value.getValue():"";
@@ -566,7 +566,7 @@ public class SampleCompUI extends ElementsCompUI
 			preparationDate.setTagValue(val,prop);
 	}
 	
-	public void setPreparationDescription(String value, boolean prop)
+	private void setPreparationDescription(String value, boolean prop)
 	{
 		if(preparationDescription == null) 
 			preparationDescription = new TagData(TagNames.PREPDESC+": ",value,prop,TagData.TEXTAREA);
@@ -574,7 +574,7 @@ public class SampleCompUI extends ElementsCompUI
 			preparationDescription.setTagValue(value,prop);	
 	}
 	
-	public void setGridBoxNumber(String string, boolean prop)
+	private void setGridBoxNumber(String string, boolean prop)
 	{
 		String val=(string!=null) ? String.valueOf(string):"";
 		if(gridBoxNumber == null) 
@@ -584,7 +584,7 @@ public class SampleCompUI extends ElementsCompUI
 		}
 	}
 	
-	public void setGridType(String value, boolean prop)
+	private void setGridType(String value, boolean prop)
 	{
 		if(gridBoxType == null) 
 			gridBoxType = new TagData(TagNames.GRIDBOXTYPE+": ",value,prop,TagData.TEXTAREA);
@@ -592,7 +592,7 @@ public class SampleCompUI extends ElementsCompUI
 			gridBoxType.setTagValue(value,prop);	
 	}
 	
-	public void setExpGridNumber(String[] value, boolean prop)
+	private void setExpGridNumber(String[] value, boolean prop)
 	{
 		if(expGrid == null) 
 			expGrid = new TagData(TagNames.EXPGRID+": ",value,prop,TagData.ARRAYFIELDS);
@@ -602,7 +602,7 @@ public class SampleCompUI extends ElementsCompUI
 		}
 	}
 	
-	public void setExpObjectNr(String value, boolean prop)
+	private void setExpObjectNr(String value, boolean prop)
 	{
 		if(expObjectNr == null) 
 			expObjectNr = new TagData(TagNames.EXPOBJNR+": ",value,prop,TagData.TEXTFIELD);
@@ -610,7 +610,7 @@ public class SampleCompUI extends ElementsCompUI
 			expObjectNr.setTagValue(value,prop);	
 	}
 	
-	public void setExpObjectType(String value, boolean prop)
+	private void setExpObjectType(String value, boolean prop)
 	{
 		if(expObjectType == null) 
 			expObjectType = new TagData(TagNames.EXPOBJTYPE+": ",value,prop,TagData.TEXTAREA);

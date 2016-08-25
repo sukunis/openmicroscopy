@@ -319,7 +319,6 @@ public class ExperimentCompUI extends ElementsCompUI
 			experiment.setDescription(description.getTagValue());
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read EXPERIMENT description input");
-			e.printStackTrace();
 		}
 		try{
 			experiment.setType(getExperimentType(type.getTagValue()));
@@ -329,7 +328,9 @@ public class ExperimentCompUI extends ElementsCompUI
 		try{
 //			experiment.getLinkedExperimenter().setFirstName(expName.getTagValue(0));
 //			experiment.getLinkedExperimenter().setLastName(expName.getTagValue(1));
-			// first element should be the inport user
+			// first element should be the import user
+//			if(expName.getListValues().get(0)!=null)
+//				System.out.println("Link to experimenter");
 			experiment.linkExperimenter(expName.getListValues().get(0));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read EXPERIMENT experimenter input");
@@ -437,6 +438,9 @@ public class ExperimentCompUI extends ElementsCompUI
 	
 	public ExperimentType getExperimentType(String value)  throws FormatException
 	  {
+		if(value==null)
+			return null;
+		
 	    ExperimentTypeEnumHandler handler = new ExperimentTypeEnumHandler();
 	    try {
 	      return (ExperimentType) handler.getEnumeration(value);

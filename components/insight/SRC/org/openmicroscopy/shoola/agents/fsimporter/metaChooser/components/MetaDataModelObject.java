@@ -35,4 +35,20 @@ public class MetaDataModelObject
 	public void setList(List<MetaDataModel> list) {
 		this.list = list;
 	}
+	
+	/**
+	 * 
+	 * @return true, if some changes of datas available
+	 */
+	public boolean hasToUpdate()
+	{
+		boolean res=false;
+		if(list==null || list.isEmpty()){
+			return res;
+		}
+		for(MetaDataModel m: list){
+			res= res || m.noticUserInput();
+		}
+		return res;
+	}
 }

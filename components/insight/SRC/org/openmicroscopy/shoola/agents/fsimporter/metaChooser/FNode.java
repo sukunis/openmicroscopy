@@ -6,14 +6,15 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 
 public class FNode extends DefaultMutableTreeNode
 {
 	private ImportUserData importData;
 	private MetaDataModelObject modelObj;
-	private MetaDataModel model;
 	private ImportableFile iFile;
+	private MetaDataView view;
 	
 	private Boolean saved;
 	
@@ -106,19 +107,27 @@ public class FNode extends DefaultMutableTreeNode
 		this.modelObj=m;
 	}
 	
-	public MetaDataModel getModel(int index)
+	public MetaDataModelObject getModelObject()
+	{
+		return modelObj;
+	}
+	
+	public MetaDataModel getModelOfSeries(int index)
 	{
 		if(modelObj==null)
 			return null;
 		
 		return modelObj.getList().get(index);
 	}
-	public MetaDataModel getModel() {
-		return model;
+	
+	public boolean hasModelObject() {
+		return modelObj!=null;
 	}
-	public void setModel(MetaDataModel m)
-	{
-		model=m;
+	public MetaDataView getView() {
+		return view;
+	}
+	public void setView(MetaDataView view) {
+		this.view = view;
 	}
 	
 //	public void addFiles(int showHidden) {
