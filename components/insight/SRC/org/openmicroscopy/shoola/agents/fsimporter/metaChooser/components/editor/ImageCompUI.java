@@ -44,11 +44,9 @@ public class ImageCompUI extends ElementsCompUI
 	private TagData stepSize;
 	private TagData timeIncrement;
 	private TagData wellNr;
-	private List<TagData> tagList;
 	
 	
 	private Image image;
-	private boolean setFields;
 	
 	private void initTagList()
 	{

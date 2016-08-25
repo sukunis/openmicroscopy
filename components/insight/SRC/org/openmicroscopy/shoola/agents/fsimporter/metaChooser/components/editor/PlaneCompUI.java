@@ -49,7 +49,6 @@ public class PlaneCompUI extends ElementsCompUI
 	private TagData posY;
 	// z position of the stage
 	private TagData posZ;
-	private List<TagData> tagList;
 	
 	
 	private Plane plane;

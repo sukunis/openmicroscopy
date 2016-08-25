@@ -53,11 +53,10 @@ public class ExperimentCompUI extends ElementsCompUI
 	private TagData group;
 	private TagData projectPartner;
 	
-	private List<TagData> tagList;
 	
 	private Experiment experiment;
 	
-	private boolean setFields;
+	
 	
 
 	public static final String PROJPARTNER_MAPLABEL="Project Partner";
@@ -427,7 +426,7 @@ public class ExperimentCompUI extends ElementsCompUI
 		return expName.getListValues();
 	}
 
-	public void setType(ExperimentType value, boolean prop)
+	private void setType(ExperimentType value, boolean prop)
 	{
 		String val= (value != null) ? value.getValue():"";
 		if(type == null) 
@@ -450,7 +449,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	    }
 	  }
 	
-	public void setDescription(String value, boolean prop)
+	private void setDescription(String value, boolean prop)
 	{
 		if(description == null) 
 			description = new TagData(TagNames.DESC+": ",value,prop,TagData.TEXTAREA);
@@ -458,24 +457,7 @@ public class ExperimentCompUI extends ElementsCompUI
 			description.setTagValue(value,prop);	
 	}
 	
-	
-//	public void setName(String value, boolean prop)
-//	{
-//		if(expName == null) 
-//			expName = new TagData(TagNames.EXPNAME+": ",value,prop,TagData.TEXTFIELD);
-//		else 
-//			expName.setTagValue(value,prop);
-//	}
-//	
-//	public void setName(String[] value, boolean prop)
-//	{
-//		if(expName == null) 
-//			expName = new TagData(TagNames.EXPNAME+": ",value,prop,TagData.ARRAYFIELDS);
-//		else {
-//			expName.setTagValue(value[0],0,prop);
-//			expName.setTagValue(value[1],1,prop);
-//		}
-//	}
+
 	
 	public void setName(Experimenter value, boolean prop)
 	{
@@ -508,7 +490,7 @@ public class ExperimentCompUI extends ElementsCompUI
 			group.setTagValue(value,prop);
 	}
 	
-	public void setProjectPartner(String value, boolean prop)
+	private void setProjectPartner(String value, boolean prop)
 	{
 		if(projectPartner == null) 
 			projectPartner = new TagData(TagNames.PROJECTPARTNER+": ",value,prop,TagData.TEXTFIELD);

@@ -45,8 +45,6 @@ public class FilterCompUI extends LightPathElem
 	private TitledBorder tb;
 	
 	private Object filter;
-	private boolean setFields;
-	private List<TagData> tagList;
 	
 	private void initTagList()
 	{

@@ -61,7 +61,6 @@ public class ChannelCompUI extends ElementsCompUI
 	/** specifying adjustable pin hole diameter for confocal microscopes. Unit are set by PinholeSizeUnit*/
 	private TagData pinholeSize;
 	
-	private List<TagData> tagList;
 	
 	//TODO
 	private String stagePosRef;
@@ -76,7 +75,6 @@ public class ChannelCompUI extends ElementsCompUI
 	
 	
 	private Channel channel;
-	private boolean setFields;
 	
 	
 	private void initTagList()

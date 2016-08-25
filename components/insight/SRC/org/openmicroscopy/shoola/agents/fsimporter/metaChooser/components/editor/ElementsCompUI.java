@@ -46,6 +46,9 @@ public abstract class ElementsCompUI extends JPanel
 	
 	protected JPanel globalPane;
 	
+	protected List<TagData> tagList;
+	protected boolean setFields;
+	
 	public ElementsCompUI(){
 		
 	}
@@ -186,6 +189,27 @@ public abstract class ElementsCompUI extends JPanel
 		public String getFilterId()
 		{
 			return this.id;
+		}
+	}
+
+
+
+	public void isUpToDate(boolean b) 
+	{
+		if(tagList!=null){
+			for(int i=0; i<tagList.size();i++){
+				if(tagList.get(i)!=null)
+					tagList.get(i).changeIsUpdated(b);
+			}
+		}
+	}
+
+	public void update(List<TagData> list) 
+	{
+		for(TagData t: list){
+			if(t.valueChanged()){
+//				switch(t.getTag)
+			}
 		}
 	}
 

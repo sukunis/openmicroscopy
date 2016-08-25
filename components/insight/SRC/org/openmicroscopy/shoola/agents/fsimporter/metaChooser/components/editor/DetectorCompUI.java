@@ -71,7 +71,6 @@ public class DetectorCompUI extends ElementsCompUI
 	private TagData amplGain;//==emGain
 	
 	
-	private List<TagData> tagList;
 	
 	private String detectorId;
 	
@@ -82,7 +81,6 @@ public class DetectorCompUI extends ElementsCompUI
 	private int linkChannelIdx;
 	
 	private Box box;
-	private boolean setFields;
 	
 	private void initTagList()
 	{

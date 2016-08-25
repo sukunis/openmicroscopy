@@ -31,13 +31,11 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 	private TagData airPressure;
 	private TagData humidity;
 	private TagData co2Percent;
-	private List<TagData> tagList;
 	
 	private Unit<Temperature> temperatureUnit;
 	private Unit<Pressure> airPressureUnit;
 	
 	private ImagingEnvironment env;
-	private boolean setFields;
 	
 	private void initTagList()
 	{

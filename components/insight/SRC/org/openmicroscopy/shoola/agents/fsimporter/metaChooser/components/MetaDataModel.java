@@ -38,6 +38,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.PlaneCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.PlaneSliderCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.SampleCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TagData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.slf4j.LoggerFactory;
@@ -94,6 +95,9 @@ public class MetaDataModel
 	
 	private Experimenter projectPartner;
 	
+	// list of component with changes
+	private List<ElementsCompUI> componentsWithChanges;
+	
 	private Image imageOME;
 	private int imageIndex;
 	private int numOfChannels;
@@ -115,6 +119,8 @@ public class MetaDataModel
 		detectorList=new ArrayList<ElementsCompUI>();
 		
 		lightPathList=new ArrayList<ElementsCompUI>();
+		
+		componentsWithChanges=new ArrayList<ElementsCompUI>();
 	}
 	
 	public MetaDataModel(int imgIdx, int _numOfChannels)
@@ -130,6 +136,8 @@ public class MetaDataModel
 		detectorList=new ArrayList<ElementsCompUI>(numOfChannels);
 		
 		lightPathList=new ArrayList<ElementsCompUI>(numOfChannels);
+		
+		componentsWithChanges=new ArrayList<ElementsCompUI>();
 	}
 	
 	public void clearData()
@@ -158,81 +166,128 @@ public class MetaDataModel
 		detectorList=new ArrayList<ElementsCompUI>();
 		
 		lightPathList=new ArrayList<ElementsCompUI>();
+		componentsWithChanges=new ArrayList<ElementsCompUI>();
 	}
 	
 	public boolean noticUserInput()
 	{
+		componentsWithChanges.clear();
 		boolean hasUserInput=false;
 		boolean result=false;
 		
+		boolean changes;
+		
+		//Experiment
 		if(experimentUI!=null){
-			LOGGER.info("[DEBUG] -- changes in EXPERIMENT: "+
-				((ExperimentCompUI) experimentUI).userInput());
-			hasUserInput=hasUserInput || ((ExperimentCompUI) experimentUI).userInput();
+			changes=((ExperimentCompUI) experimentUI).userInput();
+			LOGGER.debug("changes in EXPERIMENT: "+changes);
+			if(changes) componentsWithChanges.add(experimentUI);
+			hasUserInput=hasUserInput || changes;
 		}
 		
-		if(image!=null){ LOGGER.info("[DEBUG] -- changes in IMAGE: "+
-				((ImageCompUI) image).userInput());
-		hasUserInput=hasUserInput ||((ImageCompUI) image).userInput();
+		//Image
+		if(image!=null){ 
+			changes=((ImageCompUI) image).userInput();
+			LOGGER.debug("changes in IMAGE: "+changes);
+			if(changes) componentsWithChanges.add(image);
+			hasUserInput=hasUserInput ||changes;
 		}
 		
-		if(objectiveUI!=null){ LOGGER.info("[DEBUG] -- changes in OBJECT: "+
-				objectiveUI.userInput());
-		hasUserInput=hasUserInput ||objectiveUI.userInput();
+		//Objective
+		if(objectiveUI!=null){ 
+			changes=objectiveUI.userInput();
+			LOGGER.info("[DEBUG] -- changes in OBJECT: "+changes);
+			if(changes) componentsWithChanges.add(objectiveUI);
+			hasUserInput=hasUserInput ||objectiveUI.userInput();
 		}
 
-		
+		//Detector
 		for(int i=0; i<detectorList.size();i++){
-			if(detectorList.get(i)!=null) 
+			if(detectorList.get(i)!=null) {
+				if(detectorList.get(i).userInput()){
+					componentsWithChanges.add(detectorList.get(i));
 					result=result ||( detectorList.get(i)).userInput();
+				}
+			}
 		}
 		hasUserInput=hasUserInput ||result;
-		LOGGER.info("[DEBUG] -- changes in DETECTOR: "+result);
+		LOGGER.debug("changes in DETECTOR: "+result);
 
+		//LightSrc
 		result=false;
 		for(int i=0; i<lightSrcList.size();i++){
-			if(lightSrcList.get(i)!=null)
+			if(lightSrcList.get(i)!=null){
+				if(lightSrcList.get(i).userInput()){
+					componentsWithChanges.add(lightSrcList.get(i));
 					result=result || (lightSrcList.get(i)).userInput();
+				}
+			}
 		}
 		hasUserInput=hasUserInput ||result;
-		 LOGGER.info("[DEBUG] -- changes in LIGHTSRC: "+result);
+		 LOGGER.debug("changes in LIGHTSRC: "+result);
 		 
+		 //Channel
 		 result=false;
 		for(int i=0; i<channelList.size();i++){
-			if(channelList.get(i)!=null) 
+			if(channelList.get(i)!=null) {
+				if(channelList.get(i).userInput()){
+					componentsWithChanges.add(channelList.get(i));
 					result=result || ( channelList.get(i)).userInput();
+				}
+			}
 		}
 		hasUserInput=hasUserInput ||result;
-		LOGGER.info("[DEBUG] -- changes in CHANNEL: "+result);
+		LOGGER.debug("changes in CHANNEL: "+result);
 		
+		//LightPath
 		result=false;
 		for(int i=0; i<lightPathList.size();i++){
-			if(lightPathList.get(i)!=null) 
+			if(lightPathList.get(i)!=null) {
+				if(lightPathList.get(i).userInput()){
+					componentsWithChanges.add(lightPathList.get(i));
 					result=result || ( lightPathList.get(i)).userInput();
+				}
+			}
 		}
 		hasUserInput=hasUserInput ||result;
-		LOGGER.info("[DEBUG] -- changes in LIGHTPATH: "+result);
+		LOGGER.debug("changes in LIGHTPATH: "+result);
 		
-		if(sampleUI!=null){ LOGGER.info("[DEBUG] -- changes in SAMPLE: "+
-				( sampleUI).userInput());
-		hasUserInput=hasUserInput ||( sampleUI).userInput();
+		//Sample
+		if(sampleUI!=null){ 
+			changes=( sampleUI).userInput();
+			if(changes) componentsWithChanges.add(sampleUI);
+			LOGGER.debug("changes in SAMPLE: "+changes);
+		hasUserInput=hasUserInput ||changes;
 		}
 		
-		if(imgEnvUI!=null){ LOGGER.info("[DEBUG] -- changes in IMGENV: "+
-				( imgEnvUI).userInput());
-		hasUserInput=hasUserInput || ( imgEnvUI).userInput();
+		//ImgEnv
+		if(imgEnvUI!=null){ 
+			changes=( imgEnvUI).userInput();
+			LOGGER.debug("changes in IMGENV: "+changes);
+			if(changes) componentsWithChanges.add(imgEnvUI);
+			hasUserInput=hasUserInput || changes;
 		}
 
+		//Planes
 		result=false;
 		for(int i=0; i<planeList.size();i++){
-			if(planeList.get(i)!=null) 
+			if(planeList.get(i)!=null) {
+				if(planeList.get(i).userInput()){
+					componentsWithChanges.add(planeList.get(i));
 					result=result ||( planeList.get(i)).userInput();
+				}
+			}
 		}
 		hasUserInput=hasUserInput ||result;
-		LOGGER.info("[DEBUG] -- changes in PLANE: "+result);
+		LOGGER.debug("changes in PLANE: "+result);
 		
 		
 		return hasUserInput;
+	}
+	
+	public List<ElementsCompUI> getComponentsForUpdate()
+	{
+		return componentsWithChanges;
 	}
 	
 //	public void setImageProp(int imgIdx, int _numOfChannels)
@@ -1160,11 +1215,11 @@ public class MetaDataModel
 
 	/**
 	 * Save GUI data 
+	 * @throws Exception 
 	 */
-	public void save() 
+	public void save() throws Exception 
 	{
 		LOGGER.info("[MODEL] -- Save model data");
-		System.out.println("[MODEL] -- Save model data");
 		try {
 //			if(experimentUI!=null && ((ExperimentCompUI) experimentUI).userInput()){
 //				((ExperimentCompUI) experimentUI).getData();
@@ -1186,8 +1241,7 @@ public class MetaDataModel
 			
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new Exception("[MetaDataModel] Can't save model.");
 		}
 		
 	}
@@ -1215,6 +1269,49 @@ public class MetaDataModel
 		// TODO Auto-generated method stub
 		return (SampleCompUI) sampleUI;
 	}
+
+	public void isUpToDate(boolean b) 
+	{
+		for(Object o: componentsWithChanges){
+			if(o instanceof ElementsCompUI){
+				((ElementsCompUI) o).isUpToDate(b);
+			}else if(o instanceof List){
+				for(ElementsCompUI e :(List<ElementsCompUI>) o){
+					e.isUpToDate(b);
+				}
+			}
+		}
+		componentsWithChanges.clear();
+	}
+	
+	/**
+	 * Only for directories model! There are only one detector, channel, lightSrc, no planes
+	 * @param o
+	 */
+	protected void updateComponentsOfDirModel(ElementsCompUI o) 
+	{
+		List<TagData> tagList=o.getActiveTags();
+		if(o instanceof ExperimentCompUI)
+			experimentUI.update(tagList);
+		else if(o instanceof ImageCompUI)
+			image.update(tagList);
+		else if(o instanceof ImagingEnvironmentCompUI)
+			imgEnvUI.update(tagList);
+		else if(o instanceof ObjectiveCompUI)
+			objectiveUI.update(tagList);
+		else if(o instanceof SampleCompUI)
+			sampleUI.update(tagList);
+		else if(o instanceof DetectorCompUI)
+			detectorList.get(0).update(tagList);
+		else if(o instanceof ChannelCompUI)
+			channelList.get(0).update(tagList);
+		else if(o instanceof LightSourceCompUI)
+			lightSrcList.get(0).update(tagList);
+		else if(o instanceof LightPathCompUI)
+			lightPathList.get(0).update(tagList);
+	}
+
+	
 
 
 

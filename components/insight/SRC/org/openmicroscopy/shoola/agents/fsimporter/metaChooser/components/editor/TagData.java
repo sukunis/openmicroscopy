@@ -792,6 +792,10 @@ public class TagData
 	{
 		return valChanged;
 	}
+	
+	public void changeIsUpdated(boolean b){
+		valChanged=b;
+	}
 
 	public boolean isVisible() {
 		return visible;

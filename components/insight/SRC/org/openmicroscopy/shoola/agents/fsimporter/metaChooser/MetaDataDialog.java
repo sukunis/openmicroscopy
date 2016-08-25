@@ -75,9 +75,9 @@ import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
-
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileEditorUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSSpecificationEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
@@ -701,64 +701,39 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     }
 
 
-    private void loadAndShowDataForSelection()
+    private void loadAndShowDataForSelection(FNode node)
     {
-        if(fileTree.getLastSelectedPathComponent()==null || getSelectedFile()==null)
+    	String file=null;
+        if(node==null || (file=getSelectedFilePath(node))==null)
             return;
         
-        
-        LOGGER.info("[TREE] -- Node: "+((FNode)fileTree.getLastSelectedPathComponent()).toString()+" ##############################################");
-        
-        deselectNodeAction();
+        LOGGER.info("[TREE] -- Node: "+node.toString()+" ##############################################");
 
         JComponent panel=null;
-        
-        String file = getSelectedFile(); 
         
         //import user data
         ImportUserData importData = getImportData();
         
         //get parent dir model data
-        MetaDataModel parentModel=getParentMetaDataModel();
+        MetaDataModel parentModel=getParentMetaDataModel(node);
+        
         if(parentModel!=null)
             viewDirDataButton.setSelected(true);
-        else
+        else{
             viewFileDataButton.setSelected(true);
+        }
         
         MetaDataView view=null;
         // is selection a file or directory
         if(file.equals("")){
-            lastSelectionType=DIR;
-            
-            MetaDataModel dirModel=getCurrentSelectionMetaDataModel();
-            try {
-                view = new MetaDataView(customSettings, file, importData, parentModel, dirModel);
-                view.setVisible();
-            } catch (Exception e) {
-//				catch (DependencyException | ServiceException e) {
-                LOGGER.error("[DATA] CAN'T read METADATA");
-                ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-                        "Can't read given metadata of "+file,e);
-                ld.setVisible(true);
-            }
+            view = loadAndShowDataForDirectory(node, file, importData,
+					parentModel, view);
         }else{
-            lastSelectionType=FILE;
-            
-            try {
-                view = new MetaDataView(customSettings, file, importData, parentModel,this);
-                view.setVisible();
-            } catch (Exception e) {
-//				catch (DependencyException | ServiceException e) {
-                LOGGER.error("[DATA] CAN'T read METADATA");
-                ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-                        "Can't read given metadata of "+file,e);
-                ld.setVisible(true);
-            }
+            view = loadAndShowDataForFile(file, importData, parentModel, view);
         }
+        
         panel=view;
-        // save last selection 
-        lastNode=(FNode)fileTree.getLastSelectedPathComponent();
-        lastNode.setView(view);
+    
         
         metaPanel.removeAll();
         if(panel!=null){
@@ -777,24 +752,91 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 
 
 	/**
+	 * @param file
+	 * @param importData
+	 * @param parentModel
+	 * @param view
+	 * @return
+	 */
+	public MetaDataView loadAndShowDataForFile(String file,
+			ImportUserData importData, MetaDataModel parentModel,
+			MetaDataView view) 
+	{
+		lastSelectionType=FILE;
+		
+		String hasParentModel=parentModel==null ? "null" : "available";
+		System.out.println("load and show data for file: parentModel="+hasParentModel);
+		
+		try {
+		    view = new MetaDataView(customSettings, file, importData, parentModel,this);
+		    view.setVisible();
+		} catch (Exception e) {
+//				catch (DependencyException | ServiceException e) {
+		    LOGGER.error("[DATA] CAN'T read METADATA");
+		    ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+		            "Can't read given metadata of "+file,e);
+		    ld.setVisible(true);
+		}
+		return view;
+	}
+
+
+	/**
+	 * @param node
+	 * @param file
+	 * @param importData
+	 * @param parentModel
+	 * @param view
+	 * @return
+	 */
+	public MetaDataView loadAndShowDataForDirectory(FNode node, String file,
+			ImportUserData importData, MetaDataModel parentModel,
+			MetaDataView view) 
+	{
+		lastSelectionType=DIR;
+		
+		MetaDataModel currentDirModel=getCurrentSelectionMetaDataModel(node);
+		
+		String hasParentModel=parentModel==null ? "null" : "available";
+		String hasCurrentModel=currentDirModel==null ? "null" : "available";
+		System.out.println("load and show data for directory: parentModel="+hasParentModel
+				+", current model = "+hasCurrentModel);
+		try {
+		    view = new MetaDataView(customSettings, file, importData, parentModel, currentDirModel);
+		    view.setVisible();
+		} catch (Exception e) {
+//				catch (DependencyException | ServiceException e) {
+		    LOGGER.error("[DATA] CAN'T read METADATA");
+		    ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+		            "Can't read given metadata of "+file,e);
+		    ld.setVisible(true);
+		}
+		return view;
+	}
+
+
+	/**
 	 * 
 	 */
-	public void deselectNodeAction() {
-		if(lastNode!=null){
-        	saveModel(lastNode);
+	public void deselectNodeAction(FNode node) {
+		if(node!=null){
+			node.setView(getMetaDataView(metaPanel));
+        	saveInputToModel(node);
+        	lastNode=node;
         }
+		
 	}
     
-//    private MetaDataView getMetaDataView(JPanel panel)
-//    {
-//    	 if(panel.getComponentCount()>0){
-//             Component c=panel.getComponent(0);
-//             if(c instanceof MetaDataView){
-//            	 return (MetaDataView) c;
-//             }
-//    	 }
-//    	 return null;
-//    }
+    private MetaDataView getMetaDataView(JPanel panel)
+    {
+    	 if(panel.getComponentCount()>0){
+             Component c=panel.getComponent(0);
+             if(c instanceof MetaDataView){
+            	 return (MetaDataView) c;
+             }
+    	 }
+    	 return null;
+    }
     
     /**
      * TODO: no series image are saved
@@ -821,7 +863,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
             }
         }
         //set current dir data
-        MetaDataModel dirModel=getCurrentSelectionMetaDataModel();
+        MetaDataModel dirModel=getCurrentSelectionMetaDataModel(parentNode);
 //
 //		dataView=new MetaDataUI(customSettings);
 //		dataView.readData(importData);
@@ -854,14 +896,14 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     /**
      * save data model of  node, if any user input available
      */
-    private void saveModel(FNode node) 
+    private void saveInputToModel(FNode node) 
     {
     	if(node!=null){
-    		LOGGER.info("[DEBUG] -- SAVE MODEL FOR: "+node.getAbsolutePath());
-    		System.out.println("[DEBUG] -- SAVE MODEL FOR: "+node.getAbsolutePath());
     		if(node.getView()!=null && node.getView().getModelObject().hasToUpdate()){
-    			System.out.println("Save model of GUI data");
+    			LOGGER.info("[DEBUG] -- SAVE MODEL FOR: "+node.getAbsolutePath());
+        		System.out.println("[DEBUG] -- SAVE MODEL FOR: "+node.getAbsolutePath());
     			node.setModelObject(((MetaDataView) node.getView()).getModelObject());
+    			updateChildDirectories(node);
     		}
 
     		//                	if(node.hasModelObject()){
@@ -884,8 +926,37 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     	//			}
     	//		}
     }
-    
-    private void updateModel(FNode node)
+
+    /**
+     * Update all childs of type directory with existing model
+     * @param node
+     */
+    private void updateChildDirectories(FNode node) 
+    {
+		int numChilds=node.getChildCount();
+		for(int i=0; i<numChilds;i++){
+			FNode child = (FNode) node.getChildAt(i);
+			if(!child.isLeaf() && child.hasModelObject()){
+				updateModel(child,node.getModelObject());
+				updateChildDirectories(child);
+			}
+		}
+		node.getModelObject().isUpToDate(true);
+	}
+
+
+    /**
+     * Update child model with changes of parentModel
+     * @param child
+     * @param parentModel
+     */
+	private void updateModel(FNode child, MetaDataModelObject parentModel) 
+	{
+		child.getModelObject().update(parentModel);
+	}
+
+
+	private void updateModel(FNode node)
     {
     	LOGGER.info("[DEBUG] -- SAVE MODEL FOR: "+node.getAbsolutePath());
 		System.out.println("[DEBUG] -- SAVE MODEL FOR: "+node.getAbsolutePath());
@@ -922,13 +993,18 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 //    }
 
 
-    private MetaDataModel getParentMetaDataModel() 
+    private MetaDataModel getParentMetaDataModel(FNode node) 
     {
-        FNode node = (FNode)fileTree.getLastSelectedPathComponent();
         if(node!=null){
             FNode parent=(FNode) node.getParent();
             if(parent!=null){
-                return parent.getModelOfSeries(0);
+            	if(parent.hasModelObject()){
+            		// parent is a directory with only one metadatamodel
+            		System.out.println("Parent Model : "+parent.getAbsolutePath());
+            		return parent.getModelOfSeries(0);
+            	}else{
+            		return getParentMetaDataModel(parent);
+            	}
             }
         }
         return null;
@@ -938,9 +1014,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
      * 
      * @return model of current selected directory, if exist's. If selection is a file, return null.
      */
-    private MetaDataModel getCurrentSelectionMetaDataModel()
+    private MetaDataModel getCurrentSelectionMetaDataModel(FNode node)
     {
-        FNode node = (FNode)fileTree.getLastSelectedPathComponent();
         if(node!=null && !node.isLeaf()){
             LOGGER.info("[GUI] -- Load current selection model");
             return node.getModelOfSeries(0);
@@ -1066,11 +1141,13 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 //	
 //	
 
-    
-    private String getSelectedFile()
+    /**
+     * 
+     * @return absolute path of selected file. If selected component is a dir return empty string 
+     */
+    private String getSelectedFilePath(FNode node)
     {
         String fname="";
-        FNode node = (FNode)fileTree.getLastSelectedPathComponent();
 
         if (node!=null && node.isLeaf()) {
             fname=node.getAbsolutePath();
@@ -1186,17 +1263,21 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
         case CMD_SAVE:
             LOGGER.info("[GUI-ACTION] -- save");
             TreePath path=fileTree.getSelectionPath();
-            String fileName=getSelectedFile();
+            String fileName=getSelectedFilePath((FNode)fileTree.getLastSelectedPathComponent());
             if(fileName!=null){
                 String srcFile=fileName.equals("") ? "" : fileName;
-                saveCurrentNodeAndUpdate(path,srcFile);
+                try {
+					saveCurrentNodeAndUpdate(path,srcFile);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
             break;
         case CMD_SAVEALL:
             LOGGER.info("[GUI-ACTION] -- save all");
             //only for directory
             FNode parentNode = (FNode)fileTree.getLastSelectedPathComponent();
-            lastNode=parentNode;
             
             saveAllChilds(parentNode);
             insertNodes(null, parentNode.getFile().getName(), parentNode);
@@ -1230,7 +1311,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 //				panel=dataView;
 //			}
             //file
-            String file = getSelectedFile(); 
+            String file = getSelectedFilePath((FNode)fileTree.getLastSelectedPathComponent()); 
             if(!file.equals("")){
                 viewFileDataButton.setSelected(true);
                 MetaDataView view=null;
@@ -1272,7 +1353,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
             profileWriter.setVisible(true);
             customSettings=profileWriter.getProperties();
             //TODO reload current view if changes
-            loadAndShowDataForSelection();
+            loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
             break;
         case CMD_SPECIFICATION:
             LOGGER.info("[GUI-ACTION] -- load specification file");
@@ -1328,9 +1409,10 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 
 
     /**
+     * @throws Exception 
      * 
      */
-    private void saveCurrentNodeAndUpdate(TreePath path, String srcFile) 
+    private void saveCurrentNodeAndUpdate(TreePath path, String srcFile) throws Exception 
     {
         saveCurrentNode(path, srcFile);
         //freeze status fileTree
@@ -1348,7 +1430,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     }
     
     
-    private void saveCurrentNode(TreePath path, String srcFile)
+    private void saveCurrentNode(TreePath path, String srcFile) throws Exception
     {
         LOGGER.info("[DEBUG] -- save node "+srcFile);
         
@@ -1358,19 +1440,19 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private void saveMetadataForNode(String srcFile,MetaDataView view)
     {
         LOGGER.info("[DEBUG] -- save node "+srcFile);
-        view.save();
+        try {
+			view.save();
+		} catch (Exception e) {
+			LOGGER.error("Can't save metadata for "+srcFile);
+			LOGGER.debug(e.getStackTrace().toString());
+		}
     }
     
     
 
-    /**
-     * show metadata of selected node
-     */
     @Override
     public void valueChanged(TreeSelectionEvent e) 
     {
-//        FNode node = (FNode)fileTree.getLastSelectedPathComponent();
-        
         FNode selectedNode=null;
         FNode lastSelectedNode=null;
         
@@ -1379,7 +1461,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
         // maximum 2 paths in the list -> last and current
         for (int i = 0; i < paths.length; i++) {
           if (e.isAddedPath(i)) {
-            System.out.println("This node has been selected "+paths[i].getLastPathComponent().toString());
+            System.out.println("\nThis node has been selected "+paths[i].getLastPathComponent().toString());
             selectedNode=(FNode)paths[i].getLastPathComponent();
           } else {
             System.out.println("This node has been deselected "+paths[i].getLastPathComponent().toString());
@@ -1387,23 +1469,33 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
           }
         }
         
-        if(selectedNode!=null ){
-            if(selectedNode.isLeaf()){
-                saveDataButton.setEnabled(true);
-                saveAllDataButton.setEnabled(false);
-            }else{
-                saveDataButton.setEnabled(false);
-                saveAllDataButton.setEnabled(true);
-            }
-            loadAndShowDataForSelection();
-            
-            revalidate();
-            repaint();
-        }
+        deselectNodeAction(lastSelectedNode);
+        selectNodeAction(selectedNode);
     }
 
+    /**
+     * Call methods for selected node in the tree.
+     * @param selectedNode
+     */
+    private void selectNodeAction(FNode selectedNode) 
+   {
+	   if(selectedNode!=null ){
+           if(selectedNode.isLeaf()){
+               saveDataButton.setEnabled(true);
+               saveAllDataButton.setEnabled(false);
+           }else{
+               saveDataButton.setEnabled(false);
+               saveAllDataButton.setEnabled(true);
+           }
+           loadAndShowDataForSelection(selectedNode);
+           
+           revalidate();
+           repaint();
+       }		
+	}
 
-    @Override
+
+ @Override
     public void treeCollapsed(TreeExpansionEvent arg0) 
     {
 //		System.out.println("[DEBUG] tree collapsed");

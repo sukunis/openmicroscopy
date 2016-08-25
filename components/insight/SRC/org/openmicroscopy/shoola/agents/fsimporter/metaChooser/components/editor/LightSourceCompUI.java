@@ -85,7 +85,6 @@ public class LightSourceCompUI extends ElementsCompUI
 	private TagData pump;
 	private TagData waveLength;
 	
-	private List<TagData> tagList;
 	
 	private String classification;
 	
@@ -112,7 +111,6 @@ public class LightSourceCompUI extends ElementsCompUI
 	private JComboBox<String> sourceType;
 	
 	private int linkChannelIdx;
-	private boolean setFields;
 	
 	
 	

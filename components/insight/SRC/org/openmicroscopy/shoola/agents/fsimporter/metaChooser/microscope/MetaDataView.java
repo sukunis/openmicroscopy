@@ -281,8 +281,9 @@ public class MetaDataView extends JPanel
 	 * 
 	 * @return metaData model that holds a list of all series data models of current img data.
 	 */
-	public MetaDataModelObject getModelObject()
+	public MetaDataModelObject getModelObject() 
 	{
+		try{
 		List<MetaDataModel> list=new ArrayList<MetaDataModel>();
 		if(seriesData){
 			for(Component comp:cardPane.getComponents()){
@@ -294,12 +295,16 @@ public class MetaDataView extends JPanel
 		MetaDataModelObject obj=new MetaDataModelObject(seriesData,list);
 		
 		return obj;
+		}catch(Exception e){
+			LOGGER.error(e.getMessage().toString());
+			return null;
+		}
 	}
 	
 	/**
 	 * Save data from GUI to file.
 	 */
-	public void save()
+	public void save() throws Exception
 	{
 		if(ome!=null){
 			List<MetaDataModel> list=new ArrayList<MetaDataModel>();

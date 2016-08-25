@@ -38,7 +38,6 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	//??
 //	private TagData intensity;
 
-	private List<TagData> tagList;
 	
 	//reference to lightSrc
 	private String lightSrcId;

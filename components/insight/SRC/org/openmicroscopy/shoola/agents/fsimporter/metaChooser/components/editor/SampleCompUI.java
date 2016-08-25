@@ -66,11 +66,9 @@ public class SampleCompUI extends ElementsCompUI
 	private TagData rawMaterialDesc;
 	private TagData rawMaterialCode;
 	
-	private List<TagData> tagList;
 	
 	
 	private Sample sample;
-	private boolean setFields;
 	
 	private void initTagList()
 	{

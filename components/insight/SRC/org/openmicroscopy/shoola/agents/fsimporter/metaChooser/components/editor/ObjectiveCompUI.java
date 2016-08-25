@@ -55,7 +55,6 @@ public class ObjectiveCompUI extends ElementsCompUI
 	private TagData workDist;
 	private TagData iris;
 	
-	private List<TagData> tagList;
 	
 	private static Unit<Length> workDistUnit=UNITS.MICROM;
 	
@@ -66,7 +65,6 @@ public class ObjectiveCompUI extends ElementsCompUI
 	private Box box;
 	
 	private List<Objective> availableObj;
-	private boolean setFields;
 	
 
 	

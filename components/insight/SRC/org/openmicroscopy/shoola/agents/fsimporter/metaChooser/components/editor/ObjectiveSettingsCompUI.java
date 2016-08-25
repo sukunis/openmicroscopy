@@ -31,7 +31,6 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	private TagData corCollar;
 	private TagData medium;
 	private TagData refractIndex;
-	private List<TagData> tagList;
 	
 	private TitledBorder tb;
 	

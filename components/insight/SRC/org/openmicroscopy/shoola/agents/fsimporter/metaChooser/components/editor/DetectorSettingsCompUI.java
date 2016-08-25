@@ -46,7 +46,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	private TagData binning;
 	private TagData subarray;
 	
-	private List<TagData> tagList;
 	
 	private Unit<ElectricPotential> voltageUnit=UNITS.V;
 	

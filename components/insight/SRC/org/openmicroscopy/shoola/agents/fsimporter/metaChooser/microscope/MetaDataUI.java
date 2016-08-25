@@ -273,7 +273,7 @@ public class MetaDataUI extends JPanel
 	}
 
 	/** return model object*/
-	public MetaDataModel getModel() 
+	public MetaDataModel getModel() throws Exception
 	{
 		//read input data
 		model.save();
