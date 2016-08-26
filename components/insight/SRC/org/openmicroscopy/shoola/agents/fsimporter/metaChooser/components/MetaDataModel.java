@@ -25,6 +25,7 @@ import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.FilterType;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentContainer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
@@ -93,7 +94,6 @@ public class MetaDataModel
 	//TODO
 //	private ElementsCompUI stage;
 	
-	private Experimenter projectPartner;
 	
 	// list of component with changes
 	private List<ElementsCompUI> componentsWithChanges;
@@ -366,21 +366,17 @@ public class MetaDataModel
 	}
 	
 	
-	public Experiment getExperiment() throws Exception
+	public ExperimentContainer getExperiment() throws Exception
 	{
 		if(experimentUI==null)
 			return null;
 		else{
 			// save project partner
-			projectPartner = ((ExperimentCompUI) experimentUI).getProjectPartnerAsExp();
 			return ((ExperimentCompUI) experimentUI).getData();
 		}
 	}
 	
-	public Experimenter getProjectPartner()
-	{
-		return projectPartner;
-	}
+	
 	
 	public void setSampleData(ElementsCompUI e)
 	{
@@ -1221,9 +1217,7 @@ public class MetaDataModel
 	{
 		LOGGER.info("[MODEL] -- Save model data");
 		try {
-//			if(experimentUI!=null && ((ExperimentCompUI) experimentUI).userInput()){
-//				((ExperimentCompUI) experimentUI).getData();
-//			}
+//			
 			getExperiment();
 			getObjective();
 			getImageData();

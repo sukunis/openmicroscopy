@@ -776,7 +776,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 		String hasParentModel=parentModel==null ? "null" : "available";
 		System.out.println("load and show data for file: parentModel="+hasParentModel);
-		if(parentModel !=null) System.out.println("FROM PARENT : ProjectPartner= "+parentModel.getProjectPartner().getLastName());
+		if(parentModel !=null) System.out.println("FROM PARENT : ProjectPartner= "+
+				parentModel.getExperiment().getProjectPartnerName());
+		
 		    view = new MetaDataView(customSettings, file, importData, parentModel,this);
 		    view.setVisible();
 		return view;

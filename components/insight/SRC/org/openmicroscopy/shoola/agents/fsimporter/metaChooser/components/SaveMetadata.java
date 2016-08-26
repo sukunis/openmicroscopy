@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentContainer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
@@ -330,14 +331,14 @@ public class SaveMetadata
 	private void saveExperiment(Image i,MetaDataModel m) throws Exception 
 	{
 		//--- save Experiment and Experimenter data
-		Experiment e = m.getExperiment();
+		ExperimentContainer e = m.getExperiment();
 		
 		if(e!=null){
-			omeStore.storeExperiment(e);
+			omeStore.storeExperiment(e); 
 //			omeStore.storeExperimenter(((ExperimentCompUI)m.getExpModul()).getProjectPartnerAsExp()); 
 			// update refs
-			i.linkExperiment(e);
-			i.linkExperimenter(e.getLinkedExperimenter());
+			i.linkExperiment(e.getExperiment());
+			i.linkExperimenter(e.getExperimenter());
 			
 			//if there are more than one experimenter?
 			ExperimentCompUI eUI = m.getExpModul();
@@ -347,8 +348,8 @@ public class SaveMetadata
 			}
 			
 			// store experiment type, desc and project partner in mapAnnotations of image
-			omeStore.appendExperimentToMap(e,i);
-			omeStore.appendProjectPartnerToMap(eUI.getProjectPartnerAsExp(),i);
+			omeStore.appendExperimentToMap(e.getExperiment(),i);
+			omeStore.appendProjectPartnerToMap(e.getProjectPartner(),i);
 		}
 		//TODO: refs update
 		//Refs to experimenter: Dataset, ExperimenterGroup, Image, MicrobeamManipulation, Project

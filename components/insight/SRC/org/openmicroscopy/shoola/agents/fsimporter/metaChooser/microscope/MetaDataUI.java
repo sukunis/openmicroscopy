@@ -64,6 +64,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentContainer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
@@ -288,7 +289,7 @@ public class MetaDataUI extends JPanel
 	{
 		if(m!=null && model!=null){
 			addExperimentData(m.getExperiment(), true);
-			addProjectPartner(m.getProjectPartner(),true);
+//			addProjectPartner(m.getProjectPartner(),true);
 			
 			addImageData(m.getImageData(),true);
 			addObjectData(m.getObjective(),m.getObjectiveSettings(),true);
@@ -395,7 +396,7 @@ public class MetaDataUI extends JPanel
 		}
 	}
 	
-	private void addExperimentData(Experiment e,boolean overwrite)
+	private void addExperimentData(ExperimentContainer e,boolean overwrite)
 	{
 		ExperimentCompUI eUI=model.getExpModul();
 		if(eUI!=null && e!=null){
@@ -405,14 +406,14 @@ public class MetaDataUI extends JPanel
 		}
 	}
 	
-	private void addProjectPartner(Experimenter e, boolean overwrite)
-	{
-		ExperimentCompUI eUI=model.getExpModul();
-		if(eUI!=null && e!=null){
-			eUI.addProjectPartner(e,overwrite);
-			eUI.setFieldsExtern(true);
-		}
-	}
+//	private void addProjectPartner(Experimenter e, boolean overwrite)
+//	{
+//		ExperimentCompUI eUI=model.getExpModul();
+//		if(eUI!=null && e!=null){
+//			eUI.addProjectPartner(e,overwrite);
+//			eUI.setFieldsExtern(true);
+//		}
+//	}
 	
 	/** linke image file */
 	public void linkToFile(File file)
@@ -543,6 +544,8 @@ public class MetaDataUI extends JPanel
 		}
 	}
 
+	
+	// TODO: read project Partner from Map annotation
 	private void readExperimentData(Image image) 
 	{
 		if(initExperimentUI)
@@ -551,8 +554,15 @@ public class MetaDataUI extends JPanel
 			Experiment e=image.getLinkedExperiment();
 			Experimenter exper=image.getLinkedExperimenter();
 			ExperimentCompUI eUI=model.getExpModul();
+			String pP=null;
+			
+			MapAnnotation map=getLinkedCellNanOsAnnotation(image, ome.getStructuredAnnotations());
+			if(map!=null){
+				pP=eUI.parseProjectPartner(map); 
+			}
+			
 			if(e!=null){
-				eUI.addData(e, false);
+				eUI.addData(new ExperimentContainer(e,exper,pP), false);
 			}
 //			if(exper!=null){
 //				eUI.addData(exper, false);
@@ -566,10 +576,7 @@ public class MetaDataUI extends JPanel
 				}
 			}
 			
-			MapAnnotation map=getLinkedCellNanOsAnnotation(image, ome.getStructuredAnnotations());
-			if(map!=null){
-				eUI.parseProjectPartner(map); 
-			}
+			
 		}
 	}
 

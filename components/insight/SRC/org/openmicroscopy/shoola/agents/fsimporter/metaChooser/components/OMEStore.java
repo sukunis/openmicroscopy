@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentContainer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
@@ -132,13 +133,13 @@ public class OMEStore
 	}
 
 	
-	public void storeExperiment(Experiment e)
+	public void storeExperiment(ExperimentContainer e)
 	{
 		LOGGER.info("[SAVE] -- save EXPERIMENT data");
-		int idxExperiment=getExperimentIndexByID(e.getID());
+		int idxExperiment=getExperimentIndexByID(e.getExperiment().getID());
 			
 		//store Experimenter
-		Experimenter exp=e.getLinkedExperimenter();
+		Experimenter exp=e.getExperimenter();
 		
 		int idx2=getExperimenterIndexByID(exp.getID());
 		int idx3=getExperimenterIndexByLName(exp.getLastName());
@@ -161,16 +162,16 @@ public class OMEStore
 			ome.setExperimenter(idx3, exp);
 		}
 			
-		e.linkExperimenter(exp);
+		e.getExperiment().linkExperimenter(exp);
 
 		// store Experiment
 		if(idxExperiment==-1){
-			e.setID(MetadataTools.createLSID("Experiment", 0));
-			LOGGER.info("[SAVE] -- add new EXPERIMENT "+e.getID());
-			ome.addExperiment(e);
+			e.getExperiment().setID(MetadataTools.createLSID("Experiment", 0));
+			LOGGER.info("[SAVE] -- add new EXPERIMENT "+e.getExperiment().getID());
+			ome.addExperiment(e.getExperiment());
 		}else{
 			//rewrite
-			ome.setExperiment(idxExperiment, e);
+			ome.setExperiment(idxExperiment, e.getExperiment());
 		}
 		
 	}
