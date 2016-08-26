@@ -184,26 +184,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 			String val=t.getValue();
 			boolean prop=t.getProperty();
 			if(name!=null && t.isVisible()){
-				switch (name) {
-				case TagNames.TEMP:
-					setTemperature(null, prop);
-					temperature.setVisible(true);
-					break;
-				case TagNames.AIRPRESS:
-					setAirPressure(null, prop);
-					airPressure.setVisible(true);
-					break;
-				case TagNames.HUMIDITY:
-					setHumidity(null, prop);
-					humidity.setVisible(true);
-					break;
-				case TagNames.CO2:
-					setCo2Percent(null, prop);
-					co2Percent.setVisible(true);
-					break;
-				default:
-					LOGGER.warn("[CONF] unknown tag: "+name );break;
-				}
+				setTag(t);
 			}
 		}
 		}
@@ -363,6 +344,52 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 
 	public void setFieldsExtern(boolean b) {
 		setFields= setFields || b;
+	}
+	
+	/**
+	 * Update tags with val from list
+	 */
+	public void update(List<TagData> list) 
+	{
+		for(TagData t: list){
+			if(t.valueChanged()){
+				setTag(t);
+			}
+		}
+	}
+
+	private void setTag(TagData t)
+	{
+		setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
+	}
+	
+	private void setTag(TagConfiguration t)
+	{
+		setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
+	}
+	
+	private void setTag(String name,String val,boolean prop,Unit unit)
+	{
+		switch (name) {
+		case TagNames.TEMP:
+			setTemperature(null, prop);
+			temperature.setVisible(true);
+			break;
+		case TagNames.AIRPRESS:
+			setAirPressure(null, prop);
+			airPressure.setVisible(true);
+			break;
+		case TagNames.HUMIDITY:
+			setHumidity(null, prop);
+			humidity.setVisible(true);
+			break;
+		case TagNames.CO2:
+			setCo2Percent(null, prop);
+			co2Percent.setVisible(true);
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
 	}
 
 

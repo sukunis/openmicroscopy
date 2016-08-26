@@ -1291,6 +1291,12 @@ public class MetaDataModel
 	protected void updateComponentsOfDirModel(ElementsCompUI o) 
 	{
 		List<TagData> tagList=o.getActiveTags();
+		
+		if(tagList==null){
+			System.out.println(o.getClass().getName()+": No tags available for update");
+			return;
+		}
+		
 		if(o instanceof ExperimentCompUI)
 			experimentUI.update(tagList);
 		else if(o instanceof ImageCompUI)

@@ -201,6 +201,14 @@ public class DichroicCompUI extends LightPathElem
 		return false;
 	}
 
+
+
+	@Override
+	public void update(List<TagData> list) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 	
 	

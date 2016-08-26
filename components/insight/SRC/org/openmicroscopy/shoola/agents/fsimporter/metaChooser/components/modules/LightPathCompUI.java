@@ -354,6 +354,12 @@ public class LightPathCompUI extends ElementsCompUI
 	{
 		useEditor = useEditor || b;
 	}
+
+	@Override
+	public void update(List<TagData> list) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 }

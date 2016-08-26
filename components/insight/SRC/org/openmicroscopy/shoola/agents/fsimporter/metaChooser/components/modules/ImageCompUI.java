@@ -499,50 +499,7 @@ public class ImageCompUI extends ElementsCompUI
 				String val=t.getValue();
 				boolean prop=t.getProperty();
 				if(name!=null && t.isVisible()){
-					switch (name) {
-					case TagNames.IMG_NAME:
-						setName(null,prop);
-						this.name.setVisible(true);
-						break;
-					case TagNames.ACQTIME:
-						setAcqTime(null, prop);
-						acqTime.setVisible(true);
-						break;
-					case TagNames.DIMXY:
-						setDimXY(new String[2], prop);
-						dimXY.setVisible(true);
-						break;
-					case TagNames.PIXELTYPE:
-						setPixelType(null, prop);
-						pixelType.setVisible(true);
-						break;
-					case TagNames.PIXELSIZE:
-						setPixelSizeXY(null, null, prop);
-						pixelSize.setVisible(true);
-						break;
-					case TagNames.DIMZTC:
-						setDimZTC(new String[3], prop);
-						dimZTC.setVisible(true);
-						break;
-					case TagNames.STAGEPOS:
-						setStagePos(null,null, prop);
-						stagePos.setVisible(true);
-						break;
-					case TagNames.STEPSIZE:
-						setStepSize(null, prop);
-						stepSize.setVisible(true);
-						break;
-					case TagNames.TIMEINC:
-						setTimeIncrement(null, prop);
-						timeIncrement.setVisible(true);
-						break;
-					case TagNames.WELLNR:
-						setWellNr(null, prop);
-						wellNr.setVisible(true);
-						break;
-					default:
-						LOGGER.warn("[CONF] unknown tag: "+name );break;
-					}
+					setTag(t);
 				}
 			}
 		}
@@ -697,7 +654,75 @@ For example in a video stream.
 	public void setFieldsExtern(boolean b) {
 		setFields= setFields || b;		
 	}
+	/**
+	 * Update tags with val from list
+	 */
+	public void update(List<TagData> list) 
+	{
+		for(TagData t: list){
+			if(t.valueChanged()){
+				setTag(t);
+			}
+		}
+	}
 
+	private void setTag(TagData t)
+	{
+		setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
+	}
+	
+	private void setTag(TagConfiguration t)
+	{
+		setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
+	}
+	
+	private void setTag(String name,String val,boolean prop,Unit unit)
+	{
+		switch (name) {
+		case TagNames.IMG_NAME:
+			setName(null,prop);
+			this.name.setVisible(true);
+			break;
+		case TagNames.ACQTIME:
+			setAcqTime(null, prop);
+			acqTime.setVisible(true);
+			break;
+		case TagNames.DIMXY:
+			setDimXY(new String[2], prop);
+			dimXY.setVisible(true);
+			break;
+		case TagNames.PIXELTYPE:
+			setPixelType(null, prop);
+			pixelType.setVisible(true);
+			break;
+		case TagNames.PIXELSIZE:
+			setPixelSizeXY(null, null, prop);
+			pixelSize.setVisible(true);
+			break;
+		case TagNames.DIMZTC:
+			setDimZTC(new String[3], prop);
+			dimZTC.setVisible(true);
+			break;
+		case TagNames.STAGEPOS:
+			setStagePos(null,null, prop);
+			stagePos.setVisible(true);
+			break;
+		case TagNames.STEPSIZE:
+			setStepSize(null, prop);
+			stepSize.setVisible(true);
+			break;
+		case TagNames.TIMEINC:
+			setTimeIncrement(null, prop);
+			timeIncrement.setVisible(true);
+			break;
+		case TagNames.WELLNR:
+			setWellNr(null, prop);
+			wellNr.setVisible(true);
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
+	}
 	
 
 	

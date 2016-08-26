@@ -547,83 +547,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 				String val=t.getValue();
 				boolean prop=t.getProperty();
 				if(name!=null  && t.isVisible()){
-					switch (name) {
-					case TagNames.MODEL:
-						setModel(val,prop);
-						model.setVisible(true);
-//						objective.setModel(val);
-						break;
-					case TagNames.MANUFAC:
-						setManufact(val,prop);
-						manufact.setVisible(true);
-//						objective.setManufacturer(val);
-						break;
-					case TagNames.NOMMAGN:
-						try{
-							if(val!=null){
-							setNomMagnification(Double.valueOf(val), prop);
-							}else{
-								setNomMagnification(null, prop);
-							}
-//							objective.setNominalMagnification(Double.valueOf(val));
-						}catch(Exception e){
-							setNomMagnification(null, prop);
-						}
-						nomMagn.setVisible(true);
-						break;
-					case TagNames.CALMAGN:
-						try{
-							if(val!=null){
-							setCalMagnification(Double.valueOf(val), prop);
-							}else{
-								setCalMagnification(null,prop);
-							}
-//							objective.setCalibratedMagnification(Double.valueOf(val));
-						}catch(Exception e){
-							setCalMagnification(null,prop);
-						}
-						calMagn.setVisible(true);
-						break;
-					case TagNames.LENSNA:
-						try{
-							if(val!=null){
-							setLensNA(Double.valueOf(val), prop);
-							}else{
-								setLensNA(null,prop);
-							}
-//							objective.setLensNA(Double.valueOf(val));
-						}catch(Exception e){
-							setLensNA(null,prop);
-						}
-						lensNA.setVisible(true);
-						break;
-					case TagNames.IMMERSION:
-						try {
-							setImmersion(parseImmersion(val), prop);
-						} catch (Exception e) {
-							setImmersion(null, prop);
-						}
-						immersion.setVisible(true);
-						break;
-					case TagNames.CORRECTION:
-						try {
-							setCorrection(parseCorrection(val), prop);
-						} catch (Exception e) {
-							setCorrection(null, prop);
-						}
-						correction.setVisible(true);
-						break;
-					case TagNames.WORKDIST:
-						try{
-							setWorkingDist(parseToLength(val, t.getUnit()), prop);
-						}catch(Exception e){
-							setWorkingDist(null,prop);
-						}
-						workDist.setVisible(true);
-						break;
-					default:
-						LOGGER.warn("[CONF] unknown tag: "+name );break;
-					}
+					setTag(t);
 				}
 			}
 		}
@@ -812,7 +736,108 @@ public class ObjectiveCompUI extends ElementsCompUI
 		availableObj=null;
 	}
 
+	/**
+	 * Update tags with val from list
+	 */
+	public void update(List<TagData> list) 
+	{
+		for(TagData t: list){
+			if(t.valueChanged()){
+				setTag(t);
+			}
+		}
+	}
+
+	private void setTag(TagData t)
+	{
+		setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
+	}
 	
+	private void setTag(TagConfiguration t)
+	{
+		setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
+	}
+	
+	private void setTag(String name,String val,boolean prop,Unit unit)
+	{
+		switch (name) {
+		case TagNames.MODEL:
+			setModel(val,prop);
+			model.setVisible(true);
+//			objective.setModel(val);
+			break;
+		case TagNames.MANUFAC:
+			setManufact(val,prop);
+			manufact.setVisible(true);
+//			objective.setManufacturer(val);
+			break;
+		case TagNames.NOMMAGN:
+			try{
+				if(val!=null){
+				setNomMagnification(Double.valueOf(val), prop);
+				}else{
+					setNomMagnification(null, prop);
+				}
+//				objective.setNominalMagnification(Double.valueOf(val));
+			}catch(Exception e){
+				setNomMagnification(null, prop);
+			}
+			nomMagn.setVisible(true);
+			break;
+		case TagNames.CALMAGN:
+			try{
+				if(val!=null){
+				setCalMagnification(Double.valueOf(val), prop);
+				}else{
+					setCalMagnification(null,prop);
+				}
+//				objective.setCalibratedMagnification(Double.valueOf(val));
+			}catch(Exception e){
+				setCalMagnification(null,prop);
+			}
+			calMagn.setVisible(true);
+			break;
+		case TagNames.LENSNA:
+			try{
+				if(val!=null){
+				setLensNA(Double.valueOf(val), prop);
+				}else{
+					setLensNA(null,prop);
+				}
+//				objective.setLensNA(Double.valueOf(val));
+			}catch(Exception e){
+				setLensNA(null,prop);
+			}
+			lensNA.setVisible(true);
+			break;
+		case TagNames.IMMERSION:
+			try {
+				setImmersion(parseImmersion(val), prop);
+			} catch (Exception e) {
+				setImmersion(null, prop);
+			}
+			immersion.setVisible(true);
+			break;
+		case TagNames.CORRECTION:
+			try {
+				setCorrection(parseCorrection(val), prop);
+			} catch (Exception e) {
+				setCorrection(null, prop);
+			}
+			correction.setVisible(true);
+			break;
+		case TagNames.WORKDIST:
+			try{
+				setWorkingDist(parseToLength(val, unit), prop);
+			}catch(Exception e){
+				setWorkingDist(null,prop);
+			}
+			workDist.setVisible(true);
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
+	}
 	
 }
 	

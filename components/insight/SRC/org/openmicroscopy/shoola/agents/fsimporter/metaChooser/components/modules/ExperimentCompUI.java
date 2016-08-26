@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
+import ome.units.unit.Unit;
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
 import ome.xml.model.MapAnnotation;
@@ -30,6 +31,7 @@ import ome.xml.model.enums.handlers.ExperimentTypeEnumHandler;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentContainer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -56,6 +58,8 @@ public class ExperimentCompUI extends ElementsCompUI
 	
 	
 	private Experiment experiment;
+	
+	private ExperimentContainer expContainer;
 	
 	
 	
@@ -220,6 +224,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	public void addProjectPartner(Experimenter e, boolean overwrite) 
 	{
 		if(overwrite){
+			System.out.println("Overwrite:set projectPartner");
 			setProjectPartner(e.getLastName(), OPTIONAL);
 		}
 	}
@@ -537,65 +542,18 @@ public class ExperimentCompUI extends ElementsCompUI
 		if(list==null)
 			createDummyPane(inactive);
 		else{
-		clearDataValues();
-//		if(experiment==null && list!=null && list.size()>0)
-//			createNewElement();
-		for(int i=0; i<list.size();i++){
-			TagConfiguration t=list.get(i);
-			String name=t.getName();
-			String val=t.getValue();
-			boolean prop=t.getProperty();
-			if(name!=null && t.isVisible()){
-				switch (name) {
-				case TagNames.TYPE:
-					try{
-						if(val!=null){
-						ExperimentType value= getExperimentType(val);
-						setType(value, prop);
-						}else{
-							setType(null, prop);
-						}
-//						experiment.setType(value);
-					}catch(Exception e){
-						setType(null, prop);
-					}
-					type.setVisible(true);
-					break;
-				case TagNames.DESC:
-					try{
-						if(val!=null){
-						setDescription(val, prop);
-						}else{
-							setDescription(null, prop);
-						}
-//						experiment.setDescription(val);
-					}catch(Exception e){
-						setDescription(null, prop);
-					}
-					description.setVisible(true);
-					break;
-				case TagNames.GROUP:
-					setGroupName(null, prop);
-					group.setVisible(true);
-					break;
-				case TagNames.EXPNAME:
-//					setName(null, prop);
-					setName(null, prop);
-					this.expName.setVisible(true);
-					break;
-				case TagNames.PROJECTNAME:
-					setProjectName(null, prop);
-					projectName.setVisible(true);
-					break;
-				case TagNames.PROJECTPARTNER:
-					setProjectPartner(null, prop);
-					projectPartner.setVisible(true);
-					break;
-				default:
-					LOGGER.warn("[CONF] unknown tag: "+name );break;
+			clearDataValues();
+			//		if(experiment==null && list!=null && list.size()>0)
+			//			createNewElement();
+			for(int i=0; i<list.size();i++){
+				TagConfiguration t=list.get(i);
+				String name=t.getName();
+				String val=t.getValue();
+				boolean prop=t.getProperty();
+				if(name!=null && t.isVisible()){
+					setTag(name,val,prop,t.getUnit());
 				}
 			}
-		}
 		}
 	}
 	
@@ -656,6 +614,7 @@ public class ExperimentCompUI extends ElementsCompUI
 		for(MapPair obj:listMP){
 			switch (obj.getName()) {
 			case PROJPARTNER_MAPLABEL:
+				System.out.println("MAP:set projectPartner");
 				setProjectPartner(obj.getValue(), OPTIONAL);
 				break;		
 			default:
@@ -665,19 +624,77 @@ public class ExperimentCompUI extends ElementsCompUI
 		}
 	}
 	
+	/**
+	 * Update tags with val from list
+	 */
 	public void update(List<TagData> list) 
 	{
 		for(TagData t: list){
 			if(t.valueChanged()){
-				switch(t.getTagName()){
-				
-				}
+				System.out.println("EXP: Update Tag "+t.getTagName()+" = "+t.getTagValue());
+				setTag(t);
 			}
 		}
 	}
 
+	private void setTag(TagData t)
+	{
+		setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
+	}
 	
-
+	private void setTag(TagConfiguration t)
+	{
+		setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
+	}
+	
+	private void setTag(String name,String val,boolean prop,Unit unit)
+	{
+		switch (name) {
+		case TagNames.TYPE:
+			try{
+				if(val!=null){
+					ExperimentType value= getExperimentType(val);
+					setType(value, prop);
+				}else{
+					setType(null, prop);
+				}
+			}catch(Exception e){
+				setType(null, prop);
+			}
+			type.setVisible(true);
+			break;
+		case TagNames.DESC:
+			try{
+				if(val!=null){
+					setDescription(val, prop);
+				}else{
+					setDescription(null, prop);
+				}
+			}catch(Exception e){
+				setDescription(null, prop);
+			}
+			description.setVisible(true);
+			break;
+		case TagNames.GROUP:
+			setGroupName(null, prop);
+			group.setVisible(true);
+			break;
+		case TagNames.EXPNAME:
+			setName(null, prop);
+			this.expName.setVisible(true);
+			break;
+		case TagNames.PROJECTNAME:
+			setProjectName(null, prop);
+			projectName.setVisible(true);
+			break;
+		case TagNames.PROJECTPARTNER:
+			setProjectPartner(null, prop);
+			projectPartner.setVisible(true);
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
+	}
 
 
 

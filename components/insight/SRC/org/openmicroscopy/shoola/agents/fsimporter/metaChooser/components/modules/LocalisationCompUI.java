@@ -115,6 +115,12 @@ public class LocalisationCompUI extends ElementsCompUI
 		return false;
 	}
 
+	@Override
+	public void update(List<TagData> list) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 
 }

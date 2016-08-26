@@ -59,8 +59,7 @@ public abstract class ElementsCompUI extends JPanel
 	public abstract void clearDataValues();
 	public abstract List<TagData> getActiveTags();
 	public abstract boolean userInput();
-	//TODO to abstract
-	public void update(List<TagData> list){}
+	public abstract void update(List<TagData> list);
 	
 	
 //	public void initController(MetaDataControl _controller){

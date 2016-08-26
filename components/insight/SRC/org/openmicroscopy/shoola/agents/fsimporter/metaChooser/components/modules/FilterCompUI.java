@@ -352,6 +352,12 @@ public class FilterCompUI extends LightPathElem
 		return (result || setFields);
 	}
 
+	@Override
+	public void update(List<TagData> list) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 
 	

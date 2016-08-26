@@ -292,37 +292,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 			String val=t.getValue();
 			boolean prop=t.getProperty();
 			if(name!=null){
-				switch (name) {
-				case TagNames.SET_WAVELENGTH:
-					try {
-						if(val!=null){
-						Length value = parseToLength(val, t.getUnit());
-						setWavelength(value, prop);
-						}else{
-							setWavelength(null, prop);
-						}
-//						lightSrc.setWavelength(value);
-					} catch (Exception e) {
-						setWavelength(null, prop);
-					}
-					waveLength.setVisible(true);
-					break;
-				case TagNames.ATTENUATION:
-					try{
-						if(val!=null){
-						PercentFraction value=parseAttenuation(val);
-					setAttenuation(value, prop);
-						}else{
-							setAttenuation(null, prop);
-						}
-//					lightSrc.setAttenuation(value);
-					}catch(Exception e){
-						setAttenuation(null, prop);
-					}
-					attenuation.setVisible(true);
-					break;
-				default: LOGGER.warn("[CONF] LIGHTSRC SETT unknown tag: "+name );break;
-				}
+				setTag(t);
 			}
 		}
 		}
@@ -373,6 +343,61 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 		return null;
 	}
 
+	/**
+	 * Update tags with val from list
+	 */
+	public void update(List<TagData> list) 
+	{
+		for(TagData t: list){
+			if(t.valueChanged()){
+				setTag(t);
+			}
+		}
+	}
+
+	private void setTag(TagData t)
+	{
+		setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
+	}
 	
+	private void setTag(TagConfiguration t)
+	{
+		setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
+	}
+	
+	private void setTag(String name,String val,boolean prop,Unit unit)
+	{
+		switch (name) {
+		case TagNames.SET_WAVELENGTH:
+			try {
+				if(val!=null){
+				Length value = parseToLength(val, unit);
+				setWavelength(value, prop);
+				}else{
+					setWavelength(null, prop);
+				}
+//				lightSrc.setWavelength(value);
+			} catch (Exception e) {
+				setWavelength(null, prop);
+			}
+			waveLength.setVisible(true);
+			break;
+		case TagNames.ATTENUATION:
+			try{
+				if(val!=null){
+				PercentFraction value=parseAttenuation(val);
+			setAttenuation(value, prop);
+				}else{
+					setAttenuation(null, prop);
+				}
+//			lightSrc.setAttenuation(value);
+			}catch(Exception e){
+				setAttenuation(null, prop);
+			}
+			attenuation.setVisible(true);
+			break;
+		default: LOGGER.warn("[CONF] LIGHTSRC SETT unknown tag: "+name );break;
+		}
+	}
 
 }

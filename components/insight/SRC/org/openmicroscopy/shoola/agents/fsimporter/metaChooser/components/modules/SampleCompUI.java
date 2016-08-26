@@ -41,6 +41,7 @@ import javax.swing.border.TitledBorder;
 
 
 
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.editor.TitledSeparator;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
@@ -50,6 +51,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Tag
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
+import ome.units.unit.Unit;
 import ome.xml.model.Image;
 import ome.xml.model.XMLAnnotation;
 import ome.xml.model.primitives.Timestamp;
@@ -252,46 +254,7 @@ public class SampleCompUI extends ElementsCompUI
 				String val=t.getValue();
 				boolean prop=t.getProperty();
 				if(name!=null && t.isVisible()){
-					switch (name) {
-					case TagNames.PREPDATE:// no pre value possible
-						setPreparationDate(null, prop);
-						preparationDate.setVisible(true);
-						break;
-					case TagNames.PREPDESC:// no pre value possible
-						setPreparationDescription(null, prop);
-						preparationDescription.setVisible(true);
-						break;
-					case TagNames.RAWCODE:// no pre value possible
-						setRawMaterialCode(null, prop); 
-						rawMaterialCode.setVisible(true);
-						break;
-					case TagNames.RAWDESC:// no pre value possible
-						setRawMaterialDesc(val, prop);
-						rawMaterialDesc.setVisible(true);
-						break;
-					case TagNames.GRIDBOXNR:// no pre value possible
-						setGridBoxNumber(null, prop);
-						gridBoxNumber.setVisible(true);
-						break;
-					case TagNames.GRIDBOXTYPE:// no pre value possible
-						setGridType(null, prop);
-						gridBoxType.setVisible(true);
-						break;
-					case TagNames.EXPGRID:// no pre value possible
-						setExpGridNumber(new String[2], prop);
-						expGrid.setVisible(true);
-						break;
-					case TagNames.EXPOBJNR:// no pre value possible
-						setExpObjectNr(null, prop);
-						expObjectNr.setVisible(true);
-						break;
-					case TagNames.EXPOBJTYPE: // no pre value possible
-						setExpObjectType(null, prop);
-						expObjectType.setVisible(true);
-						break;
-					default:
-						LOGGER.warn("[CONF] unknown tag: "+name );break;
-					}
+				setTag(t);
 				}
 			}
 		}
@@ -455,8 +418,18 @@ public class SampleCompUI extends ElementsCompUI
 
 	@Override
 	public List<TagData> getActiveTags() {
-		// TODO Auto-generated method stub
-		return null;
+		List<TagData> list = new ArrayList<TagData>();
+		if(isActive(preparationDate)) list.add(preparationDate);
+		if(isActive(preparationDescription)) list.add(preparationDescription);
+		
+		if(isActive(rawMaterialCode)) list.add(rawMaterialCode);
+		if(isActive(rawMaterialDesc)) list.add(rawMaterialDesc);
+		if(isActive(expGrid)) list.add(expGrid);
+		if(isActive(expObjectNr)) list.add(expObjectNr);
+		if(isActive(expObjectType)) list.add(expObjectType);
+		if(isActive(gridBoxNumber)) list.add(gridBoxNumber);
+		if(isActive(gridBoxType)) list.add(gridBoxType);
+		return list;
 	}
 	
 	
@@ -542,4 +515,71 @@ public class SampleCompUI extends ElementsCompUI
 		setFields= setFields || b;		
 	}
 	
+	
+	/**
+	 * Update tags with val from list
+	 */
+	public void update(List<TagData> list) 
+	{
+		for(TagData t: list){
+			if(t.valueChanged()){
+				System.out.println("Sample: update tag "+t.getTagName()+" = "+t.getTagValue());
+				setTag(t);
+			}
+		}
+	}
+
+	private void setTag(TagData t)
+	{
+		setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
+	}
+	
+	private void setTag(TagConfiguration t)
+	{
+		setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
+	}
+	
+	private void setTag(String name,String val,boolean prop,Unit unit)
+	{
+		switch (name) {
+		case TagNames.PREPDATE:// no pre value possible
+			setPreparationDate(null, prop);
+			preparationDate.setVisible(true);
+			break;
+		case TagNames.PREPDESC:// no pre value possible
+			setPreparationDescription(null, prop);
+			preparationDescription.setVisible(true);
+			break;
+		case TagNames.RAWCODE:// no pre value possible
+			setRawMaterialCode(null, prop); 
+			rawMaterialCode.setVisible(true);
+			break;
+		case TagNames.RAWDESC:// no pre value possible
+			setRawMaterialDesc(val, prop);
+			rawMaterialDesc.setVisible(true);
+			break;
+		case TagNames.GRIDBOXNR:// no pre value possible
+			setGridBoxNumber(null, prop);
+			gridBoxNumber.setVisible(true);
+			break;
+		case TagNames.GRIDBOXTYPE:// no pre value possible
+			setGridType(null, prop);
+			gridBoxType.setVisible(true);
+			break;
+		case TagNames.EXPGRID:// no pre value possible
+			setExpGridNumber(new String[2], prop);
+			expGrid.setVisible(true);
+			break;
+		case TagNames.EXPOBJNR:// no pre value possible
+			setExpObjectNr(null, prop);
+			expObjectNr.setVisible(true);
+			break;
+		case TagNames.EXPOBJTYPE: // no pre value possible
+			setExpObjectType(null, prop);
+			expObjectType.setVisible(true);
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
+	}
 }

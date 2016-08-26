@@ -724,14 +724,24 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
         }
         
         MetaDataView view=null;
-        // is selection a file or directory
-        if(file.equals("")){
-            view = loadAndShowDataForDirectory(node, file, importData,
-					parentModel, view);
-        }else{
-            view = loadAndShowDataForFile(file, importData, parentModel, view);
-        }
-        
+       
+        	// is selection a file or directory
+        	if(file.equals("")){
+        		view = loadAndShowDataForDirectory(node, file, importData,
+        				parentModel, view);
+        	}else{
+        		try{
+        			view = loadAndShowDataForFile(file, importData, parentModel, view);
+        		}catch(Exception e){
+        			LOGGER.error("[DATA] CAN'T read METADATA");
+        			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+        					"Can't read given metadata of "+file,e);
+        			ld.setVisible(true);
+        			fileTree.setSelectionPath(fileTree.getSelectionPath().getParentPath());
+        			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        			return;
+        		}
+        	}
         panel=view;
     
         
@@ -760,23 +770,15 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	 */
 	public MetaDataView loadAndShowDataForFile(String file,
 			ImportUserData importData, MetaDataModel parentModel,
-			MetaDataView view) 
+			MetaDataView view) throws Exception
 	{
 		lastSelectionType=FILE;
 		
 		String hasParentModel=parentModel==null ? "null" : "available";
 		System.out.println("load and show data for file: parentModel="+hasParentModel);
-		
-		try {
+		if(parentModel !=null) System.out.println("FROM PARENT : ProjectPartner= "+parentModel.getProjectPartner().getLastName());
 		    view = new MetaDataView(customSettings, file, importData, parentModel,this);
 		    view.setVisible();
-		} catch (Exception e) {
-//				catch (DependencyException | ServiceException e) {
-		    LOGGER.error("[DATA] CAN'T read METADATA");
-		    ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-		            "Can't read given metadata of "+file,e);
-		    ld.setVisible(true);
-		}
 		return view;
 	}
 
@@ -937,7 +939,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		for(int i=0; i<numChilds;i++){
 			FNode child = (FNode) node.getChildAt(i);
 			if(!child.isLeaf() && child.hasModelObject()){
-				updateModel(child,node.getModelObject());
+				System.out.println("Update "+child.getAbsolutePath());
+				child.getModelObject().update(node.getModelObject());
 				updateChildDirectories(child);
 			}
 		}
@@ -945,15 +948,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	}
 
 
-    /**
-     * Update child model with changes of parentModel
-     * @param child
-     * @param parentModel
-     */
-	private void updateModel(FNode child, MetaDataModelObject parentModel) 
-	{
-		child.getModelObject().update(parentModel);
-	}
+    
 
 
 	private void updateModel(FNode node)

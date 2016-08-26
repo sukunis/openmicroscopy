@@ -230,5 +230,11 @@ public class PlaneSliderCompUI extends ElementsCompUI
 		return result;
 	}
 
+	@Override
+	public void update(List<TagData> list) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

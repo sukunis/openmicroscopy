@@ -313,5 +313,11 @@ public class PlaneCompUI extends ElementsCompUI
 		setGUIData();
 	}
 
+	@Override
+	public void update(List<TagData> list) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

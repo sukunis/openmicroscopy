@@ -378,70 +378,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 			String val=t.getValue();
 			boolean prop=t.getProperty();
 			if(name!=null){
-				switch (name) {
-				case TagNames.GAIN:
-					try{
-						setGain(parseToDouble(val), prop);
-					}
-					catch(Exception e){
-						setGain(null,OPTIONAL);
-					}
-					gain.setVisible(true);
-					break;
-				case TagNames.VOLTAGE:
-					try{
-							setVoltage(parseElectricPotential(val,t.getUnit()), prop);
-					}
-					catch(Exception e){
-						setVoltage(null, OPTIONAL);
-					}
-					voltage.setVisible(true);
-					break;
-				case TagNames.OFFSET:
-					try{
-						setOffset(Double.valueOf(val), prop);
-					}
-					catch(Exception e){
-						setOffset(null, OPTIONAL);
-					}
-					offset.setVisible(true);
-					break;
-				case TagNames.CONFZOOM:
-					try{
-						if(val!=null){
-						Double value=parseToDouble(val);
-					setConfocalZoom(value, prop);
-						}else{
-							setConfocalZoom(null, prop);
-						}
-//					detectorSett.setZoom(value);
-					}catch(Exception e){
-						setConfocalZoom(null, prop);
-					}
-					confocalZoom.setVisible(true);
-					break;
-				case TagNames.BINNING:
-					try{
-						if(val!=null){
-						Binning value=parseBinning(val);
-						setBinning(value, prop);
-						}else{
-							setBinning(null, prop);
-						}
-//						detectorSett.setBinning(value);
-					}catch(Exception e){
-						setBinning(null, prop);
-					}
-					binning.setVisible(true);
-					break;
-				case TagNames.SUBARRAY:
-					//TODO
-					setSubarray(null, prop);
-					subarray.setVisible(true);
-					break;
-				default:
-					LOGGER.warn("[CONF] DETECTOR SETT unknown tag: "+name );break;
-				}
+				setTag(name,val,prop,t.getUnit());
 			}
 		}
 		}
@@ -530,7 +467,90 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 			return null;
 		}
 
+		/**
+		 * Update tags with val from list
+		 */
+		public void update(List<TagData> list) 
+		{
+			for(TagData t: list){
+				if(t.valueChanged()){
+					setTag(t);
+				}
+			}
+		}
+
+		private void setTag(TagData t)
+		{
+			setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
+		}
 		
+		private void setTag(String name,String val,boolean prop,Unit unit)
+		{
+			switch (name) {
+			case TagNames.GAIN:
+				try{
+					setGain(parseToDouble(val), prop);
+				}
+				catch(Exception e){
+					setGain(null,OPTIONAL);
+				}
+				gain.setVisible(true);
+				break;
+			case TagNames.VOLTAGE:
+				try{
+						setVoltage(parseElectricPotential(val,unit), prop);
+				}
+				catch(Exception e){
+					setVoltage(null, OPTIONAL);
+				}
+				voltage.setVisible(true);
+				break;
+			case TagNames.OFFSET:
+				try{
+					setOffset(Double.valueOf(val), prop);
+				}
+				catch(Exception e){
+					setOffset(null, OPTIONAL);
+				}
+				offset.setVisible(true);
+				break;
+			case TagNames.CONFZOOM:
+				try{
+					if(val!=null){
+					Double value=parseToDouble(val);
+				setConfocalZoom(value, prop);
+					}else{
+						setConfocalZoom(null, prop);
+					}
+//				detectorSett.setZoom(value);
+				}catch(Exception e){
+					setConfocalZoom(null, prop);
+				}
+				confocalZoom.setVisible(true);
+				break;
+			case TagNames.BINNING:
+				try{
+					if(val!=null){
+					Binning value=parseBinning(val);
+					setBinning(value, prop);
+					}else{
+						setBinning(null, prop);
+					}
+//					detectorSett.setBinning(value);
+				}catch(Exception e){
+					setBinning(null, prop);
+				}
+				binning.setVisible(true);
+				break;
+			case TagNames.SUBARRAY:
+				//TODO
+				setSubarray(null, prop);
+				subarray.setVisible(true);
+				break;
+			default:
+				LOGGER.warn("[CONF] DETECTOR SETT unknown tag: "+name );break;
+			}
+		}
 
 
 

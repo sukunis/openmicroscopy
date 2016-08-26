@@ -1306,199 +1306,7 @@ public class LightSourceCompUI extends ElementsCompUI
 				String val=t.getValue();
 				boolean prop=t.getProperty();
 				if(name!=null && t.isVisible()){
-					switch (name) {
-					case TagNames.MODEL:
-						setModel(val, prop);
-//						lightSrc.setModel(val);
-						model.setVisible(true);
-						break;
-					case TagNames.MANUFAC:
-						setManufact(val, prop);
-//						lightSrc.setManufacturer(val);
-						manufact.setVisible(true);
-						break;
-					case TagNames.L_TYPE:
-						try{
-							if(val!=null){
-							LaserType value=parseLaserType(val);
-							setType(value, prop);
-							}else{
-								setType((LaserType)null,prop);
-							}
-//							((Laser)lightSrc).setType(value);
-						}catch(Exception e){
-							setType((LaserType)null,prop);
-						}
-						type.setVisible(true);
-						break;
-					case TagNames.A_TYPE:
-						try{
-							if(val!=null){							
-							ArcType value=parseArcType(val);
-							setType(value, prop);
-							}else{
-								setType((ArcType)null,prop);
-							}
-//							((Arc)lightSrc).setType(value);
-						}catch(Exception e){
-							setType((ArcType)null,prop);
-						}
-						type.setVisible(true);
-						break;
-					case TagNames.F_TYPE:
-						try{
-							if(val!=null){
-							FilamentType value=parseFilamentType(val);
-							setType(value, prop);
-							}else{
-								setType((FilamentType)null,prop);
-							}
-//							((Filament)lightSrc).setType(value);
-						}catch(Exception e){
-							setType((FilamentType)null,prop);
-						}
-						type.setVisible(true);
-						break;
-					case TagNames.POWER:
-						try{
-							
-							if(val!=null){Power value = parsePower(val, t.getUnit());
-						setPower(value, prop);
-							}else{
-								setPower(null, prop);
-							}
-//						lightSrc.setPower(value);
-						}catch(Exception e){
-							setPower(null, prop);
-						}
-						power.setVisible(true);
-						break;
-					case TagNames.MEDIUM:
-						try {
-							if(val!=null){
-							LaserMedium value=parseMedium(val);
-							setMedium(value,prop);
-							}else{
-								setMedium(null, prop);
-							}
-//							((Laser)lightSrc).setLaserMedium(value);
-						} catch (Exception e) {
-							setMedium(null, prop);
-						}
-						medium.setVisible(true);
-						break;
-					case TagNames.FREQMUL:
-						try {
-							if(val!=null){
-							PositiveInteger value=parseToPositiveInt(val);
-							setFreqMultiplication(value, prop);
-							}else{
-								setFreqMultiplication(null, prop);
-							}
-//							((Laser)lightSrc).setFrequencyMultiplication(value);
-						} catch (Exception e) {
-							setFreqMultiplication(null, prop);
-						}
-						freqMul.setVisible(true);
-						break;
-					case TagNames.TUNABLE:
-						try {
-							if(val!=null){
-							setTunable(val, prop);
-							}else{
-								setTunable((String)null, prop);
-							}
-//							((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(val));
-						} catch (Exception e) {
-							setTunable((String)null, prop);
-						}
-						tunable.setVisible(true);
-						break;
-					case TagNames.PULSE:
-						try {
-							if(val!=null){
-							Pulse value=parsePulse(val);
-							setPulse(value, prop);
-							}else{
-								setPulse(null,prop);
-							}
-//							((Laser)lightSrc).setPulse(value);
-						} catch (Exception e) {
-							setPulse(null,prop);
-						}
-						pulse.setVisible(true);
-						break;
-					case TagNames.POCKELCELL:
-						try {
-							if(val!=null){
-							setPocketCell(BooleanUtils.toBoolean(val), prop);
-							}else{
-								setPocketCell(null, prop);
-							}
-//							((Laser)lightSrc).setPockelCell(BooleanUtils.toBoolean(val));
-						} catch (Exception e) {
-							setPocketCell(null, prop);
-						}
-						pockelCell.setVisible(true);
-						break;
-					case TagNames.REPRATE:
-						try {
-							if(val!=null){
-							Frequency value=parseFrequency(val, t.getUnit());
-							setRepititationRate(value, prop);
-							}else{
-								setRepititationRate(null, prop);
-							}
-//							((Laser)lightSrc).setRepetitionRate(value);
-						} catch (Exception e) {
-							setRepititationRate(null, prop);
-						}
-						repRate.setVisible(true);
-						break;
-					case TagNames.PUMP:
-						try {
-							if(val!=null){
-							setPump(val, prop);
-							}else{
-								setPump(null, prop);
-							}
-//							TODO: ((Laser)lightSrc).linkPump(o);
-						} catch (Exception e) {
-							setPump(null, prop);
-						}
-						pump.setVisible(true);
-						break;
-					case TagNames.WAVELENGTH:
-						try {
-							if(val!=null){
-							Length value = parseToLength(val, t.getUnit());
-							setWavelength(value, prop);
-							}else{
-								setWavelength(null, prop);
-							}
-//							((Laser)lightSrc).setWavelength(value);
-						} catch (Exception e) {
-							setWavelength(null, prop);
-						}
-						waveLength.setVisible(true);
-						break;
-					case TagNames.MAP:
-						try {
-							setMap(null, prop);
-//							TODO:((GenericExcitationSource)lightSrc).setMap(value);
-						} catch (Exception e) {
-							setMap(null, prop);
-						}
-						map.setVisible(true);
-						break;
-					case TagNames.DESC:
-						setDescription(val, prop);
-//						TODO: ((LightEmittingDiode)lightSrc).set
-						description.setVisible(true);
-						break;
-					default:
-						LOGGER.warn("[CONF] unknown tag: "+name );break;
-					}
+					setTag(t);
 				}
 			}
 		}
@@ -1888,5 +1696,223 @@ public class LightSourceCompUI extends ElementsCompUI
 		availableLightSrcList=null;
 	}
 
+	/**
+	 * Update tags with val from list
+	 */
+	public void update(List<TagData> list) 
+	{
+		for(TagData t: list){
+			if(t.valueChanged()){
+				setTag(t);
+			}
+		}
+	}
+
+	private void setTag(TagData t)
+	{
+		setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
+	}
+	
+	private void setTag(TagConfiguration t)
+	{
+		setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
+	}
+	
+	private void setTag(String name,String val,boolean prop,Unit unit)
+	{
+		switch (name) {
+		case TagNames.MODEL:
+			setModel(val, prop);
+//			lightSrc.setModel(val);
+			model.setVisible(true);
+			break;
+		case TagNames.MANUFAC:
+			setManufact(val, prop);
+//			lightSrc.setManufacturer(val);
+			manufact.setVisible(true);
+			break;
+		case TagNames.L_TYPE:
+			try{
+				if(val!=null){
+				LaserType value=parseLaserType(val);
+				setType(value, prop);
+				}else{
+					setType((LaserType)null,prop);
+				}
+//				((Laser)lightSrc).setType(value);
+			}catch(Exception e){
+				setType((LaserType)null,prop);
+			}
+			type.setVisible(true);
+			break;
+		case TagNames.A_TYPE:
+			try{
+				if(val!=null){							
+				ArcType value=parseArcType(val);
+				setType(value, prop);
+				}else{
+					setType((ArcType)null,prop);
+				}
+//				((Arc)lightSrc).setType(value);
+			}catch(Exception e){
+				setType((ArcType)null,prop);
+			}
+			type.setVisible(true);
+			break;
+		case TagNames.F_TYPE:
+			try{
+				if(val!=null){
+				FilamentType value=parseFilamentType(val);
+				setType(value, prop);
+				}else{
+					setType((FilamentType)null,prop);
+				}
+//				((Filament)lightSrc).setType(value);
+			}catch(Exception e){
+				setType((FilamentType)null,prop);
+			}
+			type.setVisible(true);
+			break;
+		case TagNames.POWER:
+			try{
+				
+				if(val!=null){Power value = parsePower(val, unit);
+			setPower(value, prop);
+				}else{
+					setPower(null, prop);
+				}
+//			lightSrc.setPower(value);
+			}catch(Exception e){
+				setPower(null, prop);
+			}
+			power.setVisible(true);
+			break;
+		case TagNames.MEDIUM:
+			try {
+				if(val!=null){
+				LaserMedium value=parseMedium(val);
+				setMedium(value,prop);
+				}else{
+					setMedium(null, prop);
+				}
+//				((Laser)lightSrc).setLaserMedium(value);
+			} catch (Exception e) {
+				setMedium(null, prop);
+			}
+			medium.setVisible(true);
+			break;
+		case TagNames.FREQMUL:
+			try {
+				if(val!=null){
+				PositiveInteger value=parseToPositiveInt(val);
+				setFreqMultiplication(value, prop);
+				}else{
+					setFreqMultiplication(null, prop);
+				}
+//				((Laser)lightSrc).setFrequencyMultiplication(value);
+			} catch (Exception e) {
+				setFreqMultiplication(null, prop);
+			}
+			freqMul.setVisible(true);
+			break;
+		case TagNames.TUNABLE:
+			try {
+				if(val!=null){
+				setTunable(val, prop);
+				}else{
+					setTunable((String)null, prop);
+				}
+//				((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(val));
+			} catch (Exception e) {
+				setTunable((String)null, prop);
+			}
+			tunable.setVisible(true);
+			break;
+		case TagNames.PULSE:
+			try {
+				if(val!=null){
+				Pulse value=parsePulse(val);
+				setPulse(value, prop);
+				}else{
+					setPulse(null,prop);
+				}
+//				((Laser)lightSrc).setPulse(value);
+			} catch (Exception e) {
+				setPulse(null,prop);
+			}
+			pulse.setVisible(true);
+			break;
+		case TagNames.POCKELCELL:
+			try {
+				if(val!=null){
+				setPocketCell(BooleanUtils.toBoolean(val), prop);
+				}else{
+					setPocketCell(null, prop);
+				}
+//				((Laser)lightSrc).setPockelCell(BooleanUtils.toBoolean(val));
+			} catch (Exception e) {
+				setPocketCell(null, prop);
+			}
+			pockelCell.setVisible(true);
+			break;
+		case TagNames.REPRATE:
+			try {
+				if(val!=null){
+				Frequency value=parseFrequency(val, unit);
+				setRepititationRate(value, prop);
+				}else{
+					setRepititationRate(null, prop);
+				}
+//				((Laser)lightSrc).setRepetitionRate(value);
+			} catch (Exception e) {
+				setRepititationRate(null, prop);
+			}
+			repRate.setVisible(true);
+			break;
+		case TagNames.PUMP:
+			try {
+				if(val!=null){
+				setPump(val, prop);
+				}else{
+					setPump(null, prop);
+				}
+//				TODO: ((Laser)lightSrc).linkPump(o);
+			} catch (Exception e) {
+				setPump(null, prop);
+			}
+			pump.setVisible(true);
+			break;
+		case TagNames.WAVELENGTH:
+			try {
+				if(val!=null){
+				Length value = parseToLength(val, unit);
+				setWavelength(value, prop);
+				}else{
+					setWavelength(null, prop);
+				}
+//				((Laser)lightSrc).setWavelength(value);
+			} catch (Exception e) {
+				setWavelength(null, prop);
+			}
+			waveLength.setVisible(true);
+			break;
+		case TagNames.MAP:
+			try {
+				setMap(null, prop);
+//				TODO:((GenericExcitationSource)lightSrc).setMap(value);
+			} catch (Exception e) {
+				setMap(null, prop);
+			}
+			map.setVisible(true);
+			break;
+		case TagNames.DESC:
+			setDescription(val, prop);
+//			TODO: ((LightEmittingDiode)lightSrc).set
+			description.setVisible(true);
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
+	}
 
 }

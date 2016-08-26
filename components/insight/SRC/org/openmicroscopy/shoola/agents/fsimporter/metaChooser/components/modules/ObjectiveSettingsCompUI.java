@@ -18,6 +18,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import ome.units.unit.Unit;
 import ome.xml.model.Image;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.EnumerationException;
@@ -258,52 +259,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 			String val=t.getValue();
 			boolean prop=t.getProperty();
 			if(name!=null){
-				switch (name) {
-				case TagNames.CORCOLLAR: 
-					try{
-						if(val!=null){
-						Double value=parseToDouble(val);
-						setCorCollar(value, prop);
-						}else{
-							setCorCollar(null, prop);
-						}
-//						oSett.setCorrectionCollar(value);
-					}
-					catch(Exception e){
-						setCorCollar(null, prop);
-					}
-					corCollar.setVisible(true);
-					break;
-				case TagNames.OBJ_MEDIUM: 
-					try{
-						if(val!=null){
-							Medium value=parseMedium(val);
-							setMedium(value, prop);
-						}else{
-							setMedium(null, prop);	
-						}
-						//						oSett.setMedium(value);
-					}catch(Exception e){
-						setMedium(null, prop);	
-					}
-					medium.setVisible(true);
-					break;
-				case TagNames.REFINDEX:
-					try{
-						if(val!=null){
-							Double value=parseToDouble(val);
-							setRefractIndex(value, prop);
-						}else{
-							setRefractIndex(null, prop);		
-						}
-						//						oSett.setRefractiveIndex(value);
-					}catch(Exception e){
-						setRefractIndex(null, prop);	
-					}
-					refractIndex.setVisible(true);
-					break;
-				default:LOGGER.warn("[CONF] OBJECTIVE SETT unknown tag: "+name );break;
-				}
+			setTag(t);
 			}
 		}
 		}
@@ -349,7 +305,77 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	}
 	
 
+	/**
+	 * Update tags with val from list
+	 */
+	public void update(List<TagData> list) 
+	{
+		for(TagData t: list){
+			if(t.valueChanged()){
+				setTag(t);
+			}
+		}
+	}
+
+	private void setTag(TagData t)
+	{
+		setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
+	}
 	
+	private void setTag(TagConfiguration t)
+	{
+		setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
+	}
+	
+	private void setTag(String name,String val,boolean prop,Unit unit)
+	{
+		switch (name) {
+		case TagNames.CORCOLLAR: 
+			try{
+				if(val!=null){
+				Double value=parseToDouble(val);
+				setCorCollar(value, prop);
+				}else{
+					setCorCollar(null, prop);
+				}
+//				oSett.setCorrectionCollar(value);
+			}
+			catch(Exception e){
+				setCorCollar(null, prop);
+			}
+			corCollar.setVisible(true);
+			break;
+		case TagNames.OBJ_MEDIUM: 
+			try{
+				if(val!=null){
+					Medium value=parseMedium(val);
+					setMedium(value, prop);
+				}else{
+					setMedium(null, prop);	
+				}
+				//						oSett.setMedium(value);
+			}catch(Exception e){
+				setMedium(null, prop);	
+			}
+			medium.setVisible(true);
+			break;
+		case TagNames.REFINDEX:
+			try{
+				if(val!=null){
+					Double value=parseToDouble(val);
+					setRefractIndex(value, prop);
+				}else{
+					setRefractIndex(null, prop);		
+				}
+				//						oSett.setRefractiveIndex(value);
+			}catch(Exception e){
+				setRefractIndex(null, prop);	
+			}
+			refractIndex.setVisible(true);
+			break;
+		default:LOGGER.warn("[CONF] OBJECTIVE SETT unknown tag: "+name );break;
+		}
+	}
 
 	
 	

@@ -45,6 +45,7 @@ import javax.swing.border.TitledBorder;
 
 
 
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -415,70 +416,7 @@ public class DetectorCompUI extends ElementsCompUI
 				String val=t.getValue();
 				boolean prop=t.getProperty();
 				if(name!=null  && t.isVisible()){
-					switch (name) {
-					case TagNames.MODEL: 
-						try{
-							if(val!=null){
-								setModel(val,prop);
-								setFields=true;
-							}else{
-								setModel(null,OPTIONAL);
-							}
-						}
-						catch(Exception e){
-							setModel(null,OPTIONAL);
-						}
-						model.setVisible(true);
-					
-						break;
-					case TagNames.MANUFAC: 
-						try{
-							if(val!=null){
-								setManufact(val, prop);
-								setFields=true;
-							}else{
-								setManufact(null, OPTIONAL);
-							}
-						}
-						catch(Exception e){
-							setManufact(null, OPTIONAL);
-						}
-						manufact.setVisible(true);
-						
-						break;
-					case TagNames.TYPE:
-						try{
-							DetectorType value= DetectorType.fromString(val);
-							setType(value, prop);
-							setFields=true;
-						}
-						catch(Exception e){
-							setType(null,OPTIONAL);
-						}
-						type.setVisible(true);
-						break;
-					case TagNames.ZOOM:
-						try{
-							setZoom(Double.valueOf(val), prop);
-							setFields=true;
-						}
-						catch(Exception e){
-							setZoom(null, OPTIONAL);
-						}
-						zoom.setVisible(true);
-						break;
-					case TagNames.AMPLGAIN:
-						try{
-							setAmplGain(Double.valueOf(val), prop);
-							setFields=true;
-						}
-						catch(Exception e){
-							setAmplGain(null, OPTIONAL);
-						}
-						amplGain.setVisible(true);
-						break;
-					default: LOGGER.warn("[CONF] unknown tag: "+name );break;
-					}
+					setTag(name,val,prop,t.getUnit());
 				}
 			}
 		}
@@ -573,6 +511,91 @@ public class DetectorCompUI extends ElementsCompUI
 
 	public void setFieldsExtern(boolean b) {
 		setFields= setFields || b;		
+	}
+	
+	/**
+	 * Update tags with val from list
+	 */
+	public void update(List<TagData> list) 
+	{
+		for(TagData t: list){
+			if(t.valueChanged()){
+				setTag(t);
+			}
+		}
+	}
+
+	private void setTag(TagData t)
+	{
+		setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
+	}
+	
+	private void setTag(String name,String val,boolean prop,Unit unit)
+	{
+		switch (name) {
+		case TagNames.MODEL: 
+			try{
+				if(val!=null){
+					setModel(val,prop);
+					setFields=true;
+				}else{
+					setModel(null,OPTIONAL);
+				}
+			}
+			catch(Exception e){
+				setModel(null,OPTIONAL);
+			}
+			model.setVisible(true);
+		
+			break;
+		case TagNames.MANUFAC: 
+			try{
+				if(val!=null){
+					setManufact(val, prop);
+					setFields=true;
+				}else{
+					setManufact(null, OPTIONAL);
+				}
+			}
+			catch(Exception e){
+				setManufact(null, OPTIONAL);
+			}
+			manufact.setVisible(true);
+			
+			break;
+		case TagNames.TYPE:
+			try{
+				DetectorType value= DetectorType.fromString(val);
+				setType(value, prop);
+				setFields=true;
+			}
+			catch(Exception e){
+				setType(null,OPTIONAL);
+			}
+			type.setVisible(true);
+			break;
+		case TagNames.ZOOM:
+			try{
+				setZoom(Double.valueOf(val), prop);
+				setFields=true;
+			}
+			catch(Exception e){
+				setZoom(null, OPTIONAL);
+			}
+			zoom.setVisible(true);
+			break;
+		case TagNames.AMPLGAIN:
+			try{
+				setAmplGain(Double.valueOf(val), prop);
+				setFields=true;
+			}
+			catch(Exception e){
+				setAmplGain(null, OPTIONAL);
+			}
+			amplGain.setVisible(true);
+			break;
+		default: LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
 	}
 
 	

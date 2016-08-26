@@ -539,125 +539,7 @@ public class ChannelCompUI extends ElementsCompUI
 				boolean prop=t.getProperty();
 					
 				if(name!=null  && t.isVisible()){
-					switch (name) {
-					case TagNames.CH_NAME:
-						try{
-							setName(val,prop);
-							//						channel.setName(val);
-						}catch(Exception e){
-							setName(null,prop);
-						}
-						this.name.setVisible(true);
-						break;
-					case TagNames.COLOR:
-						try{
-							Color value=parseColor(val);
-							setColor(value, prop);
-							//						channel.setColor(value);
-						}catch(Exception e){
-							setColor(null,prop);
-						}
-						color.setVisible(true);
-						break;
-					case TagNames.FLUOROPHORE:
-						try{
-							setFluorophore(val, prop);
-							//						channel.setFluor(val);
-						}catch(Exception e){
-							setFluorophore(null, prop);
-						}
-						fluorophore.setVisible(true);
-						break;
-					case TagNames.ILLUMTYPE:
-						try{
-							IlluminationType value=parseIllumType(val);
-							setIllumType(value, prop);
-							//						channel.setIlluminationType(value);
-						}catch(Exception e){
-							setIllumType(null, prop);
-						}
-						illumType.setVisible(true);
-						break;
-					case TagNames.EXPOSURETIME:
-						try{
-							setExposureTime(val, prop);
-							//TODO: channel.set;
-						}catch(Exception e){
-							setExposureTime(null, prop);
-						}
-						exposureTime.setVisible(true);
-						break;
-					case TagNames.EXCITWAVELENGTH:
-						try{
-							Length value=parseToLength(val, t.getUnit());
-							setExcitWavelength(value, prop);
-							//						channel.setExcitationWavelength(value);
-						}catch(Exception e){
-							setExcitWavelength(null, prop);
-						}
-						excitWavelength.setVisible(true);
-						break;
-					case TagNames.EMISSIONWAVELENGTH:
-						try{
-							Length value=parseToLength(val, t.getUnit());
-							setEmissionWavelength(value, prop);
-							//						channel.setEmissionWavelength(value);
-						}catch(Exception e){
-							setEmissionWavelength(null, prop);
-						}
-						emissionWavelength.setVisible(true);
-						break;
-					case TagNames.IMAGINGMODE:
-						try{
-							AcquisitionMode value=parseAcqMode(val);
-							setImagingMode(value, prop);
-							//						TODO: channel.set
-						}catch(Exception e){
-							setImagingMode(null, prop);
-						}
-						imagingMode.setVisible(true);
-						break;
-					case TagNames.ILLUMINATIONMODE:
-						try{
-							AcquisitionMode value=parseAcqMode(val);
-							setIlluminationMode(value, prop);
-							//						TODO: channel.set
-						}catch(Exception e){
-							setIlluminationMode(null, prop);
-						}
-						illuminationMode.setVisible(true);
-						break;
-					case TagNames.CONTRASTMETHOD:
-						try{
-							ContrastMethod value=parseContrastMethod(val);
-							setContrastMethod(value, prop);
-							//						channel.setContrastMethod(value);
-						}catch(Exception e){
-							setContrastMethod(null, prop);
-						}
-						contrastMethod.setVisible(true);
-						break;
-					case TagNames.NDFILTER:
-						try{
-							Double value=parseToDouble(val);
-							setNDFilter(value, prop);
-							//						channel.setNDFilter(value);
-						}catch(Exception e){
-							setNDFilter(null, prop);
-						}
-						ndFilter.setVisible(true);
-						break;
-					case TagNames.PINHOLESIZE:
-						try{
-							setPinholeSize(parseToLength(val, t.getUnit()),prop);
-						}catch(Exception e){
-							setPinholeSize(null,prop);
-						}
-						pinholeSize.setVisible(true);
-						break;
-					default:
-						LOGGER.warn("[CONF] unknown tag: "+name );break;
-					}
+					setTag(name,val,prop,t.getUnit());
 				}
 			}
 		}
@@ -858,6 +740,145 @@ public class ChannelCompUI extends ElementsCompUI
 		setFields= setFields || b;		
 	}
 
+	/**
+	 * Update tags with val from list
+	 */
+	public void update(List<TagData> list) 
+	{
+		for(TagData t: list){
+			if(t.valueChanged()){
+				setTag(t);
+			}
+		}
+	}
+
+	private void setTag(TagData t)
+	{
+		setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
+	}
+	
+	private void setTag(String name,String val,boolean prop,Unit unit)
+	{
+		switch (name) {
+		case TagNames.CH_NAME:
+			try{
+				setName(val,prop);
+				//						channel.setName(val);
+			}catch(Exception e){
+				setName(null,prop);
+			}
+			this.name.setVisible(true);
+			break;
+		case TagNames.COLOR:
+			try{
+				Color value=parseColor(val);
+				setColor(value, prop);
+				//						channel.setColor(value);
+			}catch(Exception e){
+				setColor(null,prop);
+			}
+			color.setVisible(true);
+			break;
+		case TagNames.FLUOROPHORE:
+			try{
+				setFluorophore(val, prop);
+				//						channel.setFluor(val);
+			}catch(Exception e){
+				setFluorophore(null, prop);
+			}
+			fluorophore.setVisible(true);
+			break;
+		case TagNames.ILLUMTYPE:
+			try{
+				IlluminationType value=parseIllumType(val);
+				setIllumType(value, prop);
+				//						channel.setIlluminationType(value);
+			}catch(Exception e){
+				setIllumType(null, prop);
+			}
+			illumType.setVisible(true);
+			break;
+		case TagNames.EXPOSURETIME:
+			try{
+				setExposureTime(val, prop);
+				//TODO: channel.set;
+			}catch(Exception e){
+				setExposureTime(null, prop);
+			}
+			exposureTime.setVisible(true);
+			break;
+		case TagNames.EXCITWAVELENGTH:
+			try{
+				Length value=parseToLength(val, unit);
+				setExcitWavelength(value, prop);
+				//						channel.setExcitationWavelength(value);
+			}catch(Exception e){
+				setExcitWavelength(null, prop);
+			}
+			excitWavelength.setVisible(true);
+			break;
+		case TagNames.EMISSIONWAVELENGTH:
+			try{
+				Length value=parseToLength(val,unit);
+				setEmissionWavelength(value, prop);
+				//						channel.setEmissionWavelength(value);
+			}catch(Exception e){
+				setEmissionWavelength(null, prop);
+			}
+			emissionWavelength.setVisible(true);
+			break;
+		case TagNames.IMAGINGMODE:
+			try{
+				AcquisitionMode value=parseAcqMode(val);
+				setImagingMode(value, prop);
+				//						TODO: channel.set
+			}catch(Exception e){
+				setImagingMode(null, prop);
+			}
+			imagingMode.setVisible(true);
+			break;
+		case TagNames.ILLUMINATIONMODE:
+			try{
+				AcquisitionMode value=parseAcqMode(val);
+				setIlluminationMode(value, prop);
+				//						TODO: channel.set
+			}catch(Exception e){
+				setIlluminationMode(null, prop);
+			}
+			illuminationMode.setVisible(true);
+			break;
+		case TagNames.CONTRASTMETHOD:
+			try{
+				ContrastMethod value=parseContrastMethod(val);
+				setContrastMethod(value, prop);
+				//						channel.setContrastMethod(value);
+			}catch(Exception e){
+				setContrastMethod(null, prop);
+			}
+			contrastMethod.setVisible(true);
+			break;
+		case TagNames.NDFILTER:
+			try{
+				Double value=parseToDouble(val);
+				setNDFilter(value, prop);
+				//						channel.setNDFilter(value);
+			}catch(Exception e){
+				setNDFilter(null, prop);
+			}
+			ndFilter.setVisible(true);
+			break;
+		case TagNames.PINHOLESIZE:
+			try{
+				setPinholeSize(parseToLength(val, unit),prop);
+			}catch(Exception e){
+				setPinholeSize(null,prop);
+			}
+			pinholeSize.setVisible(true);
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
+	}
 	
 
 	
