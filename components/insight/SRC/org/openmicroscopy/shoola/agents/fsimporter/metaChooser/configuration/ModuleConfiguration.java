@@ -60,22 +60,40 @@ public class ModuleConfiguration
 		settingsTagConfList=new ArrayList<TagConfiguration>();
 	}
 	
+	/** 
+	 * 
+	 * @return list of tags
+	 */
 	public List<TagConfiguration> getTagList()
 	{
 		return tagConfList;
 	}
+	public void setTagList(List<TagConfiguration> list)
+	{
+		tagConfList=list;
+	}
 	
+	/**
+	 * 
+	 * @return list of settings tags
+	 */
 	public List<TagConfiguration> getSettingList()
 	{
 		return settingsTagConfList;
+	}
+	public void setSettingList(List<TagConfiguration> list)
+	{
+		settingsTagConfList=list;
 	}
 	
 	private void setTag(String name, String val,String unit, Boolean prop, List<TagConfiguration> thisList, boolean visible) 
 	{
 		Unit u=null;
+		String[] pU=null;
 		try {
 			u = UOSHardwareReader.parseUnit(unit,name);
-			thisList.add(new TagConfiguration(name, val,u, prop, visible));
+			pU= UOSHardwareReader.getUnits(name);
+			thisList.add(new TagConfiguration(name, val,u, prop, visible,pU));
 		} catch (Exception e) {
 			LOGGER.warn("[HARDWARE] can't parse unit of tag "+name+" ("+unit+")");
 			e.printStackTrace();
@@ -218,6 +236,16 @@ public class ModuleConfiguration
 	public int getWidth()
 	{
 		return Integer.valueOf(width);
+	}
+	
+	public void printConfig()
+	{
+		for(int i=0; i<tagConfList.size();i++){
+			System.out.println(tagConfList.get(i).getName()+" = "+tagConfList.get(i).getValue()+" "+tagConfList.get(i).getUnitSymbol());
+		}
+		for(int i=0; i<settingsTagConfList.size();i++){
+			System.out.println(settingsTagConfList.get(i).getName()+" = "+settingsTagConfList.get(i).getValue()+" "+settingsTagConfList.get(i).getUnitSymbol());
+		}
 	}
 	
 }

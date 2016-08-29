@@ -142,6 +142,7 @@ public class UOSHardwareReader
 		try {
 			db = dbf.newDocumentBuilder();
 			Document doc = db.parse(file);
+			System.out.println("Read "+file.getAbsolutePath());
 			//TODO validation of xml
 			
 			readConfiguration(doc);
@@ -787,7 +788,7 @@ public class UOSHardwareReader
 				UnitsElectricPotential uV=UnitsElectricPotential.fromString(unitSymbol);
 				unit=UnitsElectricPotentialEnumHandler.getBaseUnit(uV);
 			default:
-				LOGGER.warn("[HARDWARE] no unit available for tag "+name);
+//				LOGGER.info("[HARDWARE] no unit available for tag "+name);
 				break;
 			}
 				

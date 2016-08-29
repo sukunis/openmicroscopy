@@ -8,37 +8,37 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -46,15 +46,18 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import ome.model.units.UNITS;
 import ome.units.unit.Unit;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.DisabledPanel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -88,6 +91,8 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 
 
 	private JFileChooser fc;
+	
+	protected String[] selectedPos;
 
 	public UOSProfileEditorUI(CustomViewProperties cView)
 	{
@@ -95,28 +100,44 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 		setTitle("Customize View");
 		setModal(true);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setPreferredSize(new Dimension(1300,900));
 		buildGUI();
-		add(new JScrollPane(main));
+		add(main);
 
 		pack();
 
 	}
 
+	/**
+	 * 
+	 * @return properties from GUI
+	 */
 	public CustomViewProperties getProperties()
 	{
 		return prop;
 	}
 
+	
+	/**
+	 * Build Profile Editor GUI
+	 */
 	private void buildGUI()
 	{
 		fc=new JFileChooser();
-
+		selectedPos= new String[8];
+		for(int i=0; i<8; i++)
+			selectedPos[i]="";
+		
 		main=new JPanel();
-		main.setLayout(new BorderLayout(5,5));
-		main.setBorder(new EmptyBorder(5, 5, 5, 5));
+		main.setLayout(new BorderLayout(10,10));
+		main.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
 		// profile file location
 		JLabel fLabel = new JLabel("Profile file: ");
+		Font font = fLabel.getFont();
+		Font boldFont = new Font(font.getFontName(), Font.BOLD, font.getSize());
+		fLabel.setFont(boldFont);
+		
 		file=prop.getFile();
 		fileName = new JTextField(file!=null ?file.getAbsolutePath():"");
 		fLabel.setLabelFor(fileName);
@@ -131,6 +152,10 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 
 		//microscope name
 		JLabel micLabel=new JLabel("Microscope: ");
+		font = micLabel.getFont();
+		boldFont = new Font(font.getFontName(), Font.BOLD, font.getSize());
+		micLabel.setFont(boldFont);
+		
 		micName=new JTextField(prop.getMicName());
 		Box micPane =Box.createHorizontalBox();
 		micPane.add(micLabel);
@@ -139,27 +164,31 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 
 		headerPane=Box.createVerticalBox();
 		headerPane.add(filePane);
-		headerPane.add(Box.createVerticalStrut(10));
+		headerPane.add(Box.createVerticalStrut(30));
 		headerPane.add(micPane);
 
 		// profile settings
-		dataPane=custumViewEditor();
+		dataPane=custumViewEditor(prop);
 		buttonPane=initButtonPane();
 
 		main.add(headerPane,BorderLayout.NORTH);
-		main.add(dataPane,BorderLayout.CENTER);
+		main.add(new JScrollPane(dataPane),BorderLayout.CENTER);
 		main.add(buttonPane,BorderLayout.SOUTH);
 
 
 	}
 
+	/**
+	 * 
+	 * @return panel with save, ok, cancel buttons
+	 */
 	private JPanel initButtonPane() 
 	{
 		JPanel bar=new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		bar.add(Box.createHorizontalStrut(5));
 
 		okBtn=new JButton("OK");
-		okBtn.setToolTipText("Use configuration for current view and close editor");
+		okBtn.setToolTipText("Apply configuration for current view, save it and close editor");
 		okBtn.addActionListener(this);
 
 
@@ -167,7 +196,7 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 		cancelBtn.addActionListener(this);
 
 		saveFileBtn=new JButton("Save To File...");
-		saveFileBtn.setToolTipText("Save configuration to file");
+		saveFileBtn.setToolTipText("Save configuration to selected file");
 		saveFileBtn.addActionListener(this);
 
 
@@ -181,56 +210,87 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 		return bar;
 	}
 
-
-	public JPanel custumViewEditor()
+	/**
+	 * Load configuration from given file
+	 * @return panel with configurations
+	 */
+	public JPanel custumViewEditor(CustomViewProperties cProp)
 	{
 		JPanel pane = new JPanel();
+		pane.setBorder(BorderFactory.createEtchedBorder());
 		pane.setLayout(new GridLayout(0,4,5,5));
 
-		pane.add(new ConfigurationPanel2(prop.getImageConf(),"Image Modul",false));
-		pane.add(new ConfigurationPanel2(prop.getObjConf(),"Objective Modul",true));
-		pane.add(new ConfigurationPanel2(prop.getDetectorConf(),"Detector Modul",true));
-		pane.add(new ConfigurationPanel2(prop.getLightSrcConf(),"LightSource Modul",true));
+		if(prop.getImageConf()==null)
+			prop.loadImageConf(false);
+		pane.add(new ConfigurationPanel(prop.getImageConf(),"Image Modul",TagNames.getImageTags(), false, 0));
 
-		pane.add(new ConfigurationPanel2(prop.getChannelConf(),"Channel Modul",false));
-		pane.add(new ConfigurationPanel2(prop.getLightPathConf(),"LightPath Modul",false));
-		pane.add(new ConfigurationPanel2(prop.getSampleConf(),"Sample Modul",false));
-		pane.add(new ConfigurationPanel2(prop.getExpConf(),"Experiment Modul",false));
+		if(prop.getObjConf()==null)
+			prop.loadObjectiveConf(false);
+		pane.add(new ConfigurationPanel(prop.getObjConf(),"Objective Modul",TagNames.getObjectiveTags(),true,1));
+		
+		if(prop.getDetectorConf()==null)
+			prop.loadDetectorConf(false);
+		pane.add(new ConfigurationPanel(prop.getDetectorConf(),"Detector Modul",TagNames.getDetectorTags(),true,2));
+		
+		if(prop.getLightSrcConf()==null)
+			prop.loadLightSrcConf(false);
+		pane.add(new ConfigurationPanel(prop.getLightSrcConf(),"LightSource Modul",TagNames.getLightSrcTags(),true,3));
+
+		
+		if(prop.getChannelConf()==null)
+			prop.loadChannelConf(false);
+		pane.add(new ConfigurationPanel(prop.getChannelConf(),"Channel Modul",TagNames.getChannelTags(),false,4));
+		
+//		if(prop.getLightPathConf()==null)
+//			prop.loadLightPathConf(false);
+		pane.add(new ConfigurationPanel(prop.getLightPathConf(),"LightPath Modul",null,false,5));
+		
+		if(prop.getSampleConf()==null)
+			prop.loadSampleConf(false);
+		pane.add(new ConfigurationPanel(prop.getSampleConf(),"Sample Modul",TagNames.getSampleTags(),false,6));
+		
+		if(prop.getExpConf()==null)
+			prop.loadExperimentConf(false);
+		pane.add(new ConfigurationPanel(prop.getExpConf(),"Experiment Modul",TagNames.getExperimentTags(),false,7));
 
 		return pane;
 
 	}
 
-
-
-	//	private void applyConfigurations(CustomViewProperties cView)
-	//	{
-	//		Component[] comp=dataPane.getComponents();
-	//		cView.setImageConf(((ConfigurationPanel)comp[0]).getConfiguration());
-	//		cView.setObjConf(((ConfigurationPanel) comp[1]).getConfiguration());
-	//		cView.setDetectorConf(((ConfigurationPanel) comp[2]).getConfiguration());
-	//		cView.setLightSrcConf(((ConfigurationPanel) comp[3]).getConfiguration());
-	//		
-	//		cView.setChannelConf(((ConfigurationPanel) comp[4]).getConfiguration());
-	//		cView.setLightPathConf(((ConfigurationPanel) comp[5]).getConfiguration());
-	//		cView.setSampleConf(((ConfigurationPanel) comp[6]).getConfiguration());
-	//		cView.setExperimenterConf(((ConfigurationPanel) comp[7]).getConfiguration());
-	//		
-	//	}
-
-	private void applyConfigurations(CustomViewProperties cView)
+	
+	/**
+	 * write configuration to given CustomViewProperties cView
+	 * @param cView
+	 */
+	private CustomViewProperties applyConfigurations(CustomViewProperties cView)
 	{
 		cView.setMicName(micName.getText());
 		Component[] comp=dataPane.getComponents();
-		cView.setImageConf(((ConfigurationPanel2)comp[0]).getConfiguration());
-		cView.setObjConf(((ConfigurationPanel2) comp[1]).getConfiguration());
-		cView.setDetectorConf(((ConfigurationPanel2) comp[2]).getConfiguration());
-		cView.setLightSrcConf(((ConfigurationPanel2) comp[3]).getConfiguration());
+		
+		ModuleConfiguration imageConf=((ConfigurationPanel)comp[0]).getConfiguration();
+		ModuleConfiguration objConf=((ConfigurationPanel)comp[1]).getConfiguration();
+		ModuleConfiguration detectorConf=((ConfigurationPanel)comp[2]).getConfiguration();
+		ModuleConfiguration lightSrcConf=((ConfigurationPanel)comp[3]).getConfiguration();
+		ModuleConfiguration channelConf=((ConfigurationPanel)comp[4]).getConfiguration();
+		ModuleConfiguration lightPathConf=((ConfigurationPanel)comp[5]).getConfiguration();
+		ModuleConfiguration sampleConf=((ConfigurationPanel)comp[6]).getConfiguration();
+		ModuleConfiguration experimenterConf=((ConfigurationPanel)comp[7]).getConfiguration();
+		
+		
+		
+		cView.setImageConf(imageConf);
+		cView.setObjConf(objConf);
+		cView.setDetectorConf(detectorConf);
+		System.out.println("##########APPLY CONF");
+		detectorConf.printConfig();
+		cView.setLightSrcConf(lightSrcConf);
 
-		cView.setChannelConf(((ConfigurationPanel2) comp[4]).getConfiguration());
-		cView.setLightPathConf(((ConfigurationPanel2) comp[5]).getConfiguration());
-		cView.setSampleConf(((ConfigurationPanel2) comp[6]).getConfiguration());
-		cView.setExperimenterConf(((ConfigurationPanel2) comp[7]).getConfiguration());
+		cView.setChannelConf(channelConf);
+		cView.setLightPathConf(lightPathConf);
+		cView.setSampleConf(sampleConf);
+		cView.setExperimenterConf(experimenterConf);
+		
+		return cView;
 	}
 
 	//	private class CheckListItem
@@ -302,186 +362,132 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 
 
 
-	//	class ConfigurationPanel extends JPanel
-	//	{
-	//		private JList list;
-	//		private JCheckBox visibleCB;
-	//		private JTextField position;
-	//		private ModuleConfiguration configuration;
-	//
-	//		public ConfigurationPanel(ModuleConfiguration conf, String name) 
-	//		{
-	//			configuration=conf;
-	//			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-	//
-	//			JPanel titlePane=new JPanel(new FlowLayout(FlowLayout.LEFT));
-	//			JLabel label=new JLabel(name);
-	//			Font font = label.getFont();
-	//			Font boldFont = new Font(font.getFontName(), Font.BOLD, font.getSize());
-	//			label.setFont(boldFont);
-	//			
-	//			
-	//			visibleCB=new JCheckBox();
-	//			visibleCB.setSelected(conf.isVisible());
-	//			visibleCB.addItemListener(new ItemListener() {
-	//
-	//				@Override
-	//				public void itemStateChanged(ItemEvent e) {
-	//					if(e.getStateChange() == ItemEvent.SELECTED)
-	//						list.setEnabled(true);
-	//					else
-	//						list.setEnabled(false);
-	//				}
-	//			});
-	//			position = new JTextField(conf.getPosition().name()); 
-	//
-	//			titlePane.add(visibleCB);
-	//			titlePane.add(Box.createHorizontalStrut(2));
-	//			titlePane.add(label);
-	//			titlePane.add(Box.createHorizontalStrut(10));
-	//			titlePane.add(position);
-	//
-	//			list = new JList(getTagListAsItems(conf));
-	//			list.setCellRenderer((ListCellRenderer) new CheckBoxListRenderer());
-	//			list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	//			list.setVisibleRowCount(10);
-	//			list.addMouseListener(new MouseAdapter()
-	//			{
-	//				@Override
-	//				public void mouseClicked(MouseEvent event)
-	//				{
-	//					selectItem( (JList) event.getSource(),event.getPoint());
-	//				}
-	//			});
-	//
-	//			KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0);
-	//			Object mapKey = keyStroke.toString();
-	//			list.getInputMap().put(keyStroke, mapKey);
-	//			list.getActionMap().put(mapKey, new AbstractAction()
-	//			{
-	//				public void actionPerformed(ActionEvent event)
-	//				{
-	//					toggleSelectedItem( (JList) event.getSource());
-	//				}
-	//			});
-	//
-	//			if(!conf.isVisible())
-	//				list.setEnabled(false);
-	//
-	//			add(titlePane);
-	//			add(Box.createVerticalStrut(2));
-	//			add(new JScrollPane(list));
-	//		}
-	//		
-	//		
-	//		private void selectItem(JList jlist,Point point)
-	//		{
-	//			int index = jlist.locationToIndex(point);
-	//
-	//			if (index >= 0)
-	//			{
-	//				CheckListItem item = (CheckListItem)jlist.getModel().getElementAt(index);
-	//				item.setSelected(!item.isSelected());
-	//				jlist.repaint(jlist.getCellBounds(index, index));
-	//			}
-	//		}
-	//
-	//		private void toggleSelectedItem(JList jlist)
-	//		{
-	//			int index = jlist.getSelectedIndex();
-	//
-	//			if (index >= 0)
-	//			{
-	//				CheckListItem item = (CheckListItem)jlist.getModel().getElementAt(index);
-	//				item.setSelected(!item.isSelected());
-	//				jlist.repaint(jlist.getCellBounds(index, index));
-	//			}
-	//		}
-	//		private Object[] getTagListAsItems(ModuleConfiguration conf) 
-	//		{
-	//			List<TagConfiguration> list=conf.getTagList();
-	//			Object[] items = new Object[list.size()];
-	//
-	//			int i=0;
-	//			for(TagConfiguration tag:list){
-	//				items[i]=new CheckListItem(tag.getName(),tag.isVisible());
-	//				i++;
-	//			}
-	//
-	//			return items;
-	//		}
-	//
-	//		public ModuleConfiguration getConfiguration()
-	//		{
-	//			configuration.setVisible(visibleCB.isSelected());
-	//			configuration.setPosition(GUIPlaceholder.valueOf(position.getText()));
-	//			ListModel model=list.getModel();
-	//			for(int i=0; i<model.getSize(); i++){
-	//				configuration.getTagList().get(i).setVisible(((CheckListItem)model.getElementAt(i)).isSelected());
-	//			}
-	//
-	//			return configuration;
-	//		}
-	//	}
+	
 
-
-	class ConfigurationPanel2 extends JPanel
+	class ConfigurationPanel extends JPanel
 	{
+		private DisabledPanel tableGlassPane;
 		private JTable myTable;
 		private JCheckBox visibleCB;
-		private JTextField position;
+		private JComboBox position;
 		private ModuleConfiguration configuration;
+		private int index;
+		private String name;
+		private PreTagData[] availableTags;
+//		private JButton loadFieldValBtn;
+		
+		private String[] positions=ElementsCompUI.getNames(GUIPlaceholder.class);
+		private List<String[]> comboBoxData;
 
-		public ConfigurationPanel2(ModuleConfiguration conf, String name,boolean full) 
-		{
+	
+		
+		public ConfigurationPanel(ModuleConfiguration conf,
+				String name, PreTagData[] availableTags, boolean editableTags, int i) {
+			
 			configuration=conf;
+			this.index=i;
+			this.name=name;
+			this.availableTags=availableTags;
+			comboBoxData=new ArrayList<String[]>();
+			
+			
+			buildGUI();
+			setConfigurationData(conf, editableTags);
+			pack();
+		}
+		
+		private void buildGUI()
+		{
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+			setPreferredSize(new Dimension(300,300));
 
 			JPanel titlePane=new JPanel(new FlowLayout(FlowLayout.LEFT));
+			titlePane.setPreferredSize(new Dimension(300,30));
 			JLabel label=new JLabel(name);
 			Font font = label.getFont();
 			Font boldFont = new Font(font.getFontName(), Font.BOLD, font.getSize());
 			label.setFont(boldFont);
 
-
+			
+			JScrollPane tablePane=new JScrollPane();
+			tableGlassPane=new DisabledPanel(tablePane);
+			
 			visibleCB=new JCheckBox();
-			visibleCB.setSelected(conf.isVisible());
 			visibleCB.addItemListener(new ItemListener() {
-
 				@Override
 				public void itemStateChanged(ItemEvent e) {
-					if(e.getStateChange() == ItemEvent.SELECTED)
-						myTable.setEnabled(true);
-					else
-						myTable.setEnabled(false);
+					if(e.getStateChange() == ItemEvent.SELECTED){
+						tableGlassPane.setEnabled(true);
+						position.setEnabled(true);
+						selectedPos[index]=(String) position.getSelectedItem();
+					}else{
+						tableGlassPane.setEnabled(false);
+						position.setEnabled(false);
+						selectedPos[index]="";
+				}
 				}
 			});
-			position = new JTextField(conf.getPosition().name()); 
+			
+		
+			position=new JComboBox(positions);
+			position.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					 JComboBox selectedChoice = (JComboBox) e.getSource();
+					 if(selectedChoice.isEnabled()){
+						 testPosition((String) selectedChoice.getSelectedItem(),index);
+					 }
+				}
+			});
+//			
+//			loadFieldValBtn = new JButton("Load GUI Input");
+//			loadFieldValBtn.addActionListener(new ActionListener() {
+//				@Override
+//				public void actionPerformed(ActionEvent e) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//			});
+//			loadFieldValBtn.setEnabled(false);
 
 			titlePane.add(visibleCB);
-			titlePane.add(Box.createHorizontalStrut(2));
 			titlePane.add(label);
-			titlePane.add(Box.createHorizontalStrut(10));
+			titlePane.add(Box.createHorizontalStrut(5));
 			titlePane.add(position);
-
-			myTable=new JTable(new TagTableModel());
-			myTable.setShowGrid(false);
-			//hide settings col
-			myTable.getColumnModel().getColumn(5).setMinWidth(0);
-			myTable.getColumnModel().getColumn(5).setMaxWidth(0);
-			myTable.getColumnModel().getColumn(5).setPreferredWidth(0);
+//			titlePane.add(Box.createHorizontalStrut(10));
+//			titlePane.add(loadFieldValBtn);
 			
-			myTable.requestFocusInWindow();
+			myTable=new JTableX(availableTags);
+			myTable.setFillsViewportHeight(true);
+			((JTableX) myTable).setEditorData(comboBoxData);
+			
+			add(titlePane);
+			add(Box.createVerticalStrut(2));
+			add(tableGlassPane);
+			tablePane.setViewportView(myTable);
+		}
+
+
+
+		/**
+		 * @param conf
+		 * @param editableTags
+		 */
+		private void setConfigurationData(ModuleConfiguration conf,
+				boolean editableTags) 
+		{
+			position.setSelectedItem(conf.getPosition().name());
+			visibleCB.setSelected(conf.isVisible());
 			
 			List<TagConfiguration> tagList=conf.getTagList();
 			List<TagConfiguration> settList=conf.getSettingList();
 			if(tagList!=null){
-				if(full){
+				if(editableTags){
 					for(TagConfiguration t:tagList){
-						((TagTableModel) myTable.getModel()).addFull(t,"");
+						addEditableTag(t,"");
 					}
 					for(TagConfiguration t:settList){
-						((TagTableModel) myTable.getModel()).addFull(t,"S");
+						addEditableTag(t,"S");
 					}
 				}else{
 					for(TagConfiguration t:tagList){
@@ -492,62 +498,108 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 					}
 				}
 			}
-			//		
-
-			if(!conf.isVisible())
-				myTable.setEnabled(false);
-
-			add(titlePane);
-			add(Box.createVerticalStrut(2));
-			add(new JScrollPane(myTable));
+			if(!conf.isVisible()){
+				tableGlassPane.setEnabled(false);
+//				myTable.setEnabled(false);
+			}
 		}
+
+		
+		
+		
+
+
+
+		/**
+		 * @param t
+		 */
+		public void addEditableTag(TagConfiguration t,String clazz) {
+			comboBoxData.add(t.getPossibleUnits());
+			((TagTableModel) myTable.getModel()).addFull(t,clazz);
+		}
+		
+		 /*
+	     * This method picks good column sizes.
+	     * If all column heads are wider than the column's cells'
+	     * contents, then you can just use column.sizeWidthToFit().
+	     */
+//	    private void initColumnSizes(JTable table) {
+//	        TagTableModel model = (TagTableModel)table.getModel();
+//	        TableColumn column = null;
+//	        Component comp = null;
+//	        int headerWidth = 0;
+//	        int cellWidth = 0;
+//	        Object[] longValues = model.longValues;
+//	        TableCellRenderer headerRenderer =
+//	            table.getTableHeader().getDefaultRenderer();
+//	 
+//	        for (int i = 0; i < 5; i++) {
+//	            column = table.getColumnModel().getColumn(i);
+//	 
+//	            comp = headerRenderer.getTableCellRendererComponent(
+//	                                 null, column.getHeaderValue(),
+//	                                 false, false, 0, 0);
+//	            headerWidth = comp.getPreferredSize().width;
+//	 
+//	            comp = table.getDefaultRenderer(model.getColumnClass(i)).
+//	                             getTableCellRendererComponent(
+//	                                 table, longValues[i],
+//	                                 false, false, 0, i);
+//	            cellWidth = comp.getPreferredSize().width;
+//	 
+//	            if (DEBUG) {
+//	                System.out.println("Initializing width of column "
+//	                                   + i + ". "
+//	                                   + "headerWidth = " + headerWidth
+//	                                   + "; cellWidth = " + cellWidth);
+//	            }
+//	 
+//	            column.setPreferredWidth(Math.max(headerWidth, cellWidth));
+//	        }
+//	    }
+
+		protected void testPosition(String selectedItem, int index) 
+		{
+			String oldval=selectedPos[index];
+			selectedPos[index]="";
+			boolean stillExists=false;
+			for(int i=0; i<8;i++){
+				if(!selectedItem.equals("") && selectedPos[i].equals(selectedItem)){
+					stillExists=true;
+				}
+			}
+			
+			if(stillExists){
+            	WarningDialog ld = new WarningDialog("Please check selected Position!", 
+						"Position is used by another component");
+				ld.setVisible(true);
+            }else{
+            	selectedPos[index]=selectedItem;
+            }			
+		}
+
 
 		public ModuleConfiguration getConfiguration()
 		{
-			configuration.setVisible(visibleCB.isSelected());
-			configuration.setPosition(GUIPlaceholder.valueOf(position.getText()));
+			ModuleConfiguration conf=new ModuleConfiguration(visibleCB.isSelected(),
+					GUIPlaceholder.valueOf((String) position.getSelectedItem()), "1");
+			
 			TagTableModel dataModel=(TagTableModel) myTable.getModel();
 			int j=0;
+			List<TagConfiguration> settList=new ArrayList<TagConfiguration>();
+			List<TagConfiguration> tagList=new ArrayList<TagConfiguration>();
 			for(int i=0; i<dataModel.getRowCount(); i++){
 				if(dataModel.getValueAt(i, 5).equals("S")){
-					//visible
-					configuration.getSettingList().get(j).setVisible((boolean) dataModel.getValueAt(i, 0));
-					//value
-					if(dataModel.saveable(i,2))
-						configuration.getSettingList().get(j).setValue( (String) dataModel.getValueAt(i, 2));
-					//unit
-					if(dataModel.saveable(i,3)){
-						try {
-							configuration.getSettingList().get(j).setUnit(
-									UOSHardwareReader.parseUnit((String)dataModel.getValueAt(i, 3), (String)dataModel.getValueAt(i, 1)));
-						} catch (Exception e) {
-							configuration.getSettingList().get(j).setUnit(null);
-						}
-					}
-					configuration.getSettingList().get(j).setProperty((boolean)dataModel.getValueAt(i, 4));
-					j++;
+					settList.add(dataModel.getRow(i));
 				}else{
-					//visible
-					configuration.getTagList().get(i).setVisible((boolean) dataModel.getValueAt(i, 0));
-					//value
-					if(dataModel.saveable(i,2))
-						configuration.getTagList().get(i).setValue( (String) dataModel.getValueAt(i, 2));
-					//unit
-					if(dataModel.saveable(i,3)){
-						try {
-							configuration.getTagList().get(i).setUnit(
-									UOSHardwareReader.parseUnit((String)dataModel.getValueAt(i, 3), (String)dataModel.getValueAt(i, 1)));
-						} catch (Exception e) {
-							configuration.getTagList().get(i).setUnit(null);
+					tagList.add(dataModel.getRow(i));
 						}
 					}
-					configuration.getTagList().get(i).setProperty((boolean)dataModel.getValueAt(i, 4));
+			conf.setSettingList(settList);
+			conf.setTagList(tagList);
+			return conf;
 				}
 			}
-
-			return configuration;
-		}
-	}
 
 
 	@Override
@@ -555,7 +607,16 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 	{
 		if(e.getSource() == okBtn){
 			//TODO: aenderungen?
-			applyConfigurations(prop);
+			prop=applyConfigurations(prop);
+			
+			System.out.println("######OK BTN");
+			prop.getDetectorConf().printConfig();
+			
+			UOSProfileWriter writer=new UOSProfileWriter();
+			writer.save(new File(fileName.getText()), prop);
+			
+			LOGGER.info("[PROFILE EDITOR]: Save to "+file.getAbsolutePath()+" and reload MetaDataUI");
+			
 			setVisible(false);
 			dispose();
 		}else if(e.getSource() == openFileBtn){
@@ -567,8 +628,7 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 				fileName.setText(file.getAbsolutePath());
 			}
 		}else if(e.getSource()==saveFileBtn){
-			//TODO: aenderungen?
-			applyConfigurations(prop);
+			prop=applyConfigurations(prop);
 
 			fc.setSelectedFile(new File(fileName.getText()));
 			int returnVal = fc.showSaveDialog(this);
@@ -578,15 +638,24 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 				UOSProfileWriter writer=new UOSProfileWriter();
 
 				writer.save(newFile, prop);
+				file=newFile;
 				reloadGUIData(newFile);
 				fileName.setText(file.getAbsolutePath());
 			}
+			
+			LOGGER.info("[PROFILE EDITOR]: Save to "+file.getAbsolutePath());
+		
 		}else if(e.getSource()==cancelBtn){
+			LOGGER.info("[PROFILE EDITOR]: Cancel");
 			setVisible(false);
 			dispose();
 		}
 	}
 
+	/**
+	 * Update editor data
+	 * @param newFile input file for editor data
+	 */
 	private void reloadGUIData(File newFile) 
 	{
 		UOSProfileReader propReader=new UOSProfileReader(newFile);
@@ -598,7 +667,7 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 		prop=newProp;
 		file=newFile;
 		micName.setText(prop.getMicName());
-		dataPane=custumViewEditor();
+		dataPane=custumViewEditor(prop);
 
 		main.removeAll();
 		main.add(headerPane,BorderLayout.NORTH);
@@ -610,6 +679,120 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 	}
 
 
+	
+	public class JTableX extends JTable
+	{
+		private List<String[]> comboBoxData=null;
+		private JPopupMenu popupMenu;
+		private PreTagData[] availableTags;
+		
+		public JTableX(PreTagData[] availableTags){
+			super(new TagTableModel());
+			setShowGrid(false);
+			
+			this.availableTags=availableTags;
+			// fit size of column: visible and unit
+			getColumnModel().getColumn(0).setMinWidth(15);
+			getColumnModel().getColumn(0).setPreferredWidth(15);
+			getColumnModel().getColumn(3).setMinWidth(15);
+			getColumnModel().getColumn(3).setPreferredWidth(15);
+			
+			//hide col for optional (4)
+			getColumnModel().getColumn(4).setMinWidth(0);
+			getColumnModel().getColumn(4).setMaxWidth(0);
+			getColumnModel().getColumn(4).setPreferredWidth(0);
+			//hide col for settings notize (5)
+			getColumnModel().getColumn(5).setMinWidth(0);
+			getColumnModel().getColumn(5).setMaxWidth(0);
+			getColumnModel().getColumn(5).setPreferredWidth(0);
+			
+			getTableHeader().setBackground(Color.lightGray);
+			
+			popupMenu = new JPopupMenu();
+			JMenu insertMenu=new JMenu("Insert Tag");
+			
+			if(availableTags!=null){
+				for(int i=0; i<availableTags.length; i++){
+					JMenuItem item = new JMenuItem(availableTags[i].name);
+					item.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							JMenuItem item= (JMenuItem) e.getSource();
+							JPopupMenu menu= (JPopupMenu) item.getParent();
+							insertTagAtTable(menu.getComponentZOrder(item));
+						}
+					});
+					insertMenu.add(item);
+				}
+			}	
+			popupMenu.add(insertMenu);
+			addMouseListener(new MouseAdapter() {
+		         public void mouseClicked(MouseEvent me) {
+		            if (SwingUtilities.isRightMouseButton(me))
+		               popupMenu.show(getParent(), me.getX(), me.getY());
+		         }
+		      });
+			
+			requestFocusInWindow();
+		}
+		
+		private void insertTagAtTable(int index) 
+		{
+			System.out.println("Select index: "+index);
+			TagConfiguration t=new TagConfiguration(availableTags[index].name, "", 
+					availableTags[index].defaultUnit, false, false, availableTags[index].unitsList);
+			TagTableModel model=(TagTableModel) getModel();
+			int row=getSelectedRow();
+			model.insertRow(row, t, availableTags[index].settings);
+		}
+		
+		/**
+		 * 
+		 * @param data list of unit combobox default data for all tags in the table. If no units specified for a tag, element=null
+		 */
+		public void setEditorData(List<String[]> data)
+		{
+			comboBoxData=data;
+		}
+		
+		/**
+		 * Set unit field as combobox if units available for this tag
+		 */
+		public TableCellEditor getCellEditor(int row, int column)
+		{
+			int modelColumn = convertColumnIndexToModel( column );
+
+            if (modelColumn == 3 && comboBoxData.get(row)!=null)
+            {
+                JComboBox<String> comboBox1 = new JComboBox<String>( comboBoxData.get(row));
+                return new DefaultCellEditor( comboBox1 );
+            }
+            else
+                return super.getCellEditor(row, column);
+		}
+		
+		
+		@Override
+		/**
+		 * Highlight non editable field value and field unit cells
+		 */
+	    public Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
+	        Component comp = super.prepareRenderer(renderer, row, col);
+	        if(!getModel().isCellEditable(row, col) && (col==2 || col==3)){
+	        	comp.setBackground(UIManager.getColor("TextField.inactiveBackground"));
+	        	comp.setFont(getFont());
+	        } 
+	        else {
+	        	comp.setBackground(getBackground());
+	        	comp.setForeground(getForeground());
+	        	comp.setFont(getFont());
+	        }
+	        
+	        return comp;
+	    }
+		
+	}
+	
+	
 	//TODO: navigation by tab-key
 	public class MyTable extends JTable
 	{
@@ -727,7 +910,15 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 		String[] columns = {"Visible","Field Name","Field Value","Unit","Optional","Settings"};
 		private List<List> data = new ArrayList<>();
 
-		private String NOEDITABLE="--";
+		public static final String NOEDITABLE="--";
+		
+		public static final int COL_VISIBLE=0;
+		public static final int COL_NAME=1;
+		public static final int COL_VALUE=2;
+		public static final int COL_UNIT=3;
+		public static final int COL_PROP=4;
+		public static final int COL_SETT=5;
+		
 
 		@Override
 		public String getColumnName(int column) {
@@ -749,14 +940,18 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 			if(UOSHardwareReader.getUnitList(t.getName())==null){
 				hideUnit=true;
 			}
-
+			//visible
 			list.add(t.isVisible());
+			// field name
 			list.add(t.getName());
+			// field value
 			list.add(t.getValue());
+			//unit
 			if(hideUnit)
 				list.add(NOEDITABLE);
 			else
 				list.add(t.getUnitSymbol());
+			//optional
 			list.add(t.getProperty());
 			list.add(settings);
 			data.add(list);
@@ -764,8 +959,12 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 			fireTableRowsInserted(data.size() - 1, data.size() - 1);
 
 		}
-		
-		public void add(TagConfiguration t,String settings) {
+		/**
+		 * Add only tag, predefinitions for this tag are not possible.
+		 * @param t
+		 * @param isSettingsTag
+		 */
+		public void add(TagConfiguration t,String isSettingsTag) {
 			List<Object> list=new ArrayList<Object>(columns.length);
 			
 
@@ -774,7 +973,7 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 			list.add(NOEDITABLE);
 			list.add(NOEDITABLE);
 			list.add(t.getProperty());
-			list.add(settings);
+			list.add(isSettingsTag);
 			data.add(list);
 
 			fireTableRowsInserted(data.size() - 1, data.size() - 1);
@@ -804,9 +1003,6 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 		}
 
 		@Override
-		//	        public Class<?> getColumnClass(int columnIndex) {
-			//	        	return data.get(0).get(columnIndex).getClass();
-			//	        }
 		public Class<?> getColumnClass(int columnIndex) {
 			Class classOfCol = String.class;
 			if(columnIndex==0 || columnIndex==4)
@@ -822,21 +1018,92 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 		{
 			boolean editable=true;
 			
-			if((columnIndex!=0 && columnIndex!= 4) &&
+			if((columnIndex!=COL_VISIBLE && columnIndex!= COL_PROP) &&
 					(getValueAt(rowIndex, columnIndex)!=null && getValueAt(rowIndex, columnIndex).equals(NOEDITABLE))
-					|| columnIndex==1 || columnIndex==5)
+					|| columnIndex==COL_NAME || columnIndex==COL_SETT)
 				editable=false;
 			return editable;
 		}
 
+		public void insertRow(int rowIndex, TagConfiguration t,String settings)
+		{
+			List<Object> list=new ArrayList<Object>(columns.length);
+			boolean hideUnit=false;
+			if(UOSHardwareReader.getUnitList(t.getName())==null){
+				hideUnit=true;
+			}
+			//visible
+			list.add(t.isVisible());
+			// field name
+			list.add(t.getName());
+			// field value
+			list.add(t.getValue());
+			//unit
+			if(hideUnit)
+				list.add(NOEDITABLE);
+			else
+				list.add(t.getUnitSymbol());
+			//optional
+			list.add(t.getProperty());
+			list.add(settings);
+			
+			data.add(rowIndex, list);
+
+				fireTableRowsInserted(rowIndex,rowIndex);
+		}
+		
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+			System.out.println("Set value at "+rowIndex+", "+columnIndex);
+			if(aValue instanceof String){
+				List temp=data.get(rowIndex);
+				temp.set(columnIndex, aValue.toString());
+				data.set(rowIndex, temp);
+				
+			}else{
 			data.get(rowIndex).set(columnIndex, aValue);
+		}
+			fireTableRowsUpdated(rowIndex, rowIndex);
 		}
 
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			return data.get(rowIndex).get(columnIndex);
 		}
+		
+		/**
+		 * 
+		 * @param rowIndex
+		 * @return row as TagConfiguration object
+		 */
+		public TagConfiguration getRow(int rowIndex)
+		{
+			TagConfiguration tag=null;
+			String name=(String) getValueAt(rowIndex,COL_NAME);
+			String value=(String) getValueAt(rowIndex,COL_VALUE);
+			value=value.equals(NOEDITABLE)? "":value;
+			Unit unit=null;
+			String[] pU=null;
+			if(!((String) getValueAt(rowIndex,COL_UNIT)).equals(NOEDITABLE)){
+				try {
+					unit=UOSHardwareReader.parseUnit((String) getValueAt(rowIndex,COL_UNIT),name);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 	}
+				pU= UOSHardwareReader.getUnits(name);
+			}
+			tag=new TagConfiguration(name, value, unit, (Boolean)getValueAt(rowIndex,COL_PROP),(Boolean) getValueAt(rowIndex,0), pU);
+			return tag;
+		}
+	}
+
+//	public class TagTableModel extends DefaultTableModel
+//	{
+//		public void insertRow(int row, TagConfiguration tag,String sett) 
+//		{
+//			Object[] rowData={tag.isVisible(),tag.getName(),};
+//			super.insertRow(row, rowData);
+//		}
+//	}
 }

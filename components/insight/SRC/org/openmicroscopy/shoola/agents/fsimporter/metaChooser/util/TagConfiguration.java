@@ -9,14 +9,16 @@ public class TagConfiguration
 	private Unit unit;
 	private Boolean property;
 	private boolean visible;
+	private String[] possibleUnits;
 	
-	public TagConfiguration(String name, String value, Unit unit,Boolean property, boolean visible)
+	public TagConfiguration(String name, String value, Unit unit,Boolean property, boolean visible,String[] possUnits)
 	{
 		this.name=name;
 		this.value=value;
 		this.unit=unit;
 		this.property=property;
 		this.visible=visible;
+		this.possibleUnits=possUnits;
 	}
 	
 	public String getName() {
@@ -44,6 +46,14 @@ public class TagConfiguration
 	
 	public Unit getUnit() {
 		return unit;
+	}
+	
+	public String[] getPossibleUnits(){
+		return possibleUnits;
+	}
+	
+	public void setPossibleUnits(String[] units){
+		possibleUnits=units;
 	}
 
 	public void setUnit(Unit unit) {

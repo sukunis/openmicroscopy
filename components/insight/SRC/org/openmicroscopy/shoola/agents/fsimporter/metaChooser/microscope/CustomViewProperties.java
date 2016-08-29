@@ -179,110 +179,163 @@ public class CustomViewProperties
 	{
 		LOGGER.info("[VIEW_PROP] Load general view");
 
-		imageConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_A,"1");
-		imageConf.setTag(TagNames.IMG_NAME,null,null,true);
-		imageConf.setTag(TagNames.ACQTIME,null,null,true);
-		imageConf.setTag(TagNames.DIMXY,null,null,true);
-		imageConf.setTag(TagNames.PIXELTYPE,null,null,true);
-		imageConf.setTag(TagNames.PIXELSIZE,null,null,true);
-		imageConf.setTag(TagNames.DIMZTC,null,null,true);
-		imageConf.setTag(TagNames.STAGEPOS,null,null,true);
-		imageConf.setTag(TagNames.STEPSIZE,null,null,true);
-		imageConf.setTag(TagNames.TIMEINC,null,null,true);
-		imageConf.setTag(TagNames.WELLNR,null,null,true);
+		loadImageConf(true);
+
+		loadChannelConf(true);
+
+		loadObjectiveConf(true);
+
+		loadDetectorConf(true);
+
+		loadExperimentConf(true);
 
 
-		channelConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_E,"1");
-		channelConf.setTag(TagNames.CH_NAME,null,null,true);
-		channelConf.setTag(TagNames.COLOR,null,null,true);
-		channelConf.setTag(TagNames.FLUOROPHORE,null,null,true);
-		channelConf.setTag(TagNames.ILLUMTYPE,null,null,true);
-		channelConf.setTag(TagNames.EXPOSURETIME,null,TagNames.EMISSIONWL_UNIT.getSymbol(),true);
-		channelConf.setTag(TagNames.EXCITWAVELENGTH,null,TagNames.EXCITATIONWL_UNIT.getSymbol(),true);
-		channelConf.setTag(TagNames.EMISSIONWAVELENGTH,null,null,true);
-		channelConf.setTag(TagNames.IMAGINGMODE,null,null,true);
-		channelConf.setTag(TagNames.ILLUMINATIONMODE,null,null,true);
-		channelConf.setTag(TagNames.CONTRASTMETHOD,null,null,true);
-		channelConf.setTag(TagNames.NDFILTER,null,null,true);
-		channelConf.setTag(TagNames.PINHOLESIZE,null,TagNames.PINHOLESIZE_UNIT.getSymbol(),true);
+		loadImageEnvConf(true);
 
-
-		oConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_B,"1");
-		oConf.setTag(TagNames.MODEL,null,null,true);
-		oConf.setTag(TagNames.MANUFAC,null,null,true);
-		oConf.setTag(TagNames.NOMMAGN,null,null,true);
-		oConf.setTag(TagNames.CALMAGN,null,null,true);
-		oConf.setTag(TagNames.LENSNA,null,null,true);
-		oConf.setTag(TagNames.IMMERSION,null,null,true);
-		oConf.setTag(TagNames.CORRECTION,null,null,true);
-		oConf.setTag(TagNames.WORKDIST,null,TagNames.WORKDIST_UNIT.getSymbol(),true);
-
-
-		oConf.setSettingTag(TagNames.CORCOLLAR,null,null,true);
-		oConf.setSettingTag(TagNames.OBJ_MEDIUM,null,null,true);
-		oConf.setSettingTag(TagNames.REFINDEX,null,null,true);
-
-
-		detectorConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_C,"1");
-		detectorConf.setTag(TagNames.MODEL,null,null,true);
-		detectorConf.setTag(TagNames.MANUFAC,null,null,true);
-		detectorConf.setTag(TagNames.TYPE,null,null,true);
-		detectorConf.setTag(TagNames.ZOOM,null,null,true);
-		detectorConf.setTag(TagNames.AMPLGAIN,null,null,true);
-		detectorConf.setSettingTag(TagNames.GAIN,null,null,true);
-		detectorConf.setSettingTag(TagNames.VOLTAGE,null,TagNames.VOLTAGE_UNIT.getSymbol(),true);
-		detectorConf.setSettingTag(TagNames.OFFSET,null,null,true);
-		detectorConf.setSettingTag(TagNames.CONFZOOM,null,null,true);
-		detectorConf.setSettingTag(TagNames.BINNING,null,null,true);
-		detectorConf.setSettingTag(TagNames.SUBARRAY,null,null,true);
-
-		expConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_H,"1");
-		expConf.setTag(TagNames.TYPE,null,null,true);
-		expConf.setTag(TagNames.DESC,null,null,true);
-		expConf.setTag(TagNames.EXPNAME,null,null,true);
-		expConf.setTag(TagNames.PROJECTNAME,null,null,true);
-		expConf.setTag(TagNames.GROUP,null,null,true);
-		expConf.setTag(TagNames.PROJECTPARTNER,null,null,true);
-
-
-		imgEnvConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_A,"1");
-		imgEnvConf.setTag(TagNames.TEMP,null,null,true);
-		imgEnvConf.setTag(TagNames.AIRPRESS,null,null,true);
-		imgEnvConf.setTag(TagNames.HUMIDITY,null,null,true);
-		imgEnvConf.setTag(TagNames.CO2,null,null,true);
-
-		// laser module for lightSrc
-		lightSrcConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_D,"1");
-		lightSrcConf.setTag(TagNames.MODEL,null,null,true);
-		lightSrcConf.setTag(TagNames.MANUFAC,null,null,true);
-		lightSrcConf.setTag(TagNames.POWER,null,TagNames.POWER_UNIT.getSymbol(),true);
-		lightSrcConf.setTag(TagNames.L_TYPE,null,null,true);
-		lightSrcConf.setTag(TagNames.MEDIUM,null,null,true);
-		lightSrcConf.setTag(TagNames.FREQMUL,null,null,true);
-		lightSrcConf.setTag(TagNames.TUNABLE,null,null,true);
-		lightSrcConf.setTag(TagNames.PULSE,null,null,true);
-		lightSrcConf.setTag(TagNames.POCKELCELL,null,null,true);
-		lightSrcConf.setTag(TagNames.REPRATE,null,TagNames.REPRATE_UNIT_HZ.getSymbol(),true);
-		lightSrcConf.setTag(TagNames.PUMP,null,null,true);
-		lightSrcConf.setTag(TagNames.WAVELENGTH,null,TagNames.WAVELENGTH_UNIT.getSymbol(),true);
-		lightSrcConf.setSettingTag(TagNames.SET_WAVELENGTH,null,null,true);
-		lightSrcConf.setSettingTag(TagNames.ATTENUATION,null,null,true);
+		loadLightSrcConf(true);
 
 		
-		sampleConf=new ModuleConfiguration(true,GUIPlaceholder.Pos_G,"1");
-		sampleConf.setTag(TagNames.PREPDATE,null,null,true);
-		sampleConf.setTag(TagNames.PREPDESC,null,null,true);
-		sampleConf.setTag(TagNames.RAWCODE,null,null,true);
-		sampleConf.setTag(TagNames.RAWDESC,null,null,true);
-		sampleConf.setTag(TagNames.GRIDBOXNR,null,null,true);
-		sampleConf.setTag(TagNames.GRIDBOXTYPE,null,null,true);
-		sampleConf.setTag(TagNames.EXPGRID,null,null,true);
-		sampleConf.setTag(TagNames.EXPOBJNR,null,null,true);
-		sampleConf.setTag(TagNames.EXPOBJTYPE,null,null,true);
+		loadSampleConf(true);
 
 		//TODO: plane,
 
 	}
+
+/**
+ * 
+ */
+public void loadSampleConf(boolean active) {
+	sampleConf=new ModuleConfiguration(active,GUIPlaceholder.Pos_G,"1");
+	sampleConf.setTag(TagNames.PREPDATE,null,null,true);
+	sampleConf.setTag(TagNames.PREPDESC,null,null,true);
+	sampleConf.setTag(TagNames.RAWCODE,null,null,true);
+	sampleConf.setTag(TagNames.RAWDESC,null,null,true);
+	sampleConf.setTag(TagNames.GRIDBOXNR,null,null,true);
+	sampleConf.setTag(TagNames.GRIDBOXTYPE,null,null,true);
+	sampleConf.setTag(TagNames.EXPGRID,null,null,true);
+	sampleConf.setTag(TagNames.EXPOBJNR,null,null,true);
+	sampleConf.setTag(TagNames.EXPOBJTYPE,null,null,true);
+}
+
+/**
+ * 
+ */
+public void loadLightSrcConf(boolean active) {
+	// laser module for lightSrc
+	lightSrcConf=new ModuleConfiguration(active,GUIPlaceholder.Pos_D,"1");
+	lightSrcConf.setTag(TagNames.MODEL,null,null,true);
+	lightSrcConf.setTag(TagNames.MANUFAC,null,null,true);
+	lightSrcConf.setTag(TagNames.POWER,null,TagNames.POWER_UNIT.getSymbol(),true);
+	lightSrcConf.setTag(TagNames.L_TYPE,null,null,true);
+	lightSrcConf.setTag(TagNames.MEDIUM,null,null,true);
+	lightSrcConf.setTag(TagNames.FREQMUL,null,null,true);
+	lightSrcConf.setTag(TagNames.TUNABLE,null,null,true);
+	lightSrcConf.setTag(TagNames.PULSE,null,null,true);
+	lightSrcConf.setTag(TagNames.POCKELCELL,null,null,true);
+	lightSrcConf.setTag(TagNames.REPRATE,null,TagNames.REPRATE_UNIT_HZ.getSymbol(),true);
+	lightSrcConf.setTag(TagNames.PUMP,null,null,true);
+	lightSrcConf.setTag(TagNames.WAVELENGTH,null,TagNames.WAVELENGTH_UNIT.getSymbol(),true);
+	lightSrcConf.setSettingTag(TagNames.SET_WAVELENGTH,null,null,true);
+	lightSrcConf.setSettingTag(TagNames.ATTENUATION,null,null,true);
+}
+
+/**
+ * 
+ */
+public void loadImageEnvConf(boolean active) {
+	imgEnvConf=new ModuleConfiguration(active,GUIPlaceholder.Pos_A,"1");
+	imgEnvConf.setTag(TagNames.TEMP,null,null,true);
+	imgEnvConf.setTag(TagNames.AIRPRESS,null,null,true);
+	imgEnvConf.setTag(TagNames.HUMIDITY,null,null,true);
+	imgEnvConf.setTag(TagNames.CO2,null,null,true);
+}
+
+/**
+ * 
+ */
+public void loadExperimentConf(boolean active) {
+	expConf=new ModuleConfiguration(active,GUIPlaceholder.Pos_H,"1");
+	expConf.setTag(TagNames.TYPE,null,null,true);
+	expConf.setTag(TagNames.DESC,null,null,true);
+	expConf.setTag(TagNames.EXPNAME,null,null,true);
+	expConf.setTag(TagNames.PROJECTNAME,null,null,true);
+	expConf.setTag(TagNames.GROUP,null,null,true);
+	expConf.setTag(TagNames.PROJECTPARTNER,null,null,true);
+}
+
+/**
+ * 
+ */
+public void loadDetectorConf(boolean active) {
+	detectorConf=new ModuleConfiguration(active,GUIPlaceholder.Pos_C,"1");
+	detectorConf.setTag(TagNames.MODEL,null,null,true);
+	detectorConf.setTag(TagNames.MANUFAC,null,null,true);
+	detectorConf.setTag(TagNames.TYPE,null,null,true);
+	detectorConf.setTag(TagNames.ZOOM,null,null,true);
+	detectorConf.setTag(TagNames.AMPLGAIN,null,null,true);
+	detectorConf.setSettingTag(TagNames.GAIN,null,null,true);
+	detectorConf.setSettingTag(TagNames.VOLTAGE,null,TagNames.VOLTAGE_UNIT.getSymbol(),true);
+	detectorConf.setSettingTag(TagNames.OFFSET,null,null,true);
+	detectorConf.setSettingTag(TagNames.CONFZOOM,null,null,true);
+	detectorConf.setSettingTag(TagNames.BINNING,null,null,true);
+	detectorConf.setSettingTag(TagNames.SUBARRAY,null,null,true);
+}
+
+/**
+ * 
+ */
+public void loadObjectiveConf(boolean active) {
+	oConf=new ModuleConfiguration(active,GUIPlaceholder.Pos_B,"1");
+	oConf.setTag(TagNames.MODEL,null,null,true);
+	oConf.setTag(TagNames.MANUFAC,null,null,true);
+	oConf.setTag(TagNames.NOMMAGN,null,null,true);
+	oConf.setTag(TagNames.CALMAGN,null,null,true);
+	oConf.setTag(TagNames.LENSNA,null,null,true);
+	oConf.setTag(TagNames.IMMERSION,null,null,true);
+	oConf.setTag(TagNames.CORRECTION,null,null,true);
+	oConf.setTag(TagNames.WORKDIST,null,TagNames.WORKDIST_UNIT.getSymbol(),true);
+	
+	oConf.setSettingTag(TagNames.CORCOLLAR,null,null,true);
+	oConf.setSettingTag(TagNames.OBJ_MEDIUM,null,null,true);
+	oConf.setSettingTag(TagNames.REFINDEX,null,null,true);
+
+}
+
+/**
+ * 
+ */
+public void loadChannelConf(boolean active) {
+	channelConf=new ModuleConfiguration(active,GUIPlaceholder.Pos_E,"1");
+	channelConf.setTag(TagNames.CH_NAME,null,null,true);
+	channelConf.setTag(TagNames.COLOR,null,null,true);
+	channelConf.setTag(TagNames.FLUOROPHORE,null,null,true);
+	channelConf.setTag(TagNames.ILLUMTYPE,null,null,true);
+	channelConf.setTag(TagNames.EXPOSURETIME,null,TagNames.EMISSIONWL_UNIT.getSymbol(),true);
+	channelConf.setTag(TagNames.EXCITWAVELENGTH,null,TagNames.EXCITATIONWL_UNIT.getSymbol(),true);
+	channelConf.setTag(TagNames.EMISSIONWAVELENGTH,null,null,true);
+	channelConf.setTag(TagNames.IMAGINGMODE,null,null,true);
+	channelConf.setTag(TagNames.ILLUMINATIONMODE,null,null,true);
+	channelConf.setTag(TagNames.CONTRASTMETHOD,null,null,true);
+	channelConf.setTag(TagNames.NDFILTER,null,null,true);
+	channelConf.setTag(TagNames.PINHOLESIZE,null,TagNames.PINHOLESIZE_UNIT.getSymbol(),true);
+}
+
+/**
+ * 
+ */
+public void loadImageConf(boolean active) {
+	imageConf=new ModuleConfiguration(active,GUIPlaceholder.Pos_A,"1");
+	imageConf.setTag(TagNames.IMG_NAME,null,null,true);
+	imageConf.setTag(TagNames.ACQTIME,null,null,true);
+	imageConf.setTag(TagNames.DIMXY,null,null,true);
+	imageConf.setTag(TagNames.PIXELTYPE,null,null,true);
+	imageConf.setTag(TagNames.PIXELSIZE,null,null,true);
+	imageConf.setTag(TagNames.DIMZTC,null,null,true);
+	imageConf.setTag(TagNames.STAGEPOS,null,null,true);
+	imageConf.setTag(TagNames.STEPSIZE,null,null,true);
+	imageConf.setTag(TagNames.TIMEINC,null,null,true);
+	imageConf.setTag(TagNames.WELLNR,null,null,true);
+}
 
 	
 

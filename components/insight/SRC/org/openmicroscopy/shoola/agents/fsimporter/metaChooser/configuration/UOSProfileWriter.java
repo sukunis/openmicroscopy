@@ -21,7 +21,6 @@ import org.w3c.dom.Element;
 public class UOSProfileWriter 
 {
 	private CustomViewProperties view;
-	private File destFile;
 	
 	public UOSProfileWriter()
 	{
