@@ -857,9 +857,12 @@ private List<String> unreadableFileList;
         ImportUserData importData = getImportData();
         
         //set parent dir data
-        MetaDataModel parentModel=parentNode.getModelOfSeries(0);
+//        MetaDataModel parentModel=parentNode.getModelOfSeries(0);
+        MetaDataModel parentModel = getParentMetaDataModel(node);
+        
         if(parentNode!=null && parentModel!=null){
             LOGGER.info("[DEBUG] -- READ MODEL OF "+parentNode.getAbsolutePath());
+           
             boolean parentDataChange=parentModel.noticUserInput();
         }
         //set current dir data
@@ -1255,6 +1258,7 @@ private List<String> unreadableFileList;
             //only for directory
             FNode parentNode = (FNode)fileTree.getLastSelectedPathComponent();
             unreadableFileList=new ArrayList<String>();
+            deselectNodeAction(parentNode);
             saveAllChilds(parentNode);
             insertNodes(null, parentNode.getFile().getName(), parentNode);
             fileTree.updateUI();
