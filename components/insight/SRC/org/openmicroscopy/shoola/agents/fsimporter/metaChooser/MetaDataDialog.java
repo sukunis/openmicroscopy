@@ -13,6 +13,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -84,6 +85,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.Custom
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
 import org.openmicroscopy.shoola.env.LookupNames;
 import org.openmicroscopy.shoola.env.data.model.FileObject;
@@ -192,6 +194,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 
 
     private FileFilter fileFilter;
+    
+private List<String> unreadableFileList;
 
     private static final String VIEWFILE ="View File Data";
     private static final String VIEWDIR ="View File and Dir Data";
@@ -856,42 +860,15 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
         MetaDataModel parentModel=parentNode.getModelOfSeries(0);
         if(parentNode!=null && parentModel!=null){
             LOGGER.info("[DEBUG] -- READ MODEL OF "+parentNode.getAbsolutePath());
-//            try {
-                boolean parentDataChange=parentModel.noticUserInput();
-                
-//            } catch (Exception e) {
-//                LOGGER.error("can't read model of "+parentNode.getAbsolutePath());
-//                ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-//                        "Can't read model of "+parentNode.getAbsolutePath(),e);
-//                ld.setVisible(true);
-//            }
+            boolean parentDataChange=parentModel.noticUserInput();
         }
         //set current dir data
         MetaDataModel dirModel=getCurrentSelectionMetaDataModel(parentNode);
-//
-//		dataView=new MetaDataUI(customSettings);
-//		dataView.readData(importData);
-//
-//		addParentModel(parentModel,dataView);
-//
-//		LOGGER.info("[DEBUG]--- ADD METADATA FROM FILE");
-//
-//		try {
-//			loadFileMetaData(node.getAbsolutePath(), dataView,parentModel,importData);
-//		} catch (FormatException e) {
-//			LOGGER.warning("MY Unknown file format "+node.getAbsolutePath());
-//		}catch(IOException e){
-//			LOGGER.warning("Can't read/access "+node.getAbsolutePath());
-//		}
+
         MetaDataView dataView=null;
         try {
             dataView=new MetaDataView(customSettings, node.getAbsolutePath(), importData, parentModel,this);
         } catch (Exception e) {
-//			catch (DependencyException | ServiceException e) {
-            LOGGER.error("[DATA] CAN'T read METADATA");
-            ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-                    "Can't read given metadata of "+node.getAbsolutePath(),e);
-            ld.setVisible(true);
             return null;
         }
         return dataView;
@@ -1277,10 +1254,19 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
             LOGGER.info("[GUI-ACTION] -- save all");
             //only for directory
             FNode parentNode = (FNode)fileTree.getLastSelectedPathComponent();
-            
+            unreadableFileList=new ArrayList<String>();
             saveAllChilds(parentNode);
             insertNodes(null, parentNode.getFile().getName(), parentNode);
             fileTree.updateUI();
+            if(unreadableFileList.size()> 0){
+            	String files="";
+            	for(int i=0; i<unreadableFileList.size(); i++){
+            		files=files+"\n"+unreadableFileList.get(i);
+            	}
+            	WarningDialog ld=new WarningDialog("Not supported file format!", 
+    					"Can't read metadata of following files! Format is not supported.\n "+files);
+    			ld.setVisible(true);
+            }
             break;
         case CMD_RESET:
             LOGGER.info("[GUI-ACTION] -- reset");
@@ -1399,7 +1385,10 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     		if(node !=null){
     			if(node.isLeaf()){
     				MetaDataView view=loadData(node,parentNode);
-    				saveMetadataForNode(node.getAbsolutePath(),view);
+    				if(view.isLoaded())
+    					saveMetadataForNode(node.getAbsolutePath(),view);
+    				else
+    					unreadableFileList.add(node.getAbsolutePath());
     			}else{
     				saveAllChilds(node);
     			}
@@ -1440,6 +1429,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private void saveMetadataForNode(String srcFile,MetaDataView view)
     {
         LOGGER.info("[DEBUG] -- save node "+srcFile);
+        System.out.println("Save node "+srcFile);
         try {
 			view.save();
 		} catch (Exception e) {

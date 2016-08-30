@@ -343,11 +343,9 @@ public class SaveMetadata
 			
 			//if there are more than one experimenter?
 //			ExperimentCompUI eUI = m.getExpModul();
-			List<Experimenter> eList=e.getExperimenterList();//eUI.getExperimenterList();
+			Experimenter exper=e.getExperimenter();//eUI.getExperimenterList();
 			
-			for(int index=1; index<eList.size();index++){
-				omeStore.storeExperimenter(eList.get(index));
-			}
+			omeStore.storeExperimenter(exper);
 			
 			// store experiment type, desc and project partner in mapAnnotations of image
 			omeStore.appendExperimentToMap(e.getExperiment(),i);

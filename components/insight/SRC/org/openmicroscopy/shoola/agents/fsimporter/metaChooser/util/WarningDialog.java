@@ -64,7 +64,7 @@ public class WarningDialog extends JDialog
 
 	public void setupUI() {
  
-		this.setTitle("Error");
+		this.setTitle("Warning");
  
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);

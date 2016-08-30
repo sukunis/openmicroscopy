@@ -65,6 +65,8 @@ public class MetaDataView extends JPanel
     
     private boolean seriesData;
     
+    private boolean readFile;
+    
     
     /**
      * Constructor for place holder / dummy component
@@ -96,11 +98,12 @@ public class MetaDataView extends JPanel
 		
 		Cursor cursor=parentPanel.getCursor();
 		parentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		
+		readFile=true;
 		data = readMetadataFromFile(fName, reader);
 
 		parentPanel.setCursor(cursor);
 		if(data==null){ 
+			readFile=false;
 			singleView=new MetaDataUI(sett);
 			return ;
 		}
@@ -271,9 +274,9 @@ public class MetaDataView extends JPanel
 		try{
 			reader.setId(file);
 		}catch(FormatException | IOException e){
-			WarningDialog ld=new WarningDialog("Not supported file format for MetaData Editor!", 
-					"Can't read metadata of "+file+"! Format is not supported.");
-			ld.setVisible(true);
+//			WarningDialog ld=new WarningDialog("Not supported file format for MetaData Editor!", 
+//					"Can't read metadata of "+file+"! Format is not supported.");
+//			ld.setVisible(true);
 			return null;
 		}
 		
@@ -383,5 +386,9 @@ public class MetaDataView extends JPanel
 	public void showSeries(String name)
 	{
 		seriesCard.show(cardPane,name);
+	}
+
+	public boolean isLoaded() {
+		return readFile;
 	}
 }

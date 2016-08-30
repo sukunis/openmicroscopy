@@ -481,8 +481,6 @@ public class TagData
 		if(type == LIST){
 			
 			List<Experimenter> list = ((ExperimenterBox) inputField).getExperimenterList();
-			for(int i=0; i<list.size(); i++)
-				System.out.println("GUI read::Experimenter: "+list.get(i).getLastName());
 			
 			return list;
 		}

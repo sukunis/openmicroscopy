@@ -372,7 +372,6 @@ public class MetaDataModel
 			return null;
 		else{
 			// save project partner
-			System.out.println("MetaDataModel::getExperiment()...");
 			return ((ExperimentCompUI) experimentUI).getData();
 		}
 	}

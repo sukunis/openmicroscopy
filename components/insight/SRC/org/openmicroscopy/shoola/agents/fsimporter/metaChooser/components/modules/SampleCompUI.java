@@ -523,7 +523,6 @@ public class SampleCompUI extends ElementsCompUI
 	{
 		for(TagData t: list){
 			if(t.valueChanged()){
-				System.out.println("Sample: update tag "+t.getTagName()+" = "+t.getTagValue());
 				setTag(t);
 			}
 		}

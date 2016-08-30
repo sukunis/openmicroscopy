@@ -555,12 +555,12 @@ public class MetaDataUI extends JPanel
 //			}
 			
 			//if there are more than one experimenter?
-			if(ome.sizeOfExperimenterList()>1){
-				List<Experimenter> eList=ome.copyExperimenterList();
-				for(Experimenter anotherExp : eList){
-					expCont.addExperimenter(anotherExp);
-				}
-			}
+//			if(ome.sizeOfExperimenterList()>1){
+//				List<Experimenter> eList=ome.copyExperimenterList();
+//				for(Experimenter anotherExp : eList){
+//					expCont.addExperimenter(anotherExp);
+//				}
+//			}
 			
 			eUI.addData(expCont, false,MetaDataDialog.FILE);
 			
@@ -948,16 +948,12 @@ public class MetaDataUI extends JPanel
 			importUserData=data;
 			ExperimentCompUI e=model.getExpModul();
 			try {
-				System.out.println("MetaDataUI::readData()...");
 				ExperimentContainer expCont=e.getData();
 				if(e!=null){
 					
-					expCont.addExperimenter(importUserData.getUser());
+					expCont.setExperimenter(importUserData.getUser());
 					expCont.setGroupName(importUserData.getGroup());
 					expCont.setProjectName(importUserData.getProject());
-//					e.setName(importUserData.getUser(), ElementsCompUI.OPTIONAL);
-//					e.setGroupName(importUserData.getGroup(), ElementsCompUI.OPTIONAL);
-//					e.setProjectName(importUserData.getProject(), ElementsCompUI.OPTIONAL);
 					e.setExtendedData(expCont);
 				}
 			} catch (Exception e1) {
