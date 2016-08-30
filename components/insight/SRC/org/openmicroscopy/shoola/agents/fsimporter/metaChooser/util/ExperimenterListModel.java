@@ -2,10 +2,13 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.DefaultListModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
+import org.apache.commons.lang.SerializationUtils;
 
 import ome.xml.model.Experimenter;
 import ome.xml.model.Objective;
@@ -21,6 +24,7 @@ public class ExperimenterListModel extends DefaultListModel<String>
 		
 	}
 	
+
 	public Experimenter getExperimenterAt(int index){
 		Experimenter e = null;
 		if(exp!=null && exp.size()>0)
@@ -81,6 +85,14 @@ public class ExperimenterListModel extends DefaultListModel<String>
 		}
 		
 		return list;
+	}
+	
+	public void setList(List<Experimenter> list)
+	{
+		if(list!=null)
+			for(int i=0; i<list.size();i++)
+				System.out.println("ExpModel::setList "+list.get(i).getLastName());
+		exp=list;
 	}
 
 	public void replace(int editRow, Experimenter ex) 

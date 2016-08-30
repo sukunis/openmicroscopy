@@ -1,5 +1,10 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterListModel;
+
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
 
@@ -7,7 +12,11 @@ public class ExperimentContainer {
 
 	Experiment experiment;
 	Experimenter projectPartner;
+	String projectName;
+	String group;
 	Experimenter experimenter;
+//	ExperimenterListModel experimenterListModel;
+	List<Experimenter> expList;
 	
 	public ExperimentContainer()
 	{
@@ -82,6 +91,13 @@ public class ExperimentContainer {
 	public void setExperimenter(Experimenter experimenter) {
 		this.experimenter = experimenter;
 	}
+	
+	public void addExperimenter(Experimenter user) {
+		if(expList==null)
+			expList=new ArrayList<Experimenter>();
+		
+		expList.add(user);
+	}
 
 	public boolean testExperiment(Experiment e) 
 	{
@@ -99,19 +115,87 @@ public class ExperimentContainer {
 		return true;
 	}
 
-	public boolean testExperimenter(Experimenter exp) 
-	{ 
-		if(experimenter==null && exp==null){
-			experimenter=new Experimenter();
-			return true;
-		}
-		if(experimenter==null){
-			experimenter=exp;
-			return false;
-		}else if(!experimenter.getID().equals(exp.getID())){
-			experimenter=exp;
-			return false;
-		}
-		return true;
+//	public boolean testExperimenter(Experimenter exp) 
+//	{ 
+//		if(experimenter==null && exp==null){
+//			experimenter=new Experimenter();
+//			return true;
+//		}
+//		if(experimenter==null){
+//			experimenter=exp;
+//			return false;
+//		}else if(!experimenter.getID().equals(exp.getID())){
+//			experimenter=exp;
+//			return false;
+//		}
+//		return true;
+//	}
+
+	public List<Experimenter> getExperimenterList() 
+	{
+		return expList;
 	}
+	
+//	public ExperimenterListModel getExperimenterListCopy() {
+//		if(experimenterList==null)
+//			return null;
+//		
+//		ExperimenterListModel list = new ExperimenterListModel();
+//		for(int i=0;i<experimenterList.size(); i++ )
+//			list.addElement(experimenterList.get(i));
+//		return list;
+//	}
+
+	/**
+	 * Copy input list
+	 * @param list
+	 */
+	public void setExperimenterList(List<Experimenter> list) {
+		if(list==null)
+			return;
+		
+		
+//		if(list==null)
+//			experimenterListModel=null;
+//		
+		expList.clear();
+		for(int i=0; i<list.size();i++){
+			expList.add(list.get(i));
+			
+		}
+		
+		for(int i=0; i<expList.size();i++){
+			System.out.println("ExpCont::setExpList(): "+expList.get(i).getLastName());
+			
+		}
+				
+	}
+
+	public void setGroupName(String group) {
+		this.group=group;		
+	}
+
+	public void setProjectName(String project) {
+		this.projectName=project;		
+	}
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public String getGroupName() {
+		return group;
+	}
+
+	public void addExperimenterList(List<Experimenter> expList) 
+	{
+		for(int i=0; i<expList.size();i++){
+			if(!expList.contains(expList.get(i))){
+				System.out.println("ExpCont::addExp "+expList.get(i).getLastName());
+				expList.add(expList.get(i));
+			}
+		}
+	}
+
+	
 }

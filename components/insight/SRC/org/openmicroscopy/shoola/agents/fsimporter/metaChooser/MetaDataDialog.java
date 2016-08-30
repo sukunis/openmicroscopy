@@ -175,8 +175,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private static final int 	MAX_CHAR = 200000;
     
     /** lastSelection types*/
-    private static final int DIR=0;
-    private static final int FILE=1;
+    public static final int DIR=0;
+    public static final int FILE=1;
     
     /** type of last selection in tree */
     private int lastSelectionType;
@@ -704,60 +704,61 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private void loadAndShowDataForSelection(FNode node)
     {
     	String file=null;
-        if(node==null || (file=getSelectedFilePath(node))==null)
-            return;
-        
-        LOGGER.info("[TREE] -- Node: "+node.toString()+" ##############################################");
+    	if(node==null || (file=getSelectedFilePath(node))==null)
+    		return;
 
-        JComponent panel=null;
-        
-        //import user data
-        ImportUserData importData = getImportData();
-        
-        //get parent dir model data
-        MetaDataModel parentModel=getParentMetaDataModel(node);
-        
-        if(parentModel!=null)
-            viewDirDataButton.setSelected(true);
-        else{
-            viewFileDataButton.setSelected(true);
-        }
-        
-        MetaDataView view=null;
-       
-        	// is selection a file or directory
-        	if(file.equals("")){
-        		view = loadAndShowDataForDirectory(node, file, importData,
-        				parentModel, view);
-        	}else{
-        		try{
-        			view = loadAndShowDataForFile(file, importData, parentModel, view);
-        		}catch(Exception e){
-        			LOGGER.error("[DATA] CAN'T read METADATA");
-        			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-        					"Can't read given metadata of "+file,e);
-        			ld.setVisible(true);
-        			fileTree.setSelectionPath(fileTree.getSelectionPath().getParentPath());
-        			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        			return;
-        		}
-        	}
-        panel=view;
-    
-        
-        metaPanel.removeAll();
-        if(panel!=null){
-            metaPanel.add(panel,BorderLayout.CENTER);
-            DefaultListModel list=view.getSeries();
-            if(list!=null){
-                seriesList.setModel(list);
-                seriesList.setSelectedIndex(0);
-            }else{
-                seriesList.setModel(new DefaultListModel());
-            }
-        }
-        revalidate();
-        repaint();
+    	LOGGER.info("[TREE] -- Node: "+node.toString()+" ##############################################");
+    	System.out.println("[TREE] -- Node: "+node.toString()+" ##############################################");
+
+    	JComponent panel=null;
+
+    	//import user data
+    	ImportUserData importData = getImportData();
+
+    	//get parent dir model data
+    	MetaDataModel parentModel=getParentMetaDataModel(node);
+
+    	if(parentModel!=null)
+    		viewDirDataButton.setSelected(true);
+    	else{
+    		viewFileDataButton.setSelected(true);
+    	}
+
+    	MetaDataView view=null;
+
+    	// is selection a file or directory
+    	if(file.equals("")){
+    		view = loadAndShowDataForDirectory(node, file, importData,
+    				parentModel, view);
+    	}else{
+    		try{
+    			view = loadAndShowDataForFile(file, importData, parentModel, view);
+    		}catch(Exception e){
+    			LOGGER.error("[DATA] CAN'T read METADATA");
+    			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+    					"Can't read given metadata of "+file,e);
+    			ld.setVisible(true);
+    			fileTree.setSelectionPath(fileTree.getSelectionPath().getParentPath());
+    			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    			return;
+    		}
+    	}
+    	panel=view;
+
+
+    	metaPanel.removeAll();
+    	if(panel!=null){
+    		metaPanel.add(panel,BorderLayout.CENTER);
+    		DefaultListModel list=view.getSeries();
+    		if(list!=null){
+    			seriesList.setModel(list);
+    			seriesList.setSelectedIndex(0);
+    		}else{
+    			seriesList.setModel(new DefaultListModel());
+    		}
+    	}
+    	revalidate();
+    	repaint();
     }
 
 
@@ -776,8 +777,6 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 		
 		String hasParentModel=parentModel==null ? "null" : "available";
 		System.out.println("load and show data for file: parentModel="+hasParentModel);
-		if(parentModel !=null) System.out.println("FROM PARENT : ProjectPartner= "+
-				parentModel.getExperiment().getProjectPartnerName());
 		
 		    view = new MetaDataView(customSettings, file, importData, parentModel,this);
 		    view.setVisible();
@@ -824,6 +823,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	 */
 	public void deselectNodeAction(FNode node) {
 		if(node!=null){
+			System.out.println("DESELECT NODE ACTION------------------");
 			node.setView(getMetaDataView(metaPanel));
         	saveInputToModel(node);
         	lastNode=node;
@@ -856,15 +856,15 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
         MetaDataModel parentModel=parentNode.getModelOfSeries(0);
         if(parentNode!=null && parentModel!=null){
             LOGGER.info("[DEBUG] -- READ MODEL OF "+parentNode.getAbsolutePath());
-            try {
-                parentModel.noticUserInput();
+//            try {
+                boolean parentDataChange=parentModel.noticUserInput();
                 
-            } catch (Exception e) {
-                LOGGER.error("can't read model of "+parentNode.getAbsolutePath());
-                ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-                        "Can't read model of "+parentNode.getAbsolutePath(),e);
-                ld.setVisible(true);
-            }
+//            } catch (Exception e) {
+//                LOGGER.error("can't read model of "+parentNode.getAbsolutePath());
+//                ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+//                        "Can't read model of "+parentNode.getAbsolutePath(),e);
+//                ld.setVisible(true);
+//            }
         }
         //set current dir data
         MetaDataModel dirModel=getCurrentSelectionMetaDataModel(parentNode);
@@ -994,12 +994,14 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     {
         if(node!=null){
             FNode parent=(FNode) node.getParent();
+           
             if(parent!=null){
             	if(parent.hasModelObject()){
             		// parent is a directory with only one metadatamodel
             		System.out.println("Parent Model : "+parent.getAbsolutePath());
             		return parent.getModelOfSeries(0);
             	}else{
+            		 System.out.println("Parent Model : "+parent.getAbsolutePath()+" has no model");
             		return getParentMetaDataModel(parent);
             	}
             }
@@ -1387,7 +1389,8 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 	 * Save recursive all childs.
 	 * @param parentNode
 	 */
-    public void saveAllChilds(FNode parentNode) {
+    public void saveAllChilds(FNode parentNode) 
+    {
     	updateModel(parentNode);
     	Enumeration children =parentNode.children();
     	while(children.hasMoreElements()){
@@ -1477,6 +1480,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private void selectNodeAction(FNode selectedNode) 
    {
 	   if(selectedNode!=null ){
+		   System.out.println("SELECT NODE ACTION------------------");
            if(selectedNode.isLeaf()){
                saveDataButton.setEnabled(true);
                saveAllDataButton.setEnabled(false);

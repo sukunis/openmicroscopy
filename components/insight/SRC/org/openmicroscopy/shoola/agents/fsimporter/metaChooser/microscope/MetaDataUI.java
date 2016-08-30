@@ -59,6 +59,7 @@ import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.XMLAnnotation;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ImportUserData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataControl;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
@@ -400,7 +401,7 @@ public class MetaDataUI extends JPanel
 	{
 		ExperimentCompUI eUI=model.getExpModul();
 		if(eUI!=null && e!=null){
-			eUI.addData(e, overwrite);
+			eUI.addData(e, overwrite,MetaDataDialog.DIR);
 			
 			eUI.setFieldsExtern(true);
 		}
@@ -423,11 +424,10 @@ public class MetaDataUI extends JPanel
 	
 	/** read data from given metadata container 
 	 * @param imageIndex TODO*/
-	public void readData(OME o, int imageIndex)
+	public void readData(OME o, int imageIndex) throws Exception
 	{
 		if(o !=null)
 		{		
-			try{
 				ome=o;
 
 				//TODO eigentlich imageList!!!!
@@ -492,13 +492,7 @@ public class MetaDataUI extends JPanel
 					LOGGER.warn("[DATA] NO IMAGE object available");
 					
 				}
-
-			}catch(Exception e){
-				LOGGER.error("[DATA] CAN'T read METADATA");
-				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-						"Can't read given metadata  from "+file.getAbsolutePath(),e);
-				ld.setVisible(true);
-			}
+			
 		}else{
 			LOGGER.warn("[DATA] NOT available METADATA ");
 			model.setImageOMEData(null);
@@ -507,11 +501,10 @@ public class MetaDataUI extends JPanel
 	
 	
 
-	private void readPlaneData(List<Plane> planes) 
+	private void readPlaneData(List<Plane> planes) throws Exception
 	{
 		if(initPlanesUI && planes!=null && !planes.isEmpty())
 		{
-			try{
 				for(int i=0; i<planes.size(); i++){
 					PlaneCompUI pUI;
 					if(i<model.getNumberOfPlanes()){
@@ -524,12 +517,7 @@ public class MetaDataUI extends JPanel
 					
 				}
 				LOGGER.info("[DATA] -- load PLANE ("+planes.size()+")");
-			}catch(Exception e){
-				LOGGER.error("[DATA] -- PLANE data load failed");
-				ExceptionDialog ld = new ExceptionDialog("Plane Data Error!", 
-						"Can't read plane data from file "+file.getAbsolutePath(),e);
-				ld.setVisible(true);
-			}
+			
 		}
 	}
 
@@ -561,20 +549,20 @@ public class MetaDataUI extends JPanel
 				pP=eUI.parseProjectPartner(map); 
 			}
 			
-			if(e!=null){
-				eUI.addData(new ExperimentContainer(e,exper,pP), false);
-			}
-//			if(exper!=null){
-//				eUI.addData(exper, false);
+			ExperimentContainer expCont=new ExperimentContainer(e,exper,pP);
+//			if(e!=null){
+//				eUI.addData(new ExperimentContainer(e,exper,pP), false);
 //			}
 			
 			//if there are more than one experimenter?
 			if(ome.sizeOfExperimenterList()>1){
 				List<Experimenter> eList=ome.copyExperimenterList();
 				for(Experimenter anotherExp : eList){
-					eUI.setName(anotherExp, ElementsCompUI.REQUIRED);
+					expCont.addExperimenter(anotherExp);
 				}
 			}
+			
+			eUI.addData(expCont, false,MetaDataDialog.FILE);
 			
 			
 		}
@@ -959,13 +947,24 @@ public class MetaDataUI extends JPanel
 			LOGGER.info("[DATA] -- add IMPORT USER data");
 			importUserData=data;
 			ExperimentCompUI e=model.getExpModul();
-			if(e!=null){
-//				e.setName(importUserData.getUser(), ElementsCompUI.OPTIONAL);
-				e.setName(importUserData.getUser(), ElementsCompUI.OPTIONAL);
-				e.setGroupName(importUserData.getGroup(), ElementsCompUI.OPTIONAL);
-				e.setProjectName(importUserData.getProject(), ElementsCompUI.OPTIONAL);
-				e.setFieldsExtern(true);
+			try {
+				System.out.println("MetaDataUI::readData()...");
+				ExperimentContainer expCont=e.getData();
+				if(e!=null){
+					
+					expCont.addExperimenter(importUserData.getUser());
+					expCont.setGroupName(importUserData.getGroup());
+					expCont.setProjectName(importUserData.getProject());
+//					e.setName(importUserData.getUser(), ElementsCompUI.OPTIONAL);
+//					e.setGroupName(importUserData.getGroup(), ElementsCompUI.OPTIONAL);
+//					e.setProjectName(importUserData.getProject(), ElementsCompUI.OPTIONAL);
+					e.setExtendedData(expCont);
+				}
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
+			
 		}
 	}
 	

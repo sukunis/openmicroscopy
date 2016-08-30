@@ -777,27 +777,27 @@ public class OMEStore
 
 
 
-	private int getIDFromLSID(String str)
-	{
-		int index=-1;
-		if(str ==null || str.equals(""))return index;
-		String delims = "[:]";
-		try {
-		String[] tokens = str.split(delims);
-		
-			if(tokens.length > 0){
-				index=Integer.parseInt(tokens[tokens.length-1]);
-			}else{
-				index=Integer.parseInt(str);
-			}
-		} catch (NumberFormatException e) {
-			LOGGER.error("[SAVE] -- Wrong Format: "+str);
-			ExceptionDialog ld = new ExceptionDialog("ID Format Error!", 
-					"Wrong id format : "+str,e);
-			ld.setVisible(true);
-		}
-		return index;
-	}
+//	private int getIDFromLSID(String str)
+//	{
+//		int index=-1;
+//		if(str ==null || str.equals(""))return index;
+//		String delims = "[:]";
+//		try {
+//		String[] tokens = str.split(delims);
+//		
+//			if(tokens.length > 0){
+//				index=Integer.parseInt(tokens[tokens.length-1]);
+//			}else{
+//				index=Integer.parseInt(str);
+//			}
+//		} catch (NumberFormatException e) {
+//			LOGGER.error("[SAVE] -- Wrong Format: "+str);
+//			ExceptionDialog ld = new ExceptionDialog("ID Format Error!", 
+//					"Wrong id format : "+str,e);
+//			ld.setVisible(true);
+//		}
+//		return index;
+//	}
 
 
 

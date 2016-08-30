@@ -372,6 +372,7 @@ public class MetaDataModel
 			return null;
 		else{
 			// save project partner
+			System.out.println("MetaDataModel::getExperiment()...");
 			return ((ExperimentCompUI) experimentUI).getData();
 		}
 	}
@@ -1230,7 +1231,7 @@ public class MetaDataModel
 				getChannel(i);
 			for(int i=0; i<getNumberOfLightPath();i++)
 				getLightPath(i);
-			//TODO: getPlaneData();
+			// TODO : getPlaneData();
 			getSample();
 			
 

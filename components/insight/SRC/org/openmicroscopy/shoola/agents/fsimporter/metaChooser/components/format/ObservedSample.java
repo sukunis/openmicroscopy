@@ -140,9 +140,9 @@ public class ObservedSample
 			}
 		}
 		}catch(Exception e){
-			ExceptionDialog ld = new ExceptionDialog("Parse Error Observed Sample!", 
-					"Can not parse given observed sample from ome file",e);
-			ld.setVisible(true);
+//			ExceptionDialog ld = new ExceptionDialog("Parse Error Observed Sample!", 
+//					"Can not parse given observed sample from ome file",e);
+//			ld.setVisible(true);
 			LOGGER.error("Can not parse OBSERVED SAMPLE");
 		}
 	}

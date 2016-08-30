@@ -539,6 +539,7 @@ public class SampleCompUI extends ElementsCompUI
 		setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
 	}
 	
+	//TODO val as object uebergeben!
 	private void setTag(String name,String val,boolean prop,Unit unit)
 	{
 		switch (name) {

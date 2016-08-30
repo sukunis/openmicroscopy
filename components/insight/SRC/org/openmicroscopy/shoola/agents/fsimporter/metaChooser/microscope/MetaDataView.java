@@ -31,6 +31,7 @@ import ome.xml.meta.IMetadata;
 import ome.xml.model.OME;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ImportUserData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
@@ -120,7 +121,14 @@ public class MetaDataView extends JPanel
 			loadParentData(parentData, singleView);
 
 			//load data from file
-			loadFileData(fName, ome, 0, singleView);
+			try{
+				loadFileData(fName, ome, 0, singleView);
+			}catch(Exception e){
+				LOGGER.error("[DATA] CAN'T read METADATA of "+fName);
+				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+						"Can't read given metadata  from "+fName,e);
+				ld.setVisible(true);
+			}
 			add(singleView,BorderLayout.CENTER);
 			
 		}else{
@@ -170,9 +178,10 @@ public class MetaDataView extends JPanel
 	 * @param o OME of the given file
 	 * @param j series index
 	 * @param metaUI gui for filedata
+	 * @throws Exception 
 	 */
 	private void loadFileData(String fName, OME o, int j,
-			MetaDataUI metaUI) 
+			MetaDataUI metaUI) throws Exception 
 	{
 		metaUI.linkToFile(new File(fName));
 		metaUI.readData(o, j);
@@ -313,15 +322,13 @@ public class MetaDataView extends JPanel
 				for(Component comp:cardPane.getComponents()){
 					list.add(((MetaDataUI) comp).getModel());
 				}
-				LOGGER.info("[SAVE] -- save model for series data");
-				LOGGER.info("[SAVE] -- save to "+srcFile.getAbsolutePath());
+				LOGGER.info("[SAVE] -- save series data to "+srcFile.getAbsolutePath());
 				SaveMetadata saver=new SaveMetadata(ome, getModelObject(), null, srcFile);
 				saver.save();
 				
 			}else{
 				if(singleView!=null){
-					LOGGER.info("[SAVE] -- save model for single data");
-					LOGGER.info("[SAVE] -- save to "+srcFile.getAbsolutePath());
+					LOGGER.info("[SAVE] -- save single data to "+srcFile.getAbsolutePath());
 					SaveMetadata saver=new SaveMetadata(ome, singleView.getModel(), null, srcFile);
 
 					saver.save();

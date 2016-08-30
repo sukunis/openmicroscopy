@@ -28,23 +28,27 @@ public class ExperimenterBox extends Box implements KeyListener
 {
 	private JList list;
 	private JTextField txtField;
+	private boolean userInput;
 	
 	private int editRow;
 
 	public ExperimenterBox(int axis) {
 		super(axis);
+		userInput=false;
 	}
 	
-	public ExperimenterBox(ExperimenterListModel m)
+	public ExperimenterBox(List<Experimenter> m)
 	{
 		super(BoxLayout.Y_AXIS);
 		editRow=-1;
-		
+		userInput=false;
 		txtField = new JTextField();
 		txtField.addKeyListener(this);
 		txtField.setToolTipText("<FirstName LastName> \n Please type enter after input!");
 		
-		list=new JList(m);
+		ExperimenterListModel model=new ExperimenterListModel();
+		model.setList(m);
+		list=new JList(model);
 		list.setVisibleRowCount(4);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.addMouseListener(new MouseAdapter() {
@@ -60,6 +64,7 @@ public class ExperimenterBox extends Box implements KeyListener
 					JList list = (JList)e.getSource();
 		            int row = list.locationToIndex(e.getPoint());
 					editElement(row);
+					userInput=true;
 				}
 			}
 		});
@@ -83,6 +88,16 @@ public class ExperimenterBox extends Box implements KeyListener
 		ExperimenterListModel m =(ExperimenterListModel) list.getModel();
 			m.addElement(e);
 			list.setModel(m);
+			System.out.println("ExpBox::addExpElem");
+	}
+	
+	public void addExperimenterList(List<Experimenter> newList)
+	{
+		if(newList==null)
+			return;
+		
+		System.out.println("ExpBox::addExpList...");
+		((ExperimenterListModel)list.getModel()).setList(newList);
 	}
 	
 	public List<Experimenter> getExperimenterList()
@@ -99,10 +114,12 @@ public class ExperimenterBox extends Box implements KeyListener
 	@Override
 	public void keyReleased(KeyEvent e) {
 		int key=e.getKeyCode();
+		userInput=true;
 	    if(e.getSource()==txtField)
 	    {
 	        if(key==KeyEvent.VK_ENTER)
 	        { 
+	        	
 	        	boolean append=true;
 	        	String item = txtField.getText().toLowerCase();
 	        	
@@ -160,6 +177,9 @@ public class ExperimenterBox extends Box implements KeyListener
 		list.setBackground(c);
 	}
 
+	public boolean valueChanged(){
+		return userInput;
+	}
 	
 	
 	

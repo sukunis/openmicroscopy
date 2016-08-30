@@ -182,11 +182,8 @@ public class TagData
 	 * @param prop
 	 * @param type
 	 */
-	public TagData(String name, ExperimenterListModel model, boolean prop, int type)
+	public TagData(String name, List<Experimenter> expList, boolean prop, int type)
 	{
-		if(model==null)
-			model=new ExperimenterListModel();
-		
 		initListener();
 		this.markedToStore=false;
 		this.type=type;
@@ -195,7 +192,7 @@ public class TagData
 		
 		switch (type) {
 		case LIST:
-			initListField(model);
+			initListField(expList);
 			break;
 		default:
 			initTextField();
@@ -281,9 +278,9 @@ public class TagData
 
 	}
 	
-	private void initListField(ExperimenterListModel model)
+	private void initListField(List<Experimenter> expList)
 	{
-		inputField = new ExperimenterBox(model);
+		inputField = new ExperimenterBox(expList);
 		inputField.addKeyListener(fieldKeyListener);
 	}
 
@@ -481,13 +478,16 @@ public class TagData
 	
 	public List<Experimenter> getListValues()
 	{
-		List<Experimenter> list=null;
 		if(type == LIST){
-			list=((ExperimenterBox) inputField).getExperimenterList();
-			if(list.size()==0)
-				list=null;
+			
+			List<Experimenter> list = ((ExperimenterBox) inputField).getExperimenterList();
+			for(int i=0; i<list.size(); i++)
+				System.out.println("GUI read::Experimenter: "+list.get(i).getLastName());
+			
+			return list;
 		}
-		return list;
+		
+		return null;
 	}
 
 	
@@ -533,6 +533,18 @@ public class TagData
 		}
 		if(type==LIST){
 			((ExperimenterBox) inputField).addElement(val);
+		}
+	}
+	
+	public void setTagValue(List<Experimenter> val)
+	{
+		if(val==null || val.isEmpty()){
+			inputField.setBackground(noInfo);
+		}else{
+			inputField.setBackground(fillInfo);
+		}
+		if(type==LIST){
+			((ExperimenterBox) inputField).addExperimenterList(val);
 		}
 	}
 	
@@ -816,6 +828,9 @@ public class TagData
 
 	public boolean valueChanged()
 	{
+		if(type==LIST)
+			return ((ExperimenterBox)inputField).valueChanged();
+		
 		return valChanged;
 	}
 	

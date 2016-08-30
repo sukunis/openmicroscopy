@@ -11,6 +11,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterListModel;
 import org.slf4j.LoggerFactory;
 
 import loci.formats.meta.IMetadata;
@@ -341,8 +342,9 @@ public class SaveMetadata
 			i.linkExperimenter(e.getExperimenter());
 			
 			//if there are more than one experimenter?
-			ExperimentCompUI eUI = m.getExpModul();
-			List<Experimenter> eList=eUI.getExperimenterList();
+//			ExperimentCompUI eUI = m.getExpModul();
+			List<Experimenter> eList=e.getExperimenterList();//eUI.getExperimenterList();
+			
 			for(int index=1; index<eList.size();index++){
 				omeStore.storeExperimenter(eList.get(index));
 			}
