@@ -663,15 +663,19 @@ public class TagData
 			// parse to yyyy-MM-ddT00:00:00
 			String date = DateTools.formatDate(creationDate, DATE_FORMATS_TAGS);
 			
+			
 			if(creationDate!= null && !creationDate.equals("") && !creationDate.equals(datePattern) && date ==null){
-				String formats="";
-				for(String s: DATE_FORMATS_TAGS){
-					formats=formats+s+"\n";
+				date = parseDate(creationDate);
+				if(date==null){
+					String formats="";
+					for(String s: DATE_FORMATS_TAGS){
+						formats=formats+s+"\n";
+					}
+					LOGGER.warn("unknown creation date format: {}", creationDate);
+					WarningDialog ld = new WarningDialog("Unknown Timestamp Format!", 
+							"Can't parse given timestamp ["+label.getText()+"] ! Please use one of the following date formats:\n"+formats);
+					ld.setVisible(true);
 				}
-				LOGGER.warn("unknown creation date format: {}", creationDate);
-				WarningDialog ld = new WarningDialog("Unknown Timestamp Format!", 
-						"Can't parse given timestamp ["+label.getText()+"] ! Please use one of the following date formats:\n"+formats);
-				ld.setVisible(true);
 			}
 			
 			val=date;//DateTools.formatDate(((JTextField)inputField).getText(), DateTools.TIMESTAMP_FORMAT);
@@ -684,6 +688,30 @@ public class TagData
 		return val;
 	}
 	
+
+	private String parseDate(String val) 
+	{
+		String dateformat= DateTools.ISO8601_FORMAT_MS;
+		String s=DateTools.formatDate(val,dateformat);
+		if(s==null){
+			dateformat=DateTools.ISO8601_FORMAT;
+			s=DateTools.formatDate(val, dateformat);
+			
+		}
+		DateTimeFormatter formatter=DateTimeFormatter.ofPattern(dateformat);
+		DateFormat df=new SimpleDateFormat(dateformat);
+		
+		Date d=null;
+		try {
+			d=df.parse(s);
+			SimpleDateFormat f=new SimpleDateFormat(DateTools.TIMESTAMP_FORMAT);
+			return f.format(d);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			LOGGER.error("Parse error date for format "+dateformat);
+			return null;
+		}
+	}
 
 	private void setValTimestamp(String val) 
 	{

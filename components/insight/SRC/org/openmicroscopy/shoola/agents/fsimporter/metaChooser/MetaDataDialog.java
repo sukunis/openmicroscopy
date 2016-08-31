@@ -520,8 +520,6 @@ private List<String> unreadableFileList;
         metaPanel=new JPanel(new BorderLayout());
         metaPanel.add(view,BorderLayout.CENTER);
         
-//		File root=new File(System.getProperty("user.home"));
-//		FNode rootNode=new FNode(root);
         FNode rootNode=new FNode("ImportQueue");
         //Create a tree that allows one selection at a time
         fileTree = new JTree(rootNode);
@@ -711,8 +709,7 @@ private List<String> unreadableFileList;
     	if(node==null || (file=getSelectedFilePath(node))==null)
     		return;
 
-    	LOGGER.info("[TREE] -- Node: "+node.toString()+" ##############################################");
-    	System.out.println("[TREE] -- Node: "+node.toString()+" ##############################################");
+    	LOGGER.debug("[TREE] -- Node: "+node.toString()+" ##############################################");
 
     	JComponent panel=null;
 
@@ -780,7 +777,7 @@ private List<String> unreadableFileList;
 		lastSelectionType=FILE;
 		
 		String hasParentModel=parentModel==null ? "null" : "available";
-		System.out.println("load and show data for file: parentModel="+hasParentModel);
+		LOGGER.debug("load and show data for file: parentModel="+hasParentModel);
 		
 		    view = new MetaDataView(customSettings, file, importData, parentModel,this);
 		    view.setVisible();
@@ -806,7 +803,7 @@ private List<String> unreadableFileList;
 		
 		String hasParentModel=parentModel==null ? "null" : "available";
 		String hasCurrentModel=currentDirModel==null ? "null" : "available";
-		System.out.println("load and show data for directory: parentModel="+hasParentModel
+		LOGGER.debug("load and show data for directory: parentModel="+hasParentModel
 				+", current model = "+hasCurrentModel);
 		try {
 		    view = new MetaDataView(customSettings, file, importData, parentModel, currentDirModel);
@@ -827,7 +824,7 @@ private List<String> unreadableFileList;
 	 */
 	public void deselectNodeAction(FNode node) {
 		if(node!=null){
-			System.out.println("DESELECT NODE ACTION------------------");
+			LOGGER.debug("Deselect node action for "+node.getAbsolutePath());
 			node.setView(getMetaDataView(metaPanel));
         	saveInputToModel(node);
         	lastNode=node;
@@ -884,8 +881,7 @@ private List<String> unreadableFileList;
     {
     	if(node!=null){
     		if(node.getView()!=null && node.getView().getModelObject().hasToUpdate()){
-    			LOGGER.info("[DEBUG] -- SAVE MODEL FOR: "+node.getAbsolutePath());
-        		System.out.println("[DEBUG] -- SAVE MODEL FOR: "+node.getAbsolutePath());
+    			LOGGER.debug("[SAVE] -- SAVE MODEL FOR: "+node.getAbsolutePath());
     			node.setModelObject(((MetaDataView) node.getView()).getModelObject());
     			updateChildDirectories(node);
     		}
@@ -921,7 +917,7 @@ private List<String> unreadableFileList;
 		for(int i=0; i<numChilds;i++){
 			FNode child = (FNode) node.getChildAt(i);
 			if(!child.isLeaf() && child.hasModelObject()){
-				System.out.println("Update "+child.getAbsolutePath());
+				LOGGER.debug("Update "+child.getAbsolutePath());
 				child.getModelObject().update(node.getModelObject());
 				updateChildDirectories(child);
 			}
@@ -935,15 +931,14 @@ private List<String> unreadableFileList;
 
 	private void updateModel(FNode node)
     {
-    	LOGGER.info("[DEBUG] -- SAVE MODEL FOR: "+node.getAbsolutePath());
-		System.out.println("[DEBUG] -- SAVE MODEL FOR: "+node.getAbsolutePath());
+    	
 		if(node.getView()!=null){
-			System.out.println("Save model of GUI data");
+			LOGGER.debug("[Save] -- save gui model for: "+node.getAbsolutePath());
 			node.setModelObject(((MetaDataView) node.getView()).getModelObject());
 		}else{
 			// save model of parent
-			System.out.println("No gui - save model of parent");
 			FNode parent=(FNode) node.getParent();
+			LOGGER.debug("[Save] -- No gui -save model of parent node: "+parent.getAbsolutePath());
 			node.setModelObject(parent.getModelObject());
 		}
     }
@@ -978,10 +973,8 @@ private List<String> unreadableFileList;
             if(parent!=null){
             	if(parent.hasModelObject()){
             		// parent is a directory with only one metadatamodel
-            		System.out.println("Parent Model : "+parent.getAbsolutePath());
             		return parent.getModelOfSeries(0);
             	}else{
-            		 System.out.println("Parent Model : "+parent.getAbsolutePath()+" has no model");
             		return getParentMetaDataModel(parent);
             	}
             }
@@ -1432,8 +1425,7 @@ private List<String> unreadableFileList;
     
     private void saveMetadataForNode(String srcFile,MetaDataView view)
     {
-        LOGGER.info("[DEBUG] -- save node "+srcFile);
-        System.out.println("Save node "+srcFile);
+        LOGGER.debug("[SAVE] -- save node "+srcFile);
         try {
 			view.save();
 		} catch (Exception e) {
@@ -1455,10 +1447,8 @@ private List<String> unreadableFileList;
         // maximum 2 paths in the list -> last and current
         for (int i = 0; i < paths.length; i++) {
           if (e.isAddedPath(i)) {
-            System.out.println("\nThis node has been selected "+paths[i].getLastPathComponent().toString());
             selectedNode=(FNode)paths[i].getLastPathComponent();
           } else {
-            System.out.println("This node has been deselected "+paths[i].getLastPathComponent().toString());
             lastSelectedNode = (FNode)paths[i].getLastPathComponent();
           }
         }
@@ -1474,7 +1464,7 @@ private List<String> unreadableFileList;
     private void selectNodeAction(FNode selectedNode) 
    {
 	   if(selectedNode!=null ){
-		   System.out.println("SELECT NODE ACTION------------------");
+		   LOGGER.debug("Select node action for "+selectedNode.getAbsolutePath());
            if(selectedNode.isLeaf()){
                saveDataButton.setEnabled(true);
                saveAllDataButton.setEnabled(false);
