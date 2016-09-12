@@ -324,7 +324,7 @@ public class MetaDataUI extends JPanel
 			iUI.setFieldsExtern(true);
 		}
 	}
-	private void addSampleData(Sample s, boolean overwrite) 
+	public void addSampleData(Sample s, boolean overwrite) 
 	{
 		SampleCompUI sUI=model.getSampleModul();
 		if(sUI!=null && s!=null){
@@ -397,7 +397,7 @@ public class MetaDataUI extends JPanel
 		}
 	}
 	
-	private void addExperimentData(ExperimentContainer e,boolean overwrite)
+	public void addExperimentData(ExperimentContainer e,boolean overwrite)
 	{
 		ExperimentCompUI eUI=model.getExpModul();
 		if(eUI!=null && e!=null){
@@ -947,20 +947,21 @@ public class MetaDataUI extends JPanel
 			LOGGER.info("[DATA] -- add IMPORT USER data");
 			importUserData=data;
 			ExperimentCompUI e=model.getExpModul();
-			try {
-				ExperimentContainer expCont=e.getData();
-				if(e!=null){
-					
-					expCont.setExperimenter(importUserData.getUser());
-					expCont.setGroupName(importUserData.getGroup());
-					expCont.setProjectName(importUserData.getProject());
-					e.setExtendedData(expCont);
+			if(e!=null){
+				try {
+					ExperimentContainer expCont=e.getData();
+					if(e!=null){
+
+						expCont.setExperimenter(importUserData.getUser());
+						expCont.setGroupName(importUserData.getGroup());
+						expCont.setProjectName(importUserData.getProject());
+						e.setExtendedData(expCont);
+					}
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
 			}
-			
 		}
 	}
 	

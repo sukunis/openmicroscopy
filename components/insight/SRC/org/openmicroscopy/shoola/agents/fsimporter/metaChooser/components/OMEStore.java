@@ -190,7 +190,6 @@ public class OMEStore
 		LOGGER.info("[SAVE] -- save Experiment data to mapAnnotation");
 		CellNanOsAnnotation cAnnot=getCellNanOsAnnotation();
 		MapAnnotation mapAnnot=cAnnot.map;
-
 		addMapPair(cAnnot.valueList, ExperimentCompUI.EXPERIMENT_DESC_MAPLABEL,e.getDescription());
 		addMapPair(cAnnot.valueList,ExperimentCompUI.EXPERIMENT_TYPE_MAPLABEL,e.getType().getValue());
 		mapAnnot.setValue(new MapPairs(cAnnot.valueList));

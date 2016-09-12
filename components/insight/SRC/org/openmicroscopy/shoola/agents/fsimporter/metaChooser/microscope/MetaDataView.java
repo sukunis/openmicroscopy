@@ -36,6 +36,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,8 @@ public class MetaDataView extends JPanel
     private DefaultListModel seriesListModel;
     private JPanel cardPane;
     private CardLayout seriesCard; 
+    private List<String> cardNames;
+    private int currentCardIndex;
     
     private boolean seriesData;
     
@@ -136,11 +139,11 @@ public class MetaDataView extends JPanel
 			
 		}else{
 			seriesData=true;
+			currentCardIndex=-1;
 			
 			seriesListModel=new DefaultListModel();
 			seriesCard = new CardLayout();
 			cardPane=new JPanel(seriesCard);
-			
 			for(int j=0; j< reader.getSeriesCount(); j++){
 				LOGGER.info("[SERIE] ------------ read SERIE "+j+" of "+reader.getSeriesCount()+
 						": "+data.getImageName(j)+"---------------------" );
@@ -159,6 +162,8 @@ public class MetaDataView extends JPanel
 
 				// add series to cardPane
 				seriesListModel.addElement(data.getImageName(j));
+				
+				
 				cardPane.add(metaUI,data.getImageName(j));
 			}
 			add(cardPane,BorderLayout.CENTER);
@@ -322,10 +327,12 @@ public class MetaDataView extends JPanel
 			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
 			//file
 			if(seriesData){
+				updateGlobalSeriesData();
 				for(Component comp:cardPane.getComponents()){
 					list.add(((MetaDataUI) comp).getModel());
 				}
 				LOGGER.info("[SAVE] -- save series data to "+srcFile.getAbsolutePath());
+				System.out.println("Save series data");
 				SaveMetadata saver=new SaveMetadata(ome, getModelObject(), null, srcFile);
 				saver.save();
 				
@@ -380,12 +387,63 @@ public class MetaDataView extends JPanel
 	}
 	
 	/**
-	 * Shows card pane of given name on the top.
+	 * Shows card pane of given name on the top. Holds Sample and ExperimentCompUI
+	 * as global informnations.
 	 * @param name
 	 */
 	public void showSeries(String name)
 	{
 		seriesCard.show(cardPane,name);
+		currentCardIndex = seriesListModel.indexOf(name);
+	}
+	
+	/**
+	 * Update global data for all series, if data has changed in current selection. 
+	 * Global data are sample, experiment data.
+	 */
+	public void updateGlobalSeriesData() 
+	{
+		try {
+			if(currentCardIndex==-1)
+				currentCardIndex=getCurrentCardIndex();
+			if(currentCardIndex!=-1){
+				MetaDataModel currentModel=((MetaDataUI) cardPane.getComponent(currentCardIndex)).getModel();
+				if(currentModel.getExpModul().userInput() || currentModel.getSampleModul().userInput()){
+					//					MetaDataUI newModel=((MetaDataUI) cardPane.getComponent(seriesListModel.indexOf(name)));
+					for(Component comp:cardPane.getComponents()){
+						if(currentModel.getExpModul().userInput()){
+							((MetaDataUI) comp).addExperimentData(currentModel.getExperiment(),true);
+						}
+						if(currentModel.getSampleModul().userInput()){
+							((MetaDataUI) comp).addSampleData(currentModel.getSample(),true);
+						}
+					}
+				}
+				
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+
+	public int getCurrentCardIndex()
+	{
+		int index = -1;
+
+		int i=0;
+	    for (Component comp : cardPane.getComponents() ) {
+	        if (comp.isVisible() == true) {
+	            try {
+					index=i;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        }
+	        i++;
+	    }
+	    return index;
 	}
 
 	public boolean isLoaded() {

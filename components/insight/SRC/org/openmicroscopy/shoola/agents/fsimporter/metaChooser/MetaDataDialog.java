@@ -832,6 +832,10 @@ private List<String> unreadableFileList;
 		
 	}
     
+	/**
+	 * @param panel
+	 * @return active view component from metapanel
+	 */
     private MetaDataView getMetaDataView(JPanel panel)
     {
     	 if(panel.getComponentCount()>0){
@@ -1245,6 +1249,8 @@ private List<String> unreadableFileList;
 					e.printStackTrace();
 				}
             }
+            revalidate();
+            repaint();
             break;
         case CMD_SAVEALL:
             LOGGER.info("[GUI-ACTION] -- save all");
@@ -1294,38 +1300,47 @@ private List<String> unreadableFileList;
 //			}
             //file
             String file = getSelectedFilePath((FNode)fileTree.getLastSelectedPathComponent()); 
-            if(!file.equals("")){
-                viewFileDataButton.setSelected(true);
-                MetaDataView view=null;
-                try {
-                    view = new MetaDataView(customSettings, file, null, null,this);
-                    
-                    view.setVisible();
-                } catch (Exception e) {
-//					catch (DependencyException | ServiceException e) {
-                    LOGGER.error("[DATA] CAN'T read METADATA");
-                    ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-                            "Can't read given metadata of "+file,e);
-                    ld.setVisible(true);
-                }
-                
-                metaPanel.removeAll();
-                if(view!=null){
-                    metaPanel.add(view,BorderLayout.CENTER);
-                    viewFileDataButton.setSelected(true);	
-                    DefaultListModel list=view.getSeries();
-                    if(list!=null){
-                        seriesList.setModel(list);
-                        seriesList.setSelectedIndex(0);
-                    }else{
-                        seriesList.setModel(new DefaultListModel());
-                    }
-                }
-                
-                revalidate();
-                repaint();
+            MetaDataView view=null;
+            if(lastSelectionType==DIR){
+            	metaPanel.removeAll();
+            	MetaDataModel meta=null;
+            	view= new MetaDataView(customSettings, file, null, null, meta);
+    		    view.setVisible();
+            	if(view!=null){
+            		metaPanel.add(view,BorderLayout.CENTER);
+            	}
+            }else{
+            	if(!file.equals("")){
+            		viewFileDataButton.setSelected(true);
+            		view=null;
+            		try {
+            			view = new MetaDataView(customSettings, file, null, null,this);
+
+            			view.setVisible();
+            		} catch (Exception e) {
+            			//					catch (DependencyException | ServiceException e) {
+            			LOGGER.error("[DATA] CAN'T read METADATA");
+            			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+            					"Can't read given metadata of "+file,e);
+            			ld.setVisible(true);
+            		}
+
+            		metaPanel.removeAll();
+            		if(view!=null){
+            			metaPanel.add(view,BorderLayout.CENTER);
+            			viewFileDataButton.setSelected(true);	
+            			DefaultListModel list=view.getSeries();
+            			if(list!=null){
+            				seriesList.setModel(list);
+            				seriesList.setSelectedIndex(0);
+            			}else{
+            				seriesList.setModel(new DefaultListModel());
+            			}
+            		}
+            	}
             }
-            
+        	revalidate();
+    		repaint();
             
             break;
         case CMD_PROFILE:
@@ -1411,7 +1426,7 @@ private List<String> unreadableFileList;
         
         File[] fileList={new File(srcFile),new File(fileName)};
         firePropertyChange(ImportDialog.ADD_AND_REFRESH_FILE_LIST,null, fileList);
-        fileTree.expandPath(path);
+        fileTree.setSelectionPath(path);//TODO: 
         holdData=false;
     }
     
@@ -1503,11 +1518,11 @@ private List<String> unreadableFileList;
     public void valueChanged(ListSelectionEvent e) 
     {
          if (e.getValueIsAdjusting() == false) {
-             
                 if (seriesList.getSelectedIndex() != -1) {
                     if(metaPanel.getComponentCount()>0){
                         Component c=metaPanel.getComponent(0);
                         if(c instanceof MetaDataView){
+                        	((MetaDataView) c).updateGlobalSeriesData();
                             ((MetaDataView) c).showSeries((String)seriesList.getSelectedValue());
                         }
                     }

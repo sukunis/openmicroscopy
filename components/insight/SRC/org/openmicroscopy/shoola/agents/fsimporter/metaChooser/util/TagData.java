@@ -17,7 +17,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javafx.embed.swing.JFXPanel;
@@ -51,6 +53,7 @@ import ome.xml.model.Experimenter;
 import ome.xml.model.primitives.Timestamp;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ScrollablePanel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
@@ -75,14 +78,51 @@ public class TagData
 	    "dd/MM/yyyy HH:mm:ss",
 	    "MM/dd/yyyy hh:mm:ss aa",
 	    "yyyyMMdd HH:mm:ss",
+	    
+	    "yyyy/MM/dd",
 	    "yyyy/MM/dd HH:mm:ss",
+	    
+	    "yyyy-MM-dd HH:mm:ss",
+	    "yyyy-MM-dd HH:mm:ss:SSS",
 	    "yyyy-MM-dd'T'HH:mm:ssZ",
 	    "yyyy-MM-dd",
-	    "dd-MM-yyyy",
+	    
 	    "dd.MM.yyyy",
-	    "yyyy-MM-dd hh:mm:ss",
-	    "yyyy-MM-dd HH:mm:ss:SSS"
+	    "dd.MM.yyyy HH:mm:ss",
+	    "dd.MM.yyyy HH:mm:ss:SSS",
+	    
+	    "dd-MM-yyyy HH:mm:ss",
+	    "dd-MM-yyyy"
+	   
 	  };
+	
+	private static final Map<String, String> DATE_FORMAT_REGEXPS = new HashMap<String, String>() {{
+	    put("^\\d{8}$", "yyyyMMdd");
+	    put("^\\d{1,2}-\\d{1,2}-\\d{4}$", "dd-MM-yyyy");
+	    put("^\\d{1,2}.\\d{1,2}.\\d{4}$", "dd.MM.yyyy");
+	    put("^\\d{4}-\\d{1,2}-\\d{1,2}$", "yyyy-MM-dd");
+	    put("^\\d{1,2}/\\d{1,2}/\\d{4}$", "MM/dd/yyyy");
+	    put("^\\d{4}/\\d{1,2}/\\d{1,2}$", "yyyy/MM/dd");
+	    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}$", "dd MMM yyyy");
+	    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}$", "dd MMMM yyyy");
+	    put("^\\d{12}$", "yyyyMMddHHmm");
+	    put("^\\d{8}\\s\\d{4}$", "yyyyMMdd HHmm");
+	    put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}$", "dd-MM-yyyy HH:mm");
+	    put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy-MM-dd HH:mm");
+	    put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}$", "MM/dd/yyyy HH:mm");
+	    put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy/MM/dd HH:mm");
+	    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMM yyyy HH:mm");
+	    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMMM yyyy HH:mm");
+	    put("^\\d{14}$", "yyyyMMddHHmmss");
+	    put("^\\d{8}\\s\\d{6}$", "yyyyMMdd HHmmss");
+	    put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd-MM-yyyy HH:mm:ss");
+	    put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy-MM-dd HH:mm:ss");
+	    put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MM/dd/yyyy HH:mm:ss");
+	    put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy/MM/dd HH:mm:ss");
+	    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMM yyyy HH:mm:ss");
+	    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
+	    put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}:\\d{3}$", "yyyy-MM-dd HH:mm:ss:SSS");
+	}};
 	
 	private final String datePattern = DateTools.TIMESTAMP_FORMAT;
 
@@ -649,23 +689,17 @@ public class TagData
 	
 	private String readTimestamp(String val) 
 	{
-//		
-//		 String creationDate = getImageCreationDate();
-//		    String date = DateTools.formatDate(creationDate, DATE_FORMATS, ".");
-//		    if (creationDate != null && date == null) {
-//		      LOGGER.warn("unknown creation date format: {}", creationDate);
-//		    }
-//		    creationDate = date;
-		
-		//TODO: format test
+		String creationDate = ((JTextField)inputField).getText();
 		try{
-			String creationDate = ((JTextField)inputField).getText();
 			// parse to yyyy-MM-ddT00:00:00
 			String date = DateTools.formatDate(creationDate, DATE_FORMATS_TAGS);
 			
-			
+			//parsing successfull?
 			if(creationDate!= null && !creationDate.equals("") && !creationDate.equals(datePattern) && date ==null){
 				date = parseDate(creationDate);
+				
+				
+				// show warn dialog
 				if(date==null){
 					String formats="";
 					for(String s: DATE_FORMATS_TAGS){
@@ -673,14 +707,14 @@ public class TagData
 					}
 					LOGGER.warn("unknown creation date format: {}", creationDate);
 					WarningDialog ld = new WarningDialog("Unknown Timestamp Format!", 
-							"Can't parse given timestamp ["+label.getText()+"] ! Please use one of the following date formats:\n"+formats);
+							"Can't parse given timestamp ["+label.getText()+": "+creationDate+"] ! Please use one of the following date formats:\n"+formats);
 					ld.setVisible(true);
 				}
 			}
 			
 			val=date;//DateTools.formatDate(((JTextField)inputField).getText(), DateTools.TIMESTAMP_FORMAT);
 		}catch(Exception e){
-			LOGGER.error("Wrong string input format timestamp: "+val);
+			LOGGER.error("Wrong string input format timestamp: "+label.getText()+": "+creationDate);
 			ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
 					"Wrong timestamp format at input at "+label.getText(),e);
 			ld.setVisible(true);
@@ -688,8 +722,27 @@ public class TagData
 		return val;
 	}
 	
+	//http://stackoverflow.com/questions/3389348/parse-any-date-in-java
+	/**
+	 * Determine SimpleDateFormat pattern matching with the given date string. Returns null if
+	 * format is unknown. You can simply extend DateUtil with more formats if needed.
+	 * @param dateString The date string to determine the SimpleDateFormat pattern for.
+	 * @return The matching SimpleDateFormat pattern, or null if format is unknown.
+	 * @see SimpleDateFormat
+	 */
+	public static String determineDateFormat(String dateString) {
+	    for (String regexp : DATE_FORMAT_REGEXPS.keySet()) {
+	        if (dateString.toLowerCase().matches(regexp)) {
+	            return DATE_FORMAT_REGEXPS.get(regexp);
+	        }
+	    }
+	    LOGGER.warn("Can't parse date: "+dateString+". Unknown date format!");
+	   System.out.println("Can't parse date: "+dateString+". Unknown date format!");
+	    return null; // Unknown format.
+	}
+	
 
-	private String parseDate(String val) 
+	private String parseDate(String val) throws Exception
 	{
 		String dateformat= DateTools.ISO8601_FORMAT_MS;
 		String s=DateTools.formatDate(val,dateformat);
@@ -702,15 +755,15 @@ public class TagData
 		DateFormat df=new SimpleDateFormat(dateformat);
 		
 		Date d=null;
-		try {
+//		try {
 			d=df.parse(s);
 			SimpleDateFormat f=new SimpleDateFormat(DateTools.TIMESTAMP_FORMAT);
 			return f.format(d);
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			LOGGER.error("Parse error date for format "+dateformat);
-			return null;
-		}
+//		} catch (ParseException | NullPointerException e1) {
+//			// TODO Auto-generated catch block
+//			LOGGER.error("Parse error date for format "+dateformat+"\n"+e1.toString());
+//			return null;
+//		}
 	}
 
 	private void setValTimestamp(String val) 

@@ -476,28 +476,40 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 		private void setConfigurationData(ModuleConfiguration conf,
 				boolean editableTags) 
 		{
+			if(conf==null)
+				return;
+						
 			position.setSelectedItem(conf.getPosition().name());
+			
 			visibleCB.setSelected(conf.isVisible());
 			
 			List<TagConfiguration> tagList=conf.getTagList();
 			List<TagConfiguration> settList=conf.getSettingList();
-			if(tagList!=null){
-				if(editableTags){
+
+			if(editableTags){
+				if(tagList!=null){
 					for(TagConfiguration t:tagList){
 						addEditableTag(t,"");
 					}
+				}
+				if(settList!=null){
 					for(TagConfiguration t:settList){
 						addEditableTag(t,"S");
 					}
-				}else{
+				}
+			}else{
+				if(tagList!=null){
 					for(TagConfiguration t:tagList){
 						((TagTableModel) myTable.getModel()).add(t,"");
 					}
+				}
+				if(settList!=null){
 					for(TagConfiguration t:settList){
 						((TagTableModel) myTable.getModel()).add(t,"S");
 					}
 				}
 			}
+			
 			if(!conf.isVisible()){
 				tableGlassPane.setEnabled(false);
 //				myTable.setEnabled(false);
@@ -615,7 +627,7 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 			UOSProfileWriter writer=new UOSProfileWriter();
 			writer.save(new File(fileName.getText()), prop);
 			
-			LOGGER.info("[PROFILE EDITOR]: Save to "+file.getAbsolutePath()+" and reload MetaDataUI");
+			LOGGER.info("[PROFILE EDITOR]: Reload MetaDataUI");
 			
 			setVisible(false);
 			dispose();
@@ -643,7 +655,6 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 				fileName.setText(file.getAbsolutePath());
 			}
 			
-			LOGGER.info("[PROFILE EDITOR]: Save to "+file.getAbsolutePath());
 		
 		}else if(e.getSource()==cancelBtn){
 			LOGGER.info("[PROFILE EDITOR]: Cancel");
@@ -1081,7 +1092,7 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 			TagConfiguration tag=null;
 			String name=(String) getValueAt(rowIndex,COL_NAME);
 			String value=(String) getValueAt(rowIndex,COL_VALUE);
-			value=value.equals(NOEDITABLE)? "":value;
+			value=(value==null ||value.equals(NOEDITABLE))? "":value;
 			Unit unit=null;
 			String[] pU=null;
 			if(!((String) getValueAt(rowIndex,COL_UNIT)).equals(NOEDITABLE)){

@@ -196,10 +196,16 @@ public class CustomViewProperties
 
 		
 		loadSampleConf(true);
+		loadLightPathConf(true);
 
 		//TODO: plane,
 
 	}
+
+private void loadLightPathConf(boolean b) 
+{
+	lightPathConf= new ModuleConfiguration(b, GUIPlaceholder.Pos_F, "1");
+}
 
 /**
  * 
