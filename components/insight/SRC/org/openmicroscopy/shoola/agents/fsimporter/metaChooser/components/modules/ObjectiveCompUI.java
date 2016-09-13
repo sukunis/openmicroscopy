@@ -247,8 +247,10 @@ public class ObjectiveCompUI extends ElementsCompUI
 	
 	public void addData(ObjectiveSettings os, boolean overwrite)
 	{
-		if(objectiveSettUI!=null)
+		if(objectiveSettUI!=null){
+			
 			objectiveSettUI.addData(os,overwrite);
+		}
 	}
 
 
@@ -493,15 +495,15 @@ public class ObjectiveCompUI extends ElementsCompUI
 //		
 //	}
 	
-	public void createNewElem()
-	{
-		globalPane.removeAll();
-    	globalPane.setLayout(gridbag);
-    	createDummyPane(false);
-    	buildComponents();   
-    	revalidate();
-    	repaint();
-	}
+//	public void createNewElem()
+//	{
+//		globalPane.removeAll();
+//    	globalPane.setLayout(gridbag);
+//    	createDummyPane(false);
+//    	buildComponents();   
+//    	revalidate();
+//    	repaint();
+//	}
 	
 	@Override
 	public void createDummyPane(boolean inactive) 
@@ -533,7 +535,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 //		objective.setID(MetadataTools.createLSID("Objective", linkImageIdx,(list!=null)? list.size() : 0));
 	}
 	
-	public void createDummyPane(List<TagConfiguration> taglist,boolean inactive) 
+	private void createDummyPane(List<TagConfiguration> taglist,boolean inactive) 
 	{
 		if(taglist==null)
 			createDummyPane(inactive);
@@ -567,6 +569,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	
 	public void clearDataValues()
 	{
+		
 		clearTagValue(model);
 		clearTagValue(manufact);
 		clearTagValue(nomMagn);
@@ -576,9 +579,6 @@ public class ObjectiveCompUI extends ElementsCompUI
 		clearTagValue(correction);
 		clearTagValue(workDist);
 		
-		if(objectiveSettUI!=null){
-			objectiveSettUI.clearDataValues();
-		}
 	}
 	
 	

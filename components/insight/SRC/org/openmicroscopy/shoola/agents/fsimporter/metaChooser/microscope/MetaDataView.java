@@ -118,23 +118,24 @@ public class MetaDataView extends JPanel
 		if(reader.getSeriesCount()<2){
 			LOGGER.info("[DATA] -- no series data");
 			seriesData=false;
+			// create with profile and hardware configurations
 			singleView=new MetaDataUI(sett);
 
 			// load importData
-			singleView.readData(importData);
-
-			//load parent data
-			loadParentData(parentData, singleView);
-
-			//load data from file
-			try{
-				loadFileData(fName, ome, 0, singleView);
-			}catch(Exception e){
-				LOGGER.error("[DATA] CAN'T read METADATA of "+fName);
-				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-						"Can't read given metadata  from "+fName,e);
-				ld.setVisible(true);
-			}
+//			singleView.readData(importData);
+//
+//			//load parent data
+//			loadParentData(parentData, singleView);
+//
+//			//load data from file
+//			try{
+//				loadFileData(fName, ome, 0, singleView);
+//			}catch(Exception e){
+//				LOGGER.error("[DATA] CAN'T read METADATA of "+fName);
+//				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+//						"Can't read given metadata  from "+fName,e);
+//				ld.setVisible(true);
+//			}
 			add(singleView,BorderLayout.CENTER);
 			
 		}else{
@@ -313,7 +314,7 @@ public class MetaDataView extends JPanel
 		
 		return obj;
 		}catch(Exception e){
-			LOGGER.error(e.getMessage().toString());
+			e.printStackTrace();
 			return null;
 		}
 	}

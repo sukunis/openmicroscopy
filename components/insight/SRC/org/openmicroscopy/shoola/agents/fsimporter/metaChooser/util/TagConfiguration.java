@@ -68,4 +68,9 @@ public class TagConfiguration
 		this.visible = visible;
 	}
 	
+	public void printf()
+	{
+		System.out.println("TAG "+name+" = "+value+" "+getUnitSymbol());
+	}
+	
 }

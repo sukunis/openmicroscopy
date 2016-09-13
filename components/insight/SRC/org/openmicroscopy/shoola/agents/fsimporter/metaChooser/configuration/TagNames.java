@@ -1,5 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util.PreTagData;
+
 import ome.units.UNITS;
 import ome.units.quantity.Angle;
 import ome.units.quantity.ElectricPotential;

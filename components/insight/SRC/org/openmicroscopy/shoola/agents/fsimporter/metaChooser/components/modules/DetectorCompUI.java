@@ -432,8 +432,8 @@ public class DetectorCompUI extends ElementsCompUI
 		clearTagValue(amplGain);
 		
 		clearTagValue(zoom);
-		if(detectorSettUI!=null) detectorSettUI.clearDataValues();
-		if(availableDetectors!=null) availableDetectors.clear();
+//		if(detectorSettUI!=null) detectorSettUI.clearDataValues();
+//		if(availableDetectors!=null) availableDetectors.clear();
 	}
 	
 	public List<TagData> getActiveTags()

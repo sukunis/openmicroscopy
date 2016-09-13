@@ -46,10 +46,11 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	public ObjectiveSettingsCompUI(ModuleConfiguration objConf)
 	{
 		initGUI();
-		if(objConf==null)
+		if(objConf==null){
 			createDummyPane(false);
-		else
+		}else{
 			createDummyPane(objConf.getSettingList(),false);
+		}
 	}
 	
 
@@ -196,17 +197,18 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	}
 	public ObjectiveSettings getData() throws Exception
 	{
-		if(userInput())
+		if(userInput()){
 			readGUIInput();
+		}
 		return oSett;
 	}
 	
 	
-	public void setTitledBorder(String s)
-	{
-		if(s== null || s.equals(null)) return;
-		tb.setTitle(s);
-	}
+//	public void setTitledBorder(String s)
+//	{
+//		if(s== null || s.equals(null)) return;
+//		tb.setTitle(s);
+//	}
 	public void buildComponents() 
 	{
 		labels.clear();
@@ -245,23 +247,24 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 		}
 	}
 	
-	public void createDummyPane(List<TagConfiguration> list,boolean inactive) 
+	private void createDummyPane(List<TagConfiguration> list,boolean inactive) 
 	{
 		if(list==null)
 			createDummyPane(inactive);
 		else{
-		clearDataValues();
-//		if(oSett==null && list!=null && list.size()>0)
-//			createNewElement();
-		for(int i=0; i<list.size();i++){
-			TagConfiguration t=list.get(i);
-			String name=t.getName();
-			String val=t.getValue();
-			boolean prop=t.getProperty();
-			if(name!=null){
-			setTag(t);
+			clearDataValues();
+			//		if(oSett==null && list!=null && list.size()>0)
+			//			createNewElement();
+			for(int i=0; i<list.size();i++){
+				TagConfiguration t=list.get(i);
+
+				String name=t.getName();
+				String val=t.getValue();
+				boolean prop=t.getProperty();
+				if(name!=null){
+					setTag(t);
+				}
 			}
-		}
 		}
 	}
 
@@ -273,7 +276,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 	}
 	
 	
-	public void setCorCollar(Double value,boolean prop)
+	private void setCorCollar(Double value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(corCollar == null) 
@@ -281,7 +284,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 		else 
 			corCollar.setTagValue(val,prop);
 	}
-	public void setMedium(Medium value,boolean prop)
+	private void setMedium(Medium value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(medium == null) 
@@ -289,7 +292,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 		else 
 			medium.setTagValue(val,prop);
 	}
-	public void setRefractIndex(Double value,boolean prop)
+	private void setRefractIndex(Double value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
 		if(refractIndex == null) 
@@ -333,8 +336,9 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 		case TagNames.CORCOLLAR: 
 			try{
 				if(val!=null){
-				Double value=parseToDouble(val);
-				setCorCollar(value, prop);
+					Double value=parseToDouble(val);
+					setCorCollar(value, prop);
+					
 				}else{
 					setCorCollar(null, prop);
 				}
@@ -375,6 +379,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 			break;
 		default:LOGGER.warn("[CONF] OBJECTIVE SETT unknown tag: "+name );break;
 		}
+		setFields=true;
 	}
 
 	

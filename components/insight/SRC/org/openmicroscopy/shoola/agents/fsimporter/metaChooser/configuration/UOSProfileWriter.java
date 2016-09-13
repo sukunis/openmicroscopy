@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 public class UOSProfileWriter 
 {
 	private static final org.slf4j.Logger LOGGER =
-			LoggerFactory.getLogger(UOSProfileReader.class);
+			LoggerFactory.getLogger(UOSProfileWriter.class);
 	
 	private CustomViewProperties view;
 	
@@ -30,18 +30,19 @@ public class UOSProfileWriter
 	{
 	}
 	
+	/**
+	 * Save to file if available.
+	 * @param file
+	 * @param prop
+	 */
 	public void save(File file, CustomViewProperties prop)
 	{
 		if(file==null || !file.isFile()){
-			System.out.println(file==null?"File null":"File not null");
-
+			System.out.println("Can't access file "+(file==null?"!":file.getAbsolutePath()));
+			LOGGER.warn("[PROFILE EDITOR]: Can't access file "+(file==null?"!":file.getAbsolutePath()));
 			return;
 		}
 
-		if(prop==null){
-			System.out.println(prop==null?"Prop null":"Prop not null");
-			return;
-		}
 
 		LOGGER.info("[PROFILE EDITOR]: Save to "+file.getAbsolutePath());
 		System.out.println(file.getAbsolutePath());

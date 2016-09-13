@@ -12,6 +12,8 @@ import java.io.StringWriter;
 
 
 
+
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -22,6 +24,11 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
  
 /**
  * 
@@ -35,6 +42,9 @@ import javax.swing.border.EmptyBorder;
  */
 public class ExceptionDialog extends JDialog {
  
+	private static final org.slf4j.Logger LOGGER =
+			LoggerFactory.getLogger(ExceptionDialog.class);
+	
 	private int dialogWidth = 600;
 	private int dialogHeight = 200;
  
@@ -61,7 +71,7 @@ public class ExceptionDialog extends JDialog {
 			Throwable e) 
 	{
 		
- 
+		LOGGER.error(errorDescription+" \n"+e);
 		setSize(dialogWidth, dialogHeight);
 		setLocation(100, 100);
 		setModal(true);
