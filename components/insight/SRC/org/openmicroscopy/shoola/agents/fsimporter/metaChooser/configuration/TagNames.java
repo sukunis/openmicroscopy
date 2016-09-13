@@ -146,6 +146,8 @@ public class TagNames
 	public static final String L_TYPE="L_Type";
 	public static final String A_TYPE="A_Type";
 	public static final String F_TYPE="F_Type";
+	public static final String GES_TYPE="GES_Type";
+	public static final String LED_TYPE="LED_Type";
 	
 	public static final String MEDIUM="Medium";
 	public static final String FREQMUL="Frequency Multiplication";
