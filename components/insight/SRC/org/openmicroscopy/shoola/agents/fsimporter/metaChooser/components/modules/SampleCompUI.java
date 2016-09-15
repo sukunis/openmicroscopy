@@ -221,11 +221,7 @@ public class SampleCompUI extends ElementsCompUI
 		initTagList();
 		setFields=false;
 	}
-	@Override
-	public void buildExtendedComponents() 
-	{
-					
-	}
+	
 	@Override
 	public void createDummyPane(boolean inactive) 
 	{

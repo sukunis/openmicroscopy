@@ -177,7 +177,6 @@ public class DetectorCompUI extends ElementsCompUI
 					setFields=true;
 					detector=selected;
 					setGUIData();
-//					buildComponents();   
 					revalidate();
 					repaint();
 				}
@@ -377,15 +376,12 @@ public class DetectorCompUI extends ElementsCompUI
 		setFields=false;
 	}
 
-	//TODO: advanced properties shows by touch a button
-	public void buildExtendedComponents(){
-
-	}
+	
 	
 	
 	public void createDummyPane(boolean inactive)
 	{
-		clearDataValues();
+		clearCompData();
 		
 		setID(null);
 		setModel(null, OPTIONAL);
@@ -409,7 +405,7 @@ public class DetectorCompUI extends ElementsCompUI
 		if(list==null)
 			createDummyPane(inactive);
 		else{
-			clearDataValues();
+			clearCompData();
 			for(int i=0; i<list.size();i++){
 				TagConfiguration t=list.get(i);
 				String name=t.getName();
@@ -426,14 +422,18 @@ public class DetectorCompUI extends ElementsCompUI
 
 	public void clearDataValues()
 	{
+		clearCompData();
+		detectorSettUI.clearDataValues();
+	}
+	
+	private void clearCompData()
+	{
 		clearTagValue(model);
 		clearTagValue(manufact);
 		clearTagValue(type);
 		clearTagValue(amplGain);
 		
 		clearTagValue(zoom);
-//		if(detectorSettUI!=null) detectorSettUI.clearDataValues();
-//		if(availableDetectors!=null) availableDetectors.clear();
 	}
 	
 	public List<TagData> getActiveTags()

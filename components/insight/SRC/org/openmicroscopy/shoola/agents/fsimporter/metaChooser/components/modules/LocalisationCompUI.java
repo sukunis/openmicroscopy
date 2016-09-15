@@ -81,10 +81,7 @@ public class LocalisationCompUI extends ElementsCompUI
 		buildComp=true;
 	}
 
-	public void buildExtendedComponents() 
-	{
-		
-	}
+	
 
 	public void clearDataValues() 
 	{

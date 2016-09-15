@@ -137,7 +137,6 @@ public class MetaDataControl implements PropertyChangeListener
 	
 	public Component activateLightSrcModulView(int i, String name,ModuleConfiguration conf) 
 	{
-		System.out.println("# MetaDataControl::activateLightSrcModulView()");
 		LightSourceCompUI l=null;
 		if(i<model.getNumberOfLightSrc()){
 			l=model.getLightSourceModul(i);

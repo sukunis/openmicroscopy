@@ -30,20 +30,13 @@ import ome.xml.model.primitives.PercentFraction;
 
 public class LightSourceSettingsCompUI extends ElementsCompUI 
 {
-	
 
 	private TagData waveLength;
-	private Unit<Length> waveLengthUnit=UNITS.NM;
 	/**==Absorptionskoefizient a fraction, as a value from 0.0 to 1.0*/
 	private TagData attenuation;
 	//??
 //	private TagData intensity;
 
-	
-	//reference to lightSrc
-	private String lightSrcId;
-	
-	private TitledBorder tb;
 	
 	private LightSourceSettings lightSrc;
 	
@@ -64,36 +57,21 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
+		System.out.println("# LightSrcSettCompUI::userInput()= "+result);
 		return result;
 	}
 
 	
 	public LightSourceSettingsCompUI(ModuleConfiguration objConf)
 	{
-	
+		System.out.println("# LightSrcSettCompUI::new Instance 1");
 		initGUI();
 		if(objConf==null)
 			createDummyPane(false);
 		else
 			createDummyPane(objConf.getSettingList(),false);
 	}
-	
-	public LightSourceSettingsCompUI(LightSourceSettings _ls, String id)
-	{
-		lightSrc=_ls;
-		initGUI();
-		if(lightSrc!=null)
-			setGUIData();
-		else{
-			//TODO
-//			if(id==null){
-//				id=MetadataTools.createLSID("LightSource", 0,0);
-//			}
-			lightSrc=new LightSourceSettings();
-			lightSrc.setID("");
-			createDummyPane(false);
-		}
-	}
+
 	
 	private void initGUI()
 	{
@@ -104,45 +82,12 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 		gridbag = new GridBagLayout();
 		c = new GridBagConstraints();
 		setLayout(gridbag);
-		tb=new TitledBorder("");
-//		setBorder(
-//				BorderFactory.createCompoundBorder(	tb,
-//						BorderFactory.createEmptyBorder(5,5,5,5)));
 	}
 	
-//	public void addData(LightSourceSettings ls,boolean overwrite)
-//	{
-//		if(lightSrc!=null){
-//			if(ls!=null){
-//				Length w=ls.getWavelength();
-//				PercentFraction p=ls.getAttenuation();
-//				if(overwrite){
-//					if(ls.getID()!=null && !ls.getID().equals(""))
-//						lightSrc.setID(ls.getID());
-//					if(w!=null) lightSrc.setWavelength(w);
-//					if(p!=null) lightSrc.setAttenuation(p);
-//					LOGGER.info("[DATA] overwrite LIGHTSRC_SETTINGS data");
-//				}else{
-//					if(lightSrc.getID()==null || lightSrc.getID().equals(""))
-//						lightSrc.setID(ls.getID());
-//					if(lightSrc.getWavelength()==null)
-//						lightSrc.setWavelength(w);
-//					if(lightSrc.getAttenuation()==null)
-//						lightSrc.setAttenuation(p);
-//					LOGGER.info("[DATA] complete LIGHTSRC_SETTINGS data");
-//				}
-//			}
-//			
-//		}else if(ls!=null){
-//			lightSrc=ls;
-//			LOGGER.info("[DATA] add LIGHTSRC_SETTINGS data");
-//		}
-//		
-//		setGUIData();
-//	}
-//	
+
 	public boolean addData(LightSourceSettings l, boolean overwrite)
 	{
+		System.out.println("# LightSrcSettCompUI::addData("+overwrite+")");
 		boolean conflicts=false;
 		if(overwrite){
 			replaceData(l);
@@ -198,6 +143,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	
 	private void readGUIInput() throws Exception
 	{
+		System.out.println("# LightSrcSettCompUI::readGuiInput");
 		if(lightSrc==null){
 			createNewElement();
 		}
@@ -228,19 +174,16 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 
 	public LightSourceSettings getData() throws Exception
 	{
+		System.out.println("# LightSrcSettCompUI::getData()");
 		if(userInput())
 			readGUIInput();
 		return lightSrc;
 	}
 	
-	public void setTitledBorder(String s)
-	{
-		if(s== null || s.equals(null)) return;
-		tb.setTitle(s);
-	}
 	
 	public void buildComponents() 
 	{
+		System.out.println("# LightSrcSettCompUI::buildComp()");
 		labels.clear();
 		comp.clear();
 		
@@ -259,14 +202,11 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 		initTagList();
 	}
 
-	public void buildExtendedComponents() 
-	{
 
-	}
 	
 	@Override
 	public void createDummyPane(boolean inactive) {
-		
+		System.out.println("# LightSrcSettCompUI::createDummyPane(bool)");
 //		setIntensity(null, ElementsCompUI.OPTIONAL);
 		setWavelength(null, ElementsCompUI.OPTIONAL);
 		setAttenuation(null, ElementsCompUI.OPTIONAL);
@@ -280,6 +220,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	
 	public void createDummyPane(List<TagConfiguration> list,boolean inactive) 
 	{
+		System.out.println("# LightSrcSettingsCompUI::createDummyPane(List,boolean)");
 		if(list==null)
 			createDummyPane(inactive);
 		else{
@@ -300,28 +241,18 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 
 	public void clearDataValues() 
 	{
+		System.out.println("# LightSrcSettCompUI::clearDataValues()");
 //		clearTagValue(intensity);
 		clearTagValue(waveLength);
 		clearTagValue(attenuation);
-		lightSrcId=null;
 	}
 	
-	public void setID(String value)
-	{
-		String val= (value != null) ? String.valueOf(value):"";
-		lightSrcId=val;
-	}
-	
-	public String getID()
-	{
-		return lightSrc.getID();
-	}
 	
 
 	public void setWavelength(Length value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		Unit unit=(value!=null) ? value.unit():waveLengthUnit;
+		Unit unit=(value!=null) ? value.unit():TagNames.WAVELENGTH_UNIT;
 		if(waveLength == null) 
 			waveLength = new TagData(TagNames.SET_WAVELENGTH,val,unit,prop,TagData.TEXTFIELD);
 		else 
@@ -348,6 +279,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	 */
 	public void update(List<TagData> list) 
 	{
+		System.out.println("# LightSrcSettCompUI::update()");
 		for(TagData t: list){
 			if(t.valueChanged()){
 				setTag(t);
@@ -362,6 +294,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	
 	private void setTag(TagConfiguration t)
 	{
+		t.printf();
 		setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
 	}
 	
@@ -370,13 +303,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 		switch (name) {
 		case TagNames.SET_WAVELENGTH:
 			try {
-				if(val!=null){
-				Length value = parseToLength(val, unit);
-				setWavelength(value, prop);
-				}else{
-					setWavelength(null, prop);
-				}
-//				lightSrc.setWavelength(value);
+				setWavelength(parseToLength(val, unit), prop);
 			} catch (Exception e) {
 				setWavelength(null, prop);
 			}
@@ -384,13 +311,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 			break;
 		case TagNames.ATTENUATION:
 			try{
-				if(val!=null){
-				PercentFraction value=parseAttenuation(val);
-			setAttenuation(value, prop);
-				}else{
-					setAttenuation(null, prop);
-				}
-//			lightSrc.setAttenuation(value);
+			setAttenuation(parseAttenuation(val), prop);
 			}catch(Exception e){
 				setAttenuation(null, prop);
 			}

@@ -213,10 +213,7 @@ public class FilterCompUI extends LightPathElem
 		setFields=false;
 	}
 
-	public void buildExtendedComponents() 
-	{
-		
-	}
+	
 
 	@Override
 	public void createDummyPane(boolean inactive) 

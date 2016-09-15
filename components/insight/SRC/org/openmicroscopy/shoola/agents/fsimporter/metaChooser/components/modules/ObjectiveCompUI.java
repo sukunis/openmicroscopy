@@ -461,10 +461,6 @@ public class ObjectiveCompUI extends ElementsCompUI
 		setFields=false;
 	}
 	
-	//TODO: advanced properties shows by touch a button
-	public void buildExtendedComponents(){
-		
-	}
 	
 
 //	public void showOptionPane() 
@@ -508,7 +504,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	@Override
 	public void createDummyPane(boolean inactive) 
 	{
-		clearDataValues();
+		clearCompData();
 		
 		setModel(null,OPTIONAL);
 		setManufact(null,OPTIONAL);
@@ -540,7 +536,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 		if(taglist==null)
 			createDummyPane(inactive);
 		else{
-			clearDataValues();
+			clearCompData();
 //			if(objective==null && taglist!=null && taglist.size()>0)
 //				createNewElement();
 			for(int i=0; i<taglist.size();i++){
@@ -569,7 +565,12 @@ public class ObjectiveCompUI extends ElementsCompUI
 	
 	public void clearDataValues()
 	{
-		
+		clearCompData();
+		objectiveSettUI.clearDataValues();
+	}
+	
+	private void clearCompData()
+	{
 		clearTagValue(model);
 		clearTagValue(manufact);
 		clearTagValue(nomMagn);
@@ -578,7 +579,6 @@ public class ObjectiveCompUI extends ElementsCompUI
 		clearTagValue(immersion);
 		clearTagValue(correction);
 		clearTagValue(workDist);
-		
 	}
 	
 	

@@ -884,7 +884,7 @@ private List<String> unreadableFileList;
     private void saveInputToModel(FNode node) 
     {
     	if(node!=null){
-    		if(node.getView()!=null && node.getView().getModelObject().hasToUpdate()){
+    		if(node.getView()!=null && node.getView().getModelObject()!=null &&node.getView().getModelObject().hasToUpdate()){
     			LOGGER.debug("[SAVE] -- SAVE MODEL FOR: "+node.getAbsolutePath());
     			node.setModelObject(((MetaDataView) node.getView()).getModelObject());
     			updateChildDirectories(node);
@@ -1273,72 +1273,60 @@ private List<String> unreadableFileList;
             break;
         case CMD_RESET:
             LOGGER.info("[GUI-ACTION] -- reset");
-            
+            System.out.println("+++++ EVENT RESET ++++++++++++");
             JComponent panel=null;
             //TODO: profile default data eliminate
-//			dataView=new MetaDataUI(customSettings);
-//			String file = getSelectedFile(); 
-//			if(!file.equals("")){
-//				try {
-//					panel=loadFileMetaData(file, dataView);
-//				} catch (FormatException | IOException e) {
-//					LOGGER.severe("[RESET] Can't load metadata from file.");
-//					ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-//							"Can't load metadata of "+file,e);
-//					ld.setVisible(true);
-//				}
-//			}else{
-//				try {
-//					dataView.showData();
-//				} catch (Exception e) {
-//					LOGGER.severe("[RESET] Can't reload view.");
-//					ExceptionDialog ld = new ExceptionDialog("Metadata GUI Error!", 
-//							"Can't show metadata of "+file,e);
-//					ld.setVisible(true);
-//				}
-//				panel=dataView;
-//			}
             //file
-            String file = getSelectedFilePath((FNode)fileTree.getLastSelectedPathComponent()); 
+            String file = getSelectedFilePath((FNode)fileTree.getLastSelectedPathComponent());
+            //clear node model data
+            ((FNode)fileTree.getLastSelectedPathComponent()).setModelObject(null);
             MetaDataView view=null;
-            if(lastSelectionType==DIR){
-            	metaPanel.removeAll();
-            	MetaDataModel meta=null;
-            	view= new MetaDataView(customSettings, file, null, null, meta);
-    		    view.setVisible();
-            	if(view!=null){
-            		metaPanel.add(view,BorderLayout.CENTER);
-            	}
-            }else{
-            	if(!file.equals("")){
-            		viewFileDataButton.setSelected(true);
-            		view=null;
-            		try {
-            			view = new MetaDataView(customSettings, file, null, null,this);
-
-            			view.setVisible();
-            		} catch (Exception e) {
-            			//					catch (DependencyException | ServiceException e) {
-            			LOGGER.error("[DATA] CAN'T read METADATA");
-            			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-            					"Can't read given metadata of "+file,e);
-            			ld.setVisible(true);
-            		}
-
-            		metaPanel.removeAll();
-            		if(view!=null){
-            			metaPanel.add(view,BorderLayout.CENTER);
-            			viewFileDataButton.setSelected(true);	
-            			DefaultListModel list=view.getSeries();
-            			if(list!=null){
-            				seriesList.setModel(list);
-            				seriesList.setSelectedIndex(0);
-            			}else{
-            				seriesList.setModel(new DefaultListModel());
-            			}
-            		}
-            	}
-            }
+//            if(lastSelectionType==DIR){
+            	try {
+					((MetaDataView)metaPanel.getComponent(0)).reset();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+//            	metaPanel.removeAll();
+//            	MetaDataModel meta=null;
+//            	
+//            	//reset all data, load profile data
+//            	view= new MetaDataView(customSettings, file, null, null, meta);
+//    		    view.setVisible();
+//            	if(view!=null){
+//            		metaPanel.add(view,BorderLayout.CENTER);
+//            	}
+//            }else{
+//            	if(!file.equals("")){
+//            		viewFileDataButton.setSelected(true);
+//            		view=null;
+//            		try {
+//            			view = new MetaDataView(customSettings, file, null, null,this);
+//
+//            			view.setVisible();
+//            		} catch (Exception e) {
+//            			//					catch (DependencyException | ServiceException e) {
+//            			LOGGER.error("[DATA] CAN'T read METADATA");
+//            			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+//            					"Can't read given metadata of "+file,e);
+//            			ld.setVisible(true);
+//            		}
+//
+//            		metaPanel.removeAll();
+//            		if(view!=null){
+//            			metaPanel.add(view,BorderLayout.CENTER);
+//            			viewFileDataButton.setSelected(true);	
+//            			DefaultListModel list=view.getSeries();
+//            			if(list!=null){
+//            				seriesList.setModel(list);
+//            				seriesList.setSelectedIndex(0);
+//            			}else{
+//            				seriesList.setModel(new DefaultListModel());
+//            			}
+//            		}
+//            	}
+//            }
         	revalidate();
     		repaint();
             
@@ -1467,7 +1455,7 @@ private List<String> unreadableFileList;
             lastSelectedNode = (FNode)paths[i].getLastPathComponent();
           }
         }
-        
+        System.out.println("+++++ EVENT TREE ++++++");
         deselectNodeAction(lastSelectedNode);
         selectNodeAction(selectedNode);
     }

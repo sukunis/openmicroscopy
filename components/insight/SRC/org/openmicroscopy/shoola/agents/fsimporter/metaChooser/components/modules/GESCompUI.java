@@ -78,7 +78,7 @@ public class GESCompUI extends LightSrcSubCompUI
 			LOGGER.error("[DATA] can't read LIGHTSRC ges model input");
 		}
 		try{
-			((GenericExcitationSource)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
+			((GenericExcitationSource)lightSrc).setPower(LightSourceCompUI.parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC ges power input");
 		}

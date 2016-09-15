@@ -146,11 +146,7 @@ public class DichroicCompUI extends LightPathElem
 		
 	}
 
-	@Override
-	public void buildExtendedComponents() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	public void createDummyPane(boolean inactive)
 	{

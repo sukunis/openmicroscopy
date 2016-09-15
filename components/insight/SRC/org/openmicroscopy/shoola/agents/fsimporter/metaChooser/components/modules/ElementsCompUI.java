@@ -54,8 +54,7 @@ public abstract class ElementsCompUI extends JPanel
 	}
 	
 	public abstract void buildComponents();
-	public abstract void buildExtendedComponents();
-	public abstract void createDummyPane(boolean inactive);
+	protected abstract void createDummyPane(boolean inactive);
 	public abstract void clearDataValues();
 	public abstract List<TagData> getActiveTags();
 	public abstract boolean userInput();
@@ -151,7 +150,7 @@ public abstract class ElementsCompUI extends JPanel
 	}
 	
 	//TODO: equal vertical space between components
-	void addLabelTextRows(List<JLabel> labels,List<JComponent> fields,GridBagLayout gridbag,Container container) {
+	protected void addLabelTextRows(List<JLabel> labels,List<JComponent> fields,GridBagLayout gridbag,Container container) {
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHWEST;
 		c.insets = new Insets( 0, 0, 1, 0);

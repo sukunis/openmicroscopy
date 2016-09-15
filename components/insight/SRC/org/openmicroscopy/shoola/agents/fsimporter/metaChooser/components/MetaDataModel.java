@@ -169,6 +169,30 @@ public class MetaDataModel
 		componentsWithChanges=new ArrayList<ElementsCompUI>();
 	}
 	
+	public void resetData()
+	{
+		experimentUI.clearDataValues();
+		sampleUI.clearDataValues();
+		objectiveUI.clearDataValues();
+		imgEnvUI.clearDataValues();
+//		planeSliderUI.clearDataValues();
+		image.clearDataValues();
+		
+		for(ElementsCompUI comp:lightSrcList){
+			comp.clearDataValues();
+		}
+		for(ElementsCompUI comp:detectorList){
+			comp.clearDataValues();
+		}
+		for(ElementsCompUI comp:channelList){
+			comp.clearDataValues();
+		}
+		for(ElementsCompUI comp:lightPathList){
+			comp.clearDataValues();
+		}
+		
+	}
+	
 	public boolean noticUserInput()
 	{
 		componentsWithChanges.clear();
@@ -225,6 +249,7 @@ public class MetaDataModel
 		}
 		hasUserInput=hasUserInput ||result;
 		 LOGGER.debug("changes in LIGHTSRC: "+result);
+		 System.out.println("LightSrc has change: "+result);
 		 
 		 //Channel
 		 result=false;

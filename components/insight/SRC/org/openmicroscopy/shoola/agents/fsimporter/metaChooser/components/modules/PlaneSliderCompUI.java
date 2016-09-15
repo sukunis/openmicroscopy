@@ -193,11 +193,7 @@ public class PlaneSliderCompUI extends ElementsCompUI
 		
 	}
 
-	@Override
-	public void buildExtendedComponents() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	@Override
 	public void createDummyPane(boolean inactive) {

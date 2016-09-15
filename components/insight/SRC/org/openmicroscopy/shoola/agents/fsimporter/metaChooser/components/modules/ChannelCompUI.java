@@ -486,10 +486,7 @@ public class ChannelCompUI extends ElementsCompUI
 		setFields=false;
 	}
 
-	public void buildExtendedComponents() 
-	{
-		
-	}
+	
 
 	public void createDummyPane(boolean inactive)
 	{

@@ -369,11 +369,11 @@ public class MetaDataUI extends JPanel
 		if(dUI!=null){
 			if(d!=null){
 				dUI.addData(d,overwrite);
-				dUI.setFieldsExtern(true);
 			}
 			if(ds!=null){
 				dUI.addData(ds, overwrite);
 			}
+			dUI.setFieldsExtern(true);
 		}
 	}
 	

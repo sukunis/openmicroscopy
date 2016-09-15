@@ -103,6 +103,7 @@ public class ArcCompUI extends LightSrcSubCompUI
 	
 	protected void addTags()
 	{
+		System.out.println("# ArcCompUI::addTags()");
 		addTagToGUI(model);
 		addTagToGUI(manufact);
 
@@ -117,6 +118,7 @@ public class ArcCompUI extends LightSrcSubCompUI
 	}
 	protected void createDummyPane(boolean inactive) 
 	{
+		System.out.println("# ArcCompUI::createDummyPane(boolean)");
 		setManufact(null, OPTIONAL);
 		setType((LaserType)null, OPTIONAL);
 		setPower(null, OPTIONAL);

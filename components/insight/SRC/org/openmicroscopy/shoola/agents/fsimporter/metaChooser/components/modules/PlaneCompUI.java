@@ -190,11 +190,7 @@ public class PlaneCompUI extends ElementsCompUI
 		initTagList();
 		
 	}
-	@Override
-	public void buildExtendedComponents() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 	@Override
 	public void createDummyPane(boolean inactive) {
 		setZ(null,OPTIONAL);

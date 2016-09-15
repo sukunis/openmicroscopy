@@ -177,7 +177,6 @@ public class ExperimentCompUI extends ElementsCompUI
 //				BorderFactory.createCompoundBorder(	new MyTitledBorder("Objective"),
 						BorderFactory.createEmptyBorder(10,10,10,10));
 		
-		
 	}
 
 	/**
@@ -393,11 +392,7 @@ public class ExperimentCompUI extends ElementsCompUI
 //		revalidate();
 	}
 
-	@Override
-	public void buildExtendedComponents() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	public void clearDataValues() 
 	{

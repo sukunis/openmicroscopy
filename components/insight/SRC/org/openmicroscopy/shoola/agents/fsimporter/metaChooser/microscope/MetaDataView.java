@@ -70,6 +70,8 @@ public class MetaDataView extends JPanel
     
     private boolean readFile;
     
+    private JPanel parent;
+    
     
     /**
      * Constructor for place holder / dummy component
@@ -93,6 +95,7 @@ public class MetaDataView extends JPanel
 	{
 		super(new BorderLayout());
 		this.setBorder(BorderFactory.createEmptyBorder());
+		parent=parentPanel;
 
 		LOGGER.info("### build view and load data for "+ fName+" ###");
 
@@ -122,20 +125,20 @@ public class MetaDataView extends JPanel
 			singleView=new MetaDataUI(sett);
 
 			// load importData
-//			singleView.readData(importData);
-//
-//			//load parent data
-//			loadParentData(parentData, singleView);
-//
-//			//load data from file
-//			try{
-//				loadFileData(fName, ome, 0, singleView);
-//			}catch(Exception e){
-//				LOGGER.error("[DATA] CAN'T read METADATA of "+fName);
-//				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-//						"Can't read given metadata  from "+fName,e);
-//				ld.setVisible(true);
-//			}
+			singleView.readData(importData);
+
+			//load parent data
+			loadParentData(parentData, singleView);
+
+			//load data from file
+			try{
+				loadFileData(fName, ome, 0, singleView);
+			}catch(Exception e){
+				LOGGER.error("[DATA] CAN'T read METADATA of "+fName);
+				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+						"Can't read given metadata  from "+fName,e);
+				ld.setVisible(true);
+			}
 			add(singleView,BorderLayout.CENTER);
 			
 		}else{
@@ -450,4 +453,51 @@ public class MetaDataView extends JPanel
 	public boolean isLoaded() {
 		return readFile;
 	}
+
+	
+	/**
+	 * Clear all data in the view. Set file data for file. Parent should be not null!
+	 */
+	public void reset() throws Exception
+	{
+		if(ome!=null){
+			
+			ImageReader reader = new ImageReader();
+			IMetadata data=null;
+			
+			Cursor cursor=parent.getCursor();
+			parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			readFile=true;
+			data = readMetadataFromFile(srcFile.getAbsolutePath(), reader);
+
+			parent.setCursor(cursor);
+
+			//file
+			if(seriesData){
+				int j=0;
+				for(Component comp:cardPane.getComponents()){
+					((MetaDataUI) comp).getModel().resetData();
+					reader.setSeries(j);
+					//load data from file
+					loadFileData(srcFile.getAbsolutePath(), ome, j, (MetaDataUI) comp);
+					j++;
+				}
+			}else{
+				if(singleView!=null){
+					singleView.getModel().resetData();
+					//set data from file
+					loadFileData(srcFile.getAbsolutePath(), ome, 0, singleView);
+				}
+			}
+
+		}else{
+			//dir
+			if(singleView!=null){
+				LOGGER.info("[SAVE] -- reset directory view");
+				singleView.getModel().resetData();
+			}
+		}	
+		setVisible();
+	}
+	
 }

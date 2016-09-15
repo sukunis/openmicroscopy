@@ -451,11 +451,7 @@ public class ImageCompUI extends ElementsCompUI
 		setFields=false;
 	}
 
-	@Override
-	public void buildExtendedComponents() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 	
 	@Override
 	public void createDummyPane(boolean inactive) 

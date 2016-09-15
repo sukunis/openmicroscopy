@@ -256,11 +256,7 @@ public class LightPathCompUI extends ElementsCompUI
 		repaint();
 	}
 
-	@Override
-	public void buildExtendedComponents() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	@Override
 	public void createDummyPane(boolean inactive) 

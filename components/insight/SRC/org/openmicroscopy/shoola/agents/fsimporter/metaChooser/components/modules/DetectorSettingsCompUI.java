@@ -33,7 +33,6 @@ import omero.model.enums.DetectorTypeUnknown;
 public class DetectorSettingsCompUI extends ElementsCompUI
 {
 	
-	
 	/** variable value, that also can change during the acq.
 	 * See also DetectorSettings*/
 	private TagData gain;
@@ -46,11 +45,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	/**represents the number of pixels that are combined to form larger pixels*/
 	private TagData binning;
 	private TagData subarray;
-	
-	
-	private Unit<ElectricPotential> voltageUnit=UNITS.V;
-	
-	private TitledBorder tb;
 	
 	private DetectorSettings detectorSett; 
 	
@@ -75,32 +69,10 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
+		System.out.println("# DetectorSettCompUI::userInput()= "+result);
 		return result;
 	}
 	
-	public DetectorSettingsCompUI(DetectorSettings _detectorSett, String id)
-	{
-		detectorSett=_detectorSett;
-		
-		 
-		initGUI();
-		
-		if(detectorSett!=null)
-			setGUIData();
-		else{//TODO
-//			if(id==null)
-//				id=MetadataTools.createLSID("Detector", 0,0);
-			detectorSett=new DetectorSettings();
-			detectorSett.setID("");
-			createDummyPane(false);
-		}
-	}
-	
-//	public DetectorSettingsCompUI() 
-//	{
-//		initGUI();
-//		createDummyPane(false);
-//	}
 	
 	public DetectorSettingsCompUI(ModuleConfiguration objConf) 
 	{
@@ -111,53 +83,10 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 			createDummyPane(objConf.getSettingList(),false);
 	}
 
-//	public boolean addData(DetectorSettings ds,boolean overwrite) 
-//	{
-//		boolean conflicts=false;
-//		if(detectorSett!=null){
-//			if(ds!=null){
-//				Double g=ds.getGain();
-//				ElectricPotential v=ds.getVoltage();
-//				Double o=ds.getOffset();
-//				Double z=ds.getZoom();
-//				Binning b=ds.getBinning();
-//				if(overwrite){
-//					if(ds.getID()!=null && !ds.getID().equals(""))
-//						detectorSett.setID(ds.getID());
-//					if(g!=null) detectorSett.setGain(g);
-//					if(v!=null) detectorSett.setVoltage(v);
-//					if(o!=null) detectorSett.setOffset(o);
-//					if(z!=null) detectorSett.setZoom(z);
-//					if(b!=null) detectorSett.setBinning(b);
-//					LOGGER.info("[DATA] overwrite DETECTOR_SETTINGS data");
-//				}else{
-//					if(detectorSett.getID()==null || detectorSett.getID().equals(""))
-//						detectorSett.setID(ds.getID());
-//					if(detectorSett.getGain()==null)
-//						detectorSett.setGain(g);
-//					if(detectorSett.getVoltage()==null)
-//						detectorSett.setVoltage(v);
-//					if(detectorSett.getOffset()==null)
-//						 detectorSett.setOffset(o);
-//					if(detectorSett.getZoom()==null)
-//						detectorSett.setZoom(z);
-//					if(detectorSett.getBinning()==null)
-//						detectorSett.setBinning(b);
-//					LOGGER.info("[DATA] complete DETECTOR_SETTINGS data");
-//				}
-//			}
-//			
-//		}else if(ds!=null){
-//			detectorSett=ds;
-//			LOGGER.info("[DATA] add DETECTOR_SETTINGS data");
-//			
-//		}
-//		setGUIData();
-//		return conflicts;
-//	}
-	
+
 	public boolean addData(DetectorSettings sett, boolean overwrite)
 	{
+		System.out.println("# DetectorSettCompUI::addData("+overwrite+")");
 		boolean conflicts=false;
 		if(overwrite){
 			replaceData(sett);
@@ -238,9 +167,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		gridbag = new GridBagLayout();
 		c = new GridBagConstraints();
 		setLayout(gridbag);
-		tb=new TitledBorder("");
-//		setBorder(BorderFactory.createCompoundBorder(tb,
-//						BorderFactory.createEmptyBorder(5,0,5,0)));
 	}
 	
 	private void readGUIInput() throws Exception
@@ -303,21 +229,16 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 
 	public DetectorSettings getData() throws Exception
 	{
+		System.out.println("# DetectorSettCompUI::getData()");
 		if(userInput())
 			readGUIInput();
 		return detectorSett;
 	}
 	
-
-	public void setTitledBorder(String s)
-	{
-		if(s== null || s.equals(null)) return;
-		tb.setTitle(s);
-	}
-	
 	@Override
 	public void buildComponents() 
 	{
+		System.out.println("# DetectorSettCompUI::buildComp()");
 		labels.clear();
 		comp.clear();
 		addLabelToGUI(new JLabel("Settings:"));
@@ -339,14 +260,10 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 
 	}
 
-	@Override
-	public void buildExtendedComponents() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	public void createDummyPane(boolean inactive)
 	{
+		System.out.println("# DetectorSettCompUI::createDummy(bool)");
 		setGain(null,OPTIONAL);
 		setVoltage(null, OPTIONAL);
 		setOffset(null,OPTIONAL);
@@ -366,6 +283,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	
 	public void createDummyPane(List<TagConfiguration> list,boolean inactive) 
 	{
+		System.out.println("# DetectorSettCompUI::createDummy(List,bool)");
 		if(list==null)
 			createDummyPane(inactive);
 		else{
@@ -387,6 +305,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	@Override
 	public void clearDataValues() 
 	{
+		System.out.println("# DetectorSettCompUI::clearDataValues()");
 		clearTagValue(gain);
 		clearTagValue(voltage);
 		clearTagValue(offset);
@@ -472,6 +391,7 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		 */
 		public void update(List<TagData> list) 
 		{
+			System.out.println("# DetectorSettCompUI::update()");
 			for(TagData t: list){
 				if(t.valueChanged()){
 					setTag(t);

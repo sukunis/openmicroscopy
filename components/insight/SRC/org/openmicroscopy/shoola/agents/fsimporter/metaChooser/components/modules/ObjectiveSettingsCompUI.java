@@ -229,10 +229,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 		initTagList();
 	}
 
-	public void buildExtendedComponents() 
-	{
-				
-	}
+	
 	
 	public void createDummyPane(boolean inactive)
 	{

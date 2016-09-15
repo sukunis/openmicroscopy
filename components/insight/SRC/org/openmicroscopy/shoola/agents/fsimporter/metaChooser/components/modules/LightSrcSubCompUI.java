@@ -78,7 +78,7 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 	
 	protected void initGUI()
 	{
-		setLayout(new BorderLayout(5,5));
+		setLayout(new BorderLayout(0,0));
 		buildComp=false;
 		labels= new ArrayList<JLabel>();
 		comp = new ArrayList<JComponent>();
@@ -122,7 +122,7 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 	
 	public boolean addData(LightSource lSrc, boolean overwrite)
 	{
-		
+		System.out.println("# LightSrcSubCompUI::addData()");
 		boolean conflicts=false;
 		
 		//TODO
@@ -214,7 +214,6 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 	
 	public void clearDataValues()
 	{
-		System.out.println("# LightSrcSubCompUI::clearData");
 		clearTagValue(manufact);
 		clearTagValue(type);
 		clearTagValue(power);
