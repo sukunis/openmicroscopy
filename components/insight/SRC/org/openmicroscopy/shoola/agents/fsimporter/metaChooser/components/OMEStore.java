@@ -735,7 +735,7 @@ public class OMEStore
 			//TODO create new or corrupted data???
 			LOGGER.error("[SAVE] -- no PIXELS object available");
 			ExceptionDialog ld = new ExceptionDialog("OME Format Error!", 
-					"No pixel element available to save channel.");
+					"No pixel element available to save channel.",this.getClass().getSimpleName());
 			ld.setVisible(true);
 		}else{
 			int idx = getChannelIndexByID(pixels.copyChannelList(),c.getID());

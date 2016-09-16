@@ -16,7 +16,6 @@ public class FilamentCompUI extends LightSrcSubCompUI
 {
 
 	public FilamentCompUI(ModuleConfiguration objConf) {
-		System.out.println("# FilamentCompUI::new Instance 1");
 		lightSrc=null;
 		initGUI();
 		if(objConf==null)
@@ -66,7 +65,6 @@ public class FilamentCompUI extends LightSrcSubCompUI
 	}
 	protected void readGUIInput() throws Exception 
 	{
-		System.out.println("# FilamentCompUI::setGUIData()");
 		if(lightSrc==null)
 			createNewElement();
 		try{
@@ -107,7 +105,6 @@ public class FilamentCompUI extends LightSrcSubCompUI
 	
 	protected void addTags()
 	{
-		System.out.println("# FilamentCompUI::addTags()");
 		addTagToGUI(model);
 		addTagToGUI(manufact);
 		
@@ -116,13 +113,11 @@ public class FilamentCompUI extends LightSrcSubCompUI
 			addTagToGUI(power); 
 	
 	}
-	protected void createNewElement() 
-	{System.out.println("# FilamentCompUI::createNewElement()");
+	protected void createNewElement() {
 		lightSrc=new Filament();
 	}
 	protected void createDummyPane(boolean inactive) 
 	{
-		System.out.println("# FilamentCompUI::createDummyPane(boolean)");
 		setManufact(null, OPTIONAL);
 		setType((LaserType)null, OPTIONAL);
 		setPower(null, OPTIONAL);

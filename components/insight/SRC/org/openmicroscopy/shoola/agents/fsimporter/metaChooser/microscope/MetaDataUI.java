@@ -1312,7 +1312,8 @@ public class MetaDataUI extends JPanel
 		default:
 			LOGGER.error("[GUI] Unknown position for element");
 			ExceptionDialog ld = new ExceptionDialog("Property File Error!", 
-					"Use unknown position ["+place+"] in given property file.");
+					"Use unknown position ["+place+"] in given property file.",
+					this.getClass().getSimpleName());
 			ld.setVisible(true);
 			break;
 		}

@@ -16,7 +16,6 @@ public class ArcCompUI extends LightSrcSubCompUI
 {
 
 	public ArcCompUI(ModuleConfiguration objConf) {
-		System.out.println("# ArcCompUI::new Instance 1");
 		lightSrc=null;
 		initGUI();
 		if(objConf==null)
@@ -103,7 +102,6 @@ public class ArcCompUI extends LightSrcSubCompUI
 	
 	protected void addTags()
 	{
-		System.out.println("# ArcCompUI::addTags()");
 		addTagToGUI(model);
 		addTagToGUI(manufact);
 
@@ -118,7 +116,6 @@ public class ArcCompUI extends LightSrcSubCompUI
 	}
 	protected void createDummyPane(boolean inactive) 
 	{
-		System.out.println("# ArcCompUI::createDummyPane(boolean)");
 		setManufact(null, OPTIONAL);
 		setType((LaserType)null, OPTIONAL);
 		setPower(null, OPTIONAL);

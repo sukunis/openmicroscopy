@@ -136,7 +136,7 @@ public class MetaDataView extends JPanel
 			}catch(Exception e){
 				LOGGER.error("[DATA] CAN'T read METADATA of "+fName);
 				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-						"Can't read given metadata  from "+fName,e);
+						"Can't read given metadata  from "+fName,e,this.getClass().getSimpleName());
 				ld.setVisible(true);
 			}
 			add(singleView,BorderLayout.CENTER);
@@ -371,7 +371,8 @@ public class MetaDataView extends JPanel
 				} catch (Exception e) {
 					LOGGER.error("[DATA] CAN'T load METADATA gui");
 					ExceptionDialog ld = new ExceptionDialog("Metadata GUI Error!", 
-							"Can't load metadata gui for series "+i,e);
+							"Can't load metadata gui for series "+i,e,
+							this.getClass().getSimpleName());
 					ld.setVisible(true);
 				}
 				i++;
@@ -382,7 +383,8 @@ public class MetaDataView extends JPanel
 			} catch (Exception e) {
 				LOGGER.error("[DATA] CAN'T load METADATA gui");
 				ExceptionDialog ld = new ExceptionDialog("Metadata GUI Error!", 
-						"Can't load metadata gui",e);
+						"Can't load metadata gui",e,
+						this.getClass().getSimpleName());
 				ld.setVisible(true);
 			}
 		}

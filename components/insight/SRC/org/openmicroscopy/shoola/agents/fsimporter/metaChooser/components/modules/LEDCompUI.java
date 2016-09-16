@@ -13,7 +13,6 @@ public class LEDCompUI extends LightSrcSubCompUI
 {
 
 	public LEDCompUI(ModuleConfiguration objConf) {
-		System.out.println("# LEDCompUI::new Instance 1");
 		lightSrc=null;
 		initGUI();
 		if(objConf==null)

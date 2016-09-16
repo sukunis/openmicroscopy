@@ -285,7 +285,8 @@ public class ProfileConfPanel extends JPanel
 		
 		if(stillExists){
         	WarningDialog ld = new WarningDialog("Please check selected Position!", 
-					"Position is used by another component");
+					"Position is used by another component",
+					this.getClass().getSimpleName());
 			ld.setVisible(true);
         }else{
         	selectedPos[index]=selectedItem;

@@ -69,7 +69,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		System.out.println("# DetectorSettCompUI::userInput()= "+result);
 		return result;
 	}
 	
@@ -86,7 +85,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 
 	public boolean addData(DetectorSettings sett, boolean overwrite)
 	{
-		System.out.println("# DetectorSettCompUI::addData("+overwrite+")");
 		boolean conflicts=false;
 		if(overwrite){
 			replaceData(sett);
@@ -229,7 +227,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 
 	public DetectorSettings getData() throws Exception
 	{
-		System.out.println("# DetectorSettCompUI::getData()");
 		if(userInput())
 			readGUIInput();
 		return detectorSett;
@@ -238,7 +235,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	@Override
 	public void buildComponents() 
 	{
-		System.out.println("# DetectorSettCompUI::buildComp()");
 		labels.clear();
 		comp.clear();
 		addLabelToGUI(new JLabel("Settings:"));
@@ -263,7 +259,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	
 	public void createDummyPane(boolean inactive)
 	{
-		System.out.println("# DetectorSettCompUI::createDummy(bool)");
 		setGain(null,OPTIONAL);
 		setVoltage(null, OPTIONAL);
 		setOffset(null,OPTIONAL);
@@ -283,7 +278,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	
 	public void createDummyPane(List<TagConfiguration> list,boolean inactive) 
 	{
-		System.out.println("# DetectorSettCompUI::createDummy(List,bool)");
 		if(list==null)
 			createDummyPane(inactive);
 		else{
@@ -305,7 +299,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 	@Override
 	public void clearDataValues() 
 	{
-		System.out.println("# DetectorSettCompUI::clearDataValues()");
 		clearTagValue(gain);
 		clearTagValue(voltage);
 		clearTagValue(offset);
@@ -391,7 +384,6 @@ public class DetectorSettingsCompUI extends ElementsCompUI
 		 */
 		public void update(List<TagData> list) 
 		{
-			System.out.println("# DetectorSettCompUI::update()");
 			for(TagData t: list){
 				if(t.valueChanged()){
 					setTag(t);

@@ -540,7 +540,7 @@ public class TagData
 				val=((JTextField) comp).getText();
 			}else{
 				ExceptionDialog ld = new ExceptionDialog("Tag Data Parse Error!", 
-						"Can't parse tag value of "+label.getText());
+						"Can't parse tag value of "+label.getText(),this.getClass().getSimpleName());
 				ld.setVisible(true);
 				LOGGER.error("can't get value at "+index+" ");
 			}
@@ -707,7 +707,8 @@ public class TagData
 					}
 					LOGGER.warn("unknown creation date format: {}", creationDate);
 					WarningDialog ld = new WarningDialog("Unknown Timestamp Format!", 
-							"Can't parse given timestamp ["+label.getText()+": "+creationDate+"] ! Please use one of the following date formats:\n"+formats);
+							"Can't parse given timestamp ["+label.getText()+": "+creationDate+"] ! Please use one of the following date formats:\n"+formats,
+							this.getClass().getSimpleName());
 					ld.setVisible(true);
 				}
 			}
@@ -716,7 +717,8 @@ public class TagData
 		}catch(Exception e){
 			LOGGER.error("Wrong string input format timestamp: "+label.getText()+": "+creationDate);
 			ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
-					"Wrong timestamp format at input at "+label.getText(),e);
+					"Wrong timestamp format at input at "+label.getText(),e,
+					this.getClass().getSimpleName());
 			ld.setVisible(true);
 		}
 		return val;
@@ -791,7 +793,8 @@ public class TagData
 				// TODO Auto-generated catch block
 				LOGGER.error("Parse error date for format "+dateformat);
 				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
-						"Wrong timestamp format at input at "+label.getText(),e1);
+						"Wrong timestamp format at input at "+label.getText(),e1,
+						this.getClass().getSimpleName());
 				ld.setVisible(true);
 			}
 			
@@ -802,7 +805,8 @@ public class TagData
 			} catch (Exception e) {
 				LOGGER.error("Parse error for timestamp");
 				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
-						"Wrong timestamp format at input at "+label.getText(),e);
+						"Wrong timestamp format at input at "+label.getText(),e,
+						this.getClass().getSimpleName());
 				ld.setVisible(true);
 			}
 			

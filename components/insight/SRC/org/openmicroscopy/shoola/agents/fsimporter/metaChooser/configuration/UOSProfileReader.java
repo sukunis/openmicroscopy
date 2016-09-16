@@ -94,7 +94,8 @@ public class UOSProfileReader
 		} catch (/*ParserConfigurationException | SAXException | IOException*/Exception  e) {
 			LOGGER.error("[VIEW_PROP] Can't read property file");
 			ExceptionDialog ld = new ExceptionDialog("Property File Error!", 
-					"Can't read given property file "+file.getAbsolutePath(),e);
+					"Can't read given property file "+file.getAbsolutePath(),e,
+					this.getClass().getSimpleName());
 			ld.setVisible(true);
 			view=null;
 		} 

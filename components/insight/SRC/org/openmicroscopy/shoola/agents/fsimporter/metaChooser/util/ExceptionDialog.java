@@ -68,10 +68,10 @@ public class ExceptionDialog extends JDialog {
 	
 	
 	public ExceptionDialog(String errorLabelText, String errorDescription,
-			Throwable e) 
+			Throwable e,String clazz) 
 	{
 		
-		LOGGER.error(errorDescription+" \n"+e);
+		LOGGER.error("["+clazz+"] "+errorDescription+" \n"+e);
 		setSize(dialogWidth, dialogHeight);
 		setLocation(100, 100);
 		setModal(true);
@@ -100,12 +100,12 @@ public class ExceptionDialog extends JDialog {
  
 	public ExceptionDialog(String errorLabelText, Throwable e) 
 	{
-		this(errorLabelText, null, e);
+		this(errorLabelText, null, e,"");
 	}
  
-	public ExceptionDialog(String label, String errorStr) 
+	public ExceptionDialog(String label, String errorStr,String clazz) 
 	{
-		this(label,errorStr,null);
+		this(label,errorStr,null,clazz);
 	}
 
 	public void setupUI() {

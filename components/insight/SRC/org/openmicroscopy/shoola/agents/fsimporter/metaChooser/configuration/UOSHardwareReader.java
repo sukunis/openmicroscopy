@@ -150,7 +150,8 @@ public class UOSHardwareReader
 		} catch (Exception e) {
 			LOGGER.error("[VIEW_PROP] Can't read hardware file");
 			ExceptionDialog ld = new ExceptionDialog("Hardware File Error!", 
-					"Can't read given hardware file "+file.getAbsolutePath(),e);
+					"Can't read given hardware file "+file.getAbsolutePath(),e,
+					this.getClass().getSimpleName());
 			ld.setVisible(true);
 			hasRead=false;
 		} 
@@ -776,6 +777,7 @@ public class UOSHardwareReader
 				UnitsPower uP=UnitsPower.fromString(unitSymbol);
 				unit=UnitsPowerEnumHandler.getBaseUnit(uP);
 				break;
+			case TagNames.SET_WAVELENGTH:
 			case TagNames.WAVELENGTH:
 				UnitsLength uL=UnitsLength.fromString(unitSymbol);
 				unit = UnitsLengthEnumHandler.getBaseUnit(uL);
@@ -810,6 +812,9 @@ public class UOSHardwareReader
 		case TagNames.WAVELENGTH:
 			units = UnitsLength.values();
 			break;
+		case TagNames.SET_WAVELENGTH:
+			units = UnitsLength.values();
+			break;
 		case TagNames.WORKDIST:
 			units = UnitsLength.values();
 			break;
@@ -833,6 +838,9 @@ public class UOSHardwareReader
 			units=ElementsCompUI.getNames(UnitsPower.class);
 			break;
 		case TagNames.WAVELENGTH:
+			units =ElementsCompUI.getNames(UnitsLength.class);
+			break;
+		case TagNames.SET_WAVELENGTH:
 			units =ElementsCompUI.getNames(UnitsLength.class);
 			break;
 		case TagNames.WORKDIST:

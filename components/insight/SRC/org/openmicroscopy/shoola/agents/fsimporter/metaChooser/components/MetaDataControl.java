@@ -142,9 +142,10 @@ public class MetaDataControl implements PropertyChangeListener
 			l=model.getLightSourceModul(i);
 			
 		}else{
+			System.out.println("# MetaDataControl::activateLightSrcModul() \n"
+					+ "Channel: "+i+" : no lightSrc available, create new");
 			l=new LightSourceCompUI(conf);
 			model.addLightSrcModul(l);
-//			l.showOptionPane();
 		}
 		l.buildComponents();
 		name=name.equals("Channel") ? "":name;

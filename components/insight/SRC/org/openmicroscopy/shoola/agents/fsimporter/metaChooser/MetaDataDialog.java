@@ -737,7 +737,8 @@ private List<String> unreadableFileList;
     		}catch(Exception e){
     			LOGGER.error("[DATA] CAN'T read METADATA");
     			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-    					"Can't read given metadata of "+file,e);
+    					"Can't read given metadata of "+file,e,
+    					this.getClass().getSimpleName());
     			ld.setVisible(true);
     			fileTree.setSelectionPath(fileTree.getSelectionPath().getParentPath());
     			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -812,7 +813,7 @@ private List<String> unreadableFileList;
 //				catch (DependencyException | ServiceException e) {
 		    LOGGER.error("[DATA] CAN'T read METADATA");
 		    ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-		            "Can't read given metadata of "+file,e);
+		            "Can't read given metadata of "+file,e,this.getClass().getSimpleName());
 		    ld.setVisible(true);
 		}
 		return view;
@@ -1267,7 +1268,7 @@ private List<String> unreadableFileList;
             		files=files+"\n"+unreadableFileList.get(i);
             	}
             	WarningDialog ld=new WarningDialog("Not supported file format!", 
-    					"Can't read metadata of following files! Format is not supported.\n "+files);
+    					"Can't read metadata of following files! Format is not supported.\n "+files,this.getClass().getSimpleName());
     			ld.setVisible(true);
             }
             break;

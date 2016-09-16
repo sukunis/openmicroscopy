@@ -327,7 +327,8 @@ public class Sample
 			}catch(Exception e){//this generic but you can control another types of exception
 				LOGGER.error("Wrong date format for SAMPLE preparation date");
 				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
-						"Wrong timestamp format",e);
+						"Wrong timestamp format",e,
+						this.getClass().getSimpleName());
 				ld.setVisible(true);
 				return "";
 			}

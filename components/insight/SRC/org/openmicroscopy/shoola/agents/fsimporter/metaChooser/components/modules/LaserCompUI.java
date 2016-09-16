@@ -21,7 +21,6 @@ public class LaserCompUI extends LightSrcSubCompUI
 
 	public LaserCompUI(ModuleConfiguration objConf) 
 	{
-		System.out.println("# LaserCompUI::new Instance 1");
 		lightSrc=null;
 		initGUI();
 		if(objConf==null)
@@ -75,7 +74,6 @@ public class LaserCompUI extends LightSrcSubCompUI
 	
 	protected void setGUIData()
 	{
-		System.out.println("# LaserCompUI::setGUIData()");
 		try{setManufact(((Laser)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }
 		try{setModel(((Laser)lightSrc).getModel(), ElementsCompUI.REQUIRED);
@@ -217,7 +215,6 @@ public class LaserCompUI extends LightSrcSubCompUI
 	}
 	protected void createDummyPane(boolean inactive) 
 	{
-		System.out.println("# LaserCompUI::createDummyPane(boolean)");
 		setManufact(null, OPTIONAL);
 		setType((LaserType)null, OPTIONAL);
 		setPower(null, OPTIONAL);

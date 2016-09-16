@@ -800,7 +800,7 @@ public class MetaDataModel
 		if(lightSrcList==null ||lightSrcList.isEmpty() || index >=lightSrcList.size() ){
 			return null;
 		}
-		return ((LightSourceCompUI)lightSrcList.get(index)).getSettings().getData(); 
+		return ((LightSourceCompUI)lightSrcList.get(index)).getSettingsData(); 
 	}
 	
 	public LightSourceCompUI getLightSourceModul(int index)
@@ -1330,8 +1330,9 @@ public class MetaDataModel
 			detectorList.get(0).update(tagList);
 		else if(o instanceof ChannelCompUI)
 			channelList.get(0).update(tagList);
-		else if(o instanceof LightSourceCompUI)
+		else if(o instanceof LightSourceCompUI){
 			lightSrcList.get(0).update(tagList);
+		}
 		else if(o instanceof LightPathCompUI)
 			lightPathList.get(0).update(tagList);
 	}

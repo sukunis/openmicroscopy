@@ -20,8 +20,13 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
+import org.slf4j.LoggerFactory;
+
 public class WarningDialog extends JDialog
 {
+	private static final org.slf4j.Logger LOGGER =
+			LoggerFactory.getLogger(WarningDialog.class);
+	
 	private int dialogWidth = 600;
 	private int dialogHeight = 200;
  
@@ -40,8 +45,9 @@ public class WarningDialog extends JDialog
  
 	
 	
-	public WarningDialog(String labelText, String tip) 
+	public WarningDialog(String labelText, String tip,String clazz) 
 	{
+		LOGGER.warn("["+clazz+"] "+labelText+" \n"+tip);
 		setSize(dialogWidth, dialogHeight);
 		setLocation(100, 100);
 		setModal(true);

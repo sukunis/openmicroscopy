@@ -241,7 +241,7 @@ public void loadLightSrcConf(boolean active) {
 	lightSrcConf.setTag(TagNames.REPRATE,null,TagNames.REPRATE_UNIT_HZ.getSymbol(),true);
 	lightSrcConf.setTag(TagNames.PUMP,null,null,true);
 	lightSrcConf.setTag(TagNames.WAVELENGTH,null,TagNames.WAVELENGTH_UNIT.getSymbol(),true);
-	lightSrcConf.setSettingTag(TagNames.SET_WAVELENGTH,null,null,true);
+	lightSrcConf.setSettingTag(TagNames.SET_WAVELENGTH,null,TagNames.WAVELENGTH_UNIT.getSymbol(),true);
 	lightSrcConf.setSettingTag(TagNames.ATTENUATION,null,null,true);
 }
 

@@ -14,7 +14,6 @@ public class GESCompUI extends LightSrcSubCompUI
 {
 
 	public GESCompUI(ModuleConfiguration objConf) {
-		System.out.println("# GESCompUI::new Instance 1");
 		lightSrc=null;
 		initGUI();
 		if(objConf==null)

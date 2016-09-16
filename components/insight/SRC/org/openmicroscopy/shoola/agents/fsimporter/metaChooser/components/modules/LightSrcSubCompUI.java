@@ -122,7 +122,6 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 	
 	public boolean addData(LightSource lSrc, boolean overwrite)
 	{
-		System.out.println("# LightSrcSubCompUI::addData()");
 		boolean conflicts=false;
 		
 		//TODO

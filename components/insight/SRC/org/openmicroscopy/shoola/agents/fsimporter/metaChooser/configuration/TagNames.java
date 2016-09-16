@@ -175,7 +175,7 @@ public class TagNames
 			new PreTagData(L_TYPE,null, ""),new PreTagData(A_TYPE,null, ""),new PreTagData(F_TYPE,null, ""),new PreTagData(MEDIUM,null, ""),
 			new PreTagData(FREQMUL,null, ""),new PreTagData(TUNABLE,null, ""),new PreTagData(PULSE,null, ""),new PreTagData(POCKELCELL,null, ""),
 			new PreTagData(REPRATE,REPRATE_UNIT_HZ, ""),new PreTagData(PUMP,null, ""),new PreTagData(WAVELENGTH,WAVELENGTH_UNIT, ""),new PreTagData(MAP,null, ""),
-			new PreTagData(SET_WAVELENGTH,null, "S"),new PreTagData(ATTENUATION,null, "S")};
+			new PreTagData(SET_WAVELENGTH,WAVELENGTH_UNIT, "S"),new PreTagData(ATTENUATION,null, "S")};
 	
 	//Sample
 	public static final String PREPDATE="Prep Date";

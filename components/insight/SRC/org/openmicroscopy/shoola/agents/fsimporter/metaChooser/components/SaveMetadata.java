@@ -68,7 +68,7 @@ public class SaveMetadata
 			String name= srcImage!=null ? srcImage.getAbsolutePath() : "";
 			LOGGER.error("[SAVE] corrupted save data: ");
 			ExceptionDialog ld = new ExceptionDialog("Invalid Data Error!", 
-					"Corrupted data : "+name,err);
+					"Corrupted data : "+name,err,this.getClass().getSimpleName());
 			ld.setVisible(true);
 		}
 		
@@ -95,7 +95,7 @@ public class SaveMetadata
 			String name= srcImage!=null ? srcImage.getAbsolutePath() : "";
 			LOGGER.error("[SAVE] corrupted save data: ");
 			ExceptionDialog ld = new ExceptionDialog("Invalid Data Error!", 
-					"Corrupted data : "+name,err);
+					"Corrupted data : "+name,err,this.getClass().getSimpleName());
 			ld.setVisible(true);
 		}
 	}
@@ -224,7 +224,8 @@ public class SaveMetadata
 									lSett.getID()+" - "+thisLightSrc.getID());
 							ExceptionDialog ld = new ExceptionDialog("Link LightSource Error!", 
 									"Wrong lightsource reference at channel "+thisChannel.getName()+": "+
-										lSett.getID()+" - "+thisLightSrc.getID());
+										lSett.getID()+" - "+thisLightSrc.getID(),
+										this.getClass().getSimpleName());
 							ld.setVisible(true);
 						}else{
 							omeStore.storeLightSrcSettings(lSett,thisChannel);
@@ -246,7 +247,8 @@ public class SaveMetadata
 									dSett.getID()+" - "+thisDetector.getID());
 							ExceptionDialog ld = new ExceptionDialog("Link Detector Error!", 
 									"Wrong detector reference at channel "+thisChannel.getName()+": "+
-										dSett.getID()+" - "+thisDetector.getID());
+										dSett.getID()+" - "+thisDetector.getID(),
+										this.getClass().getSimpleName());
 							ld.setVisible(true);
 						}else{
 							omeStore.storeDetectorSettings(dSett,thisChannel);
