@@ -47,7 +47,7 @@ public abstract class ElementsCompUI extends JPanel
 	protected JPanel globalPane;
 	
 	protected List<TagData> tagList;
-	protected boolean setFields;
+	protected boolean dataChanged;
 	
 	public ElementsCompUI(){
 		
@@ -202,6 +202,7 @@ public abstract class ElementsCompUI extends JPanel
 					tagList.get(i).changeIsUpdated(b);
 			}
 		}
+		dataChanged=!b;
 	}
 
 	

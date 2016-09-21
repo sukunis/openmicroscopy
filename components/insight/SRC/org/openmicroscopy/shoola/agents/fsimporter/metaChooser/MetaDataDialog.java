@@ -9,25 +9,23 @@ import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -56,14 +54,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
-import loci.formats.FormatException;
-import loci.formats.ImageReader;
-import loci.formats.UnknownFormatException;
-import loci.formats.meta.IMetadata;
-import loci.formats.services.OMEXMLService;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Experimenter;
 import ome.xml.model.Project;
@@ -76,13 +66,11 @@ import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileEditorUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSSpecificationEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
@@ -101,7 +89,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  */
 public class MetaDataDialog extends ClosableTabbedPaneComponent
-    implements ActionListener, PropertyChangeListener, TreeSelectionListener, TreeExpansionListener, ListSelectionListener
+    implements ActionListener, PropertyChangeListener, TreeSelectionListener, TreeExpansionListener, ListSelectionListener, ItemListener
 {
     
      /** Logger for this class. */
@@ -155,6 +143,11 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private JToggleButton viewFileDataButton;
     private JToggleButton viewDirDataButton;
     
+    private JCheckBox showFileData;
+    private JCheckBox showDirData;
+    private JCheckBox showCustomData;
+    private JCheckBox showHardwareData;
+    
     /** Test text area*/
     public JTextArea textArea; 
     
@@ -196,6 +189,13 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private FileFilter fileFilter;
     
 private List<String> unreadableFileList;
+
+private boolean dirDataVisible;
+
+private boolean fileDataVisible;
+
+private boolean customDataVisible;
+private boolean hardwareDataVisible;
 
     private static final String VIEWFILE ="View File Data";
     private static final String VIEWDIR ="View File and Dir Data";
@@ -493,6 +493,11 @@ private List<String> unreadableFileList;
         viewDirDataButton.setActionCommand("" + CMD_VIEWFILE);
         viewDirDataButton.addActionListener(this);
         viewDirDataButton.setEnabled(false);
+        
+        
+        showDirData=new JCheckBox("Dir data");
+        showDirData.addItemListener(this);
+        
        
         
         ButtonGroup bg = new ButtonGroup();
@@ -725,15 +730,24 @@ private List<String> unreadableFileList;
     		viewFileDataButton.setSelected(true);
     	}
 
-    	MetaDataView view=null;
+    	// if a view still available
+    	MetaDataView view=node.getView();
 
     	// is selection a file or directory
     	if(file.equals("")){
-    		view = loadAndShowDataForDirectory(node, file, importData,
-    				parentModel, view);
+    		if(node.hasModelObject()){
+    			view = node.getView();
+    		}else{
+    			view = loadAndShowDataForDirectory(node, file, importData,
+    					parentModel, view);
+    		}
     	}else{
     		try{
-    			view = loadAndShowDataForFile(file, importData, parentModel, view);
+    			//if model still exists, it was still updated by parent data at deselectedNodeAction()
+    			if(node.hasModelObject())
+    				view = node.getView();
+    			else
+    				view = loadAndShowDataForFile(file, importData, parentModel, view);
     		}catch(Exception e){
     			LOGGER.error("[DATA] CAN'T read METADATA");
     			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
@@ -745,6 +759,7 @@ private List<String> unreadableFileList;
     			return;
     		}
     	}
+    	view.getModelObject().isUpToDate(true);
     	panel=view;
 
 
@@ -818,13 +833,17 @@ private List<String> unreadableFileList;
 		}
 		return view;
 	}
-
+	
+	
+	
 
 	/**
 	 * 
 	 */
 	public void deselectNodeAction(FNode node) {
+		
 		if(node!=null){
+			System.out.println("# MetaDataDialog::deselectNodeAction("+node.getAbsolutePath()+")");
 			LOGGER.debug("Deselect node action for "+node.getAbsolutePath());
 			node.setView(getMetaDataView(metaPanel));
         	saveInputToModel(node);
@@ -880,36 +899,18 @@ private List<String> unreadableFileList;
     }
 
     /**
-     * save data model of  node, if any user input available
+     * save data model of  node, if any user input available and update childs
      */
     private void saveInputToModel(FNode node) 
     {
     	if(node!=null){
     		if(node.getView()!=null && node.getView().getModelObject()!=null &&node.getView().getModelObject().hasToUpdate()){
+    			System.out.println("# MeatDataDialog:: saveInputToModel("+node.getAbsolutePath()+")");
     			LOGGER.debug("[SAVE] -- SAVE MODEL FOR: "+node.getAbsolutePath());
     			node.setModelObject(((MetaDataView) node.getView()).getModelObject());
     			updateChildDirectories(node);
     		}
-
-    		//                	if(node.hasModelObject()){
-    		//                		//TODO: only update changes in parent
-    		//                	}else
-
-    		//TODO: save to file if there are some changes
-    		//			if(dataView.getModel().noticUserInput())
-    		//			{
-    		//				
-    		//			}
     	}
-    	//		if(dataView..getModel().noticUserInput() ) 
-    	//		{
-    	//			if(lastSelectionType==FILE)
-    	//			{
-    	//				dataView.saveViewData();
-    	//			}else{
-    	//				System.out.println("DIRECTORY USER INPUT");
-    	//			}
-    	//		}
     }
 
     /**
@@ -918,13 +919,17 @@ private List<String> unreadableFileList;
      */
     private void updateChildDirectories(FNode node) 
     {
+    	System.out.println("# MetaDataDialog::updateChildDirectories("+node.getAbsolutePath()+")");
 		int numChilds=node.getChildCount();
 		for(int i=0; i<numChilds;i++){
 			FNode child = (FNode) node.getChildAt(i);
-			if(!child.isLeaf() && child.hasModelObject()){
+			if(child.hasModelObject()){
+				System.out.println("\t ...update "+child.getAbsolutePath());
 				LOGGER.debug("Update "+child.getAbsolutePath());
-				child.getModelObject().update(node.getModelObject());
-				updateChildDirectories(child);
+				child.getModelObject().updateData(node.getModelObject());
+				if(!child.isLeaf()){
+					updateChildDirectories(child);
+				}
 			}
 		}
 		node.getModelObject().isUpToDate(true);
@@ -939,7 +944,7 @@ private List<String> unreadableFileList;
     	
 		if(node.getView()!=null){
 			LOGGER.debug("[Save] -- save gui model for: "+node.getAbsolutePath());
-			node.setModelObject(((MetaDataView) node.getView()).getModelObject());
+			node.setModelObject(((MetaDataView) node.getView()).getUpdatedModelObject());
 		}else{
 			// save model of parent
 			FNode parent=(FNode) node.getParent();
@@ -1273,66 +1278,27 @@ private List<String> unreadableFileList;
             }
             break;
         case CMD_RESET:
-            LOGGER.info("[GUI-ACTION] -- reset");
-            System.out.println("+++++ EVENT RESET ++++++++++++");
-            JComponent panel=null;
-            //TODO: profile default data eliminate
-            //file
-            String file = getSelectedFilePath((FNode)fileTree.getLastSelectedPathComponent());
-            //clear node model data
-            ((FNode)fileTree.getLastSelectedPathComponent()).setModelObject(null);
-            MetaDataView view=null;
-//            if(lastSelectionType==DIR){
-            	try {
-					((MetaDataView)metaPanel.getComponent(0)).reset();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-//            	metaPanel.removeAll();
-//            	MetaDataModel meta=null;
-//            	
-//            	//reset all data, load profile data
-//            	view= new MetaDataView(customSettings, file, null, null, meta);
-//    		    view.setVisible();
-//            	if(view!=null){
-//            		metaPanel.add(view,BorderLayout.CENTER);
-//            	}
-//            }else{
-//            	if(!file.equals("")){
-//            		viewFileDataButton.setSelected(true);
-//            		view=null;
-//            		try {
-//            			view = new MetaDataView(customSettings, file, null, null,this);
-//
-//            			view.setVisible();
-//            		} catch (Exception e) {
-//            			//					catch (DependencyException | ServiceException e) {
-//            			LOGGER.error("[DATA] CAN'T read METADATA");
-//            			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
-//            					"Can't read given metadata of "+file,e);
-//            			ld.setVisible(true);
-//            		}
-//
-//            		metaPanel.removeAll();
-//            		if(view!=null){
-//            			metaPanel.add(view,BorderLayout.CENTER);
-//            			viewFileDataButton.setSelected(true);	
-//            			DefaultListModel list=view.getSeries();
-//            			if(list!=null){
-//            				seriesList.setModel(list);
-//            				seriesList.setSelectedIndex(0);
-//            			}else{
-//            				seriesList.setModel(new DefaultListModel());
-//            			}
-//            		}
-//            	}
-//            }
+        	LOGGER.info("[GUI-ACTION] -- reset");
+        	System.out.println("+++++ EVENT RESET ++++++++++++");
+        	JComponent panel=null;
+        	//TODO: profile default data eliminate
+        	//file
+        	String file = getSelectedFilePath((FNode)fileTree.getLastSelectedPathComponent());
+        	//clear node model data
+        	((FNode)fileTree.getLastSelectedPathComponent()).setModelObject(null);
+        	MetaDataView view=null;
+        	try {
+        		((MetaDataView)metaPanel.getComponent(0)).reset();
+        	} catch (Exception e) {
+        		// TODO Auto-generated catch block
+        		e.printStackTrace();
+        	}
         	revalidate();
-    		repaint();
+        	repaint();
             
             break;
         case CMD_PROFILE:
+        	//TODO: reload all available views
             LOGGER.info("[GUI-ACTION] -- load profile file");
             
             UOSProfileEditorUI profileWriter=new UOSProfileEditorUI(customSettings);
@@ -1468,6 +1434,7 @@ private List<String> unreadableFileList;
     private void selectNodeAction(FNode selectedNode) 
    {
 	   if(selectedNode!=null ){
+		   System.out.println("# MetaDataDialog::selectNodeAction("+selectedNode.getAbsolutePath()+")");
 		   LOGGER.debug("Select node action for "+selectedNode.getAbsolutePath());
            if(selectedNode.isLeaf()){
                saveDataButton.setEnabled(true);
@@ -1517,7 +1484,33 @@ private List<String> unreadableFileList;
                     }
                 }
          }
-    } 
+    }
+
+
+	@Override
+	public void itemStateChanged(ItemEvent e) 
+	{
+		Object source=e.getItemSelectable();
+		if(source==showDirData || source==showFileData ||
+				source==showCustomData || source==showHardwareData){
+			showFilteredData(showDirData.isSelected(),showFileData.isSelected(),showCustomData.isSelected(),showHardwareData.isSelected());
+		}
+		
+//		  if (e.getStateChange() == ItemEvent.DESELECTED){
+//			  
+//		  }
+	}
+
+
+	private void showFilteredData(boolean dirData, boolean fileData,
+			boolean customData, boolean hardwareData) 
+	{
+		dirDataVisible=dirData;
+		fileDataVisible=fileData;
+		customDataVisible=customData;
+		hardwareDataVisible=hardwareData;
+		
+	} 
 
 
     

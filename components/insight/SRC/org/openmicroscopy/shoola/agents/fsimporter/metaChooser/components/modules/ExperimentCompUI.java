@@ -344,12 +344,12 @@ public class ExperimentCompUI extends ElementsCompUI
 		}
 		
 		
-		return (result || setFields);
+		return (result || dataChanged);
 	}
 	
 	public void setFieldsExtern(boolean val)
 	{
-		setFields= setFields || val;
+		dataChanged= dataChanged || val;
 	}
 	
 //	private void updateDataFromXML(int idxExperiment, int idxExperimenter,	IMetadata data) throws Exception 
@@ -384,7 +384,7 @@ public class ExperimentCompUI extends ElementsCompUI
 		
 		buildComp=true;	
 		initTagList();
-		setFields=false;
+		dataChanged=false;
 		
 //		globalPane.setMinimumSize(globalPane.getMinimumSize());
 //		setMinimumSize(getMinimumSize());

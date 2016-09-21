@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.ObjLongConsumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -21,7 +20,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import ome.units.quantity.Frequency;
-import ome.units.quantity.Length;
 import ome.units.quantity.Power;
 import ome.units.unit.Unit;
 import ome.xml.model.Arc;
@@ -37,23 +35,15 @@ import ome.xml.model.enums.FilamentType;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.enums.Pulse;
-import ome.xml.model.primitives.PercentFraction;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class LightSourceCompUI extends ElementsCompUI 
 {
 	private CardLayout lightSrcCard; 
 	private Box box;
-	private JPanel settingsBox;
-	private LightSourceSettings lightSrcSett;
+	private LightSourceSettingsCompUI lightSrcSettUI;
 	
 	private List<LightSource> availableLightSrcList;
 	
@@ -67,27 +57,27 @@ public class LightSourceCompUI extends ElementsCompUI
 	private JComboBox<String> sourceType;
 	
 	
-	private TagData settWaveLength;
-	/**==Absorptionskoefizient a fraction, as a value from 0.0 to 1.0*/
-	private TagData settAttenuation;
-	//??
-//	private TagData intensity;
+	
 	
 	public LightSourceCompUI(ModuleConfiguration objConf) 
 	{
-		System.out.println("# LightSrcCompUI::new Instance "+this);
-		
+		System.out.println("# LightSrcCompUI::new Instance ");
+		lightSrcSettUI=new LightSourceSettingsCompUI(objConf);
 		initGUI();
 		if(objConf==null){
 			createDummyPane(false);
-			createSettDummyPane(false);
+			lightSrcSettUI.createDummyPane(false);
 		}
 		else{
 			createDummyPane(objConf,false);
-			createSettDummyPane(objConf.getSettingList(), false);
+			lightSrcSettUI.createDummyPane(objConf.getSettingList(), false);
 		}
 	}
 	
+	/**
+	 * Copy elements from given list to local list
+	 * @param list
+	 */
 	public void addToList(List<LightSource> list)
 	{
 		if(list==null || list.size()==0)
@@ -114,8 +104,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		gridbag = new GridBagLayout();
 		c = new GridBagConstraints();
 		
-		settingsBox=new JPanel();
-		settingsBox.setLayout(gridbag);
+		
 		
 		lightSrcCard=new CardLayout();
 		globalPane=new JPanel(lightSrcCard);
@@ -150,6 +139,8 @@ public class LightSourceCompUI extends ElementsCompUI
 				LightSource l=editor.getSelectedLightSource();
 				if(l!=null){
 					showSelectedLightSrc(l);
+					dataChanged=true;
+					System.out.println("\tsetfields="+dataChanged);
 				}
 			}
 		});
@@ -164,9 +155,10 @@ public class LightSourceCompUI extends ElementsCompUI
 		lightSrcCard.show(globalPane,name);
 	}
 	
-	/** LightSource was choose from a table -> set sourceType, instance subCompUI*/
+	/** LightSource was choose from a table -> set sourceType, instance subCompUI, mark values as changed*/
 	protected void showSelectedLightSrc(LightSource l) 
 	{ 
+		System.out.println("#LightSrcCompUI::showSelectedLightSrc("+l.getClass().getSimpleName()+")");
 		// notice sourceType cb
 		// adapt intance and data of lightSrc 
 		//TODO: what happens with still existing data
@@ -176,31 +168,36 @@ public class LightSourceCompUI extends ElementsCompUI
 			lightSrcCard.show(globalPane, LASER);
 			sourceType.setSelectedIndex(0);
 			((LightSrcSubCompUI) globalPane.getComponent(0)).addData(l, true);
+			((LightSrcSubCompUI) globalPane.getComponent(0)).setAllValueChanged();
 			break;
 		case ARC:
 			lightSrcCard.show(globalPane, ARC);
 			sourceType.setSelectedIndex(1);
 			((LightSrcSubCompUI) globalPane.getComponent(1)).addData(l, true);
+			((LightSrcSubCompUI) globalPane.getComponent(1)).setAllValueChanged();
 			break;
 		case FILAMENT:
 			lightSrcCard.show(globalPane, FILAMENT);
 			sourceType.setSelectedIndex(2);
 			((LightSrcSubCompUI) globalPane.getComponent(2)).addData(l, true);
+			((LightSrcSubCompUI) globalPane.getComponent(2)).setAllValueChanged();
 			break;
 		case GENERIC_EXCITATION:
 			lightSrcCard.show(globalPane, GENERIC_EXCITATION);
 			sourceType.setSelectedIndex(3);
 			((LightSrcSubCompUI) globalPane.getComponent(3)).addData(l, true);
+			((LightSrcSubCompUI) globalPane.getComponent(3)).setAllValueChanged();
 			break;
 		case LIGHT_EMITTING_DIODE:
 			lightSrcCard.show(globalPane, LIGHT_EMITTING_DIODE);
 			sourceType.setSelectedIndex(4);
 			((LightSrcSubCompUI) globalPane.getComponent(4)).addData(l, true);
+			((LightSrcSubCompUI) globalPane.getComponent(4)).setAllValueChanged();
 			break;
 		default:
 			break;
 		}
-		setFields=true;
+		
 		revalidate();
 		repaint();
 	}
@@ -212,6 +209,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	 */
 	protected void showSubCompForSelection(String sType) throws Exception 
 	{
+		System.out.println("# LightSrcCompUI::showSubCompForSelection("+sType+"]");
 		lightSrcCard.show(globalPane,sType);
 	}
 	
@@ -301,27 +299,22 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void buildComponents()
 	{
 		System.out.println("# LightSrcCompUI::buildComponents()");
+		dataChanged=false;
 		for (Component comp : globalPane.getComponents() ) {
 			((LightSrcSubCompUI) comp).buildComponents();
 		}
-		labels.clear();
-		comp.clear();
 
 		//		addLabelToGUI(new JLabel("Settings:"));
 		//		addTagToGUI(intensity);
-		addTagToGUI(settWaveLength);
-		addTagToGUI(settAttenuation);
 
-		System.out.println("Setting waveLenght= "+settWaveLength.getTagValue());
-
-		addLabelTextRows(labels, comp, gridbag, settingsBox);
 
 		c.gridwidth = GridBagConstraints.REMAINDER; //last
 		c.anchor = GridBagConstraints.WEST;
 		c.weightx = 1.0;
 
 		buildComp=true;
-		initTagList();
+		
+		lightSrcSettUI.buildComponents();
 
 		box.removeAll();
 		box.add(sourceType);
@@ -329,10 +322,10 @@ public class LightSourceCompUI extends ElementsCompUI
 		box.add(globalPane);
 		box.add(Box.createVerticalStrut(10));
 		//			box.add(new JLabel("Settings:"));
-		box.add(settingsBox);
+		box.add(lightSrcSettUI);
 
 		buildComp=true;
-		setFields=false;
+		
 	}
 	
 	
@@ -342,11 +335,11 @@ public class LightSourceCompUI extends ElementsCompUI
 	private void createDummyPane(ModuleConfiguration objConf,boolean inactive) 
 	{
 		System.out.println("# LightSrcCompUI::createDummyPane(conf,boolean)");
-		globalPane.add(new LaserCompUI(objConf),LASER);
-		globalPane.add(new ArcCompUI(objConf),ARC);
-		globalPane.add(new FilamentCompUI(objConf),FILAMENT);
-		globalPane.add(new GESCompUI(objConf),GENERIC_EXCITATION);
-		globalPane.add(new LEDCompUI(objConf),LIGHT_EMITTING_DIODE);
+		globalPane.add(new LS_LaserCompUI(objConf),LASER);
+		globalPane.add(new LS_ArcCompUI(objConf),ARC);
+		globalPane.add(new LS_FilamentCompUI(objConf),FILAMENT);
+		globalPane.add(new LS_GESCompUI(objConf),GENERIC_EXCITATION);
+		globalPane.add(new LS_LEDCompUI(objConf),LIGHT_EMITTING_DIODE);
 		
 		showLightSrcSubPane(LASER);
 		sourceType.setSelectedItem(0);
@@ -358,11 +351,11 @@ public class LightSourceCompUI extends ElementsCompUI
 	protected void createDummyPane(boolean inactive)
 	{
 		System.out.println("# LightSrcCompUI::createDummyPane(boolean)");
-		globalPane.add(new LaserCompUI(null),LASER);
-		globalPane.add(new ArcCompUI(null),ARC);
-		globalPane.add(new FilamentCompUI(null),FILAMENT);
-		globalPane.add(new GESCompUI(null),GENERIC_EXCITATION);
-		globalPane.add(new LEDCompUI(null),LIGHT_EMITTING_DIODE);
+		globalPane.add(new LS_LaserCompUI(null),LASER);
+		globalPane.add(new LS_ArcCompUI(null),ARC);
+		globalPane.add(new LS_FilamentCompUI(null),FILAMENT);
+		globalPane.add(new LS_GESCompUI(null),GENERIC_EXCITATION);
+		globalPane.add(new LS_LEDCompUI(null),LIGHT_EMITTING_DIODE);
 		
 		
 		showLightSrcSubPane(LASER);
@@ -373,8 +366,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void clearDataValues()
 	{
 		clearCompData();
-//		lightSrcSettUI.clearDataValues();
-		clearSettDataValues();
+		lightSrcSettUI.clearDataValues();
 		
 	}
 	
@@ -389,7 +381,7 @@ public class LightSourceCompUI extends ElementsCompUI
 
 	
 	public void setFieldsExtern(boolean b) {
-		setFields= setFields || b;		
+		dataChanged= dataChanged || b;		
 	}
 
 
@@ -404,16 +396,40 @@ public class LightSourceCompUI extends ElementsCompUI
 	public void update(List<TagData> list) 
 	{
 		for (Component comp : globalPane.getComponents() ) {
-			((LightSrcSubCompUI) comp).update(list);
+			((LightSrcSubCompUI) comp).clearDataValues();
 		}
-		updateSettings(list);
+
+		lightSrcSettUI.update(list);
+
+		TagData lastelem=list.get(list.size()-1);
+		if(lastelem.getTagName().equals("SourceType")){
+			try {
+				System.out.println("\t ...set SourceType: "+sourceTypeList[Integer.valueOf(lastelem.getTagValue())]);
+				sourceType.setSelectedIndex(Integer.valueOf(lastelem.getTagValue()));
+//				showSubCompForSelection(lastelem.getTagValue());
+				((LightSrcSubCompUI) globalPane.getComponent(sourceType.getSelectedIndex())).update(list);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		revalidate();
+		repaint();
 	}
 
 
 	@Override
 	public List<TagData> getActiveTags() {
-		// TODO Auto-generated method stub
-		return ((LightSrcSubCompUI) globalPane.getComponent(sourceType.getSelectedIndex())).getActiveTags();
+		List<TagData> result=new ArrayList<TagData>();
+		for(TagData t:((LightSrcSubCompUI) globalPane.getComponent(sourceType.getSelectedIndex())).getActiveTags()){
+			result.add(t);
+		}
+		for(TagData ts:lightSrcSettUI.getActiveTags()){
+			result.add(ts);
+		}
+		result.add(new TagData("SourceType", String.valueOf(sourceType.getSelectedIndex()), OPTIONAL, TagData.TEXTFIELD));
+		System.out.println("\t ...selected SourceType: "+sourceTypeList[sourceType.getSelectedIndex()]);
+		return result;
 	}
 
 
@@ -421,8 +437,10 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	@Override
 	public boolean userInput() {
-		return userInputSettings()
-				|| setFields || ((LightSrcSubCompUI) globalPane.getComponent(sourceType.getSelectedIndex())).userInput();
+		boolean result= lightSrcSettUI.userInput()
+				|| dataChanged
+				|| ((LightSrcSubCompUI) globalPane.getComponent(sourceType.getSelectedIndex())).userInput();
+		return result;
 	}
 	
 	
@@ -530,240 +548,22 @@ public class LightSourceCompUI extends ElementsCompUI
 	/////////////////////////////////////////////////////////////
 	
 	
-	public void createSettDummyPane(List<TagConfiguration> list,boolean inactive) 
-	{
-		System.out.println("# LightSrcCompUI::createSettDummyPane(List,boolean)");
-		if(list==null)
-			createSettDummyPane(inactive);
-		else{
-			clearSettDataValues();
-			for(int i=0; i<list.size();i++){
-				TagConfiguration t=list.get(i);
-				String name=t.getName();
-				String val=t.getValue();
-				boolean prop=t.getProperty();
-				if(name!=null){
-					t.printf();
-					setTag(t);
-				}
-			}
-		}
-	}
-	
-	
-	private void clearSettDataValues() {
-		clearTagValue(settWaveLength);
-		clearTagValue(settAttenuation);
-		
-	}
 
-	private void createSettDummyPane(boolean inactive) 
-	{
-		// setting values
-		setSettWavelength(null, ElementsCompUI.OPTIONAL);
-		setSettAttenuation(null, ElementsCompUI.OPTIONAL);
-//		setIntensity(null, ElementsCompUI.OPTIONAL);
-		
-		if(inactive){
-//			intensity.setInactiv();
-			settWaveLength.setEnable(false);
-			settAttenuation.setEnable(false);
-		}
-		
-	}
-	
-	public void setSettWavelength(Length value, boolean prop)
-	{
-		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		Unit unit=(value!=null) ? value.unit():TagNames.WAVELENGTH_UNIT;
-		if(settWaveLength == null) 
-			settWaveLength = new TagData(TagNames.SET_WAVELENGTH,val,unit,prop,TagData.TEXTFIELD);
-		else 
-			settWaveLength.setTagValue(val,unit,prop);
-		
-	}
-	public void setSettAttenuation(PercentFraction value, boolean prop)
-	{
-		String val= (value != null) ? String.valueOf(value.getNumberValue()):"";
-		if(settAttenuation == null) 
-			settAttenuation = new TagData(TagNames.ATTENUATION,val,prop,TagData.TEXTFIELD);
-		else 
-			settAttenuation.setTagValue(val,prop);
-	}
-	
-	//settings tag list
-		private void initTagList()
-		{
-			tagList=new ArrayList<TagData>();
-			tagList.add(settWaveLength);
-			tagList.add(settAttenuation);
-			
-		}
-		private boolean userInputSettings()
-		{
-			boolean result=false;
-			if(tagList!=null){
-				for(int i=0; i<tagList.size();i++){
-					boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
-					result= result || val;
-				}
-			}
-			return result;
-		}
 		
 		public void addData(LightSourceSettings ls,boolean overwrite)
 		{
-			System.out.println("# LightSrcSettCompUI::addData("+overwrite+")");
-			boolean conflicts=false;
-			if(overwrite){
-				replaceData(ls);
-				LOGGER.info("[DATA] -- replace LIGHTSRC_SETTINGS data");
-			}else
-				try {
-					completeData(ls);
-					LOGGER.info("[DATA] -- complete LIGHTSRC_SETTINGS data");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			setGUIData();
+			lightSrcSettUI.addData(ls, overwrite);
 		}
 		
-		private void replaceData(LightSourceSettings l)
-		{
-			if(l!=null){
-				lightSrcSett=l;
-			}
-		}
-		
-		private void completeData(LightSourceSettings l) throws Exception
-		{
-			//copy input fields
-			LightSourceSettings copyIn=null;
-			if(lightSrcSett!=null){
-				getData();
-				copyIn=new LightSourceSettings(lightSrcSett);
-			}
-
-			replaceData(l);
-
-			// set input field values again
-			if(copyIn!=null){
-				Length w=copyIn.getWavelength();
-				PercentFraction p=copyIn.getAttenuation();
-				if(w!=null) lightSrcSett.setWavelength(w);
-				if(p!=null) lightSrcSett.setAttenuation(p);
-			}
-		}
-		
-		private void setGUIData()
-		{
-			if(lightSrcSett!=null){
-				try{setSettWavelength(lightSrcSett.getWavelength(), ElementsCompUI.REQUIRED);
-				} catch (NullPointerException e) { }
-				try{setSettAttenuation(lightSrcSett.getAttenuation(), ElementsCompUI.REQUIRED);
-				}catch (NullPointerException e){}
-			}
-		}
-		
-		private void readGUIInput() throws Exception
-		{
-			System.out.println("# LightSrcSettCompUI::readGuiInput");
-			if(lightSrcSett==null){
-				createNewElement();
-			}
-			try{
-				lightSrcSett.setWavelength(parseToLength(settWaveLength.getTagValue(),settWaveLength.getTagUnit()));
-			}catch(Exception e){
-				LOGGER.error("[DATA] can't read LIGHTSRC SETT wavelength input");
-			}
-			try{
-				//TODO input format hint: percentvalue elem of [0,100] or [0,1]
-				lightSrcSett.setAttenuation(parseAttenuation(settAttenuation.getTagValue()));
-			}catch(Exception e){
-				LOGGER.error("[DATA] can't read LIGHTSRC SETT attenuation input");
-			}
-		}
-		
-		private PercentFraction parseAttenuation(String c)
-		{
-			if(c==null || c.equals(""))
-				return null;
-			return new PercentFraction(Float.valueOf(c));
-		}
-		
-		private void createNewElement() {
-			lightSrcSett=new LightSourceSettings();
-		}
 		
 		public LightSourceSettings getSettingsData() throws Exception
 		{
-			System.out.println("# LightSrcSettCompUI::getData()");
-			if(userInput())
-				readGUIInput();
-			return lightSrcSett;
+			return lightSrcSettUI.getData();
 		}
 
-		public void updateSettings(List<TagData> list) 
-		{
-			System.out.println("# LightSrcSettCompUI::update()");
-			for(TagData t: list){
-				if(t.valueChanged()){
-					setTag(t);
-				}
-			}
-		}
 		
-		private void setTag(TagData t)
-		{
-			setTag(t.getTagName(),t.getTagValue(),t.getTagProp(),t.getTagUnit());
-		}
 		
-		private void setTag(TagConfiguration t)
-		{
-			t.printf();
-			setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
-		}
 		
-		private void setTag(String name,String val,boolean prop,Unit unit) 
-		{
-			Exception exception=null;
-			switch (name) {
-			case TagNames.SET_WAVELENGTH:
-				try {
-					if(unit==null){
-						unit=TagNames.WAVELENGTH_UNIT;
-					}
-					setSettWavelength(parseToLength(val, unit), prop);
-					System.out.println("wavelength set");
-				} catch (Exception e) {
-					setSettWavelength(null, prop);
-					exception=e;
-				}
-				settWaveLength.setVisible(true);
-				
-				break;
-			case TagNames.ATTENUATION:
-				try{
-				setSettAttenuation(parseAttenuation(val), prop);
-				System.out.println("attenuation set");
-				}catch(Exception e){
-					setSettAttenuation(null, prop);
-					exception=e;
-				}
-				settAttenuation.setVisible(true);
-				
-				break;
-			default: 
-				LOGGER.warn("[CONF] LIGHTSRC SETT unknown tag: "+name );
-				break;
-			}
-			
-			if(exception!=null){
-				WarningDialog ld = new WarningDialog(
-    					"Can't read tag value : "+name+" = "+val,exception.toString(),
-    					this.getClass().getSimpleName());
-    			ld.setVisible(true);
-			}
-		}
+		
+		
 }

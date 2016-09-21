@@ -50,7 +50,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		boolean result=false;
 		if(tagList!=null)
 		for(int i=0; i<tagList.size();i++) result= result || tagList.get(i).valueChanged();
-		return result || setFields;
+		return result || dataChanged;
 	}
 	
 
@@ -155,7 +155,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 		
 		buildComp=true;		
 		initTagList();
-		setFields=false;
+		dataChanged=false;
 	}
 
 	@Override
@@ -339,7 +339,7 @@ public class ImagingEnvironmentCompUI extends ElementsCompUI
 	
 
 	public void setFieldsExtern(boolean b) {
-		setFields= setFields || b;
+		dataChanged= dataChanged || b;
 	}
 	
 	/**

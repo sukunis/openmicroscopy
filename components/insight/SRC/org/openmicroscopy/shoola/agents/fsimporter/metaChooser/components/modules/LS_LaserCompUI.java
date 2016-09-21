@@ -16,11 +16,12 @@ import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
-public class LaserCompUI extends LightSrcSubCompUI 
+public class LS_LaserCompUI extends LightSrcSubCompUI 
 {
 
-	public LaserCompUI(ModuleConfiguration objConf) 
+	public LS_LaserCompUI(ModuleConfiguration objConf) 
 	{
+		classification="Laser";
 		lightSrc=null;
 		initGUI();
 		if(objConf==null)
@@ -102,6 +103,8 @@ public class LaserCompUI extends LightSrcSubCompUI
 	
 	protected void readGUIInput() throws Exception 
 	{
+		
+		System.out.println("# LS_LaserCompUI::readGUIInput()");
 		if(lightSrc==null)
 			createNewElement();
 		try{
@@ -194,24 +197,24 @@ public class LaserCompUI extends LightSrcSubCompUI
 		tagList.add(pump);
 		tagList.add(waveLength);
 	}
-	
+
 	protected void addTags()
 	{
 		addTagToGUI(model);
 		addTagToGUI(manufact);
-		 
-			addTagToGUI(type);
-			addTagToGUI(power);
-			addTagToGUI(medium);
-			addTagToGUI(freqMul);
-			addTagToGUI(tunable);
-			addTagToGUI(pulse);
-			addTagToGUI(pockelCell);
-			addTagToGUI(repRate);
-			addTagToGUI(pump);
-			if(pump!=null)pump.setEnable(false);
-			addTagToGUI(waveLength);
-	
+
+		addTagToGUI(type);
+		addTagToGUI(power);
+		addTagToGUI(medium);
+		addTagToGUI(freqMul);
+		addTagToGUI(tunable);
+		addTagToGUI(pulse);
+		addTagToGUI(pockelCell);
+		addTagToGUI(repRate);
+		addTagToGUI(pump);
+		if(pump!=null)pump.setEnable(false);
+		addTagToGUI(waveLength);
+
 	}
 	protected void createDummyPane(boolean inactive) 
 	{
@@ -245,6 +248,24 @@ public class LaserCompUI extends LightSrcSubCompUI
 			pump.setEnable(false);
 			waveLength.setEnable(false);
 		}
+	}
+
+	@Override
+	protected void setAllValueChanged() {
+		System.out.println("# LS_LaserCompUI::setAllTagsChanged()");
+		if(manufact!=null)manufact.changeIsUpdated(false);
+		if(type!=null)type.changeIsUpdated(false);
+		if(power!=null)power.changeIsUpdated(false);
+		if(model!=null)model.changeIsUpdated(false);
+		
+		if(medium!=null)medium.changeIsUpdated(false);
+		if(freqMul!=null)freqMul.changeIsUpdated(false);
+		if(tunable!=null)tunable.changeIsUpdated(false);
+		if(pulse!=null)pulse.changeIsUpdated(false);
+		if(pockelCell!=null)pockelCell.changeIsUpdated(false);
+		if(repRate!=null)repRate.changeIsUpdated(false);
+		if(pump!=null)pump.changeIsUpdated(false);
+		if(waveLength!=null)waveLength.changeIsUpdated(false);
 	}
 	
 }

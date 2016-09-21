@@ -232,7 +232,7 @@ public void loadLightSrcConf(boolean active) {
 	lightSrcConf.setTag(TagNames.MODEL,null,null,true);
 	lightSrcConf.setTag(TagNames.MANUFAC,null,null,true);
 	lightSrcConf.setTag(TagNames.POWER,null,TagNames.POWER_UNIT.getSymbol(),true);
-	lightSrcConf.setTag(TagNames.L_TYPE,null,null,true);
+	lightSrcConf.setTag(TagNames.TYPE,null,null,true);
 	lightSrcConf.setTag(TagNames.MEDIUM,null,null,true);
 	lightSrcConf.setTag(TagNames.FREQMUL,null,null,true);
 	lightSrcConf.setTag(TagNames.TUNABLE,null,null,true);

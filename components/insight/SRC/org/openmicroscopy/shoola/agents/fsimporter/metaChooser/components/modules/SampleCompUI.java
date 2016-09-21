@@ -103,7 +103,7 @@ public class SampleCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return result || setFields;
+		return result || dataChanged;
 	}
 	
 	public SampleCompUI(Sample _sample,int i)
@@ -219,7 +219,7 @@ public class SampleCompUI extends ElementsCompUI
 		
 		buildComp=true;		
 		initTagList();
-		setFields=false;
+		dataChanged=false;
 	}
 	
 	@Override
@@ -508,7 +508,7 @@ public class SampleCompUI extends ElementsCompUI
 	}
 
 	public void setFieldsExtern(boolean b) {
-		setFields= setFields || b;		
+		dataChanged= dataChanged || b;		
 	}
 	
 	

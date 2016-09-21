@@ -105,7 +105,7 @@ public class ChannelCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return (result || setFields);
+		return (result || dataChanged);
 	}
 	
 	/** 
@@ -483,7 +483,7 @@ public class ChannelCompUI extends ElementsCompUI
 		
 		buildComp=true;
 		initTagList();
-		setFields=false;
+		dataChanged=false;
 	}
 
 	
@@ -734,7 +734,7 @@ public class ChannelCompUI extends ElementsCompUI
 	}
 
 	public void setFieldsExtern(boolean b) {
-		setFields= setFields || b;		
+		dataChanged= dataChanged || b;		
 	}
 
 	/**

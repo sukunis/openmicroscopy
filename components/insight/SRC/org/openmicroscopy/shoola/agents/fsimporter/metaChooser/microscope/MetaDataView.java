@@ -305,17 +305,41 @@ public class MetaDataView extends JPanel
 	public MetaDataModelObject getModelObject() 
 	{
 		try{
-		List<MetaDataModel> list=new ArrayList<MetaDataModel>();
-		if(seriesData){
-			for(Component comp:cardPane.getComponents()){
-				list.add(((MetaDataUI) comp).getModel());
+			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
+			if(seriesData){
+				for(Component comp:cardPane.getComponents()){
+					list.add(((MetaDataUI) comp).getModel());
+				}
+			}else{
+				list.add(singleView.getModel());
 			}
-		}else{
-			list.add(singleView.getModel());
+			MetaDataModelObject obj=new MetaDataModelObject(seriesData,list);
+
+			return obj;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
 		}
-		MetaDataModelObject obj=new MetaDataModelObject(seriesData,list);
-		
-		return obj;
+	}
+	
+	/**
+	 * 
+	 * @return metaData model that holds a list of all series data models of current img data.
+	 */
+	public MetaDataModelObject getUpdatedModelObject() 
+	{
+		try{
+			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
+			if(seriesData){
+				for(Component comp:cardPane.getComponents()){
+					list.add(((MetaDataUI) comp).getUpdatedModel());
+				}
+			}else{
+				list.add(singleView.getUpdatedModel());
+			}
+			MetaDataModelObject obj=new MetaDataModelObject(seriesData,list);
+
+			return obj;
 		}catch(Exception e){
 			e.printStackTrace();
 			return null;
@@ -328,23 +352,22 @@ public class MetaDataView extends JPanel
 	public void save() throws Exception
 	{
 		if(ome!=null){
-			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
+//			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
 			//file
 			if(seriesData){
 				updateGlobalSeriesData();
-				for(Component comp:cardPane.getComponents()){
-					list.add(((MetaDataUI) comp).getModel());
-				}
+//				for(Component comp:cardPane.getComponents()){
+//					list.add(((MetaDataUI) comp).getUpdatedModel());
+//				}
 				LOGGER.info("[SAVE] -- save series data to "+srcFile.getAbsolutePath());
 				System.out.println("Save series data");
-				SaveMetadata saver=new SaveMetadata(ome, getModelObject(), null, srcFile);
+				SaveMetadata saver=new SaveMetadata(ome, getUpdatedModelObject(), null, srcFile);
 				saver.save();
 				
 			}else{
 				if(singleView!=null){
 					LOGGER.info("[SAVE] -- save single data to "+srcFile.getAbsolutePath());
-					SaveMetadata saver=new SaveMetadata(ome, singleView.getModel(), null, srcFile);
-
+					SaveMetadata saver=new SaveMetadata(ome, singleView.getUpdatedModel(), null, srcFile);
 					saver.save();
 				}
 			}
@@ -353,7 +376,7 @@ public class MetaDataView extends JPanel
 			//dir
 			if(singleView!=null){
 				LOGGER.info("[SAVE] -- save model for directory");
-				singleView.getModel();
+				singleView.getUpdatedModel();
 			}
 		}
 	}
@@ -413,7 +436,7 @@ public class MetaDataView extends JPanel
 			if(currentCardIndex==-1)
 				currentCardIndex=getCurrentCardIndex();
 			if(currentCardIndex!=-1){
-				MetaDataModel currentModel=((MetaDataUI) cardPane.getComponent(currentCardIndex)).getModel();
+				MetaDataModel currentModel=((MetaDataUI) cardPane.getComponent(currentCardIndex)).getUpdatedModel();
 				if(currentModel.getExpModul().userInput() || currentModel.getSampleModul().userInput()){
 					//					MetaDataUI newModel=((MetaDataUI) cardPane.getComponent(seriesListModel.indexOf(name)));
 					for(Component comp:cardPane.getComponents()){
@@ -461,6 +484,51 @@ public class MetaDataView extends JPanel
 	 * Clear all data in the view. Set file data for file. Parent should be not null!
 	 */
 	public void reset() throws Exception
+	{
+		if(ome!=null){
+			
+			ImageReader reader = new ImageReader();
+			IMetadata data=null;
+			
+			Cursor cursor=parent.getCursor();
+			parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			readFile=true;
+			data = readMetadataFromFile(srcFile.getAbsolutePath(), reader);
+
+			parent.setCursor(cursor);
+
+			//file
+			if(seriesData){
+				int j=0;
+				for(Component comp:cardPane.getComponents()){
+					((MetaDataUI) comp).getModel().resetData();
+					reader.setSeries(j);
+					//load data from file
+					loadFileData(srcFile.getAbsolutePath(), ome, j, (MetaDataUI) comp);
+					j++;
+				}
+			}else{
+				if(singleView!=null){
+					singleView.getModel().resetData();
+					//set data from file
+					loadFileData(srcFile.getAbsolutePath(), ome, 0, singleView);
+				}
+			}
+
+		}else{
+			//dir
+			if(singleView!=null){
+				LOGGER.info("[SAVE] -- reset directory view");
+				singleView.getModel().resetData();
+			}
+		}	
+		setVisible();
+	}
+	
+	/**
+	 * Clear all data in the view. Show selected kind of data.
+	 */
+	public void reset(boolean fileData,boolean dirData, boolean customData, boolean hardwareData) throws Exception
 	{
 		if(ome!=null){
 			

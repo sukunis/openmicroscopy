@@ -918,7 +918,7 @@ public class TagData
 	}
 	
 	public void changeIsUpdated(boolean b){
-		valChanged=b;
+		valChanged=!b;
 	}
 
 	public boolean isVisible() {

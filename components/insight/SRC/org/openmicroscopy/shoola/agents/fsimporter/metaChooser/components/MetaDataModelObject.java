@@ -6,6 +6,11 @@ import java.util.List;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
 
+/**
+ * Model for a image could be a single model or (for series data) a list of models
+ * @author Kunis
+ *
+ */
 public class MetaDataModelObject 
 {
 	private boolean seriesData;
@@ -55,9 +60,10 @@ public class MetaDataModelObject
 		return res;
 	}
 
-	public void update(MetaDataModelObject parentModel) 
+	// TODO: at the moment not for series data
+	public void updateData(MetaDataModelObject newData) 
 	{
-		List<ElementsCompUI> updateList=parentModel.getList().get(0).getComponentsForUpdate();
+		List<ElementsCompUI> updateList=newData.getList().get(0).getComponentsForUpdate();
 		for(ElementsCompUI o : updateList){
 				list.get(0).updateComponentsOfDirModel(o);
 		}
@@ -67,6 +73,7 @@ public class MetaDataModelObject
 
 	public void isUpToDate(boolean b) 
 	{
+		System.out.println("# MetaDataModel::isUpToDate("+b+")");
 		if(list==null || list.isEmpty())
 			return;
 		for(MetaDataModel m:list){

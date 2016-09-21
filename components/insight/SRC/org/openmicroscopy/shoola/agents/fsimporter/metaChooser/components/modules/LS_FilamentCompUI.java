@@ -3,19 +3,20 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modul
 import java.util.ArrayList;
 
 import ome.units.quantity.Power;
-import ome.xml.model.Arc;
+import ome.xml.model.Filament;
 import ome.xml.model.Laser;
 import ome.xml.model.LightSource;
-import ome.xml.model.enums.ArcType;
+import ome.xml.model.enums.FilamentType;
 import ome.xml.model.enums.LaserType;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
-public class ArcCompUI extends LightSrcSubCompUI
+public class LS_FilamentCompUI extends LightSrcSubCompUI
 {
 
-	public ArcCompUI(ModuleConfiguration objConf) {
+	public LS_FilamentCompUI(ModuleConfiguration objConf) {
+		classification="Filament";
 		lightSrc=null;
 		initGUI();
 		if(objConf==null)
@@ -23,7 +24,7 @@ public class ArcCompUI extends LightSrcSubCompUI
 		else
 			createDummyPane(objConf.getTagList(),false);
 	}
-
+	
 	@Override
 	protected void completeData(LightSource l) throws Exception 
 	{
@@ -31,7 +32,7 @@ public class ArcCompUI extends LightSrcSubCompUI
 		LightSource copyIn=null;
 		if(lightSrc!=null){
 			getData();
-			copyIn=new Arc((Arc)lightSrc);
+			copyIn=new Filament((Filament)lightSrc);
 		}
 
 		replaceData(l);
@@ -41,55 +42,59 @@ public class ArcCompUI extends LightSrcSubCompUI
 			String mo=copyIn.getModel();
 			String ma=copyIn.getManufacturer();
 			Power p=copyIn.getPower();
-			ArcType t=((Arc)copyIn).getType();
+			FilamentType t=((Filament)copyIn).getType();
 			
 			if(mo!=null && !mo.equals("")) lightSrc.setModel(mo);
 			if(ma!=null && !ma.equals("")) lightSrc.setManufacturer(ma);
 			if(p!=null) lightSrc.setPower(p);
-			if(t!=null) ((Arc) lightSrc).setType(t);
+			if(t!=null) ((Filament) lightSrc).setType(t);
 		}
 	}
 	
 	protected void setGUIData() 
 	{
-		try{ setManufact(((Arc)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
+		
+		try{ setManufact(((Filament)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setModel(((Arc)lightSrc).getModel(), ElementsCompUI.REQUIRED);
+		try{ setModel(((Filament)lightSrc).getModel(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setPower(((Arc)lightSrc).getPower(), ElementsCompUI.REQUIRED);
+		try{ setPower(((Filament)lightSrc).getPower(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setType(((Arc)lightSrc).getType(), ElementsCompUI.REQUIRED);
+		try{ setType(((Filament)lightSrc).getType(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }
+		
 	}
-	
 	protected void readGUIInput() throws Exception 
 	{
+		System.out.println("# LS_FilamentCompUI::readGUIInput()");
 		if(lightSrc==null)
 			createNewElement();
 		try{
-			((Arc)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
+			((Filament)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
 					null : manufact.getTagValue());
 		}catch(Exception e){
-			LOGGER.error("[DATA] can't read LIGHTSRC arc manufacturer input");
+			LOGGER.error("[DATA] can't read LIGHTSRC fila manufacturer input");
 		}
 		try{
-			((Arc)lightSrc).setModel(model.getTagValue().equals("")? 
+			((Filament)lightSrc).setModel(model.getTagValue().equals("")? 
 					null : model.getTagValue());
 		}catch(Exception e){
-			LOGGER.error("[DATA] can't read LIGHTSRC arc model input");
+			LOGGER.error("[DATA] can't read LIGHTSRC fila model input");
 		}
 		try{
-			((Arc)lightSrc).setPower(LightSourceCompUI.parsePower(power.getTagValue(),power.getTagUnit()));
+			((Filament)lightSrc).setPower(LightSourceCompUI.parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
-			LOGGER.error("[DATA] can't read LIGHTSRC arc power input. "+e.getMessage());
+			LOGGER.error("[DATA] can't read LIGHTSRC fila power input");
 		}
 		try{
-			((Arc)lightSrc).setType(type.getTagValue().equals("") ? 
-					null : ArcType.fromString(type.getTagValue()));
+			((Filament)lightSrc).setType(type.getTagValue().equals("") ? 
+					null : FilamentType.fromString(type.getTagValue()));
 		}catch(Exception e){
-			LOGGER.error("[DATA] can't read LIGHTSRC arc type input");
+			LOGGER.error("[DATA] can't read LIGHTSRC fila type input");
 		}
+		
 	}
+	
 	protected void initTagList()
 	{
 		tagList=new ArrayList<TagData>();
@@ -104,20 +109,19 @@ public class ArcCompUI extends LightSrcSubCompUI
 	{
 		addTagToGUI(model);
 		addTagToGUI(manufact);
+		
 
 			addTagToGUI(type);
 			addTagToGUI(power); 
 	
 	}
-	
-	protected void createNewElement() 
-	{
-		lightSrc=new Arc();
+	protected void createNewElement() {
+		lightSrc=new Filament();
 	}
 	protected void createDummyPane(boolean inactive) 
 	{
 		setManufact(null, OPTIONAL);
-		setType((LaserType)null, OPTIONAL);
+		setType((FilamentType)null, OPTIONAL);
 		setPower(null, OPTIONAL);
 		setModel(null, OPTIONAL);
 		if(inactive){
@@ -127,5 +131,13 @@ public class ArcCompUI extends LightSrcSubCompUI
 			model.setEnable(false);
 		}
 	}
-	
+
+	@Override
+	protected void setAllValueChanged() {
+		System.out.println("# LS_FilamentCompUI::setAllTagsChanged()");
+		if(manufact!=null)manufact.changeIsUpdated(false);
+		if(type!=null)type.changeIsUpdated(false);
+		if(power!=null)power.changeIsUpdated(false);
+		if(model!=null)model.changeIsUpdated(false);
+	}
 }

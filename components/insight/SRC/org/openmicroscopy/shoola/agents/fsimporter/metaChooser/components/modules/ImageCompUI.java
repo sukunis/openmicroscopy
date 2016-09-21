@@ -74,7 +74,7 @@ public class ImageCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return (result || setFields);
+		return (result || dataChanged);
 	}
 	
 
@@ -448,7 +448,7 @@ public class ImageCompUI extends ElementsCompUI
 		
 		buildComp=true;
 		initTagList();
-		setFields=false;
+		dataChanged=false;
 	}
 
 	
@@ -648,7 +648,7 @@ For example in a video stream.
 	}
 
 	public void setFieldsExtern(boolean b) {
-		setFields= setFields || b;		
+		dataChanged= dataChanged || b;		
 	}
 	/**
 	 * Update tags with val from list

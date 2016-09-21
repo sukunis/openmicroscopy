@@ -91,6 +91,8 @@ import org.xml.sax.SAXException;
  *  </LightPaths>		
  * <\Hardware>
  * 
+ * 
+ * save as data model
  * @author kunis
  *
  */
@@ -490,7 +492,7 @@ public class UOSHardwareReader
 		else if(l instanceof LightEmittingDiode)
 			l=new LightEmittingDiode();
 		else{
-			LOGGER.warn("[HARDWARE] unknown lightSource type");
+			LOGGER.warn("[HARDWARE] unknown lightSource classification");
 			return null;
 		}
 		
@@ -569,20 +571,30 @@ public class UOSHardwareReader
 				case TagNames.MANUFAC:
 					lightSrc.setManufacturer(val);
 					break;
-				case TagNames.L_TYPE:
-					LaserType l=LightSourceCompUI.parseLaserType(val);
-					if(l!=null)
-						((Laser)lightSrc).setType(l);
-					break;
+				case TagNames.L_TYPE://former tag names 
 				case TagNames.A_TYPE:
-					ArcType a=LightSourceCompUI.parseArcType(val);
-					if(a!=null)
-						((Arc)lightSrc).setType(a);
-					break;
 				case TagNames.F_TYPE:
-					FilamentType value=LightSourceCompUI.parseFilamentType(val);
-					if(value!=null)
-						((Filament)lightSrc).setType(value);
+				case TagNames.TYPE:
+					switch(lightSrc.getClass().getSimpleName()){
+					case "Laser":
+						LaserType l=LightSourceCompUI.parseLaserType(val);
+						if(l!=null)
+							((Laser)lightSrc).setType(l);
+						break;
+					case "Arc":
+						ArcType a=LightSourceCompUI.parseArcType(val);
+						if(a!=null)
+							((Arc)lightSrc).setType(a);
+						break;
+					case "Filament":
+						FilamentType value=LightSourceCompUI.parseFilamentType(val);
+						if(value!=null)
+							((Filament)lightSrc).setType(value);
+						break;
+					default:
+						LOGGER.warn("Can't parse lightSrc type");
+							break;
+					}
 					break;
 				case TagNames.POWER:
 					Power p = LightSourceCompUI.parsePower(val, unit);

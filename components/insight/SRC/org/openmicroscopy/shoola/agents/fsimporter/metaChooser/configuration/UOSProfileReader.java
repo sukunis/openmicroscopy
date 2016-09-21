@@ -1,27 +1,16 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration;
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Logger;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.lang.BooleanUtils;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 
 
@@ -53,20 +42,25 @@ public class UOSProfileReader
 	public static final String M_WIDTH="Width";
 	public static final String M_VIS="Visible";
 	
-//	public static final String TAG_VALUE="Value";
-//	public static final String TAG_PROP="Optional";
-	
-	
 	public static final String MODULE_IMG="ImageData";
 	public static final String MODULE_CHANNEL="ChannelData";
 	public static final String MODULE_OBJECTIVE="ObjectiveData";
 	public static final String MODULE_DETECTOR="DetectorData";
 	public static final String MODULE_EXPERIMENTER="ExperimentData";
 	public static final String MODULE_SAMPLE="SampleData";
-	public static final String MODULE_LIGHTSRC="LightSourceData";
 	public static final String MODULE_LIGHTPATH="LightPathData";
 	public static final String MODULE_IMGENV="ImageEnvironmentData";
 	public static final String MODULE_PLANE="PlaneData";
+	
+	public static final String MODULE_LIGHTSRC="LightSourceData";
+	//new version
+	public static final String MODULE_LS_LASER="Laser";
+	public static final String MODULE_LS_ARC="Arc";
+	public static final String MODULE_LS_FILAMENT="Filament";
+	public static final String MODULE_LS_GES="GenericExcitationSource";
+	public static final String MODULE_LS_LED="LightEmittingDiode";
+	
+	
 	
 	
 	private CustomViewProperties view;

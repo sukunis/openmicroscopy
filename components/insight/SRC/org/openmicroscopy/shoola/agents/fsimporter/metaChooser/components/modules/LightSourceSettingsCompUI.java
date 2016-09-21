@@ -15,6 +15,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Mod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
@@ -50,6 +51,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	
 	public boolean userInput()
 	{
+		
 		boolean result=false;
 		if(tagList!=null){
 			for(int i=0; i<tagList.size();i++){
@@ -57,7 +59,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		System.out.println("# LightSrcSettCompUI::userInput()= "+result);
+		System.out.println("# LightSrcSettCompUI::userInput()="+result);
 		return result;
 	}
 
@@ -66,10 +68,6 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	{
 		System.out.println("# LightSrcSettCompUI::new Instance 1");
 		initGUI();
-		if(objConf==null)
-			createDummyPane(false);
-		else
-			createDummyPane(objConf.getSettingList(),false);
 	}
 
 	
@@ -224,18 +222,18 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 		if(list==null)
 			createDummyPane(inactive);
 		else{
-		clearDataValues();
-//		if(lightSrc==null && list!=null && list.size()>0)
-//			createNewElement();
-		for(int i=0; i<list.size();i++){
-			TagConfiguration t=list.get(i);
-			String name=t.getName();
-			String val=t.getValue();
-			boolean prop=t.getProperty();
-			if(name!=null){
-				setTag(t);
+			clearDataValues();
+			//		if(lightSrc==null && list!=null && list.size()>0)
+			//			createNewElement();
+			for(int i=0; i<list.size();i++){
+				TagConfiguration t=list.get(i);
+				String name=t.getName();
+				String val=t.getValue();
+				boolean prop=t.getProperty();
+				if(name!=null){
+					setTag(t);
+				}
 			}
-		}
 		}
 	}
 
@@ -270,8 +268,10 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 
 	@Override
 	public List<TagData> getActiveTags() {
-		// TODO Auto-generated method stub
-		return null;
+		List<TagData> list = new ArrayList<TagData>();
+		if(isActive(attenuation)) list.add(attenuation);
+		if(isActive(waveLength))list.add(waveLength);
+		return list;
 	}
 
 	/**
@@ -294,30 +294,46 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	
 	private void setTag(TagConfiguration t)
 	{
-		t.printf();
 		setTag(t.getName(),t.getValue(),t.getProperty(),t.getUnit());
 	}
 	
 	private void setTag(String name,String val,boolean prop,Unit unit)
 	{
+		Exception exception=null;
 		switch (name) {
 		case TagNames.SET_WAVELENGTH:
 			try {
+				if(unit==null){
+					unit=TagNames.WAVELENGTH_UNIT;
+				}
 				setWavelength(parseToLength(val, unit), prop);
 			} catch (Exception e) {
 				setWavelength(null, prop);
+				exception=e;
 			}
 			waveLength.setVisible(true);
+			
 			break;
 		case TagNames.ATTENUATION:
 			try{
 			setAttenuation(parseAttenuation(val), prop);
 			}catch(Exception e){
 				setAttenuation(null, prop);
+				exception=e;
 			}
 			attenuation.setVisible(true);
+			
 			break;
-		default: LOGGER.warn("[CONF] LIGHTSRC SETT unknown tag: "+name );break;
+		default: 
+			LOGGER.warn("[CONF] LIGHTSRC SETT unknown tag: "+name );
+			break;
+		}
+		
+		if(exception!=null){
+			WarningDialog ld = new WarningDialog(
+					"Can't read tag value : "+name+" = "+val,exception.toString(),
+					this.getClass().getSimpleName());
+			ld.setVisible(true);
 		}
 	}
 

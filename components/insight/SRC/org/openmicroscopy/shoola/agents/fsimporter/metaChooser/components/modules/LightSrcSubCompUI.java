@@ -25,6 +25,7 @@ import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.MapPair;
 import ome.xml.model.enums.ArcType;
+import ome.xml.model.enums.Enumeration;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.FilamentType;
 import ome.xml.model.enums.LaserMedium;
@@ -67,6 +68,7 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 	abstract protected void readGUIInput() throws Exception;
 	abstract protected void completeData(LightSource lSrc) throws Exception;
 	abstract protected void addTags();
+	abstract protected void setAllValueChanged();
 	protected abstract void createNewElement(); 
 
 	protected void replaceData(LightSource l)
@@ -164,7 +166,6 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 		
 		buildComp=true;	
 		initTagList();
-		setFields=false;
 		
 	}
 	
@@ -174,7 +175,9 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 	public void update(List<TagData> list) 
 	{
 		for(TagData t: list){
+			System.out.println("\t ...Tag: "+t.getTagName()+" = "+t.getTagValue()+" : "+t.valueChanged());
 			if(t.valueChanged()){
+				
 				setTag(t);
 			}
 		}
@@ -207,7 +210,8 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return (result ||  setFields);
+		System.out.println("# LightSrcSubCompUI::userInput()="+result);
+		return result;
 	}
 	
 	
@@ -240,31 +244,68 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 			manufact.setTagValue(value,prop);
 	}
 	
-	public void setType(LaserType value, boolean prop)
-	{
-		String val= (value != null)? value.getValue() : "";
-		if(type == null) 
-			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(LaserType.class));
-		else 
-			type.setTagValue(val,prop);
-	}
-	public void setType(ArcType value, boolean prop)
-	{
-		String val= (value != null)? value.getValue() : "";
-		if(type == null) 
-			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(ArcType.class));
-		else 
-			type.setTagValue(val,prop);
-	}
-	public void setType(FilamentType value, boolean prop)
-	{
-		String val= (value != null)? value.getValue() : "";
-		if(type == null) 
-			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(FilamentType.class));
-		else 
-			type.setTagValue(val,prop);
-	}
+//	public void setType(LaserType value, boolean prop)
+//	{
+//		String val= (value != null)? value.getValue() : "";
+//		if(type == null) 
+//			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(LaserType.class));
+//		else 
+//			type.setTagValue(val,prop);
+//	}
+//	public void setType(ArcType value, boolean prop)
+//	{
+//		String val= (value != null)? value.getValue() : "";
+//		if(type == null) 
+//			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(ArcType.class));
+//		else 
+//			type.setTagValue(val,prop);
+//	}
+//	public void setType(FilamentType value, boolean prop)
+//	{
+//		String val= (value != null)? value.getValue() : "";
+//		if(type == null) 
+//			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(FilamentType.class));
+//		else 
+//			type.setTagValue(val,prop);
+//	}
 	
+	public void setType(Enumeration value,boolean prop)
+	{
+		String val;
+		System.out.println("\n ...classification lightSrc: "+classification);
+		
+		switch(classification){
+		case "Laser":
+			val= (value != null)? ((LaserType) value).getValue() : "";
+			if(type == null) 
+				type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(LaserType.class));
+			else 
+				type.setTagValue(val,prop);
+			break;
+		case "Arc":
+			val= (value != null)? ((ArcType) value).getValue() : "";
+			if(type == null) 
+				type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(ArcType.class));
+			else 
+				type.setTagValue(val,prop);
+			break;
+		case "Filament":
+			val= (value != null)? ((FilamentType) value).getValue() : "";
+			if(type == null) 
+				type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(FilamentType.class));
+			else 
+				type.setTagValue(val,prop);
+			break;
+			default:
+				val= (value != null)? ((LaserType) value).getValue() : "";
+				if(type == null) 
+					type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(LaserType.class));
+				else 
+					type.setTagValue(val,prop);
+				break;
+		}
+		
+	}
 	
 	public void setPower(Power value, boolean prop)
 	{
@@ -425,45 +466,28 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 //			lightSrc.setManufacturer(val);
 			manufact.setVisible(true);
 			break;
-		case TagNames.L_TYPE:
-			try{
-				if(val!=null){
-				LaserType value=LightSourceCompUI.parseLaserType(val);
-				setType(value, prop);
-				}else{
-					setType((LaserType)null,prop);
-				}
-//				((Laser)lightSrc).setType(value);
-			}catch(Exception e){
-				setType((LaserType)null,prop);
-			}
-			type.setVisible(true);
-			break;
+		case TagNames.TYPE:
 		case TagNames.A_TYPE:
-			try{
-				if(val!=null){							
-				ArcType value=LightSourceCompUI.parseArcType(val);
-				setType(value, prop);
-				}else{
-					setType((ArcType)null,prop);
-				}
-//				((Arc)lightSrc).setType(value);
-			}catch(Exception e){
-				setType((ArcType)null,prop);
-			}
-			type.setVisible(true);
-			break;
+		case TagNames.L_TYPE:
 		case TagNames.F_TYPE:
 			try{
-				if(val!=null){
-				FilamentType value=LightSourceCompUI.parseFilamentType(val);
-				setType(value, prop);
-				}else{
-					setType((FilamentType)null,prop);
+				switch(classification){
+				case "Arc":
+					setType(LightSourceCompUI.parseArcType(val),prop);
+					break;
+				case "Laser":
+					setType(LightSourceCompUI.parseLaserType(val),prop);
+					break;
+				case "Filament":
+					setType(LightSourceCompUI.parseFilamentType(val),prop);
+					break;
+				default:
+					setType(LightSourceCompUI.parseLaserType(val),prop);
+					break;
 				}
-//				((Filament)lightSrc).setType(value);
+				
 			}catch(Exception e){
-				setType((FilamentType)null,prop);
+					setType(null,prop);
 			}
 			type.setVisible(true);
 			break;

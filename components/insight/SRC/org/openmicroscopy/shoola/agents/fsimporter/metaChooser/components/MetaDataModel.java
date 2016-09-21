@@ -171,6 +171,7 @@ public class MetaDataModel
 	
 	public void resetData()
 	{
+		System.out.println("#MetaDataModel::resetData()");
 		experimentUI.clearDataValues();
 		sampleUI.clearDataValues();
 		objectiveUI.clearDataValues();
@@ -195,6 +196,7 @@ public class MetaDataModel
 	
 	public boolean noticUserInput()
 	{
+		System.out.println("#MetaDataModel::noticeUserInput()");
 		componentsWithChanges.clear();
 		boolean hasUserInput=false;
 		boolean result=false;
@@ -221,8 +223,11 @@ public class MetaDataModel
 		if(objectiveUI!=null){ 
 			changes=objectiveUI.userInput();
 			LOGGER.info("[DEBUG] -- changes in OBJECT: "+changes);
-			if(changes) componentsWithChanges.add(objectiveUI);
-			hasUserInput=hasUserInput ||objectiveUI.userInput();
+			if(changes){ 
+				componentsWithChanges.add(objectiveUI);
+				hasUserInput=hasUserInput ||true;
+			}
+			
 		}
 
 		//Detector
@@ -230,7 +235,7 @@ public class MetaDataModel
 			if(detectorList.get(i)!=null) {
 				if(detectorList.get(i).userInput()){
 					componentsWithChanges.add(detectorList.get(i));
-					result=result ||( detectorList.get(i)).userInput();
+					result=result ||true;
 				}
 			}
 		}
@@ -242,8 +247,9 @@ public class MetaDataModel
 		for(int i=0; i<lightSrcList.size();i++){
 			if(lightSrcList.get(i)!=null){
 				if(lightSrcList.get(i).userInput()){
+					System.out.println("\t ...lightSrc ["+i+"] : user input=true");
 					componentsWithChanges.add(lightSrcList.get(i));
-					result=result || (lightSrcList.get(i)).userInput();
+					result=result || true;
 				}
 			}
 		}
@@ -257,7 +263,7 @@ public class MetaDataModel
 			if(channelList.get(i)!=null) {
 				if(channelList.get(i).userInput()){
 					componentsWithChanges.add(channelList.get(i));
-					result=result || ( channelList.get(i)).userInput();
+					result=result || true;
 				}
 			}
 		}
@@ -270,7 +276,7 @@ public class MetaDataModel
 			if(lightPathList.get(i)!=null) {
 				if(lightPathList.get(i).userInput()){
 					componentsWithChanges.add(lightPathList.get(i));
-					result=result || ( lightPathList.get(i)).userInput();
+					result=result || true;
 				}
 			}
 		}
@@ -299,7 +305,7 @@ public class MetaDataModel
 			if(planeList.get(i)!=null) {
 				if(planeList.get(i).userInput()){
 					componentsWithChanges.add(planeList.get(i));
-					result=result ||( planeList.get(i)).userInput();
+					result=result ||true;
 				}
 			}
 		}
@@ -1291,15 +1297,57 @@ public class MetaDataModel
 
 	public void isUpToDate(boolean b) 
 	{
-		for(Object o: componentsWithChanges){
-			if(o instanceof ElementsCompUI){
-				((ElementsCompUI) o).isUpToDate(b);
-			}else if(o instanceof List){
-				for(ElementsCompUI e :(List<ElementsCompUI>) o){
-					e.isUpToDate(b);
-				}
+//		for(Object o: componentsWithChanges){
+//			if(o instanceof ElementsCompUI){
+//				System.out.println("Set "+o.getClass().getSimpleName() + " as updated");
+//				((ElementsCompUI) o).isUpToDate(b);
+//			}else if(o instanceof List){
+//				for(ElementsCompUI e :(List<ElementsCompUI>) o){
+//					e.isUpToDate(b);
+//				}
+//			}
+//		}
+		try{
+			image.isUpToDate(b);
+		}catch(Exception e){}
+		try{
+			imgEnvUI.isUpToDate(b);
+		}catch(Exception e){}
+		try{
+			for(ElementsCompUI e :planeList){
+				e.isUpToDate(b);
 			}
-		}
+		}catch(Exception e){}
+		try{
+			objectiveUI.isUpToDate(b);
+		}catch(Exception e){}
+		try{
+			for(ElementsCompUI e :detectorList){
+				e.isUpToDate(b);
+			}
+		}catch(Exception e){}
+		try{
+			for(ElementsCompUI e :lightSrcList){
+				e.isUpToDate(b);
+			}
+		}catch(Exception e){}
+		try{
+			for(ElementsCompUI e :channelList){
+				e.isUpToDate(b);
+			}
+		}catch(Exception e){}
+		try{
+			for(ElementsCompUI e :lightPathList){
+				e.isUpToDate(b);
+			}
+		}catch(Exception e){}
+		try{
+			sampleUI.isUpToDate(b);
+		}catch(Exception e){}
+		try{
+			experimentUI.isUpToDate(b);
+		}catch(Exception e){}
+		
 		componentsWithChanges.clear();
 	}
 	

@@ -9,10 +9,11 @@ import ome.xml.model.LightSource;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
-public class LEDCompUI extends LightSrcSubCompUI
+public class LS_LEDCompUI extends LightSrcSubCompUI
 {
 
-	public LEDCompUI(ModuleConfiguration objConf) {
+	public LS_LEDCompUI(ModuleConfiguration objConf) {
+		classification="LightEmittingDiode";
 		lightSrc=null;
 		initGUI();
 		if(objConf==null)
@@ -56,6 +57,7 @@ public class LEDCompUI extends LightSrcSubCompUI
 	
 	protected void readGUIInput() throws Exception 
 	{
+		System.out.println("# LS_LEDCompUI::readGUIInput()");
 		if(lightSrc==null)
 			createNewElement();
 		try{
@@ -106,5 +108,11 @@ public class LEDCompUI extends LightSrcSubCompUI
 			description.setEnable(false);
 		}
 	}
-
+	@Override
+	protected void setAllValueChanged() {
+		System.out.println("# LS_LEDCompUI::setAllTagsChanged()");
+		if(manufact!=null) manufact.changeIsUpdated(false);
+		if(description!=null)description.changeIsUpdated(false);
+		if(model!=null)model.changeIsUpdated(false);
+	}
 }

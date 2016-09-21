@@ -109,7 +109,7 @@ public class DetectorCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return (result || detectorSettUI.userInput()|| setFields);
+		return (result || detectorSettUI.userInput()|| dataChanged);
 	}
 
 
@@ -174,7 +174,7 @@ public class DetectorCompUI extends ElementsCompUI
 						availableDetectors);
 				Detector selected=creator.getDetector();  
 				if(selected!=null ){
-					setFields=true;
+					dataChanged=true;
 					detector=selected;
 					setGUIData();
 					revalidate();
@@ -373,7 +373,7 @@ public class DetectorCompUI extends ElementsCompUI
 		
 		buildComp=true;
 		initTagList();
-		setFields=false;
+		dataChanged=false;
 	}
 
 	
@@ -510,7 +510,7 @@ public class DetectorCompUI extends ElementsCompUI
 	}
 
 	public void setFieldsExtern(boolean b) {
-		setFields= setFields || b;		
+		dataChanged= dataChanged || b;		
 	}
 	
 	/**
@@ -537,7 +537,7 @@ public class DetectorCompUI extends ElementsCompUI
 			try{
 				if(val!=null){
 					setModel(val,prop);
-					setFields=true;
+					dataChanged=true;
 				}else{
 					setModel(null,OPTIONAL);
 				}
@@ -552,7 +552,7 @@ public class DetectorCompUI extends ElementsCompUI
 			try{
 				if(val!=null){
 					setManufact(val, prop);
-					setFields=true;
+					dataChanged=true;
 				}else{
 					setManufact(null, OPTIONAL);
 				}
@@ -567,7 +567,7 @@ public class DetectorCompUI extends ElementsCompUI
 			try{
 				DetectorType value= DetectorType.fromString(val);
 				setType(value, prop);
-				setFields=true;
+				dataChanged=true;
 			}
 			catch(Exception e){
 				setType(null,OPTIONAL);
@@ -577,7 +577,7 @@ public class DetectorCompUI extends ElementsCompUI
 		case TagNames.ZOOM:
 			try{
 				setZoom(Double.valueOf(val), prop);
-				setFields=true;
+				dataChanged=true;
 			}
 			catch(Exception e){
 				setZoom(null, OPTIONAL);
@@ -587,7 +587,7 @@ public class DetectorCompUI extends ElementsCompUI
 		case TagNames.AMPLGAIN:
 			try{
 				setAmplGain(Double.valueOf(val), prop);
-				setFields=true;
+				dataChanged=true;
 			}
 			catch(Exception e){
 				setAmplGain(null, OPTIONAL);

@@ -10,10 +10,11 @@ import ome.xml.model.LightSource;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
-public class GESCompUI extends LightSrcSubCompUI
+public class LS_GESCompUI extends LightSrcSubCompUI
 {
 
-	public GESCompUI(ModuleConfiguration objConf) {
+	public LS_GESCompUI(ModuleConfiguration objConf) {
+		classification="GenericExcitationSource";
 		lightSrc=null;
 		initGUI();
 		if(objConf==null)
@@ -62,6 +63,7 @@ public class GESCompUI extends LightSrcSubCompUI
 	@Override
 	protected void readGUIInput() throws Exception 
 	{
+		System.out.println("# LS_GESCompUI::readGUIInput()");
 		if(lightSrc==null)
 			createNewElement();
 		try{
@@ -100,12 +102,11 @@ public class GESCompUI extends LightSrcSubCompUI
 	{
 		addTagToGUI(model);
 		addTagToGUI(manufact);
-		
+		addTagToGUI(map);
+		addTagToGUI(power); 
 
-			addTagToGUI(map);
-			addTagToGUI(power); 
-	
 	}
+	
 	protected void createNewElement() 
 	{
 		lightSrc=new GenericExcitationSource();
@@ -124,6 +125,13 @@ public class GESCompUI extends LightSrcSubCompUI
 			model.setEnable(false);
 		}
 	}
-
+	@Override
+	protected void setAllValueChanged() {
+		System.out.println("# LS_GESCompUI::setAllTagsChanged()");
+		if(manufact!=null)manufact.changeIsUpdated(false);
+		if(map!=null)map.changeIsUpdated(false);
+		if(power!=null)power.changeIsUpdated(false);
+		if(model!=null)model.changeIsUpdated(false);
+	}
 
 }

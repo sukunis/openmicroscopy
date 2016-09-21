@@ -210,7 +210,7 @@ public class FilterCompUI extends LightPathElem
 		
 		buildComp=true;
 		initTagList();
-		setFields=false;
+		dataChanged=false;
 	}
 
 	
@@ -346,7 +346,7 @@ public class FilterCompUI extends LightPathElem
 				result= result || val;
 			}
 		}
-		return (result || setFields);
+		return (result || dataChanged);
 	}
 
 	@Override

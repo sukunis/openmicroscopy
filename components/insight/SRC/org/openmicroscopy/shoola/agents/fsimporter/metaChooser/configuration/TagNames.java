@@ -23,9 +23,11 @@ public class TagNames
 	public static final String TYPE="Type";
 	public static final String DESC="Description";
 	
-	//OBJECTIVE
-//	private final String L_MODEL="Model";
-//	private final String L_MANUFAC="Manufacturer";
+	//--------------------------
+	//	OBJECTIVE
+	//--------------------------
+	//	MODEL
+	//	MANUFAC
 	public static final String NOMMAGN="Nominal Magnification";
 	public static final String CALMAGN="Calibration Magnification";
 	public static final String LENSNA="Lens NA";
@@ -45,8 +47,9 @@ public class TagNames
 			new PreTagData(WORKDIST,WORKDIST_UNIT, ""),new PreTagData(CORCOLLAR,null, "S"),new PreTagData(OBJ_MEDIUM,null, "S"),
 			new PreTagData(REFINDEX,null, "S")};
 	
-	
-	//CHANNEL
+	//--------------------------
+	//	CHANNEL
+	//--------------------------
 	public static final String CH_NAME="Name";
 	public static final String COLOR="Color";
 	public static final String FLUOROPHORE="Fluorophore";
@@ -72,10 +75,12 @@ public class TagNames
 		new PreTagData(IMAGINGMODE,null, ""),new PreTagData(ILLUMINATIONMODE,null, ""),new PreTagData(CONTRASTMETHOD,null, ""),
 		new PreTagData(NDFILTER,null, ""),new PreTagData(PINHOLESIZE,PINHOLESIZE_UNIT, "")};
 	
-	//Detector
-//	private final String L_MODEL="Model";
-//	private final String L_MANUFAC="Manufacturer";
-//	private final String L_TYPE="Type";
+	//--------------------------
+	//	Detector
+	//--------------------------
+	//	MODEL="Model";
+	//	MANUFAC="Manufacturer";
+	//	TYPE="Type";
 	public static final String ZOOM="Zoom";
 	public static final String AMPLGAIN="AmplificationGain";
 	
@@ -94,9 +99,11 @@ public class TagNames
 		new PreTagData(OFFSET,null, "S"),new PreTagData(CONFZOOM,null, "S"),new PreTagData(BINNING,null, "S"),
 		new PreTagData(SUBARRAY,null, "S")};
 	
-	//Experiment
-//	private final String TYPE="Type";
-//	private final String DESC="Description";
+	//--------------------------
+	//	Experiment
+	//--------------------------
+	//	TYPE="Type";
+	//	DESC="Description";
 	public static final String EXPNAME="Experimenter Name";
 	
 	public static final String PROJECTNAME="Project Name";
@@ -106,7 +113,10 @@ public class TagNames
 	private static PreTagData[] experimentTags={new PreTagData(TYPE,null, ""),new PreTagData(DESC,null, ""),new PreTagData(EXPNAME,null, ""),
 		new PreTagData(PROJECTNAME,null, ""),new PreTagData(GROUP,null, ""),new PreTagData(PROJECTPARTNER,null, "")};
 	
-	//Image
+	
+	//--------------------------
+	//	Image
+	//--------------------------
 	public static final String IMG_NAME="Name";
 	public static final String ACQTIME="Acquisition Time";
 	public static final String DIMXY="Dim X x Y";
@@ -126,7 +136,9 @@ public class TagNames
 		new PreTagData(PIXELTYPE,null, ""),new PreTagData(PIXELSIZE,PIXELSIZE_UNIT, ""),new PreTagData(DIMZTC,null, ""),new PreTagData(STAGEPOS,STAGEPOS_UNIT, ""),
 		new PreTagData(STEPSIZE,null, ""),new PreTagData(TIMEINC,TIMEINC_UNIT, ""),new PreTagData(WELLNR,null, "")};
 	
-	//ImageEnv
+	//--------------------------
+	//	ImageEnv
+	//--------------------------
 	public static final String TEMP="Temperature";
 	public static final String AIRPRESS="Air Pressure";
 	public static final String HUMIDITY="Humidity";
@@ -137,18 +149,17 @@ public class TagNames
 	public static final Unit PERCENT_UNIT=ome.units.unit.Unit.CreateBaseUnit("SI.PERCENT", "%");
 	
 	
+	//--------------------------
+	//	LightSrc
+	//--------------------------
+	//	MODEL ="Model";
+	//	MANUFAC="Manufacturer";
+	// 	TYPE
+	public static final String L_TYPE="L_Type"; //only for profile/hardware xml
+	public static final String A_TYPE="A_Type"; //only for profile/hardware xml
+	public static final String F_TYPE="F_Type"; //only for profile/hardware xml
 	
-	//LightSrc
-//	private final String L_MODEL ="Model";
-//	private final String L_MANUFAC="Manufacturer";
 	public static final String POWER="Power";
-	
-	public static final String L_TYPE="L_Type";
-	public static final String A_TYPE="A_Type";
-	public static final String F_TYPE="F_Type";
-	public static final String GES_TYPE="GES_Type";
-	public static final String LED_TYPE="LED_Type";
-	
 	public static final String MEDIUM="Medium";
 	public static final String FREQMUL="Frequency Multiplication";
 	public static final String TUNABLE="Tunable";
@@ -172,12 +183,14 @@ public class TagNames
 	public static final String ATTENUATION="Attenuation";
 	
 	private static PreTagData[] lightSrcTags={new PreTagData(MODEL,null, ""),new PreTagData(MANUFAC,null, ""),new PreTagData(POWER,POWER_UNIT, ""),
-			new PreTagData(L_TYPE,null, ""),new PreTagData(A_TYPE,null, ""),new PreTagData(F_TYPE,null, ""),new PreTagData(MEDIUM,null, ""),
+			new PreTagData(TYPE,null, ""),new PreTagData(MEDIUM,null, ""),
 			new PreTagData(FREQMUL,null, ""),new PreTagData(TUNABLE,null, ""),new PreTagData(PULSE,null, ""),new PreTagData(POCKELCELL,null, ""),
 			new PreTagData(REPRATE,REPRATE_UNIT_HZ, ""),new PreTagData(PUMP,null, ""),new PreTagData(WAVELENGTH,WAVELENGTH_UNIT, ""),new PreTagData(MAP,null, ""),
 			new PreTagData(SET_WAVELENGTH,WAVELENGTH_UNIT, "S"),new PreTagData(ATTENUATION,null, "S")};
 	
-	//Sample
+	//--------------------------
+	//	Sample
+	//--------------------------
 	public static final String PREPDATE="Prep Date";
 	public static final String PREPDESC="Prep Description";
 	public static final String RAWCODE="Code";
@@ -192,7 +205,9 @@ public class TagNames
 		new PreTagData(RAWDESC,null, ""),new PreTagData(GRIDBOXNR,null, ""),new PreTagData(GRIDBOXTYPE,null, ""),new PreTagData(EXPGRID,null, ""),
 		new PreTagData(EXPOBJNR,null, ""),new PreTagData(EXPOBJTYPE,null, "")};
 	
-	//LightPath
+	//--------------------------
+	//	LightPath
+	//--------------------------
 	public static final String FILTER = "Filter";
 	public static final String FILTER_CLASS="Class";
 	public static final String FILTER_CLASS_EM="Emission Filter";
@@ -204,7 +219,9 @@ public class TagNames
 //	public static final String TYPE="Type";
 	public static final String FILTERWHEEL="Filterwheel";
 	
-	//Plane
+	//--------------------------
+	//	Plane
+	//--------------------------
 	public static final String DELTA_T="Delta T";
 	public static final String STAGE_POS_X="Stage Pos X";
 	public static final String STAGE_POS_Y="Stage Pos Y";

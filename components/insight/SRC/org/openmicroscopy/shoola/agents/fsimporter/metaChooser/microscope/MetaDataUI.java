@@ -278,6 +278,12 @@ public class MetaDataUI extends JPanel
 	public MetaDataModel getModel() throws Exception
 	{
 		//read input data
+		return model;
+	}
+	/** return model object*/
+	public MetaDataModel getUpdatedModel() throws Exception
+	{
+		//read input data
 		model.save();
 		return model;
 	}

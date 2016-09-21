@@ -156,10 +156,8 @@ public class ModuleConfiguration
 			for(int i=0; i<tagList.getLength(); i++){
 				NamedNodeMap attr=tagList.item(i).getAttributes();
 				if(tagList.item(i).getParentNode().getNodeName().equals("Settings")){
-					
 					parseTagFromXML(attr,settingsTagConfList,"settings");
 				}else{
-					
 					parseTagFromXML(attr,tagConfList,"");
 				}
 			}

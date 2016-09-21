@@ -376,7 +376,7 @@ public class ObjectiveSettingsCompUI extends ElementsCompUI
 			break;
 		default:LOGGER.warn("[CONF] OBJECTIVE SETT unknown tag: "+name );break;
 		}
-		setFields=true;
+		dataChanged=true;
 	}
 
 	

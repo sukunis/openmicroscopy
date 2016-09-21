@@ -93,7 +93,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		return (result || objectiveSettUI.userInput() || setFields);
+		return (result || objectiveSettUI.userInput() || dataChanged);
 	}
 	
 
@@ -324,7 +324,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 						availableObj);
 				Objective selectedObj=creator.getObjective();  
 				if(selectedObj!=null ){
-					setFields=true;
+					dataChanged=true;
 					objective=selectedObj;
 					setGUIData();
 					revalidate();
@@ -458,7 +458,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 		
 		buildComp=true;
 		initTagList();
-		setFields=false;
+		dataChanged=false;
 	}
 	
 	
@@ -728,7 +728,7 @@ public class ObjectiveCompUI extends ElementsCompUI
 	}
 
 	public void setFieldsExtern(boolean b) {
-		setFields= setFields || b;		
+		dataChanged= dataChanged || b;		
 	}
 
 	public void clearList() 
