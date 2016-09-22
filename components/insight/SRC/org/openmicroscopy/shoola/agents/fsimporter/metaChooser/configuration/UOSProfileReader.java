@@ -1,7 +1,16 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration;
 import java.io.File;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import ome.xml.model.Arc;
+import ome.xml.model.Filament;
+import ome.xml.model.GenericExcitationSource;
+import ome.xml.model.Laser;
+import ome.xml.model.LightEmittingDiode;
+import ome.xml.model.LightSource;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
@@ -193,7 +202,6 @@ public class UOSProfileReader
 	private void addTags(Element node, String moduleName,boolean visible, GUIPlaceholder position,String width) 
 	{
 		ModuleConfiguration conf=new ModuleConfiguration(visible,position,width);
-		
 		switch (moduleName) {
 		case MODULE_IMG:
 			conf.loadTags(node);
@@ -219,9 +227,15 @@ public class UOSProfileReader
 			conf.loadTags(node);
 			view.setLightPathConf(conf);
 			break;
+		case MODULE_LS_ARC:
+		case MODULE_LS_FILAMENT:
+		case MODULE_LS_GES:
+		case MODULE_LS_LASER:
+		case MODULE_LS_LED:
 		case MODULE_LIGHTSRC:
 			conf.loadTags(node);
 			view.setLightSrcConf(conf);	
+			createLightSrcDataObject(moduleName);
 			break;
 		case MODULE_SAMPLE:
 			conf.loadTags(node);
@@ -237,6 +251,31 @@ public class UOSProfileReader
 			break;
 		default:
 			LOGGER.warn("[VIEW_PROP] Unknown module: "+moduleName);
+			break;
+		}
+	}
+
+	private void createLightSrcDataObject(String moduleName) 
+	{
+		LightSource l=null;
+		switch (moduleName) {
+		case MODULE_LS_ARC:
+			l=new Arc();
+			break;
+		case MODULE_LS_FILAMENT:
+			l=new Filament();
+			break;
+		case MODULE_LS_GES:
+			l=new GenericExcitationSource();
+			break;
+		case MODULE_LS_LASER:
+			l=new Laser();
+			break;
+		case MODULE_LS_LED:
+			l=new LightEmittingDiode();
+			break;
+		default:
+			l=new Laser();
 			break;
 		}
 	}
