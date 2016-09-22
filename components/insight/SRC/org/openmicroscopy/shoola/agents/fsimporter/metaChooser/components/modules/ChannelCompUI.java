@@ -696,16 +696,16 @@ public class ChannelCompUI extends ElementsCompUI
 			ndFilter.setTagValue(val,prop);
 	}
 	
-	public LightPathCompUI getLightPath()
-	{
-		return lightPath;
-	}
-	
-	public void setLightPath(LightPathCompUI lp)
-	{
-		lightPath=lp;
-		
-	}
+//	public LightPathCompUI getLightPath()
+//	{
+//		return lightPath;
+//	}
+//	
+//	public void setLightPath(LightPathCompUI lp)
+//	{
+//		lightPath=lp;
+//		
+//	}
 	
 	
 	

@@ -80,25 +80,25 @@ public class ExperimentCompUI extends ElementsCompUI
 		
 	}
 	
-	public ExperimentCompUI(ExperimentContainer _experiment, String idxExp, String idxExper)
-	{
-		expContainer=_experiment;
-		
-		initGUI();
-		if(expContainer!=null){
-			setGUIData();
-		}
-		else{
-			if(idxExp==null )
-				idxExp=MetadataTools.createLSID("Experiment", 0);
-			
-			if(idxExper==null)
-				idxExper=MetadataTools.createLSID("Experimenter", 0);
-			
-			createNewExperiment(idxExp, idxExper);
-			createDummyPane(false);
-		}
-	}
+//	public ExperimentCompUI(ExperimentContainer _experiment, String idxExp, String idxExper)
+//	{
+//		expContainer=_experiment;
+//		
+//		initGUI();
+//		if(expContainer!=null){
+//			setGUIData();
+//		}
+//		else{
+//			if(idxExp==null )
+//				idxExp=MetadataTools.createLSID("Experiment", 0);
+//			
+//			if(idxExper==null)
+//				idxExper=MetadataTools.createLSID("Experimenter", 0);
+//			
+//			createNewExperiment(idxExp, idxExper);
+//			createDummyPane(false);
+//		}
+//	}
 	
 	
 	

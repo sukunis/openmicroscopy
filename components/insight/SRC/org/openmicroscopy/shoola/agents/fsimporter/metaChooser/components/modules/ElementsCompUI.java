@@ -172,25 +172,25 @@ public abstract class ElementsCompUI extends JPanel
 
 	
 	
-	class FilterRef{
-		static final String EMISSION="EmissionFilter";
-		static final String EXCITATION="ExcitationFilter";
-		static final String DICHROIC="Dichroic";
-				
-		private String type;
-		private String id;
-		
-		public FilterRef(String t, String id)
-		{
-			type=t;
-			this.id=id;
-		}
-		
-		public String getFilterId()
-		{
-			return this.id;
-		}
-	}
+//	class FilterRef{
+//		static final String EMISSION="EmissionFilter";
+//		static final String EXCITATION="ExcitationFilter";
+//		static final String DICHROIC="Dichroic";
+//				
+//		private String type;
+//		private String id;
+//		
+//		public FilterRef(String t, String id)
+//		{
+//			type=t;
+//			this.id=id;
+//		}
+//		
+//		public String getFilterId()
+//		{
+//			return this.id;
+//		}
+//	}
 
 
 
