@@ -40,6 +40,14 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.module
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneSliderCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.SampleCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ChannelModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightPathModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.SampleModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
@@ -80,6 +88,19 @@ public class MetaDataModel
 	private List<Dichroic> dichroicList;
 	/** list of all lightSrc for current image */
 	private List<LightSource> lightSrcOrigList;
+	
+	
+	//-----------------------------------------
+	private ImageModel imgModel;
+	private ExperimentContainer expModel;
+	private ObjectiveModel objModel;
+	private ImageEnvModel imgEnvModel;
+	private SampleModel sampleModel;
+	private List<LightPathModel> lightPathModelList;
+	private List<ChannelModel> channelModelList;
+	private List<DetectorModel> detectorModelList;
+	private List<LightSourceModel> lightSrcModelList;
+	//------------------------------------------------
 	
 	/** linked Channel for single filter, because there are more than one filter per channel
 	 and maybe two channel have the same kind of filter with differents settings**/
@@ -123,22 +144,26 @@ public class MetaDataModel
 		componentsWithChanges=new ArrayList<ElementsCompUI>();
 	}
 	
-	public MetaDataModel(int imgIdx, int _numOfChannels)
-	{
-		LOGGER.info("[DEBUG] set image index "+imgIdx);
-		imageIndex=imgIdx;
-		numOfChannels=_numOfChannels;
-		
-		
-		channelList=new ArrayList<ElementsCompUI>(numOfChannels);
-		planeList=new ArrayList<ElementsCompUI>();
-		lightSrcList=new ArrayList<ElementsCompUI>(numOfChannels);
-		detectorList=new ArrayList<ElementsCompUI>(numOfChannels);
-		
-		lightPathList=new ArrayList<ElementsCompUI>(numOfChannels);
-		
-		componentsWithChanges=new ArrayList<ElementsCompUI>();
-	}
+	
+	
+//	public MetaDataModel(int imgIdx, int _numOfChannels)
+//	{
+//		LOGGER.info("[DEBUG] set image index "+imgIdx);
+//		imageIndex=imgIdx;
+//		numOfChannels=_numOfChannels;
+//		
+//		
+//		channelList=new ArrayList<ElementsCompUI>(numOfChannels);
+//		planeList=new ArrayList<ElementsCompUI>();
+//		lightSrcList=new ArrayList<ElementsCompUI>(numOfChannels);
+//		detectorList=new ArrayList<ElementsCompUI>(numOfChannels);
+//		
+//		lightPathList=new ArrayList<ElementsCompUI>(numOfChannels);
+//		
+//		componentsWithChanges=new ArrayList<ElementsCompUI>();
+//	}
+	
+	
 	
 	public void clearData()
 	{

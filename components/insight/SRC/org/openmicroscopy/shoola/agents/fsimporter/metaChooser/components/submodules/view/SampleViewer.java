@@ -28,6 +28,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.SampleModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
@@ -39,7 +40,7 @@ public class SampleViewer extends ModuleViewer{
 	private static final org.slf4j.Logger LOGGER =
     	    LoggerFactory.getLogger(SampleViewer.class);
  
-private Sample sample;
+private SampleModel data;
 
 // available element tags
 private TagData preparationDate;
@@ -61,9 +62,9 @@ private TagData rawMaterialCode;
  * Creates a new instance.
  * @param model Reference to model.
  */
-public SampleViewer(Sample model,ModuleConfiguration conf)
+public SampleViewer(SampleModel model,ModuleConfiguration conf)
 {
-	this.sample=model;
+	this.data=model;
 	initComponents(conf);
 	initTagList();
 	buildGUI();
@@ -202,6 +203,11 @@ protected void initTag(TagConfiguration t)
  */
 private void setGUIData() 
 {
+	if(data==null)
+		return;
+	
+	Sample sample=data.getSample();
+	
 	if(sample!=null){
 		try{ setPreparationDescription(sample.getPrepDescription(), REQUIRED);}
 		catch(NullPointerException e){}
@@ -330,8 +336,10 @@ private void setExpObjectType(String value, boolean prop)
 @Override
 public void saveData() 
 {
-	if(sample==null)
-		sample=new Sample();
+	if(data==null)
+		data=new SampleModel();
+
+	Sample sample=data.getSample();
 	//TODO input checker
 	try{sample.setPrepDate(preparationDate.getTagValue().equals("")? 
 			null : Timestamp.valueOf(preparationDate.getTagValue()));}
@@ -388,83 +396,8 @@ public void saveData()
 	
 	
 }
-/*----------------------------------------
- * MODEL functionality
- -----------------------------------------*/
-public boolean addData(Sample s, boolean overwrite)
-{
-	boolean conflicts=false;
-	if(overwrite){
-		replaceData(s);
-		LOGGER.info("[DATA] -- replace SAMPLE data");
-	}else
-		try {
-			completeData(s);
-			LOGGER.info("[DATA] -- complete SAMPLE data");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	setGUIData();
-	return conflicts;
-}
 
-private void replaceData(Sample s)
-{
-	if(s!=null){
-		sample=s;
-	}
-}
 
-private void completeData(Sample s) throws Exception
-{
-	//copy input fields
-	Sample copyIn=null;
-	if(sample!=null){
-		if(hasDataToSave()) saveData();
-		copyIn=new Sample(sample);
-	}
-
-	replaceData(s);
-
-	// set input field values again
-	if(copyIn!=null){
-		String pdesc=copyIn.getPrepDescription();
-		Timestamp pdate=copyIn.getPrepDate();
-		String rc=copyIn.getRawMaterialCode();
-		String rdesc=copyIn.getRawMaterialDesc();
-		
-		GridBox g=copyIn.getGridBox();
-		String gNr=null;
-		String gT=null;
-		if(g!=null){
-			gNr=g.getNr();
-			gT=g.getType();
-		}
-		ObservedSample os=copyIn.getObservedSample(0);
-		String osgx=null;
-		String osgy=null;
-		String ost=null;
-		String osNr=null;
-		if(os!=null){
-			osgx=os.getGridNumberX();
-			osgy=os.getGridNumberY();
-			ost=os.getObjectType();
-			osNr=os.getObjectNumber();
-		}
-
-		if(pdesc!=null && !pdesc.equals("")) sample.setPrepDescription(pdesc);
-		if(pdate!=null) sample.setPrepDate(pdate);
-		if(rc!=null && !rc.equals("")) sample.setRawMaterialCode(rc);
-		if(rdesc!=null && !rdesc.equals("")) sample.setRawMaterialDesc(rdesc);
-		if(gNr!=null) sample.getGridBox().setNr(gNr);
-		if(gT!=null && !gT.equals("")) sample.getGridBox().setType(gT);
-		if(osgx!=null && !osgx.equals("")) sample.getObservedSample(0).setGridNumberY(osgx);
-		if(osgy!=null && !osgy.equals("")) sample.getObservedSample(0).setGridNumberY(osgy);
-		if(ost!=null && !ost.equals("")) sample.getObservedSample(0).setObjectType(ost);
-		if(osNr!=null && !osNr.equals("")) sample.getObservedSample(0).setObjectNumber(osNr);
-	}
-}
 
 }
 

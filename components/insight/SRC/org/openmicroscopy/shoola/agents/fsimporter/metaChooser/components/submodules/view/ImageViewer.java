@@ -33,6 +33,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -45,7 +46,7 @@ public class ImageViewer extends ModuleViewer{
 	private static final org.slf4j.Logger LOGGER =
 			LoggerFactory.getLogger(ImageViewer.class);
 
-	private Image image;
+	private ImageModel data;
 	private Box box;
 
 	// available element tags
@@ -65,9 +66,9 @@ public class ImageViewer extends ModuleViewer{
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public ImageViewer(Image model,ModuleConfiguration conf)
+	public ImageViewer(ImageModel model,ModuleConfiguration conf)
 	{
-		this.image=model;
+		this.data=model;
 		initComponents(conf);
 		initTagList();
 		buildGUI();
@@ -204,6 +205,11 @@ public class ImageViewer extends ModuleViewer{
 	 */
 	private void setGUIData() 
 	{
+		if(data==null)
+			return;
+		
+		Image image=data.getImage();
+		
 		if(image!=null){ 
 			try{setName(image.getName(),ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
@@ -372,10 +378,10 @@ For example in a video stream.
 	@Override
 	public void saveData() 
 	{
-		if(image==null){
-			image=new Image();
-			image.setPixels(new Pixels());
-		}
+		if(data==null)
+			data=new ImageModel();
+		
+		Image image=data.getImage();
 
 		try{
 			image.setName(name.getTagValue());
@@ -439,81 +445,8 @@ For example in a video stream.
 	}
 
 
-/*----------------------------------------
- * MODEL functionality
- -----------------------------------------*/
-	public boolean addData(Image img, boolean overwrite)
-	{
-		boolean conflicts=false;
-		if(overwrite){
-			replaceData(img);
-			LOGGER.info("[DATA] -- replace IMAGE data");
-		}else
-			try {
-				completeData(img);
-				LOGGER.info("[DATA] -- complete IMAGE data");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		setGUIData();
-		return conflicts;
-	}
 
-	private void replaceData(Image i)
-	{
-		if(i!=null){
-			image=i;
-
-		}
-	}
-
-	private void completeData(Image i) throws Exception
-	{
-		//copy input fields
-		Image copyIn=null;
-		if(image!=null){
-			if(hasDataToSave()) saveData();
-			copyIn=new Image(image);
-		}
-
-		replaceData(i);
-
-		// set input field values again
-		if(copyIn!=null){
-			String name=copyIn.getName();
-			PositiveInteger dimX=copyIn.getPixels().getSizeX();
-			PositiveInteger dimY=copyIn.getPixels().getSizeY();
-			PositiveInteger dimZ=copyIn.getPixels().getSizeZ();
-			PositiveInteger dimT=copyIn.getPixels().getSizeT();
-			PositiveInteger dimC=copyIn.getPixels().getSizeC();
-			PixelType type=copyIn.getPixels().getType();
-			Time timeInc=copyIn.getPixels().getTimeIncrement();
-			Timestamp stamp=copyIn.getAcquisitionDate();
-			Length pixelSizeX=copyIn.getPixels().getPhysicalSizeX();
-			Length pixelSizeY=copyIn.getPixels().getPhysicalSizeY();
-			//		//TODO wellNr,expRef
-			StageLabel stageLabel=copyIn.getStageLabel();
-			Pixels p=image.getPixels();
-
-			if(name!=null && !name.equals("")) image.setName(name);
-			if(dimX!=null && !dimX.toString().equals("")) p.setSizeX(dimX);
-			if(dimY!=null && !dimY.toString().equals("")) p.setSizeX(dimY);
-			if(dimZ!=null && !dimZ.toString().equals("")) p.setSizeX(dimZ);
-			if(dimT!=null && !dimT.toString().equals("")) p.setSizeX(dimT);
-			if(dimC!=null && !dimC.toString().equals("")) p.setSizeX(dimC);
-			if(type!=null && !type.toString().equals("")) p.setType(type);
-			//TODO test ifEmpty
-			if(timeInc!=null) p.setTimeIncrement(timeInc);
-			if(stamp!=null) image.setAcquisitionDate(stamp);
-			if(pixelSizeX!=null) p.setPhysicalSizeX(pixelSizeX);
-			if(pixelSizeY!=null) p.setPhysicalSizeY(pixelSizeY);
-			if(stageLabel!=null) image.setStageLabel(stageLabel);
-
-
-		}
-	}
-
+	
 }
 
 

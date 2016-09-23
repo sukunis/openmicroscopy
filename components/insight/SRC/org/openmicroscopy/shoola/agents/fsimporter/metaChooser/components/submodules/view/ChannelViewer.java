@@ -31,6 +31,7 @@ import ome.xml.model.primitives.Color;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ChannelModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -43,7 +44,7 @@ public class ChannelViewer extends ModuleViewer{
 	private static final org.slf4j.Logger LOGGER =
     	    LoggerFactory.getLogger(ChannelViewer.class);
  
-private Channel channel;
+private ChannelModel data;
 
 // available element tags
 private TagData name;
@@ -78,9 +79,9 @@ private String stagePosRef;
  * Creates a new instance.
  * @param model Reference to model.
  */
-public ChannelViewer(Channel model,ModuleConfiguration conf)
+public ChannelViewer(ChannelModel model,ModuleConfiguration conf)
 {
-	this.channel=model;
+	this.data=model;
 	initComponents(conf);
 	initTagList();
 	buildGUI();
@@ -230,6 +231,10 @@ protected void initTag(TagConfiguration t)
  */
 private void setGUIData() 
 {
+	if(data==null)
+		return;
+	Channel channel=data.getChannel();
+	
 	if(channel!=null){
 		//Channel data
 		try{ setName(channel.getName(),ElementsCompUI.REQUIRED);
@@ -387,6 +392,10 @@ private void setNDFilter(Double value, boolean prop)
 @Override
 public void saveData() 
 {
+	if(data==null)
+		data=new ChannelModel();
+	
+	Channel channel=data.getChannel();
 	if(channel==null)
 		channel=new Channel();
 	//TODO format check
@@ -477,100 +486,6 @@ private AcquisitionMode parseAcqMode(String c) throws EnumerationException {
 }
 
 
-/*----------------------------------------------------
- * Model
- -------------------------------------------------------*/
-public boolean addData(Channel c, boolean overwrite) 
-{
-	boolean conflicts=false;
-	if(overwrite){
-		replaceData(c);
-		LOGGER.info("[DATA] -- replace CHANNEL data");
-	}else
-		try {
-			completeData(c);
-			LOGGER.info("[DATA] -- complete CHANNEL data");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
-	setGUIData();
-	return conflicts;
-}
-
-private void completeData(Channel c) throws Exception
-{
-	//copy input fields
-	Channel copyIn=null;
-	if(channel!=null){
-		if(hasDataToSave()) saveData();
-		copyIn=new Channel(channel);
-	}
-	
-	replaceData(c);
-	
-	// set input field values again
-	if(copyIn!=null){
-		//read data
-		String name=copyIn.getName();
-		Color color=copyIn.getColor();
-		String fluor=copyIn.getFluor();
-		Length exW=copyIn.getExcitationWavelength();
-		Length emW=copyIn.getEmissionWavelength();
-		AcquisitionMode aMode=copyIn.getAcquisitionMode();
-		ContrastMethod cMethod=copyIn.getContrastMethod();
-		Double ndf=copyIn.getNDFilter();
-		
-		if(c.getID()!=null && !c.getID().equals(""))
-			channel.setID(c.getID());
-		if(name!=null && !name.equals("")) channel.setName(name);
-		if(color!=null) channel.setColor(color);
-		if(fluor!=null && !fluor.equals("")) channel.setFluor(fluor);
-		if(exW!=null) channel.setExcitationWavelength(exW);
-		if(emW!=null) channel.setEmissionWavelength(emW);
-		if(aMode!=null) channel.setAcquisitionMode(aMode);
-		if(cMethod!=null) channel.setContrastMethod(cMethod);
-		if(ndf!=null) channel.setNDFilter(ndf);
-	
-	}
-}
-
-private void replaceData(Channel c)
-{
-	if(c!=null){
-		channel=c;
-		
-	}
-}
-public static void mergeData(Channel in, Channel channelOME)
-{
-	if(channelOME==null ){
-		if(in==null){
-			LOGGER.error("failed to merge CHANNEL data");
-		}else{
-			channelOME=in;
-		}
-		return;
-	}else if(in==null){
-		LOGGER.info("nothing to merge CHANNEL data");
-		return;
-	}
-	
-	channelOME.setName(in.getName());
-	channelOME.setColor(in.getColor());
-	channelOME.setFluor(in.getFluor());
-	channelOME.setIlluminationType(in.getIlluminationType());
-	channelOME.setExcitationWavelength(in.getExcitationWavelength());
-	channelOME.setEmissionWavelength(in.getEmissionWavelength());
-	channelOME.setAcquisitionMode(in.getAcquisitionMode());
-	channelOME.setContrastMethod(in.getContrastMethod());
-	channelOME.setNDFilter(in.getNDFilter());
-	
-	channelOME.setDetectorSettings(in.getDetectorSettings());
-	channelOME.setLightSourceSettings(in.getLightSourceSettings());
-	channelOME.setLightPath(in.getLightPath());
-}
 
 
 }

@@ -28,6 +28,7 @@ import ome.xml.model.primitives.PercentFraction;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -40,7 +41,7 @@ public class ImageEnvViewer extends ModuleViewer{
 	private static final org.slf4j.Logger LOGGER =
     	    LoggerFactory.getLogger(ImageEnvViewer.class);
  
-private ImagingEnvironment env;
+private ImageEnvModel data;
 private Box box;
 
 // available element tags
@@ -54,9 +55,9 @@ private TagData co2Percent;
  * Creates a new instance.
  * @param model Reference to model.
  */
-public ImageEnvViewer(ImagingEnvironment model,ModuleConfiguration conf)
+public ImageEnvViewer(ImageEnvModel model,ModuleConfiguration conf)
 {
-	this.env=model;
+	this.data=model;
 	initComponents(conf);
 	initTagList();
 	buildGUI();
@@ -155,6 +156,10 @@ protected void initTag(TagConfiguration t)
  */
 private void setGUIData() 
 {
+	if(data==null)
+		return;
+	
+	ImagingEnvironment env=data.getImgEnv();
 	if(env!=null){
 		try {if(temperature!=null) setTemperature(env.getTemperature(), ElementsCompUI.REQUIRED);	} 
 		catch (NullPointerException e) {}
@@ -223,9 +228,10 @@ private void setCo2Percent(PercentFraction value, boolean prop)
 @Override
 public void saveData() 
 {
-	if(env==null)
-		env=new ImagingEnvironment();
+	if(data==null)
+		data=new ImageEnvModel();
 	
+	ImagingEnvironment env=data.getImgEnv();
 	try{
 	env.setTemperature(temperature.getTagValue().equals("") ?
 			null : new Temperature(Double.valueOf(temperature.getTagValue()), temperature.getTagUnit()));
@@ -250,61 +256,6 @@ public void saveData()
 			null : new PercentFraction(Float.valueOf(co2Percent.getTagValue())/100));
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read IMAGE ENV co2 percent input");
-	}
-}
-
-/*--------------------------------------
- * Model
- ---------------------------------------*/
-
-
-public boolean addData(ImagingEnvironment img, boolean overwrite)
-{
-	boolean conflicts=false;
-	if(overwrite){
-		replaceData(img);
-		LOGGER.info("[DATA] -- replace IMAGE_ENV data");
-	}else
-		try {
-			completeData(img);
-			LOGGER.info("[DATA] -- complete IMAGE_ENV data");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	setGUIData();
-	return conflicts;
-}
-
-private void replaceData(ImagingEnvironment i)
-{
-	if(i!=null){
-		env=i;
-	}
-}
-
-private void completeData(ImagingEnvironment i) throws Exception
-{
-	//copy input fields
-	ImagingEnvironment copyIn=null;
-	if(env!=null){
-		if(hasDataToSave()) saveData();
-		copyIn=new ImagingEnvironment(env);
-	}
-
-	replaceData(i);
-
-	// set input field values again
-	if(copyIn!=null){
-		Temperature t=copyIn.getTemperature();
-		Pressure p=copyIn.getAirPressure();
-		PercentFraction h=copyIn.getHumidity();
-		PercentFraction co=copyIn.getCO2Percent();
-			
-		if(t!=null) env.setTemperature(t);
-		if(p!=null) env.setAirPressure(p);
-		if(h!=null) env.setHumidity(h);
-		if(co!=null) env.setCO2Percent(co);
 	}
 }
 

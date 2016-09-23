@@ -31,7 +31,7 @@ public class DetectorModel
 	
 	public DetectorModel()
 	{
-		
+		element=new Detector();
 	}
 	
 	//copy constructor
@@ -170,6 +170,10 @@ public class DetectorModel
 		return availableElem;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Detector getDetector() {
 		return element;
 	}

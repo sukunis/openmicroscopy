@@ -416,6 +416,9 @@ public class DetectorViewer extends ModuleViewer{
 	@Override
 	public void saveData() 
 	{
+		if(data==null)
+			data=new DetectorModel();
+		
 		Detector detector =data.getDetector();
 		if(detector==null)
 			detector = new Detector();
