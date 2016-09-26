@@ -3,6 +3,7 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.forma
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterListModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
@@ -10,12 +11,19 @@ import org.slf4j.LoggerFactory;
 
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
+import ome.xml.model.MapAnnotation;
+import ome.xml.model.MapPair;
+import ome.xml.model.MapPairs;
 import ome.xml.model.enums.ExperimentType;
 
-public class ExperimentContainer {
+public class ExperimentModel {
 	
 	 private static final org.slf4j.Logger LOGGER =
-	    	    LoggerFactory.getLogger(ExperimentContainer.class);
+	    	    LoggerFactory.getLogger(ExperimentModel.class);
+	 
+		public static final String PROJPARTNER_MAPLABEL="Project Partner";
+		public static final String EXPERIMENT_DESC_MAPLABEL="Experiment Desc";
+		public static final String EXPERIMENT_TYPE_MAPLABEL="Experiment Type";
 
 	Experiment experiment;
 	Experimenter projectPartner;
@@ -26,7 +34,7 @@ public class ExperimentContainer {
 //	List<Experimenter> expList;
 	
 	
-	public ExperimentContainer()
+	public ExperimentModel()
 	{
 		experiment=null;
 		projectPartner=null;
@@ -34,7 +42,7 @@ public class ExperimentContainer {
 	}
 	
 	//copy constructor
-	public ExperimentContainer(ExperimentContainer orig)
+	public ExperimentModel(ExperimentModel orig)
 	{
 		experiment=orig.experiment;
 		experimenter=orig.experimenter;
@@ -48,7 +56,7 @@ public class ExperimentContainer {
 //		projectPartner=projPartner;
 //	}
 	
-	public ExperimentContainer(Experiment exp, Experimenter exper, String projPartner)
+	public ExperimentModel(Experiment exp, Experimenter exper, String projPartner)
 	{
 		if(exp!=null)
 			setExperiment(exp);
@@ -149,7 +157,6 @@ public class ExperimentContainer {
 			setExperimenter(experimenter);
 	}
 
-	
 	
 	
 	/**
@@ -263,7 +270,36 @@ public class ExperimentContainer {
 		}
 	}
 	
+	public String parseProjectPartner(MapAnnotation map) 
+	{
+		MapPairs mp=map.getValue();
+		List<MapPair> listMP=mp.getPairs();
+		String result=null;
+		switch (map.getNamespace()) {
+		case OMEStore.NS_2016_06_07:
+			result=parseFromMapAnnotation2016_06_07(listMP);
+			break;
 
+		default:
+			LOGGER.warn("[DATA] Namespace is not supported for parsing sample data");
+			break;
+		}
+		return result;
+	}
+
+	private String parseFromMapAnnotation2016_06_07(List<MapPair> listMP) 
+	{
+		for(MapPair obj:listMP){
+			switch (obj.getName()) {
+			case PROJPARTNER_MAPLABEL:
+				return obj.getValue();
+			default:
+				LOGGER.info("[DATA] unknown Label for Project Partner MapAnnotation: "+obj.getName());
+				break;
+			}
+		}
+		return null;
+	}
 
 	
 }

@@ -12,6 +12,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -65,7 +66,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentContainer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
@@ -79,6 +80,10 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.module
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneSliderCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.SampleCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ExperimentViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ImageViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.SampleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotationXML;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
@@ -115,7 +120,7 @@ public class MetaDataUI extends JPanel
 	protected JPanel objectivePane;
 	protected JTabbedPane channelTab;
 	protected JPanel lightPathCardPane;
-	private JTabbedPane imagePane;
+	private JTabbedPane imagePane;//tabbed pane with one element
 	private JTabbedPane samplePane;
 	
 	protected JDialog imgEnvDialog;
@@ -129,6 +134,10 @@ public class MetaDataUI extends JPanel
 	
 	GridBagLayout gbl;
 	
+	
+	private ImageViewer imageUI;
+	private ExperimentViewer experimentUI;
+	private SampleViewer sampleUI;
 	
 	/** modul props */
 	private ModuleConfiguration expModul;
@@ -164,6 +173,8 @@ public class MetaDataUI extends JPanel
 //    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
     private static final org.slf4j.Logger LOGGER =
     	    LoggerFactory.getLogger(MetaDataUI.class);
+
+	public static final String CHANGE_IMGDATA = "changeImageData";
 	
 	public MetaDataUI(CustomViewProperties sett)
 	{
@@ -187,7 +198,7 @@ public class MetaDataUI extends JPanel
 		// create model
 		model=new MetaDataModel();
 		initModelComponents();
-		control=new MetaDataControl(model);
+		control=new MetaDataControl(model,this);
 	}
 	
 	/** init modul components respective to settings*/ 
@@ -250,8 +261,7 @@ public class MetaDataUI extends JPanel
 			}
 			if(customSett.getExpConf()!=null && customSett.getExpConf().isVisible()){
 				LOGGER.info("[GUI] -- init EXPERIMENT modul");
-				ExperimentCompUI eUI=new ExperimentCompUI(customSett.getExpConf());
-				model.setExpData(eUI);
+				experimentUI=new ExperimentViewer(null,customSett.getExpConf());
 				initExperimentUI=true;
 				expModul=customSett.getExpConf();
 			}
@@ -264,10 +274,9 @@ public class MetaDataUI extends JPanel
 			}
 			if(customSett.getImageConf()!=null && customSett.getImageConf().isVisible()){
 				LOGGER.info("[GUI] -- init IMAGE modul");
-				ImageCompUI iUI=new ImageCompUI(customSett.getImageConf()); 
-				model.setImageModul(iUI);
+				imageUI=new ImageViewer(null, customSett.getImageConf());
 				initImageUI=true;
-				imgModul=customSett.getImageConf();
+				imgModul =customSett.getImageConf();
 			}
 
 			componentsInit=true;
@@ -284,7 +293,7 @@ public class MetaDataUI extends JPanel
 	public MetaDataModel getUpdatedModel() throws Exception
 	{
 		//read input data
-		model.save();
+		save();
 		return model;
 	}
 	
@@ -295,7 +304,7 @@ public class MetaDataUI extends JPanel
 	public void addData(MetaDataModel m) throws Exception
 	{
 		if(m!=null && model!=null){
-			addExperimentData(m.getExperiment(), true);
+			addExperimentData(m.getExperimentModel(), true);
 //			addProjectPartner(m.getProjectPartner(),true);
 			
 			addImageData(m.getImageData(),true);
@@ -396,31 +405,18 @@ public class MetaDataUI extends JPanel
 
 	private void addImageData(Image i,boolean overwrite)  
 	{
-		ImageCompUI iUI=model.getImageModul();
-		if(iUI!=null && i!=null){
-			iUI.addData(i,overwrite);
-			iUI.setFieldsExtern(true);
+		if( i!=null){
+			model.addData(i,overwrite);
 		}
 	}
 	
-	public void addExperimentData(ExperimentContainer e,boolean overwrite)
+	public void addExperimentData(ExperimentModel e,boolean overwrite) throws Exception
 	{
-		ExperimentCompUI eUI=model.getExpModul();
-		if(eUI!=null && e!=null){
-			eUI.addData(e, overwrite,MetaDataDialog.DIR);
-			
-			eUI.setFieldsExtern(true);
+		if(e!=null){
+			model.addData(e, overwrite);
 		}
 	}
 	
-//	private void addProjectPartner(Experimenter e, boolean overwrite)
-//	{
-//		ExperimentCompUI eUI=model.getExpModul();
-//		if(eUI!=null && e!=null){
-//			eUI.addProjectPartner(e,overwrite);
-//			eUI.setFieldsExtern(true);
-//		}
-//	}
 	
 	/** linke image file */
 	public void linkToFile(File file)
@@ -547,28 +543,22 @@ public class MetaDataUI extends JPanel
 			// load image linked experiment and experimenter
 			Experiment e=image.getLinkedExperiment();
 			Experimenter exper=image.getLinkedExperimenter();
-			ExperimentCompUI eUI=model.getExpModul();
+			ExperimentModel expModel = model.getExperimentModel();
 			String pP=null;
 			
 			MapAnnotation map=getLinkedCellNanOsAnnotation(image, ome.getStructuredAnnotations());
 			if(map!=null){
-				pP=eUI.parseProjectPartner(map); 
+				pP=expModel.parseProjectPartner(map); 
 			}
 			
-			ExperimentContainer expCont=new ExperimentContainer(e,exper,pP);
-//			if(e!=null){
-//				eUI.addData(new ExperimentContainer(e,exper,pP), false);
-//			}
+			ExperimentModel expCont=new ExperimentModel(e,exper,pP);
 			
-			//if there are more than one experimenter?
-//			if(ome.sizeOfExperimenterList()>1){
-//				List<Experimenter> eList=ome.copyExperimenterList();
-//				for(Experimenter anotherExp : eList){
-//					expCont.addExperimenter(anotherExp);
-//				}
-//			}
-			
-			eUI.addData(expCont, false,MetaDataDialog.FILE);
+			try {
+				model.addData(expCont, false);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			
 			
 		}
@@ -821,11 +811,8 @@ public class MetaDataUI extends JPanel
 
 	private void readImageData(Image image, List<Objective> objList, StructuredAnnotations annot) 
 	{
-		if(initImageUI){
-			ImageCompUI ui=model.getImageModul();
-			ui.addData(image, false);
+			model.addData(image, false);
 			
-		}
 			readObjectiveData(image,objList);
 			readSampleData(image,annot);
 		
@@ -947,26 +934,20 @@ public class MetaDataUI extends JPanel
 	}
 
 	/** set ImportUserData */
-	public void readData(ImportUserData data)
+	public void setImportData(ImportUserData data)
 	{
 		if(data!=null){
 			LOGGER.info("[DATA] -- add IMPORT USER data");
 			importUserData=data;
-			ExperimentCompUI e=model.getExpModul();
-			if(e!=null){
-				try {
-					ExperimentContainer expCont=e.getData();
-					if(e!=null){
-
-						expCont.setExperimenter(importUserData.getUser());
-						expCont.setGroupName(importUserData.getGroup());
-						expCont.setProjectName(importUserData.getProject());
-						e.setExtendedData(expCont);
-					}
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+			try {
+				ExperimentModel expCont=new ExperimentModel();
+				expCont.setExperimenter(importUserData.getUser());
+				expCont.setGroupName(importUserData.getGroup());
+				expCont.setProjectName(importUserData.getProject());
+				model.setExtendedData(expCont);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		}
 	}
@@ -996,7 +977,7 @@ public class MetaDataUI extends JPanel
 	private void showExperimentData() {
 		if(initExperimentUI){
 			experimentPane=new JTabbedPane();
-			experimentPane.add("Experiment",control.activateExperimentModulView());
+			experimentPane.add("Experiment",new ExperimentViewer(model.getExperimentModel(), expModul));
 			addToPlaceholder(experimentPane,expModul.getPosition(), expModul.getWidth());
 		}
 	}
@@ -1005,30 +986,31 @@ public class MetaDataUI extends JPanel
 	{
 		imagePane=new JTabbedPane();
 		if(initImageUI){
-			imagePane.add("Image",control.activateImageModul()); 
-		JComponent img=imagePane;
-		
-		//TODO position and width from file
-		if(initPlanesUI || initImageEnvUI){
-////			JScrollPane spImage =new GBScrollPane(imageUI);
-			img=new JPanel();
-			GridBagLayout myGBL=new GridBagLayout();
-			img.setLayout(myGBL);
-			addComponent(img,myGBL,imagePane,0,0,1,3,1.0,1.0,GridBagConstraints.BOTH);
-			if(initImageEnvUI)
-				addComponent(img,myGBL,initImgEnvironmentBtn(),0,3,1,1,1.0,0,GridBagConstraints.HORIZONTAL);
-			if(initPlanesUI)
-				addComponent(img,myGBL,initPlaneBtn(),0,4,1,1,1.0,0,GridBagConstraints.HORIZONTAL);
-		}
-		addToPlaceholder(img, imgModul.getPosition(), imgModul.getWidth());
+			imageUI=new ImageViewer(model.getImageModel(), imgModul);
+			imagePane.add("Image",imageUI);
+			JComponent img=imagePane;
+
+			//TODO position and width from file
+			if(initPlanesUI || initImageEnvUI){
+				////			JScrollPane spImage =new GBScrollPane(imageUI);
+				img=new JPanel();
+				GridBagLayout myGBL=new GridBagLayout();
+				img.setLayout(myGBL);
+				addComponent(img,myGBL,imagePane,0,0,1,3,1.0,1.0,GridBagConstraints.BOTH);
+				if(initImageEnvUI)
+					addComponent(img,myGBL,initImgEnvironmentBtn(),0,3,1,1,1.0,0,GridBagConstraints.HORIZONTAL);
+				if(initPlanesUI)
+					addComponent(img,myGBL,initPlaneBtn(),0,4,1,1,1.0,0,GridBagConstraints.HORIZONTAL);
+			}
+			addToPlaceholder(img, imgModul.getPosition(), imgModul.getWidth());
 		}
 		String name=model.getImageData()!=null ? model.getImageData().getName() : null;
-		
+
 		CardLayout cl;
 		cl=new CardLayout();
 		objectivePane=new JPanel(cl);
 		showOjectiveData(name);
-		
+
 		if(initObjectiveUI)
 			addToPlaceholder(objectivePane, objModul.getPosition(), objModul.getWidth());
 	}
@@ -1037,7 +1019,7 @@ public class MetaDataUI extends JPanel
 	{
 		if(initObjectiveUI){
 			objectivePane.add(control.activateObjectiveModulView(name),name);
-			
+
 		}
 	}
 	
@@ -1473,6 +1455,40 @@ public class MetaDataUI extends JPanel
 		d.pack();
 //		d.setVisible(true);
 		return d;
+	}
+
+	public boolean hasUserInput() 
+	{
+		boolean result=false;
+		if(initImageUI)
+			result=result || imageUI.hasDataToSave();
+		if(initExperimentUI)
+			result=result || experimentUI.hasDataToSave();
+//		if(initObjectiveUI)
+//			result=result || 
+		return result;
+	}
+
+	public void save() 
+	{
+		if(imageUI.hasDataToSave()){
+			imageUI.saveData();
+			firePropertyChange(CHANGE_IMGDATA, null, model.getImageModel());
+		}
+		if(experimentUI.hasDataToSave()){
+			experimentUI.saveData();
+		}
+	}
+
+
+	
+	public boolean experimentUIInput()
+	{
+		return experimentUI.hasDataToSave();
+	}
+	public boolean sampleUIInput()
+	{
+		return sampleUI.hasDataToSave();
 	}
 
 	/**

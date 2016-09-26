@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentContainer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
@@ -334,7 +334,7 @@ public class SaveMetadata
 	private void saveExperiment(Image i,MetaDataModel m) throws Exception 
 	{
 		//--- save Experiment and Experimenter data
-		ExperimentContainer e = m.getExperiment();
+		ExperimentModel e = m.getExperimentModel();
 		
 		if(e!=null){
 			omeStore.storeExperiment(e); 

@@ -61,7 +61,7 @@ public class MetaDataView extends JPanel
     private MetaDataUI singleView;
     
     private DefaultListModel seriesListModel;
-    private JPanel cardPane;
+    private JPanel cardPane; 
     private CardLayout seriesCard; 
     private List<String> cardNames;
     private int currentCardIndex;
@@ -125,7 +125,7 @@ public class MetaDataView extends JPanel
 			singleView=new MetaDataUI(sett);
 
 			// load importData
-			singleView.readData(importData);
+			singleView.setImportData(importData);
 
 			//load parent data
 			loadParentData(parentData, singleView);
@@ -156,7 +156,7 @@ public class MetaDataView extends JPanel
 				MetaDataUI metaUI=new MetaDataUI(sett);
 
 				//load importData
-				metaUI.readData(importData);
+				metaUI.setImportData(importData);
 
 				//load parent data
 				loadParentData(parentData,metaUI);
@@ -220,7 +220,7 @@ public class MetaDataView extends JPanel
 		singleView= new MetaDataUI(sett);
 		
 		//set importData
-		singleView.readData(importData);
+		singleView.setImportData(importData);
 		
 		//set parentData
 		loadParentData(parentData,singleView);
@@ -308,6 +308,7 @@ public class MetaDataView extends JPanel
 			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
 			if(seriesData){
 				for(Component comp:cardPane.getComponents()){
+					((MetaDataUI) comp).save();
 					list.add(((MetaDataUI) comp).getModel());
 				}
 			}else{
@@ -436,19 +437,17 @@ public class MetaDataView extends JPanel
 			if(currentCardIndex==-1)
 				currentCardIndex=getCurrentCardIndex();
 			if(currentCardIndex!=-1){
-				MetaDataModel currentModel=((MetaDataUI) cardPane.getComponent(currentCardIndex)).getUpdatedModel();
-				if(currentModel.getExpModul().userInput() || currentModel.getSampleModul().userInput()){
-					//					MetaDataUI newModel=((MetaDataUI) cardPane.getComponent(seriesListModel.indexOf(name)));
+				MetaDataUI currentComp=(MetaDataUI) cardPane.getComponent(currentCardIndex);
+				MetaDataModel currentModel=currentComp.getUpdatedModel();
+				if(currentComp.experimentUIInput() || currentComp.sampleUIInput())
+				{
 					for(Component comp:cardPane.getComponents()){
-						if(currentModel.getExpModul().userInput()){
-							((MetaDataUI) comp).addExperimentData(currentModel.getExperiment(),true);
-						}
-						if(currentModel.getSampleModul().userInput()){
+						if(currentComp.experimentUIInput())
+							((MetaDataUI) comp).addExperimentData(currentModel.getExperimentModel(),true);
+						if(currentComp.sampleUIInput())
 							((MetaDataUI) comp).addSampleData(currentModel.getSample(),true);
-						}
 					}
 				}
-				
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -568,6 +567,22 @@ public class MetaDataView extends JPanel
 			}
 		}	
 		setVisible();
+	}
+	
+	public boolean hasUserInput()
+	{
+		if(seriesData){
+			boolean result=false;
+			for(Component comp:cardPane.getComponents()){
+				result=result ||((MetaDataUI) comp).hasUserInput();
+			}
+			return result;
+		}else{
+			if(singleView!=null){
+				return singleView.hasUserInput();
+			}
+		}
+		return false;
 	}
 	
 }

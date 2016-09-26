@@ -59,14 +59,14 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		System.out.println("# LightSrcSettCompUI::userInput()="+result);
+//		System.out.println("# LightSrcSettCompUI::userInput()="+result);
 		return result;
 	}
 
 	
 	public LightSourceSettingsCompUI(ModuleConfiguration objConf)
 	{
-		System.out.println("# LightSrcSettCompUI::new Instance 1");
+//		System.out.println("# LightSrcSettCompUI::new Instance 1");
 		initGUI();
 	}
 
@@ -85,7 +85,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 
 	public boolean addData(LightSourceSettings l, boolean overwrite)
 	{
-		System.out.println("# LightSrcSettCompUI::addData("+overwrite+")");
+//		System.out.println("# LightSrcSettCompUI::addData("+overwrite+")");
 		boolean conflicts=false;
 		if(overwrite){
 			replaceData(l);
@@ -141,7 +141,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	
 	private void readGUIInput() throws Exception
 	{
-		System.out.println("# LightSrcSettCompUI::readGuiInput");
+//		System.out.println("# LightSrcSettCompUI::readGuiInput");
 		if(lightSrc==null){
 			createNewElement();
 		}
@@ -172,7 +172,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 
 	public LightSourceSettings getData() throws Exception
 	{
-		System.out.println("# LightSrcSettCompUI::getData()");
+//		System.out.println("# LightSrcSettCompUI::getData()");
 		if(userInput())
 			readGUIInput();
 		return lightSrc;
@@ -181,7 +181,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	
 	public void buildComponents() 
 	{
-		System.out.println("# LightSrcSettCompUI::buildComp()");
+//		System.out.println("# LightSrcSettCompUI::buildComp()");
 		labels.clear();
 		comp.clear();
 		
@@ -204,7 +204,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	
 	@Override
 	public void createDummyPane(boolean inactive) {
-		System.out.println("# LightSrcSettCompUI::createDummyPane(bool)");
+//		System.out.println("# LightSrcSettCompUI::createDummyPane(bool)");
 //		setIntensity(null, ElementsCompUI.OPTIONAL);
 		setWavelength(null, ElementsCompUI.OPTIONAL);
 		setAttenuation(null, ElementsCompUI.OPTIONAL);
@@ -218,7 +218,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	
 	public void createDummyPane(List<TagConfiguration> list,boolean inactive) 
 	{
-		System.out.println("# LightSrcSettingsCompUI::createDummyPane(List,boolean)");
+//		System.out.println("# LightSrcSettingsCompUI::createDummyPane(List,boolean)");
 		if(list==null)
 			createDummyPane(inactive);
 		else{
@@ -239,7 +239,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 
 	public void clearDataValues() 
 	{
-		System.out.println("# LightSrcSettCompUI::clearDataValues()");
+//		System.out.println("# LightSrcSettCompUI::clearDataValues()");
 //		clearTagValue(intensity);
 		clearTagValue(waveLength);
 		clearTagValue(attenuation);
@@ -279,7 +279,7 @@ public class LightSourceSettingsCompUI extends ElementsCompUI
 	 */
 	public void update(List<TagData> list) 
 	{
-		System.out.println("# LightSrcSettCompUI::update()");
+//		System.out.println("# LightSrcSettCompUI::update()");
 		for(TagData t: list){
 			if(t.valueChanged()){
 				setTag(t);

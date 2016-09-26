@@ -25,7 +25,7 @@ import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.FilterType;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentContainer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
@@ -62,9 +62,9 @@ public class MetaDataModel
 	    	    LoggerFactory.getLogger(MetaDataModel.class);
 
 	/** module for image data */ 
-	private ElementsCompUI image;
+//	private ElementsCompUI image;
 	/** module for experiment data */
-	private ElementsCompUI experimentUI;
+//	private ElementsCompUI experimentUI;
 	/** module for objective data */
 	private ElementsCompUI objectiveUI;
 	/** module for imgEnv data */
@@ -92,7 +92,7 @@ public class MetaDataModel
 	
 	//-----------------------------------------
 	private ImageModel imgModel;
-	private ExperimentContainer expModel;
+	private ExperimentModel expModel;
 	private ObjectiveModel objModel;
 	private ImageEnvModel imgEnvModel;
 	private SampleModel sampleModel;
@@ -100,6 +100,8 @@ public class MetaDataModel
 	private List<ChannelModel> channelModelList;
 	private List<DetectorModel> detectorModelList;
 	private List<LightSourceModel> lightSrcModelList;
+	
+	private List<TagData> changesImg;
 	//------------------------------------------------
 	
 	/** linked Channel for single filter, because there are more than one filter per channel
@@ -117,7 +119,7 @@ public class MetaDataModel
 	
 	
 	// list of component with changes
-	private List<ElementsCompUI> componentsWithChanges;
+	private List<Object> componentsWithChanges;
 	
 	private Image imageOME;
 	private int imageIndex;
@@ -141,7 +143,10 @@ public class MetaDataModel
 		
 		lightPathList=new ArrayList<ElementsCompUI>();
 		
-		componentsWithChanges=new ArrayList<ElementsCompUI>();
+		componentsWithChanges=new ArrayList<Object>();
+		
+		imgModel=new ImageModel();
+		
 	}
 	
 	
@@ -172,9 +177,9 @@ public class MetaDataModel
 		
 		imageOME=null;
 		ome=null;
-		image=null;
+		imgModel=null;
 		
-		experimentUI=null;
+		expModel=null;
 		sampleUI=null;
 		objectiveUI=null;
 		imgEnvUI=null;
@@ -191,18 +196,18 @@ public class MetaDataModel
 		detectorList=new ArrayList<ElementsCompUI>();
 		
 		lightPathList=new ArrayList<ElementsCompUI>();
-		componentsWithChanges=new ArrayList<ElementsCompUI>();
+		componentsWithChanges=new ArrayList<Object>();
 	}
 	
 	public void resetData()
 	{
 		System.out.println("#MetaDataModel::resetData()");
-		experimentUI.clearDataValues();
+		expModel=null;
 		sampleUI.clearDataValues();
 		objectiveUI.clearDataValues();
 		imgEnvUI.clearDataValues();
 //		planeSliderUI.clearDataValues();
-		image.clearDataValues();
+		imgModel=null;
 		
 		for(ElementsCompUI comp:lightSrcList){
 			comp.clearDataValues();
@@ -219,6 +224,8 @@ public class MetaDataModel
 		
 	}
 	
+	
+	
 	public boolean noticUserInput()
 	{
 		System.out.println("#MetaDataModel::noticeUserInput()");
@@ -229,20 +236,20 @@ public class MetaDataModel
 		boolean changes;
 		
 		//Experiment
-		if(experimentUI!=null){
-			changes=((ExperimentCompUI) experimentUI).userInput();
-			LOGGER.debug("changes in EXPERIMENT: "+changes);
-			if(changes) componentsWithChanges.add(experimentUI);
-			hasUserInput=hasUserInput || changes;
-		}
+//		if(experimentUI!=null){
+//			changes=((ExperimentCompUI) experimentUI).userInput();
+//			LOGGER.debug("changes in EXPERIMENT: "+changes);
+//			if(changes) componentsWithChanges.add(experimentUI);
+//			hasUserInput=hasUserInput || changes;
+//		}
 		
 		//Image
-		if(image!=null){ 
-			changes=((ImageCompUI) image).userInput();
-			LOGGER.debug("changes in IMAGE: "+changes);
-			if(changes) componentsWithChanges.add(image);
-			hasUserInput=hasUserInput ||changes;
-		}
+//		if(imgModel!=null){ 
+//			changes=((ImageCompUI) image).userInput();
+//			LOGGER.debug("changes in IMAGE: "+changes);
+//			if(changes) componentsWithChanges.add(image);
+//			hasUserInput=hasUserInput ||changes;
+//		}
 		
 		//Objective
 		if(objectiveUI!=null){ 
@@ -341,7 +348,7 @@ public class MetaDataModel
 		return hasUserInput;
 	}
 	
-	public List<ElementsCompUI> getComponentsForUpdate()
+	public List<Object> getComponentsForUpdate()
 	{
 		return componentsWithChanges;
 	}
@@ -409,29 +416,7 @@ public class MetaDataModel
 	}
 	
 	//----------------------------------------------
-	public void setExpData(ElementsCompUI e)
-	{
-		experimentUI=e;
-//		if(e!=null)
-//			LOGGER.info("[MODEL] link experiment module");
-	}
-	
-	public ExperimentCompUI getExpModul()
-	{
-		return (ExperimentCompUI) experimentUI;
-	}
-	
-	
-	public ExperimentContainer getExperiment() throws Exception
-	{
-		if(experimentUI==null)
-			return null;
-		else{
-			// save project partner
-			return ((ExperimentCompUI) experimentUI).getData();
-		}
-	}
-	
+
 	
 	
 	public void setSampleData(ElementsCompUI e)
@@ -451,15 +436,60 @@ public class MetaDataModel
 		}
 	}
 	
-	//image
-	public void setImageModul(ElementsCompUI elem)
+
+	
+	//-------------------------------------
+	public ExperimentModel getExperimentModel()
 	{
-		image=elem;
+		if(expModel==null)
+			expModel=new ExperimentModel();
+		return expModel;
 	}
 	
-	public ImageCompUI getImageModul() 
+	public void addData(ExperimentModel e, boolean overwrite) throws Exception 
 	{
-		return (ImageCompUI) image;
+		System.out.println("# MetaDataModel::addData() - Experiment ");	
+		if(overwrite){
+			expModel=new ExperimentModel(e);
+		}else{
+			expModel.addData(e.getExperiment(), overwrite);
+			expModel.addData(e.getExperimenter(), overwrite);			
+			if(expModel.getGroupName()==null || expModel.getGroupName().equals(""))
+					expModel.setGroupName(e.getGroupName());
+			if(expModel.getProjectName()==null || expModel.getProjectName().equals(""))
+				expModel.setProjectName(e.getProjectName());
+			if(expModel.getProjectPartnerName()==null || expModel.getProjectPartnerName().equals(""))
+				expModel.setProjectPartner(e.getProjectPartnerName());
+		}
+	}
+	/**
+	 * Set group, project name and experimenter list data
+	 * @param expCont
+	 */
+	public void setExtendedData(ExperimentModel expCont) 
+	{
+		System.out.println("# MetaDataModel::setExtendedData - Experiment");
+		if(expModel==null)
+			expModel=new ExperimentModel();
+		
+		System.out.println("\t...group="+expCont.getGroupName());
+		expModel.setGroupName(expCont.getGroupName());
+		expModel.setProjectName(expCont.getProjectName());
+		expModel.setExperimenter(expCont.getExperimenter());
+	}
+	
+	
+	public ImageModel getImageModel() 
+	{
+		if(imgModel==null)
+			imgModel=new ImageModel();
+		return imgModel;
+	}
+	
+	public void addData(Image i,boolean overwrite)
+	{
+		System.out.println("# MetaDataModel::addData - Image");
+		imgModel.addData(i, overwrite);
 	}
 
 	/**
@@ -469,9 +499,9 @@ public class MetaDataModel
 	 */
 	public Image getImageData() throws Exception
 	{
-		if(image==null)
+		if(imgModel==null)
 			return null;
-		return ((ImageCompUI)image).getData();
+		return imgModel.getImage();
 	}
 
 	
@@ -1194,28 +1224,7 @@ public class MetaDataModel
 		
 	}
 	
-//	public void clearData()
-//	{
-//		if(lightPath!=null)
-//			lightPath.clear();
-//		if(lightSrcList!=null)
-//			lightSrcList.clear();
-//		if(detectorList!=null)
-//			detectorList.clear();
-//		if(linkedChannelForDichroic!=null)
-//			linkedChannelForDichroic.clear();
-//		if(linkedChannelForFilter!=null)
-//			linkedChannelForFilter.clear();
-//		if(dichroicList!=null)
-//			dichroicList.clear();
-//		if(filterList!=null)
-//			filterList.clear();
-//		if(channelList!=null)
-//			channelList.clear();
-//		
-//		image.clearDataValues();
-//		image=null;
-//	}
+
 
 	
 	
@@ -1265,36 +1274,7 @@ public class MetaDataModel
 	}
 
 
-	/**
-	 * Save GUI data 
-	 * @throws Exception 
-	 */
-	public void save() throws Exception 
-	{
-		LOGGER.info("[MODEL] -- Save model data");
-		try {
-//			
-			getExperiment();
-			getObjective();
-			getImageData();
-			getImgagingEnv();
-			for(int i=0; i<getNumberOfDetectors();i++)
-				getDetector(i);
-			for(int i=0; i<getNumberOfLightSrc();i++)
-				getLightSourceData(i);
-			for(int i=0; i<getNumberOfChannels(); i++)
-				getChannel(i);
-			for(int i=0; i<getNumberOfLightPath();i++)
-				getLightPath(i);
-			// TODO : getPlaneData();
-			getSample();
-			
-
-		} catch (Exception e) {
-			throw new Exception("[MetaDataModel] Can't save model.");
-		}
-		
-	}
+	
 
 	public PlaneCompUI getPlaneModul(int i) {
 		// TODO Auto-generated method stub
@@ -1320,95 +1300,119 @@ public class MetaDataModel
 		return (SampleCompUI) sampleUI;
 	}
 
-	public void isUpToDate(boolean b) 
-	{
-//		for(Object o: componentsWithChanges){
-//			if(o instanceof ElementsCompUI){
-//				System.out.println("Set "+o.getClass().getSimpleName() + " as updated");
-//				((ElementsCompUI) o).isUpToDate(b);
-//			}else if(o instanceof List){
-//				for(ElementsCompUI e :(List<ElementsCompUI>) o){
-//					e.isUpToDate(b);
-//				}
+//	public void isUpToDate(boolean b) 
+//	{
+////		for(Object o: componentsWithChanges){
+////			if(o instanceof ElementsCompUI){
+////				System.out.println("Set "+o.getClass().getSimpleName() + " as updated");
+////				((ElementsCompUI) o).isUpToDate(b);
+////			}else if(o instanceof List){
+////				for(ElementsCompUI e :(List<ElementsCompUI>) o){
+////					e.isUpToDate(b);
+////				}
+////			}
+////		}
+////		try{
+////			image.isUpToDate(b);
+////		}catch(Exception e){}
+//		try{
+//			imgEnvUI.isUpToDate(b);
+//		}catch(Exception e){}
+//		try{
+//			for(ElementsCompUI e :planeList){
+//				e.isUpToDate(b);
 //			}
-//		}
-		try{
-			image.isUpToDate(b);
-		}catch(Exception e){}
-		try{
-			imgEnvUI.isUpToDate(b);
-		}catch(Exception e){}
-		try{
-			for(ElementsCompUI e :planeList){
-				e.isUpToDate(b);
-			}
-		}catch(Exception e){}
-		try{
-			objectiveUI.isUpToDate(b);
-		}catch(Exception e){}
-		try{
-			for(ElementsCompUI e :detectorList){
-				e.isUpToDate(b);
-			}
-		}catch(Exception e){}
-		try{
-			for(ElementsCompUI e :lightSrcList){
-				e.isUpToDate(b);
-			}
-		}catch(Exception e){}
-		try{
-			for(ElementsCompUI e :channelList){
-				e.isUpToDate(b);
-			}
-		}catch(Exception e){}
-		try{
-			for(ElementsCompUI e :lightPathList){
-				e.isUpToDate(b);
-			}
-		}catch(Exception e){}
-		try{
-			sampleUI.isUpToDate(b);
-		}catch(Exception e){}
-		try{
-			experimentUI.isUpToDate(b);
-		}catch(Exception e){}
-		
-		componentsWithChanges.clear();
-	}
-	
+//		}catch(Exception e){}
+//		try{
+//			objectiveUI.isUpToDate(b);
+//		}catch(Exception e){}
+//		try{
+//			for(ElementsCompUI e :detectorList){
+//				e.isUpToDate(b);
+//			}
+//		}catch(Exception e){}
+//		try{
+//			for(ElementsCompUI e :lightSrcList){
+//				e.isUpToDate(b);
+//			}
+//		}catch(Exception e){}
+//		try{
+//			for(ElementsCompUI e :channelList){
+//				e.isUpToDate(b);
+//			}
+//		}catch(Exception e){}
+//		try{
+//			for(ElementsCompUI e :lightPathList){
+//				e.isUpToDate(b);
+//			}
+//		}catch(Exception e){}
+//		try{
+//			sampleUI.isUpToDate(b);
+//		}catch(Exception e){}
+//		try{
+//			experimentUI.isUpToDate(b);
+//		}catch(Exception e){}
+//		
+//		componentsWithChanges.clear();
+//	}
+//	
 	/**
 	 * Only for directories model! There are only one detector, channel, lightSrc, no planes
 	 * @param o
 	 */
-	protected void updateComponentsOfDirModel(ElementsCompUI o) 
+//	protected void updateComponentsOfDirModel(Object o) 
+//	{
+//		List<TagData> tagList=o.getActiveTags();
+//		
+//		if(tagList==null){
+//			System.out.println(o.getClass().getName()+": No tags available for update");
+//			return;
+//		}
+//		
+//		if(o instanceof ExperimentCompUI)
+//			experimentUI.update(tagList);
+//		else if(o instanceof ImageModel){
+//			imgModel.update(((ImageModel) o).getChangedTags());
+//		}
+//		else if(o instanceof ImagingEnvironmentCompUI)
+//			imgEnvUI.update(tagList);
+//		else if(o instanceof ObjectiveCompUI)
+//			objectiveUI.update(tagList);
+//		else if(o instanceof SampleCompUI)
+//			sampleUI.update(tagList);
+//		else if(o instanceof DetectorCompUI)
+//			detectorList.get(0).update(tagList);
+//		else if(o instanceof ChannelCompUI)
+//			channelList.get(0).update(tagList);
+//		else if(o instanceof LightSourceCompUI){
+//			lightSrcList.get(0).update(tagList);
+//		}
+//		else if(o instanceof LightPathCompUI)
+//			lightPathList.get(0).update(tagList);
+//	}
+
+
+
+	public void setChangesImage(List<TagData> list)
 	{
-		List<TagData> tagList=o.getActiveTags();
-		
-		if(tagList==null){
-			System.out.println(o.getClass().getName()+": No tags available for update");
-			return;
-		}
-		
-		if(o instanceof ExperimentCompUI)
-			experimentUI.update(tagList);
-		else if(o instanceof ImageCompUI)
-			image.update(tagList);
-		else if(o instanceof ImagingEnvironmentCompUI)
-			imgEnvUI.update(tagList);
-		else if(o instanceof ObjectiveCompUI)
-			objectiveUI.update(tagList);
-		else if(o instanceof SampleCompUI)
-			sampleUI.update(tagList);
-		else if(o instanceof DetectorCompUI)
-			detectorList.get(0).update(tagList);
-		else if(o instanceof ChannelCompUI)
-			channelList.get(0).update(tagList);
-		else if(o instanceof LightSourceCompUI){
-			lightSrcList.get(0).update(tagList);
-		}
-		else if(o instanceof LightPathCompUI)
-			lightPathList.get(0).update(tagList);
+		changesImg=list;
 	}
+	
+	public List<TagData> getChangesImage()
+	{
+		return changesImg;
+	}
+
+
+
+	public void updateData(MetaDataModel metaDataModel) 
+	{
+//		imgModel.update(metaDataModel.getChangesImage());
+	}
+
+
+
+	
 
 	
 

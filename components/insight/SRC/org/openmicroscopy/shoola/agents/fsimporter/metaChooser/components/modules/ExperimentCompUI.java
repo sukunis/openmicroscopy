@@ -31,7 +31,7 @@ import ome.xml.model.enums.handlers.ExperimentTypeEnumHandler;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentContainer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -60,7 +60,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	
 //	private Experiment experiment;
 	
-	private ExperimentContainer expContainer;
+	private ExperimentModel expContainer;
 	
 	
 	
@@ -105,7 +105,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	private void createNewExperiment(String idxExp,String idxExper)
 	{
 		//create new one
-		expContainer=new ExperimentContainer();
+		expContainer=new ExperimentModel();
 		Experiment experiment=new Experiment();
 		experiment.setID(idxExp);
 		Experimenter experimenter=new Experimenter();
@@ -185,7 +185,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	 * @param overwrite
 	 * @return
 	 */
-	public boolean addData(ExperimentContainer exp, boolean overwrite,int nodeType)
+	public boolean addData(ExperimentModel exp, boolean overwrite,int nodeType)
 	{
 		boolean conflicts=false;
 		if(exp==null)
@@ -213,15 +213,15 @@ public class ExperimentCompUI extends ElementsCompUI
 	 * @param exper
 	 * @throws Exception 
 	 */
-	private List<TagData> completeData(ExperimentContainer exper) throws Exception
+	private List<TagData> completeData(ExperimentModel exper) throws Exception
 	{
 		List<TagData> conflictTags=new ArrayList<TagData>();
 		
 		// copy input fields
-		ExperimentContainer copyIn=null;
+		ExperimentModel copyIn=null;
 		if(expContainer!=null ){
 			getData();
-			copyIn=new ExperimentContainer(expContainer);
+			copyIn=new ExperimentModel(expContainer);
 		}
 		replaceData(exper);
 		
@@ -268,7 +268,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	 * Replace intern experimenter object by given experimenter. All manuell input data are lost. 
 	 * @param exper
 	 */
-	private void replaceData(ExperimentContainer exper)
+	private void replaceData(ExperimentModel exper)
 	{
 		if(exper!=null){
 			expContainer=exper;
@@ -406,7 +406,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	}
 	
 	
-	public ExperimentContainer getData() throws Exception
+	public ExperimentModel getData() throws Exception
 	{
 //		if(userInput()){
 //			LOGGER.info("[DEBUG] read GUI input (EXPERIMENT)");
@@ -721,7 +721,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	 * Set group, project name and experimenter list data
 	 * @param expCont
 	 */
-	public void setExtendedData(ExperimentContainer expCont) 
+	public void setExtendedData(ExperimentModel expCont) 
 	{
 		setGroupName(expCont.getGroupName(), OPTIONAL);
 		setProjectName(expCont.getProjectName(), OPTIONAL);

@@ -175,7 +175,7 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 	public void update(List<TagData> list) 
 	{
 		for(TagData t: list){
-			System.out.println("\t ...Tag: "+t.getTagName()+" = "+t.getTagValue()+" : "+t.valueChanged());
+//			System.out.println("\t ...Tag: "+t.getTagName()+" = "+t.getTagValue()+" : "+t.valueChanged());
 			if(t.valueChanged()){
 				
 				setTag(t);
@@ -210,7 +210,7 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 				result= result || val;
 			}
 		}
-		System.out.println("# LightSrcSubCompUI::userInput()="+result);
+//		System.out.println("# LightSrcSubCompUI::userInput()="+result);
 		return result;
 	}
 	
@@ -272,7 +272,7 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 	public void setType(Enumeration value,boolean prop)
 	{
 		String val;
-		System.out.println("\n ...classification lightSrc: "+classification);
+//		System.out.println("\n ...classification lightSrc: "+classification);
 		
 		switch(classification){
 		case "Laser":

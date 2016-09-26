@@ -63,21 +63,19 @@ public class MetaDataModelObject
 	// TODO: at the moment not for series data
 	public void updateData(MetaDataModelObject newData) 
 	{
-		List<ElementsCompUI> updateList=newData.getList().get(0).getComponentsForUpdate();
-		for(ElementsCompUI o : updateList){
-				list.get(0).updateComponentsOfDirModel(o);
-		}
+		List<MetaDataModel> modelList_new=newData.getList();
+//		list.get(0).updateData(modelList_new.get(0));
 	}
 
 	
 
 	public void isUpToDate(boolean b) 
 	{
-		System.out.println("# MetaDataModel::isUpToDate("+b+")");
-		if(list==null || list.isEmpty())
-			return;
-		for(MetaDataModel m:list){
-			m.isUpToDate(b);
-		}
+//		System.out.println("# MetaDataModel::isUpToDate("+b+")");
+//		if(list==null || list.isEmpty())
+//			return;
+//		for(MetaDataModel m:list){
+//			m.isUpToDate(b);
+//		}
 	}
 }

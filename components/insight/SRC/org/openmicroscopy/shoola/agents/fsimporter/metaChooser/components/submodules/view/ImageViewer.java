@@ -68,6 +68,7 @@ public class ImageViewer extends ModuleViewer{
 	 */
 	public ImageViewer(ImageModel model,ModuleConfiguration conf)
 	{
+		System.out.println("# ImageViewer::newInstance("+(model!=null?"model":"null")+")");
 		this.data=model;
 		initComponents(conf);
 		initTagList();
@@ -444,6 +445,22 @@ For example in a video stream.
 
 	}
 
+	public List<TagData> getChangedTags()
+	{
+		List<TagData> list = new ArrayList<TagData>();
+		if(name.valueChanged()) list.add(name);
+		if(acqTime.valueChanged()) list.add(acqTime);
+		if(dimXY.valueChanged()) list.add(dimXY);
+		if(pixelType.valueChanged()) list.add(pixelType);
+		if(pixelSize.valueChanged()) list.add(pixelSize);
+		if(dimZTC.valueChanged()) list.add(dimZTC);
+		if(stepSize.valueChanged()) list.add(stepSize);
+		if(timeIncrement.valueChanged()) list.add(timeIncrement);
+		if(stagePos.valueChanged()) list.add(stagePos);
+		if(wellNr.valueChanged()) list.add(wellNr);
+		
+		return list;
+	}
 
 
 	

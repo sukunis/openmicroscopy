@@ -26,15 +26,18 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.module
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.SampleCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 
 public class MetaDataControl implements PropertyChangeListener
 {
 	private MetaDataModel model;
+	private MetaDataUI view;
 	
-	public MetaDataControl(MetaDataModel model) 
+	public MetaDataControl(MetaDataModel model, MetaDataUI view) 
 	{
 		if (model == null) throw new NullPointerException("No model.");
 		this.model = model;
+		this.view=view;
 	}
 
 	public JPanel showData()
@@ -61,6 +64,7 @@ public class MetaDataControl implements PropertyChangeListener
 //		}
 //	}
 
+	//TODO: see ImporterControl::propertyChange
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) 
 	{
@@ -68,15 +72,26 @@ public class MetaDataControl implements PropertyChangeListener
 //		 if(ElementsCompUI.ADD_NEW_LIGHTSRC.equals(name)){
 //			 model.createNewLightSrc((String)evt.getNewValue());
 //		 }
+		 handlePropertyChangedEvent(evt);
+		 
 	}
 
-	public JPanel activateExperimentModulView() 
+	private void handlePropertyChangedEvent(PropertyChangeEvent evt) 
 	{
-		ExperimentCompUI e=model.getExpModul();
-		e.buildComponents();
-		// TODO Auto-generated method stub
-		return e;
+		String name=evt.getPropertyName();
+		if(MetaDataUI.CHANGE_IMGDATA.equals(name)){
+//			model.addComponentForUpdate(model.getImageModel());
+		}
+			
 	}
+
+//	public JPanel activateExperimentModulView() 
+//	{
+//		ExperimentCompUI e=model.getExpModul();
+//		e.buildComponents();
+//		// TODO Auto-generated method stub
+//		return e;
+//	}
 	
 	public SampleCompUI activateSampleModuleView() 
 	{
@@ -85,12 +100,12 @@ public class MetaDataControl implements PropertyChangeListener
 		return s;
 	}
 	
-	public Component activateImageModul() 
-	{
-		ImageCompUI i=model.getImageModul();
-		i.buildComponents();
-		return i;
-	}
+//	public Component activateImageModul() 
+//	{
+//		ImageCompUI i=model.getImageModul();
+//		i.buildComponents();
+//		return i;
+//	}
 	
 	public Component activateObjectiveModulView(String name) 
 	{

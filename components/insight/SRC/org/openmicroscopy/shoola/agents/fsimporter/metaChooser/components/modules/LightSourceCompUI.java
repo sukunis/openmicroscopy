@@ -61,7 +61,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	public LightSourceCompUI(ModuleConfiguration objConf) 
 	{
-		System.out.println("# LightSrcCompUI::new Instance ");
+//		System.out.println("# LightSrcCompUI::new Instance ");
 		lightSrcSettUI=new LightSourceSettingsCompUI(objConf);
 		initGUI();
 		if(objConf==null){
@@ -140,7 +140,7 @@ public class LightSourceCompUI extends ElementsCompUI
 				if(l!=null){
 					showSelectedLightSrc(l);
 					dataChanged=true;
-					System.out.println("\tsetfields="+dataChanged);
+//					System.out.println("\tsetfields="+dataChanged);
 				}
 			}
 		});
@@ -158,7 +158,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	/** LightSource was choose from a table -> set sourceType, instance subCompUI, mark values as changed*/
 	protected void showSelectedLightSrc(LightSource l) 
 	{ 
-		System.out.println("#LightSrcCompUI::showSelectedLightSrc("+l.getClass().getSimpleName()+")");
+//		System.out.println("#LightSrcCompUI::showSelectedLightSrc("+l.getClass().getSimpleName()+")");
 		// notice sourceType cb
 		// adapt intance and data of lightSrc 
 		//TODO: what happens with still existing data
@@ -209,7 +209,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	 */
 	protected void showSubCompForSelection(String sType) throws Exception 
 	{
-		System.out.println("# LightSrcCompUI::showSubCompForSelection("+sType+"]");
+//		System.out.println("# LightSrcCompUI::showSubCompForSelection("+sType+"]");
 		lightSrcCard.show(globalPane,sType);
 	}
 	
@@ -220,7 +220,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	public void addData(LightSource l,boolean overwrite)
 	{
-		System.out.println("# LightSrcCompUI::addData()");
+//		System.out.println("# LightSrcCompUI::addData()");
 		if(l instanceof Laser){
 			sourceType.setSelectedIndex(0);
 			((LightSrcSubCompUI) globalPane.getComponent(0)).addData(l, overwrite);
@@ -243,7 +243,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	public static LightSource copyLightSource(LightSource l) 
 	{
-		System.out.println("# LightSrcCompUI::copyLightSrc()");
+//		System.out.println("# LightSrcCompUI::copyLightSrc()");
 		LightSource result=null;
 		if(l!=null){
 			switch (l.getClass().getSimpleName()) {
@@ -271,7 +271,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	private void showLightSrcPane(LightSource l)
 	{
-		System.out.println("# LightSrcCompUI::showLightSrcPane");
+//		System.out.println("# LightSrcCompUI::showLightSrcPane");
 		if(l instanceof Laser){
 			sourceType.setSelectedIndex(0);
 		}else if(l instanceof Arc){
@@ -298,7 +298,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	public void buildComponents()
 	{
-		System.out.println("# LightSrcCompUI::buildComponents()");
+//		System.out.println("# LightSrcCompUI::buildComponents()");
 		dataChanged=false;
 		for (Component comp : globalPane.getComponents() ) {
 			((LightSrcSubCompUI) comp).buildComponents();
@@ -334,7 +334,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	private void createDummyPane(ModuleConfiguration objConf,boolean inactive) 
 	{
-		System.out.println("# LightSrcCompUI::createDummyPane(conf,boolean)");
+//		System.out.println("# LightSrcCompUI::createDummyPane(conf,boolean)");
 		globalPane.add(new LS_LaserCompUI(objConf),LASER);
 		globalPane.add(new LS_ArcCompUI(objConf),ARC);
 		globalPane.add(new LS_FilamentCompUI(objConf),FILAMENT);
@@ -350,7 +350,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	//create dummy laser
 	protected void createDummyPane(boolean inactive)
 	{
-		System.out.println("# LightSrcCompUI::createDummyPane(boolean)");
+//		System.out.println("# LightSrcCompUI::createDummyPane(boolean)");
 		globalPane.add(new LS_LaserCompUI(null),LASER);
 		globalPane.add(new LS_ArcCompUI(null),ARC);
 		globalPane.add(new LS_FilamentCompUI(null),FILAMENT);
@@ -372,7 +372,7 @@ public class LightSourceCompUI extends ElementsCompUI
 	
 	private void clearCompData()
 	{
-		System.out.println("# LightSrcCompUI::clearCompData");
+//		System.out.println("# LightSrcCompUI::clearCompData");
 		for (Component comp : globalPane.getComponents() ) {
 			((LightSrcSubCompUI) comp).clearDataValues();
 		}
@@ -404,7 +404,7 @@ public class LightSourceCompUI extends ElementsCompUI
 		TagData lastelem=list.get(list.size()-1);
 		if(lastelem.getTagName().equals("SourceType")){
 			try {
-				System.out.println("\t ...set SourceType: "+sourceTypeList[Integer.valueOf(lastelem.getTagValue())]);
+//				System.out.println("\t ...set SourceType: "+sourceTypeList[Integer.valueOf(lastelem.getTagValue())]);
 				sourceType.setSelectedIndex(Integer.valueOf(lastelem.getTagValue()));
 //				showSubCompForSelection(lastelem.getTagValue());
 				((LightSrcSubCompUI) globalPane.getComponent(sourceType.getSelectedIndex())).update(list);
@@ -428,7 +428,7 @@ public class LightSourceCompUI extends ElementsCompUI
 			result.add(ts);
 		}
 		result.add(new TagData("SourceType", String.valueOf(sourceType.getSelectedIndex()), OPTIONAL, TagData.TEXTFIELD));
-		System.out.println("\t ...selected SourceType: "+sourceTypeList[sourceType.getSelectedIndex()]);
+//		System.out.println("\t ...selected SourceType: "+sourceTypeList[sourceType.getSelectedIndex()]);
 		return result;
 	}
 

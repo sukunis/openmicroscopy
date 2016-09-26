@@ -27,7 +27,7 @@ import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.ExperimentType;
 import ome.xml.model.enums.handlers.ExperimentTypeEnumHandler;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentContainer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
@@ -42,7 +42,7 @@ public class ExperimentViewer extends ModuleViewer{
 	private static final org.slf4j.Logger LOGGER =
     	    LoggerFactory.getLogger(ExperimentViewer.class);
  
-private ExperimentContainer data;
+private ExperimentModel data;
 private Box box;
 
 // available element tags
@@ -64,8 +64,9 @@ public static final String EXPERIMENT_TYPE_MAPLABEL="Experiment Type";
  * Creates a new instance.
  * @param model Reference to model.
  */
-public ExperimentViewer(ExperimentContainer model,ModuleConfiguration conf)
+public ExperimentViewer(ExperimentModel model,ModuleConfiguration conf)
 {
+	System.out.println("# ExperimentModel::new Instance("+(model!=null?"model":"null")+")");
 	this.data=model;
 	initComponents(conf);
 	initTagList();
@@ -195,8 +196,13 @@ private void setGUIData()
 		try{
 //			setName(expContainer.getExperimenter(),ElementsCompUI.REQUIRED);
 			setName(data.getExperimenter(),ElementsCompUI.REQUIRED);
-		}
-		catch(NullPointerException e){}
+		}catch(NullPointerException e){}
+		try{
+			setGroupName(data.getGroupName(), OPTIONAL);
+		}catch(NullPointerException e){}
+		try{setProjectName(data.getProjectName(), OPTIONAL);
+		
+		}catch(NullPointerException e){}
 	}
 	
 }
@@ -308,7 +314,7 @@ private void setProjectPartner(String value, boolean prop)
 public void saveData() 
 {
 	if(data==null){
-		data=new ExperimentContainer();
+		data=new ExperimentModel();
 		data.createNew("","");
 	}
 //TODO input checker

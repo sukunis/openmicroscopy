@@ -759,7 +759,7 @@ private boolean hardwareDataVisible;
     			return;
     		}
     	}
-    	view.getModelObject().isUpToDate(true);
+//    	view.getModelObject().isUpToDate(true);
     	panel=view;
 
 
@@ -904,7 +904,7 @@ private boolean hardwareDataVisible;
     private void saveInputToModel(FNode node) 
     {
     	if(node!=null){
-    		if(node.getView()!=null && node.getView().getModelObject()!=null &&node.getView().getModelObject().hasToUpdate()){
+    		if(node.getView()!=null && node.getView().getModelObject()!=null &&node.getView().hasUserInput()){
     			System.out.println("# MeatDataDialog:: saveInputToModel("+node.getAbsolutePath()+")");
     			LOGGER.debug("[SAVE] -- SAVE MODEL FOR: "+node.getAbsolutePath());
     			node.setModelObject(((MetaDataView) node.getView()).getModelObject());
@@ -932,7 +932,7 @@ private boolean hardwareDataVisible;
 				}
 			}
 		}
-		node.getModelObject().isUpToDate(true);
+//		node.getModelObject().isUpToDate(true);
 	}
 
 

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentContainer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
@@ -133,7 +133,7 @@ public class OMEStore
 	}
 
 	
-	public void storeExperiment(ExperimentContainer e)
+	public void storeExperiment(ExperimentModel e)
 	{
 		LOGGER.info("[SAVE] -- save EXPERIMENT data");
 		int idxExperiment=getExperimentIndexByID(e.getExperiment().getID());

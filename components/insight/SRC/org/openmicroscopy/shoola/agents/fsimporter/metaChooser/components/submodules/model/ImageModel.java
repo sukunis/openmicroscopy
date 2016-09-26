@@ -1,7 +1,10 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
+import java.util.List;
+
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.xml.model.Detector;
 import ome.xml.model.Image;
 import ome.xml.model.Pixels;
@@ -10,6 +13,8 @@ import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 public class ImageModel 
@@ -32,6 +37,7 @@ public class ImageModel
 	
 	public boolean addData(Image img, boolean overwrite)
 	{
+		System.out.println("# ImageModel::addData()");
 		boolean conflicts=false;
 		if(overwrite){
 			replaceData(img);
@@ -103,5 +109,63 @@ public class ImageModel
 	public Image getImage() {
 		return element;
 	}
+
+//	public void update(List<TagData> changesImage) 
+//	{
+//		for(TagData t: changesImage){
+//			updateTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
+//		}
+//	}
+
+//	private void updateTag(String tagName, Object value, Unit tagUnit) 
+//	{
+//		switch (tagName) {
+//		case TagNames.IMG_NAME:
+//			element.setName(value);
+//			break;
+//		case TagNames.ACQTIME:
+//			element.setAcquisitionDate(Timestamp.valueOf(value));
+//			break;
+//		case TagNames.DIMXY:
+//			setDimXY(new String[2], prop);
+//			dimXY.setVisible(true);
+//			break;
+//		case TagNames.PIXELTYPE:
+//			setPixelType(null, prop);
+//			pixelType.setVisible(true);
+//			break;
+//		case TagNames.PIXELSIZE:
+//			setPixelSizeXY(null, null, prop);
+//			pixelSize.setVisible(true);
+//			break;
+//		case TagNames.DIMZTC:
+//			setDimZTC(new String[3], prop);
+//			dimZTC.setVisible(true);
+//			break;
+//		case TagNames.STAGEPOS:
+//			setStagePos(null,null, prop);
+//			stagePos.setVisible(true);
+//			break;
+//		case TagNames.STEPSIZE:
+//			setStepSize(null, prop);
+//			stepSize.setVisible(true);
+//			break;
+//		case TagNames.TIMEINC:
+//			setTimeIncrement(null, prop);
+//			timeIncrement.setVisible(true);
+//			break;
+//		case TagNames.WELLNR:
+//			setWellNr(null, prop);
+//			wellNr.setVisible(true);
+//			break;
+//		default:
+//			LOGGER.warn("[CONF] unknown tag: "+name );break;
+//		}
+//		
+//	}
+
+
+
+	
 
 }
