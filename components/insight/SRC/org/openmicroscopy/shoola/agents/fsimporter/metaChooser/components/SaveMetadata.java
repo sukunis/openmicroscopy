@@ -203,7 +203,7 @@ public class SaveMetadata
 		//--- Channels
 		int numChannels=m.getNumberOfChannels();
 		for(int cNr=0; cNr<numChannels; cNr++){
-			Channel thisChannel=m.getChannel(cNr);
+			Channel thisChannel=m.getChannelData(cNr);
 			LightSource thisLightSrc=m.getLightSourceData(cNr);
 			Detector thisDetector=m.getDetector(cNr);
 			LightPath thisLightPath = m.getLightPath(cNr);
@@ -321,7 +321,7 @@ public class SaveMetadata
 		if(os!=null)
 			omeStore.storeObjectiveSettings(os,i);
 		
-		Objective o=m.getObjective();
+		Objective o=m.getObjectiveData();
 		if(o!=null )
 			omeStore.storeObjective(o,i,m.getImageIndex());
 	}

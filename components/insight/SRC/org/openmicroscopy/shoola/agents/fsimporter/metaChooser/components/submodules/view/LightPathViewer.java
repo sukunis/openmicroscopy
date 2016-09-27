@@ -11,11 +11,13 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
 import ome.xml.model.LightPath;
 import ome.xml.model.enums.FilterType;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathTableSmall;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightPathModel;
@@ -32,6 +34,7 @@ public class LightPathViewer extends ModuleViewer{
 	private LightPathTableSmall lightPathTable;
 	private boolean useEditor;
 
+	private int index;
 	// available element tags
 
 
@@ -43,9 +46,11 @@ public class LightPathViewer extends ModuleViewer{
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public LightPathViewer(LightPathModel model,ModuleConfiguration conf)
+	public LightPathViewer(LightPathModel model,ModuleConfiguration conf,int index)
 	{
+		System.out.println("# LightPathViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		this.data=model;
+		this.index=index;
 		initComponents(conf);
 		buildGUI();
 	}
@@ -77,11 +82,16 @@ public class LightPathViewer extends ModuleViewer{
 			public void actionPerformed(ActionEvent e) 
 			{
 				LightPathEditor creator = new LightPathEditor(new JFrame(),"Edit LightPath",
-						data.getList(),data.getLightPath());
+						data.getList(),data.getLightPath(index));
 				useEditor=true;
 				List<Object> newList=creator.getLightPathList(); 
 				if(newList!=null && !newList.isEmpty()){
-					data.createLightPath(newList);
+					try {
+						createLightPath(newList);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					//				createLightPath(model.updateLightPathElems(newList,chIdx));
 					setGUIData();
 					dataChanged=true;
@@ -112,7 +122,7 @@ public class LightPathViewer extends ModuleViewer{
 		if(data==null)
 			return;
 
-		LightPath lightPath=data.getLightPath();
+		LightPath lightPath=data.getLightPath(index);
 		if(lightPath!=null){
 			lightPathTable.clearData();
 			//load primary dichroic of instrument
@@ -158,13 +168,18 @@ public class LightPathViewer extends ModuleViewer{
 
 
 	@Override
-	public void saveData() 
+	public void saveData()  
 	{
 		List<Object> lightPathList=lightPathTable.getLightPathList();
 
 		if(data==null)
 			data=new LightPathModel();
-		data.createLightPath(lightPathList);
+		try {
+			createLightPath(lightPathList);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		dataChanged=false;
 	}
 
@@ -176,6 +191,53 @@ public class LightPathViewer extends ModuleViewer{
 
 	}
 
+	/**
+	 * LightPath order is Exitation Filter -> Dichroic -> Dichroic/Emission filter
+	 * @param list
+	 * @throws Exception 
+	 */
+	public void createLightPath(List<Object> list) throws Exception
+	{
+		if(list!=null && !list.isEmpty()){
+			LightPath newElement=new LightPath();
+			int linkType=1;
+			for(Object f : list)
+			{
+				Dichroic pD=newElement.getLinkedDichroic();
+				boolean primDNotExists= pD==null ? true : false ;
+
+				// Dichroic
+				if(f instanceof Dichroic){
+					linkType=2;
+					// primary dichroic exists?
+					if(primDNotExists){
+						newElement.linkDichroic((Dichroic) f);
+					}else{
+						LOGGER.warn("primary Dichroic still exists! [LightPathCompUI::createLightPath]");
+						newElement.linkEmissionFilter(MetaDataModel.convertDichroicToFilter((Dichroic)f));
+					}
+
+				}else{
+
+					String	type= ((Filter) f).getType()!=null ? ((Filter) f).getType().toString() : "";
+					//filters that comes before and dichroic are exitation filters by definition
+					if(	!type.equals(FilterType.DICHROIC.getValue()) && 
+							linkType==1){
+						newElement.linkExcitationFilter((Filter) f);
+					}else{// link additional dichroic as emission filter
+						linkType=2;
+
+						if( primDNotExists){
+							newElement.linkDichroic(MetaDataModel.convertFilterToDichroic((Filter) f));
+						}else{
+							newElement.linkEmissionFilter((Filter) f);
+						}
+					}
+				}
+			}
+			data.addData(newElement, true, index);
+		}
+	}
 
 
 

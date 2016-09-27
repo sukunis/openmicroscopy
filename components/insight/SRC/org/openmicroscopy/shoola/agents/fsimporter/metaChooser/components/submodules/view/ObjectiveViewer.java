@@ -20,6 +20,7 @@ import javax.swing.border.TitledBorder;
 
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
+import ome.xml.model.Arc;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.Correction;
@@ -65,6 +66,7 @@ public class ObjectiveViewer extends ModuleViewer
 	 */
 	public ObjectiveViewer(ObjectiveModel model,ModuleConfiguration conf)
 	{
+		System.out.println("# ObjectiveViewer::newInstance("+(model!=null?"model":"null")+")");
 		this.data=model;
 		initComponents(conf);
 		initTagList();
@@ -252,6 +254,8 @@ public class ObjectiveViewer extends ModuleViewer
 	 */
 	private void setGUIData() 
 	{
+		if(data==null)
+			return;
 		Objective objective=data.getObjective();
 		try{setModel(objective.getModel());
 		} catch (NullPointerException e) { }
@@ -276,6 +280,8 @@ public class ObjectiveViewer extends ModuleViewer
 	
 	private void setSettingsGUIData()
 	{
+		if(data==null)
+			return;
 		ObjectiveSettings settings = data.getSettings();
 		try{setRefractIndex(settings.getRefractiveIndex(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import ome.xml.model.Arc;
 import ome.xml.model.Laser;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -21,10 +22,11 @@ public class LS_LaserViewer extends LightSourceSubViewer
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public LS_LaserViewer(LightSourceModel model,ModuleConfiguration conf)
+	public LS_LaserViewer(LightSourceModel model,ModuleConfiguration conf,int index)
 	{
 		classification=LightSourceModel.LASER;
 		this.data=model;
+		this.index=index;
 		initComponents(conf);
 		buildGUI();
 		initTagList();
@@ -52,7 +54,9 @@ tagList=new ArrayList<TagData>();
 
 	@Override
 	protected void setGUIData() {
-		Laser lightSrc=(Laser) data.getLightSource();
+		if(data==null)
+			return;
+		Laser lightSrc=(Laser) data.getLightSource(index);
 		
 		try{setManufact(((Laser)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }
@@ -101,7 +105,7 @@ tagList=new ArrayList<TagData>();
 	@Override
 	public void saveData() 
 	{
-		Laser lightSrc=(Laser) data.getLightSource();
+		Laser lightSrc=(Laser) data.getLightSource(index);
 		if(lightSrc==null)
 			lightSrc=new Laser();
 		

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import ome.xml.model.Arc;
 import ome.xml.model.Filament;
 import ome.xml.model.enums.FilamentType;
 
@@ -17,10 +18,11 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 public class LS_FilamentViewer extends LightSourceSubViewer
 {
-	public LS_FilamentViewer(LightSourceModel model,ModuleConfiguration conf)
+	public LS_FilamentViewer(LightSourceModel model,ModuleConfiguration conf,int index)
 	{
 		classification=LightSourceModel.FILAMENT;
 		this.data=model;
+		this.index=index;
 		initComponents(conf);
 		buildGUI();
 		initTagList();
@@ -38,7 +40,9 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 
 	@Override
 	protected void setGUIData() {
-		Filament lightSrc=(Filament) data.getLightSource();
+		if(data==null)
+			return;
+		Filament lightSrc=(Filament) data.getLightSource(index);
 		try{ setManufact(((Filament)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }
 		try{ setModel(((Filament)lightSrc).getModel(), ElementsCompUI.REQUIRED);
@@ -62,7 +66,7 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 
 	@Override
 	public void saveData() {
-		Filament lightSrc=(Filament) data.getLightSource();
+		Filament lightSrc=(Filament) data.getLightSource(index);
 		if(lightSrc==null)
 			lightSrc=new Filament();
 

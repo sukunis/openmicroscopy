@@ -45,6 +45,7 @@ public class ChannelViewer extends ModuleViewer{
     	    LoggerFactory.getLogger(ChannelViewer.class);
  
 private ChannelModel data;
+private int index;
 
 // available element tags
 private TagData name;
@@ -79,9 +80,11 @@ private String stagePosRef;
  * Creates a new instance.
  * @param model Reference to model.
  */
-public ChannelViewer(ChannelModel model,ModuleConfiguration conf)
+public ChannelViewer(ChannelModel model,ModuleConfiguration conf,int index)
 {
+	System.out.println("# ChannelViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 	this.data=model;
+	this.index=index;
 	initComponents(conf);
 	initTagList();
 	buildGUI();
@@ -233,7 +236,7 @@ private void setGUIData()
 {
 	if(data==null)
 		return;
-	Channel channel=data.getChannel();
+	Channel channel=data.getChannel(index);
 	
 	if(channel!=null){
 		//Channel data
@@ -395,7 +398,7 @@ public void saveData()
 	if(data==null)
 		data=new ChannelModel();
 	
-	Channel channel=data.getChannel();
+	Channel channel=data.getChannel(index);
 	if(channel==null)
 		channel=new Channel();
 	//TODO format check

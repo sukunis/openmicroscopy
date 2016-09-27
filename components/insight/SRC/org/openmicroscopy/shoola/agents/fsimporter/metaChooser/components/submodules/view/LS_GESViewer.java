@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import ome.xml.model.Arc;
 import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.LightEmittingDiode;
 
@@ -17,10 +18,11 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 public class LS_GESViewer extends LightSourceSubViewer
 {
-	public LS_GESViewer(LightSourceModel model,ModuleConfiguration conf)
+	public LS_GESViewer(LightSourceModel model,ModuleConfiguration conf,int index)
 	{
 		classification=LightSourceModel.GENERIC_EXCITATION;
 		this.data=model;
+		this.index=index;
 		initComponents(conf);
 		buildGUI();
 		initTagList();
@@ -38,7 +40,9 @@ public class LS_GESViewer extends LightSourceSubViewer
 
 	@Override
 	protected void setGUIData() {
-		GenericExcitationSource lightSrc=(GenericExcitationSource) data.getLightSource();
+		if(data==null)
+			return;
+		GenericExcitationSource lightSrc=(GenericExcitationSource) data.getLightSource(index);
 		try{ setManufact(((GenericExcitationSource)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }
 		try{ setModel(((GenericExcitationSource)lightSrc).getModel(), ElementsCompUI.REQUIRED);
@@ -59,7 +63,7 @@ public class LS_GESViewer extends LightSourceSubViewer
 
 	@Override
 	public void saveData() {
-		GenericExcitationSource lightSrc=(GenericExcitationSource) data.getLightSource();
+		GenericExcitationSource lightSrc=(GenericExcitationSource) data.getLightSource(index);
 		if(lightSrc==null)
 			lightSrc=new GenericExcitationSource();
 		try{

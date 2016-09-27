@@ -1,5 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -170,6 +171,23 @@ public class ObjectiveModel
 	public ObjectiveSettings getSettings()
 	{
 		return settings;
+	}
+	
+	public void addToList(List<Objective> list)
+	{
+		if(list==null || list.size()==0)
+			return;
+
+		if(availableElem==null){
+			availableElem=new ArrayList<Objective>();
+		}
+		for(int i=0; i<list.size(); i++){
+			availableElem.add(list.get(i));
+		}
+	}
+	public void clearList() 
+	{
+		availableElem=null;
 	}
 			
 }

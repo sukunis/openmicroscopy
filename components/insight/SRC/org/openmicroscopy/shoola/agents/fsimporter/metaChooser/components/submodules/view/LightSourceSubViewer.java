@@ -60,6 +60,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 
 	protected String classification;
 	protected LightSourceModel data;
+	protected int index;
 	
 	abstract protected void initTagList();
 	abstract protected void setGUIData();

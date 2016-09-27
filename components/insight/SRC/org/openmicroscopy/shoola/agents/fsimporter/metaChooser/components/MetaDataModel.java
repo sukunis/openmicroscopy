@@ -60,27 +60,10 @@ public class MetaDataModel
 	/** Logger for this class. */
 	 private static final org.slf4j.Logger LOGGER =
 	    	    LoggerFactory.getLogger(MetaDataModel.class);
-
-	/** module for image data */ 
-//	private ElementsCompUI image;
-	/** module for experiment data */
-//	private ElementsCompUI experimentUI;
-	/** module for objective data */
-	private ElementsCompUI objectiveUI;
-	/** module for imgEnv data */
-	private ElementsCompUI imgEnvUI;
-	/** module for planeSlider */
+	
+	/** TODO: module for planeSlider */
 	private ElementsCompUI planeSliderUI;
-	/** module for sample data */
-	private ElementsCompUI sampleUI;
-	/** modules for lightPath data link to channel of current image. List index== channelIndex*/
-	private List<ElementsCompUI> lightPathList;
-	/** modules for channel data*/
-	private List<ElementsCompUI> channelList;
-	/** modules for detector data link to channel of current image */
-	private List<ElementsCompUI> detectorList;
-	/** modules for lightsource data link to channel of current image */
-	private List<ElementsCompUI> lightSrcList;
+	
 	
 	/** list of filter data  of current image*/
 	private List<Filter> filterList;
@@ -91,15 +74,24 @@ public class MetaDataModel
 	
 	
 	//-----------------------------------------
+	/** module for image data */ 
 	private ImageModel imgModel;
+	/** module for experiment data */
 	private ExperimentModel expModel;
+	/** module for objective data */
 	private ObjectiveModel objModel;
+	/** module for imgEnv data */
 	private ImageEnvModel imgEnvModel;
+	/** module for sample data */
 	private SampleModel sampleModel;
-	private List<LightPathModel> lightPathModelList;
-	private List<ChannelModel> channelModelList;
-	private List<DetectorModel> detectorModelList;
-	private List<LightSourceModel> lightSrcModelList;
+	/** module for lightPath data link to channel of current image. List index of element== channelIndex*/
+	private LightPathModel lightPathModel;
+	/** module for channel data*/
+	private ChannelModel channelModel;
+	/** module for detector data link to channel of current image */
+	private DetectorModel detectorModel;
+	/** module for lightsource data link to channel of current image */
+	private LightSourceModel lightSrcModel;
 	
 	private List<TagData> changesImg;
 	//------------------------------------------------
@@ -123,7 +115,6 @@ public class MetaDataModel
 	
 	private Image imageOME;
 	private int imageIndex;
-	private int numOfChannels;
 	
 	private OME ome;
 
@@ -134,55 +125,31 @@ public class MetaDataModel
 	public MetaDataModel()
 	{
 		imageIndex=-1;
-		numOfChannels=-1;
 		
-		channelList=new ArrayList<ElementsCompUI>();
+		channelModel=null;
 		planeList=new ArrayList<ElementsCompUI>();
-		lightSrcList=new ArrayList<ElementsCompUI>();
-		detectorList=new ArrayList<ElementsCompUI>();
+		lightSrcModel=null;
 		
-		lightPathList=new ArrayList<ElementsCompUI>();
+		lightPathModel=null;
 		
 		componentsWithChanges=new ArrayList<Object>();
 		
 		imgModel=new ImageModel();
 		
 	}
-	
-	
-	
-//	public MetaDataModel(int imgIdx, int _numOfChannels)
-//	{
-//		LOGGER.info("[DEBUG] set image index "+imgIdx);
-//		imageIndex=imgIdx;
-//		numOfChannels=_numOfChannels;
-//		
-//		
-//		channelList=new ArrayList<ElementsCompUI>(numOfChannels);
-//		planeList=new ArrayList<ElementsCompUI>();
-//		lightSrcList=new ArrayList<ElementsCompUI>(numOfChannels);
-//		detectorList=new ArrayList<ElementsCompUI>(numOfChannels);
-//		
-//		lightPathList=new ArrayList<ElementsCompUI>(numOfChannels);
-//		
-//		componentsWithChanges=new ArrayList<ElementsCompUI>();
-//	}
-	
-	
-	
+
 	public void clearData()
 	{
 		imageIndex=-1;
-		numOfChannels=-1;
 		
 		imageOME=null;
 		ome=null;
 		imgModel=null;
 		
 		expModel=null;
-		sampleUI=null;
-		objectiveUI=null;
-		imgEnvUI=null;
+		sampleModel=null;
+		objModel=null;
+		imgEnvModel=null;
 		planeSliderUI=null;
 		
 		filterList=null;
@@ -190,12 +157,12 @@ public class MetaDataModel
 //		linkedChannelForDichroic=null;
 //		linkedChannelForFilter=null;
 		
-		channelList=new ArrayList<ElementsCompUI>();
+		channelModel=null;
 		planeList=new ArrayList<ElementsCompUI>();
-		lightSrcList=new ArrayList<ElementsCompUI>();
-		detectorList=new ArrayList<ElementsCompUI>();
+		lightSrcModel=null;
+		detectorModel=null;
 		
-		lightPathList=new ArrayList<ElementsCompUI>();
+		lightPathModel=null;
 		componentsWithChanges=new ArrayList<Object>();
 	}
 	
@@ -203,24 +170,15 @@ public class MetaDataModel
 	{
 		System.out.println("#MetaDataModel::resetData()");
 		expModel=null;
-		sampleUI.clearDataValues();
-		objectiveUI.clearDataValues();
-		imgEnvUI.clearDataValues();
+		sampleModel=null;
+		objModel=null;
+		imgEnvModel=null;
 //		planeSliderUI.clearDataValues();
 		imgModel=null;
 		
-		for(ElementsCompUI comp:lightSrcList){
-			comp.clearDataValues();
-		}
-		for(ElementsCompUI comp:detectorList){
-			comp.clearDataValues();
-		}
-		for(ElementsCompUI comp:channelList){
-			comp.clearDataValues();
-		}
-		for(ElementsCompUI comp:lightPathList){
-			comp.clearDataValues();
-		}
+		lightSrcModel=null;
+		detectorModel=null;
+		lightPathModel=null;
 		
 	}
 	
@@ -252,84 +210,84 @@ public class MetaDataModel
 //		}
 		
 		//Objective
-		if(objectiveUI!=null){ 
-			changes=objectiveUI.userInput();
-			LOGGER.info("[DEBUG] -- changes in OBJECT: "+changes);
-			if(changes){ 
-				componentsWithChanges.add(objectiveUI);
-				hasUserInput=hasUserInput ||true;
-			}
-			
-		}
+//		if(objectiveUI!=null){ 
+//			changes=objectiveUI.userInput();
+//			LOGGER.info("[DEBUG] -- changes in OBJECT: "+changes);
+//			if(changes){ 
+//				componentsWithChanges.add(objectiveUI);
+//				hasUserInput=hasUserInput ||true;
+//			}
+//			
+//		}
 
 		//Detector
-		for(int i=0; i<detectorList.size();i++){
-			if(detectorList.get(i)!=null) {
-				if(detectorList.get(i).userInput()){
-					componentsWithChanges.add(detectorList.get(i));
-					result=result ||true;
-				}
-			}
-		}
+//		for(int i=0; i<detectorList.size();i++){
+//			if(detectorList.get(i)!=null) {
+//				if(detectorList.get(i).userInput()){
+//					componentsWithChanges.add(detectorList.get(i));
+//					result=result ||true;
+//				}
+//			}
+//		}
 		hasUserInput=hasUserInput ||result;
 		LOGGER.debug("changes in DETECTOR: "+result);
 
 		//LightSrc
 		result=false;
-		for(int i=0; i<lightSrcList.size();i++){
-			if(lightSrcList.get(i)!=null){
-				if(lightSrcList.get(i).userInput()){
-					System.out.println("\t ...lightSrc ["+i+"] : user input=true");
-					componentsWithChanges.add(lightSrcList.get(i));
-					result=result || true;
-				}
-			}
-		}
+//		for(int i=0; i<lightSrcList.size();i++){
+//			if(lightSrcList.get(i)!=null){
+//				if(lightSrcList.get(i).userInput()){
+//					System.out.println("\t ...lightSrc ["+i+"] : user input=true");
+//					componentsWithChanges.add(lightSrcList.get(i));
+//					result=result || true;
+//				}
+//			}
+//		}
 		hasUserInput=hasUserInput ||result;
 		 LOGGER.debug("changes in LIGHTSRC: "+result);
 		 System.out.println("LightSrc has change: "+result);
 		 
 		 //Channel
 		 result=false;
-		for(int i=0; i<channelList.size();i++){
-			if(channelList.get(i)!=null) {
-				if(channelList.get(i).userInput()){
-					componentsWithChanges.add(channelList.get(i));
-					result=result || true;
-				}
-			}
-		}
+//		for(int i=0; i<channelModel.getNumberOfChannels();i++){
+//			if(channelModel.getChannel(i)!=null) {
+//				if(channelList.get(i).userInput()){
+//					componentsWithChanges.add(channelList.get(i));
+//					result=result || true;
+//				}
+//			}
+//		}
 		hasUserInput=hasUserInput ||result;
 		LOGGER.debug("changes in CHANNEL: "+result);
 		
 		//LightPath
-		result=false;
-		for(int i=0; i<lightPathList.size();i++){
-			if(lightPathList.get(i)!=null) {
-				if(lightPathList.get(i).userInput()){
-					componentsWithChanges.add(lightPathList.get(i));
-					result=result || true;
-				}
-			}
-		}
+//		result=false;
+//		for(int i=0; i<lightPathList.size();i++){
+//			if(lightPathList.get(i)!=null) {
+//				if(lightPathList.get(i).userInput()){
+//					componentsWithChanges.add(lightPathList.get(i));
+//					result=result || true;
+//				}
+//			}
+//		}
 		hasUserInput=hasUserInput ||result;
 		LOGGER.debug("changes in LIGHTPATH: "+result);
 		
 		//Sample
-		if(sampleUI!=null){ 
-			changes=( sampleUI).userInput();
-			if(changes) componentsWithChanges.add(sampleUI);
-			LOGGER.debug("changes in SAMPLE: "+changes);
-		hasUserInput=hasUserInput ||changes;
-		}
+//		if(sampleUI!=null){ 
+//			changes=( sampleUI).userInput();
+//			if(changes) componentsWithChanges.add(sampleUI);
+//			LOGGER.debug("changes in SAMPLE: "+changes);
+//		hasUserInput=hasUserInput ||changes;
+//		}
 		
-		//ImgEnv
-		if(imgEnvUI!=null){ 
-			changes=( imgEnvUI).userInput();
-			LOGGER.debug("changes in IMGENV: "+changes);
-			if(changes) componentsWithChanges.add(imgEnvUI);
-			hasUserInput=hasUserInput || changes;
-		}
+//		//ImgEnv
+//		if(imgEnvUI!=null){ 
+//			changes=( imgEnvUI).userInput();
+//			LOGGER.debug("changes in IMGENV: "+changes);
+//			if(changes) componentsWithChanges.add(imgEnvUI);
+//			hasUserInput=hasUserInput || changes;
+//		}
 
 		//Planes
 		result=false;
@@ -418,22 +376,28 @@ public class MetaDataModel
 	//----------------------------------------------
 
 	
-	
-	public void setSampleData(ElementsCompUI e)
+	public SampleModel getSampleModel() 
 	{
-		sampleUI=e;
-		if(e==null){
-			LOGGER.warn("[DEBUG] Add empty sample obj ");
-		}
+		if(sampleModel==null)
+			sampleModel=new SampleModel();
+		return sampleModel;
 	}
+	
 	
 	public Sample getSample() throws Exception
 	{
-		if(sampleUI==null){
+		if(sampleModel==null)
 			return null;
-		}else{
-			return ((SampleCompUI) sampleUI).getData();
-		}
+		return sampleModel.getSample();
+	}
+	
+	public void addData(Sample s, boolean overwrite) 
+	{
+		System.out.println("# MetaDataModel::addData() - Sample ");
+		if(sampleModel==null)
+			sampleModel=new SampleModel();
+		
+		sampleModel.addData(s, overwrite);
 	}
 	
 
@@ -449,6 +413,9 @@ public class MetaDataModel
 	public void addData(ExperimentModel e, boolean overwrite) throws Exception 
 	{
 		System.out.println("# MetaDataModel::addData() - Experiment ");	
+		if(expModel==null)
+			expModel=new ExperimentModel();
+		
 		if(overwrite){
 			expModel=new ExperimentModel(e);
 		}else{
@@ -478,6 +445,10 @@ public class MetaDataModel
 		expModel.setExperimenter(expCont.getExperimenter());
 	}
 	
+	/*-------------------------------------------
+	 * Image
+	 -------------------------------------------*/
+	
 	
 	public ImageModel getImageModel() 
 	{
@@ -489,11 +460,13 @@ public class MetaDataModel
 	public void addData(Image i,boolean overwrite)
 	{
 		System.out.println("# MetaDataModel::addData - Image");
+		if(imgModel==null)
+			imgModel=new ImageModel();
 		imgModel.addData(i, overwrite);
 	}
 
 	/**
-	 * Get image modul gui input data
+	 * Get image modul data
 	 * @return
 	 * @throws Exception
 	 */
@@ -506,118 +479,120 @@ public class MetaDataModel
 
 	
 	
-	public ObjectiveSettings getObjectiveSettings() throws Exception
-	{
-		if(objectiveUI==null)
-			return null;
-		return ((ObjectiveCompUI)objectiveUI).getSettings().getData();
-	}
 
+
+	/*-------------------------------------------
+	 * Channel
+	 -------------------------------------------*/
 	
 	
-	public void addChannelData(ChannelCompUI c)
+	public void addData(Channel c,boolean overwrite,int index)
 	{
-		if(channelList==null)
-			channelList=new ArrayList<ElementsCompUI>();
+		System.out.println("# MetaDataModel::addData - Channel "+index);
+		if(channelModel==null)
+			channelModel=new ChannelModel();
 		
-		int size=channelList.size();
-		channelList.add(c);
-		try {
-			c.getData();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		channelModel.addData(c, overwrite, index);
 	}
 	
 	public int getNumberOfChannels()
 	{
-		return channelList!=null ? channelList.size() : 0;
+		if(channelModel==null)
+			return 0;
+		return channelModel.getNumberOfChannels();
 	}
 	
-	public Channel getChannel(int index) throws Exception
+	public Channel getChannelData(int index) throws Exception
 	{
-		if(channelList==null || channelList.isEmpty() || index >=channelList.size())
+		if(channelModel==null || getNumberOfChannels()==0 )
 			return null;
-		else
-			return  ((ChannelCompUI)channelList.get(index)).getData(); 
+
+		return  channelModel.getChannel(index); 
 	}
 	
-	public ChannelCompUI getChannelModul(int i) 
+	public ChannelModel getChannelModel() 
 	{
-		if(channelList==null || channelList.isEmpty() || i >=channelList.size())
-			return null;
+		if(channelModel==null )
+			channelModel=new ChannelModel();
 		
-		return (ChannelCompUI) channelList.get(i);
+		return channelModel;
 	}
 	
 	
-//	public void setDetectorData(DetectorCompUI d, int chIdx)
-//	{
-//		if(detectorList!=null)
-//			detectorList.add(chIdx,d);
-//		else
-//			LOGGER.warn("[Model] detector list not available");
-//	}
-	
-	public void addDetectorData(DetectorCompUI d)
+	/*------------------------------------------------------
+	 * Detector
+	 -------------------------------------------------------*/
+	public void addData(Detector d, boolean overwrite, int index) throws Exception 
 	{
-		if(detectorList!=null){
-			detectorList.add(d);
-			try {
-				Detector l=((DetectorCompUI) d).getData();
-			} catch (Exception err) {
-				// TODO Auto-generated catch block
-				err.printStackTrace();
-			}
-		}
-		else
-			LOGGER.warn("[Model] detector list not available");
-	}
-	
-	public DetectorCompUI getDetectorModul(int i) 
-	{
-		if(detectorList==null || detectorList.isEmpty() || i >=detectorList.size()){
-			return null;
-		}
-		return 	(DetectorCompUI) detectorList.get(i);
+		System.out.println("# MetaDataModel::addData - Detector");
+		if(detectorModel==null)
+			detectorModel=new DetectorModel();
+		detectorModel.addData(d, overwrite,index);
 	}
 
+
+
+	public void addData(DetectorSettings ds, boolean overwrite, int index) throws Exception 
+	{
+		System.out.println("# MetaDataModel::addData - DetectorSettings");
+		if(detectorModel==null)
+			detectorModel=new DetectorModel();
+		detectorModel.addData(ds, overwrite,index);
+	}
+
+
+
+	public void addToDetectorList(List<Detector> micDetectorList, boolean append) 
+	{
+		if(!append)
+			detectorModel.clearList();
+		
+		detectorModel.addToList(micDetectorList);
+			
+	}
+	
+	public DetectorModel getDetectorModel() 
+	{
+		if(detectorModel==null ){
+			detectorModel=new DetectorModel();
+		}
+		return 	detectorModel;
+	}
 	
 	
 	public int getNumberOfDetectors()
 	{
-		return detectorList!=null ? detectorList.size() : 0;
+		if(detectorModel==null)
+			return 0;
+		return detectorModel.getNumberOfElements();
 	}
 	
 	public Detector getDetector(int index) throws Exception
 	{
 		Detector res=null;
-		
-		
-		if(detectorList==null || detectorList.isEmpty() || index >=detectorList.size()){
+
+
+		if(detectorModel==null || getNumberOfDetectors()==0 ){
 			return res;
 		}
-		DetectorCompUI dUI=((DetectorCompUI)detectorList.get(index));
-		if(dUI!=null){
-			res=dUI.getData();
-			DetectorSettings dSett=getDetectorSettings(index);
-			// check if this detector is linked to channel
-			if(res!=null && !detectorIsLinkedToChannel(dSett, res.getID())){
-				LOGGER.info("[DEBUG] detector is not linked");
-				if(imageOME!=null){
-					if(imageOME.getLinkedInstrument()==null ){
-						createAndLinkNewInstrument(ome);
-					}
-					linkDetector(dSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfDetectorList());
-					//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
-				}else{
-					LOGGER.info("[DEBUG] can't link detector. ");
+		res=detectorModel.getDetector(index);
+		DetectorSettings dSett=getDetectorSettings(index);
+		// check if this detector is linked to channel
+		if(res!=null && !detectorIsLinkedToChannel(dSett, res.getID())){
+			LOGGER.info("[DEBUG] detector is not linked");
+			if(imageOME!=null){
+				if(imageOME.getLinkedInstrument()==null ){
+					createAndLinkNewInstrument(ome);
 				}
+				linkDetector(dSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfDetectorList());
+				//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
+			}else{
+				LOGGER.info("[DEBUG] can't link detector. ");
 			}
 		}
 		return res;
 	}
+	
 	
 	private void linkDetector(DetectorSettings dSett, Detector d,
 			int imgIdx, int sizeOfDetectorList) 
@@ -652,174 +627,125 @@ public class MetaDataModel
 	
 	public DetectorSettings getDetectorSettings(int index) throws Exception
 	{
-		if(detectorList==null || detectorList.isEmpty() || index>=detectorList.size())
+		if(detectorModel==null)
 			return null;
 		
-		return ((DetectorCompUI)detectorList.get(index)).getSettings().getData();
+		return detectorModel.getSettings(index);
 	}
 	
-//	public void setLightPath(LightPathCompUI lpUI, int chIdx) 
-//	{
-//		if(lightPathList!=null)
-//			lightPathList.add(chIdx, lpUI);
-//		else
-//			LOGGER.warn("[Model] light path not available");
-//		
-//		// set linked Channel for Filter and dichroic list
-//		LightPath lP=lpUI.getLightPath();
-//		if(lP!=null){
-//			setLinkedChannel(lP,chIdx);
-//		}
-//	}
-	public void addLightPath(LightPathCompUI lpUI) 
+
+	
+	/*--------------------------------------------
+	 * LightPath
+	 *--------------------------------------------*/
+	public void addData(LightPath lp, boolean overwrite, int i) throws Exception 
 	{
-		if(lightPathList!=null){
-			lightPathList.add(lpUI);
-			// set linked Channel for Filter and dichroic list
-			LightPath lP=lpUI.getLightPath();
-//			if(lP!=null){
-//				setLinkedChannel(lP,lightPathList.size());
-//			}
-		}else{
-			LOGGER.warn("[Model] light path not available");
-		}
+		if(lightPathModel==null)
+			lightPathModel=new LightPathModel();
 		
-		
+		lightPathModel.addData(lp, overwrite, i);
 	}
+
+	public void addFilterToList(List<Filter> list, boolean append) 
+	{
+		if(!append)
+			lightPathModel.addFilterToList(list);
+	}
+
+	public void addDichroicToList(List<Dichroic> list, boolean append) {
+		if(!append)
+			lightPathModel.addDichroicToList(list);
+	}
+	
+	
 
 	public LightPath getLightPath(int index) throws Exception
 	{
-		if(lightPathList==null || lightPathList.isEmpty() || index>=lightPathList.size()){
+		if(lightPathModel==null || getNumberOfLightPath()==0){
 			LOGGER.info("No lightPath available for channel "+index);
 			return null;
 		}
 //		updateLightPathElems( lightPathObjectList, chIdx);
 		
-		return ((LightPathCompUI)lightPathList.get(index)).getData();
+		return lightPathModel.getLightPath(index);
 	}
 	
-	public LightPathCompUI getLightPathModul(int index)
+
+	public LightPathModel getLightPathModel(int index)
 	{
-		if(lightPathList==null || lightPathList.isEmpty() || index >= lightPathList.size())
+		if(lightPathModel==null )
 			return null;
-		else 
-			return((LightPathCompUI)lightPathList.get(index));
+		return lightPathModel;
 	}
 	
 	public int getNumberOfLightPath() {
-		return lightPathList!=null ? lightPathList.size() : 0;
+		if(lightPathModel==null)
+			return 0;
+		return lightPathModel.getNumberOfLightPaths();
 	}
 	
 	
-//	private void setLinkedChannel(LightPath lP, int chIdx) 
-//	{
-//		List<Filter> list=lP.copyLinkedExcitationFilterList();
-//		int counter=0;
-//		if(filterList !=null){
-//		for(Filter f:filterList){
-//			for(Filter fC:list)	{
-//				if(f.equals(fC)){
-//					if(linkedChannelForFilter.get(counter)==-1){
-//						linkedChannelForFilter.set(counter, chIdx);
-//					}else{
-//						LOGGER.warn("DEBUG: filter schon von anderem Channel besetzt "+
-//								fC.getID());
-//					}
-//				}
-//			}
-//			counter++;
-//		}	
-//		list=lP.copyLinkedEmissionFilterList();
-//		counter=0;
-//		for(Filter f:filterList){
-//			for(Filter fC:list)	{
-//				//TODO : better filterList.indexOf(fC)
-//				if(f.equals(fC)){
-//					if(linkedChannelForFilter.get(counter)==-1){
-//						linkedChannelForFilter.set(counter, chIdx);
-//					}else{
-//						LOGGER.warn("filter is used by another channel"+
-//								fC.getID());
-//					}
-//				}
-//			}
-//			counter++;
-//		}	
-//		}
-//		
-//		Dichroic thisD=lP.getLinkedDichroic();
-//		counter=0;
-//		if(dichroicList!=null){
-//		for(Dichroic d:dichroicList){
-//			if(d.equals(thisD)){
-//				if(linkedChannelForDichroic.get(counter)==-1){
-//					linkedChannelForDichroic.set(counter,chIdx);
-//				}else{
-//					LOGGER.warn("dichroic is used by another channel "+d.getID());
-//				}
-//			}
-//			counter++;
-//		}
-//		}
-//	}
-	
-	
-	//originalList from xml
-	public void setLightSrcList(List<LightSource> list)
+	/*--------------------------------------------
+	 * LightSource
+	 *--------------------------------------------*/
+	public void addData(LightSource l, boolean overwrite, int i) throws Exception 
 	{
-		lightSrcOrigList=list;
+		if(lightSrcModel==null)
+			lightSrcModel=new LightSourceModel();
+		
+		lightSrcModel.addData(l, overwrite, i);
 	}
-	//lightSrc for channels (maybe same new created)
-	public void setLightSrcModul(ElementsCompUI e, int chIdx)
+
+	public void addData(LightSourceSettings ls, boolean overwrite, int i) throws Exception {
+		if(lightSrcModel==null)
+			lightSrcModel=new LightSourceModel();
+		
+		lightSrcModel.addData(ls, overwrite, i);		
+	}
+
+	public void addToLightSrcList(List<LightSource> micLightSrcList, boolean append) 
 	{
-		if(lightSrcList!=null)
-			lightSrcList.add(chIdx,e);
-		else
-			LOGGER.warn("[MODEL] light source list not available");
+		if(!append)
+			lightSrcModel.clearList();
+		
+		lightSrcModel.addToList(micLightSrcList);		
 	}
 	
-	public void addLightSrcModul(ElementsCompUI e)
+	public LightSourceModel getLightSourceModel()
 	{
-		if(lightSrcList!=null){
-			lightSrcList.add(e);
-			try {
-				LightSource l=((LightSourceCompUI) e).getData();
-			} catch (Exception err) {
-				// TODO Auto-generated catch block
-				err.printStackTrace();
-			}
-		}
-		else
-			LOGGER.warn("[MODEL] light source list not available");
+		if(lightSrcModel==null)
+			lightSrcModel=new LightSourceModel();
+		
+		return lightSrcModel;
 	}
+	
 	
 	
 	public int getNumberOfLightSrc()
 	{
-		return lightSrcList!=null ? lightSrcList.size() : 0;
+		if(lightSrcModel==null)
+			return 0;
+		return lightSrcModel.getNumberOfLightSrc();
 	}
-	
+
 	public LightSource getLightSourceData(int index) throws Exception
 	{
 		LightSource res=null;
-		if(lightSrcList==null || lightSrcList.isEmpty() || index >=lightSrcList.size()){
+		if(lightSrcModel==null || getNumberOfLightSrc()==0){
 			return res;
 		}
-		LightSourceCompUI lUI=((LightSourceCompUI)lightSrcList.get(index));
-		if(lUI!=null){
-			res=lUI.getData();
-			LightSourceSettings lSett=getLightSourceSettings(index);
-			// check if this detector is linked to channel
-			if(res!=null && !lightSrcIsLinkedToChannel(lSett, res.getID())){
-				LOGGER.info("[DEBUG] lightSrc is not linked");
-				if(imageOME!=null){
-					if(imageOME.getLinkedInstrument()==null ){
-						createAndLinkNewInstrument(ome);
-					}
-					linkLightSrc(lSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfLightSourceList());
-				}else{
-					LOGGER.info("[DEBUG] can't link lightSrc. ");
+		res=lightSrcModel.getLightSource(index);
+		LightSourceSettings lSett=getLightSourceSettings(index);
+		// check if this detector is linked to channel
+		if(res!=null && !lightSrcIsLinkedToChannel(lSett, res.getID())){
+			LOGGER.info("[DEBUG] lightSrc is not linked");
+			if(imageOME!=null){
+				if(imageOME.getLinkedInstrument()==null ){
+					createAndLinkNewInstrument(ome);
 				}
+				linkLightSrc(lSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfLightSourceList());
+			}else{
+				LOGGER.info("[DEBUG] can't link lightSrc. ");
 			}
 		}
 		return res;
@@ -858,25 +784,15 @@ public class MetaDataModel
 	
 	public LightSourceSettings getLightSourceSettings(int index) throws Exception
 	{
-		if(lightSrcList==null ||lightSrcList.isEmpty() || index >=lightSrcList.size() ){
+		if(lightSrcModel==null ||getNumberOfLightSrc()==0){
 			return null;
 		}
-		return ((LightSourceCompUI)lightSrcList.get(index)).getSettingsData(); 
-	}
-	
-	public LightSourceCompUI getLightSourceModul(int index)
-	{
-		if(lightSrcList==null ||lightSrcList.isEmpty() || index >=lightSrcList.size())
-			return null;
-		return (LightSourceCompUI)lightSrcList.get(index);
+		return lightSrcModel.getSettings(index);
 	}
 	
 	
 	
-	public void setImagingEnv(ImagingEnvironmentCompUI i)
-	{
-		imgEnvUI=i;
-	}
+	
 	
 
 	public PlaneSliderCompUI getPlaneModel()
@@ -889,17 +805,27 @@ public class MetaDataModel
 		planeSliderUI=p;
 	}
 	
-	public ImagingEnvironmentCompUI getImgEnvModel() 
+	public ImageEnvModel getImgEnvModel() 
 	{
-		return (ImagingEnvironmentCompUI)imgEnvUI;
+		if(imgEnvModel==null)
+			imgEnvModel=new ImageEnvModel();
+		return imgEnvModel;
+	}
+	
+	public void addData(ImagingEnvironment i,boolean overwrite)
+	{
+		if(imgEnvModel==null)
+			imgEnvModel=new ImageEnvModel();
+		
+		imgEnvModel.addData(i, overwrite);
 	}
 	
 	public ImagingEnvironment getImgagingEnv() throws Exception
 	{
-		if(imgEnvUI==null)
+		if(imgEnvModel==null)
 			return null;
-		else
-			return ((ImagingEnvironmentCompUI) imgEnvUI).getData();
+
+		return imgEnvModel.getImgEnv();
 	}
 	
 	
@@ -913,40 +839,70 @@ public class MetaDataModel
 		 LOGGER.info("[DEBUG] create new Instrument : "+i.getID());
 	}
 	
-	public void setObjectiveData(ObjectiveCompUI o)
+	
+	/*--------------------------------------------
+	 * Objective
+	 *--------------------------------------------*/
+	
+	public void addData(Objective o,boolean overwrite) throws Exception
 	{
-		objectiveUI=o;
+		System.out.println("# MetaDataModel::addData() - Objective");
+		if(objModel==null)
+			objModel=new ObjectiveModel();
+		
+		objModel.addData(o, overwrite);
+	}
+
+	public void addData(ObjectiveSettings os, boolean overwrite) throws Exception 
+	{
+		System.out.println("# MetaDataModel::addData() - ObjectiveSettings");
+		if(objModel==null)
+			objModel=new ObjectiveModel();
+		objModel.addData(os, overwrite);		
 	}
 	
+	public ObjectiveModel getObjectiveModel()
+	{
+		if(objModel==null)
+			return new ObjectiveModel();
+		return objModel;
+	}
+	
+	public ObjectiveSettings getObjectiveSettings() throws Exception
+	{
+		if(objModel==null)
+			return null;
+		return objModel.getSettings();
+	}
 	/**
-	 * Read out GUI data and return data as Objective object.
-	 * @return Objective contains GUI data.
+	 * Get objective modul data
+	 * @return
 	 * @throws Exception
 	 */
-	public Objective getObjective() throws Exception
+	public Objective getObjectiveData() throws Exception
 	{
-		Objective res=null;
-		if(objectiveUI==null){
-			return res;
-		}
-		res=((ObjectiveCompUI) objectiveUI).getData();
+		if(objModel==null)
+			return null;
+		
+		Objective obj=objModel.getObjective();
 		ObjectiveSettings oSett=getObjectiveSettings();
+		
 		// check if this objective is linked to image
-		if(res!=null && !objectiveIsLinkedToImage(oSett,res.getID())){
+		if(obj!=null && !objectiveIsLinkedToImage(oSett,obj.getID())){
 			LOGGER.info("[DEBUG] objective is not linked");
 			if(imageOME!=null){
 				if(imageOME.getLinkedInstrument()==null ){
 					createAndLinkNewInstrument(ome);
 				}
-				linkObjective(oSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfObjectiveList());
+				linkObjective(oSett,obj,imageIndex,imageOME.getLinkedInstrument().sizeOfObjectiveList());
 				//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
 			}else{
 				LOGGER.info("[DEBUG] can't link objective. ");
 			}
 		}
-		return res;
+		
+		return obj;
 	}
-	
 
 	private void linkObjective(ObjectiveSettings oSett,
 			Objective o, int imgIdx, int sizeOfObjectiveList) 
@@ -979,10 +935,7 @@ public class MetaDataModel
 		return res;
 	}
 
-	public ObjectiveCompUI getObjectiveModul() 
-	{
-		return (ObjectiveCompUI) objectiveUI;
-	}
+	
 	
 	public void setFilterList(List<Filter> list)
 	{
@@ -996,54 +949,7 @@ public class MetaDataModel
 //		linkedChannelForDichroic=new ArrayList<Integer>(Collections.nCopies(dichroicList.size(), -1));
 	}
 	
-//	/** TODO: if no primD exists convert first emF of type dichroic to primD
-//	 *  Add elements of list to the list of filter and dichroics of this image.
-//	 Note: set ID for new elements and return list completed by ID
-//	 @return input list completed by id's
-//	 **/
-//	public List<Object> updateLightPathElems(List<Object> list,int channelIdx)
-//	{
-//		System.out.println("updateLightPathElem");
-//		if(imageIndex!=-1){
-//			int id1=imageIndex;
-//			int id2=channelIdx;
-//			boolean primDExists=true;
-//
-//			int idxList=0;
-//			for(int i=0; i<list.size(); i++){
-//				Object o=list.get(i);
-//				if(o instanceof Dichroic){
-//					Dichroic f= (Dichroic) o;
-//					// new Dichroic elem
-//					if(f.getID()==null || f.getID().equals("")){
-//						appendNewDichroic(f, id1, dichroicList.size(), channelIdx);
-//					}else{
-//						int listIndex=identifyDichroic(f, channelIdx);
-//						if(listIndex!=-1){
-//							dichroicList.set(listIndex, f);
-//						}else{
-//							appendNewDichroic(f,id1,dichroicList.size(),channelIdx);
-//						}
-//					}
-//				}// end dichroic
-//
-//				if(o instanceof Filter){
-//					Filter f=(Filter) o;
-//					if(f.getID()==null || f.getID().equals("")){
-//						appendNewFilter(f,id1,filterList.size(),channelIdx);
-//					}else{
-//						int listIndex=identifyFilter(f, channelIdx);
-//						if(listIndex!=-1){
-//							filterList.set(listIndex, f);
-//						}else{
-//							appendNewFilter(f,id1,filterList.size(),channelIdx);
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return list;
-//	}
+
 	
 	/** TODO: if no primD exists convert first emF of type dichroic to primD
 	 *  Add elements of list to the list of filter and dichroics of this image.
@@ -1295,10 +1201,7 @@ public class MetaDataModel
 		return planeList!=null ? planeList.size():0;
 	}
 
-	public SampleCompUI getSampleModul() {
-		// TODO Auto-generated method stub
-		return (SampleCompUI) sampleUI;
-	}
+	
 
 //	public void isUpToDate(boolean b) 
 //	{
@@ -1409,6 +1312,34 @@ public class MetaDataModel
 	{
 //		imgModel.update(metaDataModel.getChangesImage());
 	}
+
+
+
+	public void addToObjList(List<Objective> list, boolean append) 
+	{
+		if(!append)
+			objModel.clearList();
+		objModel.addToList(list);
+	}
+
+	
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+
+
+
+	
 
 
 

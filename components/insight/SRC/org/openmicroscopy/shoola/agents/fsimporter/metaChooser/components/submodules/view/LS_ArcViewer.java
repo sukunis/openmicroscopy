@@ -17,10 +17,12 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 public class LS_ArcViewer extends LightSourceSubViewer 
 {
-	public LS_ArcViewer(LightSourceModel model,ModuleConfiguration conf)
+	
+	public LS_ArcViewer(LightSourceModel model,ModuleConfiguration conf,int index)
 	{
 		classification=LightSourceModel.ARC;
 		this.data=model;
+		this.index=index;
 		initComponents(conf);
 		buildGUI();
 		initTagList();
@@ -37,7 +39,9 @@ public class LS_ArcViewer extends LightSourceSubViewer
 
 	@Override
 	protected void setGUIData() {
-		Arc lightSrc=(Arc) data.getLightSource();
+		if(data==null)
+			return;
+		Arc lightSrc=(Arc) data.getLightSource(index);
 		try{ setManufact(((Arc)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
 		} catch (NullPointerException e) { }
 		try{ setModel(((Arc)lightSrc).getModel(), ElementsCompUI.REQUIRED);
@@ -59,7 +63,7 @@ public class LS_ArcViewer extends LightSourceSubViewer
 
 	@Override
 	public void saveData() {
-		Arc lightSrc=(Arc) data.getLightSource();
+		Arc lightSrc=(Arc) data.getLightSource(index);
 		if(lightSrc==null)
 			lightSrc=new Arc();
 

@@ -21,17 +21,18 @@ public class DetectorModel
 	 private static final org.slf4j.Logger LOGGER =
 	    	    LoggerFactory.getLogger(DetectorModel.class);
 	
-	private Detector element;
+	private List<Detector> element;
 	
 	// settings
-	private DetectorSettings settings;
+	private List<DetectorSettings> settings;
 	
 	// list of available detector (set by hardware definition)
 	private List<Detector> availableElem;
 	
 	public DetectorModel()
 	{
-		element=new Detector();
+		element=new ArrayList<Detector>();
+		settings=new ArrayList<DetectorSettings>();
 	}
 	
 	//copy constructor
@@ -48,13 +49,17 @@ public class DetectorModel
 	 * @param overwrite
 	 * @throws Exception
 	 */
-	public void addData(Detector newElem,boolean overwrite) throws Exception
+	public void addData(Detector newElem,boolean overwrite,int index) throws Exception
 	{
+		if(element.size()<=index){
+			expandList(element.size(),index);
+		}
+		
 		if(overwrite){
-			replaceData(newElem);
+			replaceData(newElem,index);
 			LOGGER.info("[DATA] -- replace Detector data");
 		}else{
-			completeData(newElem);
+			completeData(newElem,index);
 			LOGGER.info("[DATA] -- complete Detector data");
 		}
 	}
@@ -65,13 +70,13 @@ public class DetectorModel
 	 * @param overwrite
 	 * @throws Exception
 	 */
-	public void addData(DetectorSettings newElem,boolean overwrite) throws Exception
+	public void addData(DetectorSettings newElem,boolean overwrite,int index) throws Exception
 	{
 		if(overwrite){
-			replaceData(newElem);
+			replaceData(newElem,index);
 			LOGGER.info("[DATA] -- replace Detector data");
 		}else{
-			completeData(newElem);
+			completeData(newElem,index);
 			LOGGER.info("[DATA] -- complete Detector data");
 		}
 	}
@@ -80,21 +85,38 @@ public class DetectorModel
 	 * Overwrite data with given data
 	 * @param newElem
 	 */
-	private void replaceData(Detector newElem)
+	private void replaceData(Detector newElem,int index)
 	{
+			
 		if(newElem!=null){
-			element=newElem;
+			element.set(index, newElem);
 		}
 	}
 	
 	/**
+	 * If index exits size, expand elements and settings list
+	 * @param size
+	 * @param index
+	 */
+	private void expandList(int size,int index) 
+	{
+		for(int i=size;i<index+1;i++){
+			element.add(new Detector());
+			settings.add(new DetectorSettings());
+		}
+	}
+
+	/**
 	 * Overwrite data with given data
 	 * @param newElem
 	 */
-	private void replaceData(DetectorSettings newElem)
+	private void replaceData(DetectorSettings newElem,int index)
 	{
+		if(settings.size()<=index){
+			expandList(settings.size(),index);
+		}
 		if(newElem!=null){
-			settings=newElem;
+			settings.set(index,newElem);
 		}
 	}
 	
@@ -103,15 +125,16 @@ public class DetectorModel
 	 * @param newElem
 	 * @throws Exception
 	 */
-	private void completeData(Detector newElem) throws Exception
+	private void completeData(Detector newElem,int index) throws Exception
 	{
+		
 		//copy input fields
 		Detector copyIn=null;
 		if(element!=null){
-			copyIn=new Detector(element);
+			copyIn=new Detector(element.get(index));
 		}
 
-		replaceData(newElem);
+		replaceData(newElem,index);
 		// set input field values again
 		if(copyIn!=null){
 			String mo=copyIn.getModel();
@@ -123,14 +146,15 @@ public class DetectorModel
 			Double a=copyIn.getAmplificationGain();
 			Double g=copyIn.getGain();
 			
-			if(mo!=null && !mo.equals("")) element.setModel(mo);
-			if(ma!=null && !ma.equals("")) element.setManufacturer(ma);
-			if(t!=null) element.setType(t);
-			if(v!=null) element.setVoltage(v);
-			if(o!=null) element.setOffset(o);
-			if(z!=null) element.setZoom(z);
-			if(a!=null) element.setAmplificationGain(a);
-			if(g!=null) element.setGain(g);
+			Detector d=element.get(index);
+			if(mo!=null && !mo.equals("")) d.setModel(mo);
+			if(ma!=null && !ma.equals("")) d.setManufacturer(ma);
+			if(t!=null) d.setType(t);
+			if(v!=null) d.setVoltage(v);
+			if(o!=null) d.setOffset(o);
+			if(z!=null) d.setZoom(z);
+			if(a!=null) d.setAmplificationGain(a);
+			if(g!=null) d.setGain(g);
 		}
 	}
 	
@@ -139,15 +163,18 @@ public class DetectorModel
 	 * @param newElem
 	 * @throws Exception
 	 */
-	private void completeData(DetectorSettings newElem) throws Exception
+	private void completeData(DetectorSettings newElem,int index) throws Exception
 	{
+		if(settings.size()<=index){
+			expandList(settings.size(),index);
+		}
 		//copy input fields
 		DetectorSettings copyIn=null;
 		if(settings!=null){
-			copyIn=new DetectorSettings(settings);
+			copyIn=new DetectorSettings(settings.get(index));
 		}
 
-		replaceData(newElem);
+		replaceData(newElem,index);
 
 		// set input field values again
 		if(copyIn!=null){
@@ -157,11 +184,12 @@ public class DetectorModel
 			Double z=copyIn.getZoom();
 			Binning b=copyIn.getBinning();
 
-			if(g!=null) settings.setGain(g);
-			if(v!=null) settings.setVoltage(v);
-			if(o!=null) settings.setOffset(o);
-			if(z!=null) settings.setZoom(z);
-			if(b!=null) settings.setBinning(b);
+			DetectorSettings sett=settings.get(index);
+			if(g!=null) sett.setGain(g);
+			if(v!=null) sett.setVoltage(v);
+			if(o!=null) sett.setOffset(o);
+			if(z!=null) sett.setZoom(z);
+			if(b!=null) sett.setBinning(b);
 		}
 	}
 	
@@ -174,13 +202,17 @@ public class DetectorModel
 	 * 
 	 * @return
 	 */
-	public Detector getDetector() {
-		return element;
+	public Detector getDetector(int index) {
+		if(index>=element.size())
+			return null;
+		return element.get(index);
 	}
 	
-	public DetectorSettings getSettings()
+	public DetectorSettings getSettings(int index)
 	{
-		return settings;
+		if(index>=settings.size())
+			return null;
+		return settings.get(index);
 	}
 	
 	/**
@@ -199,5 +231,14 @@ public class DetectorModel
 			availableElem.add(list.get(i));
 		}
 
+	}
+	
+	public void clearList() 
+	{
+		availableElem=null;
+	}
+
+	public int getNumberOfElements() {
+		return element.size();
 	}
 }

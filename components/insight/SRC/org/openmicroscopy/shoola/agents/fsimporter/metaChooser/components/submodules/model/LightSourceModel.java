@@ -1,5 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ome.units.quantity.Frequency;
@@ -33,17 +34,18 @@ public class LightSourceModel
 	public final static String GENERIC_EXCITATION="GenericExcitationSource";
 	public final static String LIGHT_EMITTING_DIODE="LightEmittingDiode";
 
-	private LightSource element;
+	private List<LightSource> element;
 
 	// settings
-	private LightSourceSettings settings;
+	private List<LightSourceSettings> settings;
 
 	// list of available lightSrc (set by hardware definition)
 	private List<LightSource> availableElem;
 
 	public LightSourceModel()
 	{
-
+		element=new ArrayList<LightSource>();
+		settings=new ArrayList<LightSourceSettings>();
 	}
 
 	//copy constructor
@@ -60,13 +62,24 @@ public class LightSourceModel
 	 * @param overwrite
 	 * @throws Exception
 	 */
-	public void addData(LightSource newElem,boolean overwrite) throws Exception
+	public void addData(LightSource newElem,boolean overwrite,int i) throws Exception
 	{
+		if(element.size()<=i){
+			switch(newElem.getClass().getSimpleName()){
+			case LASER: expandList(element.size(),i,new Laser());break;
+			case ARC: expandList(element.size(),i,new Arc());break;
+			case FILAMENT: expandList(element.size(),i,new Filament());break;
+			case GENERIC_EXCITATION:expandList(element.size(),i,new GenericExcitationSource());break;
+			case LIGHT_EMITTING_DIODE: expandList(element.size(),i,new LightEmittingDiode());break;
+			default: break;
+			}
+			
+		}
 		if(overwrite || (newElem.getClass()!= element.getClass())){
-			replaceData(newElem);
+			replaceData(newElem,i);
 			LOGGER.info("[DATA] -- replace LightSource data");
 		}else{
-			completeData(newElem);
+			completeData(newElem,i);
 			LOGGER.info("[DATA] -- complete LightSource data");
 		}
 	}
@@ -77,13 +90,16 @@ public class LightSourceModel
 	 * @param overwrite
 	 * @throws Exception
 	 */
-	public void addData(LightSourceSettings newElem,boolean overwrite) throws Exception
+	public void addData(LightSourceSettings newElem,boolean overwrite,int i) throws Exception
 	{
+		if(element.size()<=i){
+			LOGGER.warn("No lightSrc available for given lightSrcSettings "+i);
+		}
 		if(overwrite){
-			replaceData(newElem);
+			replaceData(newElem,i);
 			LOGGER.info("[DATA] -- replace LightSource data");
 		}else{
-			completeData(newElem);
+			completeData(newElem,i);
 			LOGGER.info("[DATA] -- complete LightSource data");
 		}
 	}
@@ -92,10 +108,10 @@ public class LightSourceModel
 	 * Overwrite data with given data
 	 * @param newElem
 	 */
-	private void replaceData(LightSource newElem)
+	private void replaceData(LightSource newElem,int i)
 	{
 		if(newElem!=null){
-			element=newElem;
+			element.set(i,newElem);
 		}
 	}
 
@@ -103,10 +119,10 @@ public class LightSourceModel
 	 * Overwrite data with given data
 	 * @param newElem
 	 */
-	private void replaceData(LightSourceSettings newElem)
+	private void replaceData(LightSourceSettings newElem,int i)
 	{
 		if(newElem!=null){
-			settings=newElem;
+			settings.set(i, newElem);
 		}
 	}
 
@@ -115,50 +131,50 @@ public class LightSourceModel
 	 * @param newElem
 	 * @throws Exception
 	 */
-	private void completeData(LightSource newElem) throws Exception
+	private void completeData(LightSource newElem,int i) throws Exception
 	{
 		switch(newElem.getClass().getSimpleName())
 		{
-		case LASER: completeLaserData(newElem);break;
-		case ARC: completeArcData(newElem);break;
-		case FILAMENT: completeFilamentData(newElem);break;
-		case GENERIC_EXCITATION: completeGESData(newElem);break;
-		case LIGHT_EMITTING_DIODE: completeLEDData(newElem);break;
+		case LASER: completeLaserData(newElem,i);break;
+		case ARC: completeArcData(newElem,i);break;
+		case FILAMENT: completeFilamentData(newElem,i);break;
+		case GENERIC_EXCITATION: completeGESData(newElem,i);break;
+		case LIGHT_EMITTING_DIODE: completeLEDData(newElem,i);break;
 		default: break;
 		}
 
 	}
 
-	private void completeLEDData(LightSource newElem) 
+	private void completeLEDData(LightSource newElem,int i) 
 	{
 		//copy input fields
 		LightSource copyIn=null;
 		if(element!=null){
-			copyIn=new LightEmittingDiode((LightEmittingDiode)element);
+			copyIn=new LightEmittingDiode((LightEmittingDiode)element.get(i));
 		}
 
-		replaceData(newElem);
+		replaceData(newElem,i);
 
 		// set input field values again
 		if(copyIn!=null){
 			String mo=copyIn.getModel();
 			String ma=copyIn.getManufacturer();
 
-			if(mo!=null && !mo.equals("")) element.setModel(mo);
-			if(ma!=null && !ma.equals("")) element.setManufacturer(ma);
+			if(mo!=null && !mo.equals("")) element.get(i).setModel(mo);
+			if(ma!=null && !ma.equals("")) element.get(i).setManufacturer(ma);
 		}
 
 	}
 
-	private void completeGESData(LightSource newElem) 
+	private void completeGESData(LightSource newElem,int i) 
 	{
 		//copy input fields
 		LightSource copyIn=null;
 		if(element!=null){
-			copyIn=new GenericExcitationSource((GenericExcitationSource)element);
+			copyIn=new GenericExcitationSource((GenericExcitationSource)element.get(i));
 		}
 
-		replaceData(newElem);
+		replaceData(newElem,i);
 
 		// set input field values again
 		if(copyIn!=null){
@@ -166,21 +182,21 @@ public class LightSourceModel
 			String ma=copyIn.getManufacturer();
 			Power p=copyIn.getPower();
 
-			if(mo!=null && !mo.equals("")) element.setModel(mo);
-			if(ma!=null && !ma.equals("")) element.setManufacturer(ma);
-			if(p!=null) element.setPower(p);
+			if(mo!=null && !mo.equals("")) element.get(i).setModel(mo);
+			if(ma!=null && !ma.equals("")) element.get(i).setManufacturer(ma);
+			if(p!=null) element.get(i).setPower(p);
 		}		
 	}
 
-	private void completeFilamentData(LightSource newElem) 
+	private void completeFilamentData(LightSource newElem,int i) 
 	{
 		//copy input fields
 		LightSource copyIn=null;
 		if(element!=null){
-			copyIn=new Filament((Filament)element);
+			copyIn=new Filament((Filament)element.get(i));
 		}
 
-		replaceData(newElem);
+		replaceData(newElem,i);
 
 		// set input field values again
 		if(copyIn!=null){
@@ -189,22 +205,22 @@ public class LightSourceModel
 			Power p=copyIn.getPower();
 			FilamentType t=((Filament)copyIn).getType();
 
-			if(mo!=null && !mo.equals("")) element.setModel(mo);
-			if(ma!=null && !ma.equals("")) element.setManufacturer(ma);
-			if(p!=null) element.setPower(p);
-			if(t!=null) ((Filament) element).setType(t);
+			if(mo!=null && !mo.equals("")) element.get(i).setModel(mo);
+			if(ma!=null && !ma.equals("")) element.get(i).setManufacturer(ma);
+			if(p!=null) element.get(i).setPower(p);
+			if(t!=null) ((Filament) element.get(i)).setType(t);
 		}
 
 	}
 
-	private void completeArcData(LightSource newElem) {
+	private void completeArcData(LightSource newElem,int i) {
 		//copy input fields
 		LightSource copyIn=null;
 		if(element!=null){
-			copyIn=new Arc((Arc)element);
+			copyIn=new Arc((Arc)element.get(i));
 		}
 
-		replaceData(newElem);
+		replaceData(newElem,i);
 
 		// set input field values again
 		if(copyIn!=null){
@@ -213,21 +229,21 @@ public class LightSourceModel
 			Power p=copyIn.getPower();
 			ArcType t=((Arc)copyIn).getType();
 
-			if(mo!=null && !mo.equals("")) element.setModel(mo);
-			if(ma!=null && !ma.equals("")) element.setManufacturer(ma);
-			if(p!=null) element.setPower(p);
-			if(t!=null) ((Arc) element).setType(t);
+			if(mo!=null && !mo.equals("")) element.get(i).setModel(mo);
+			if(ma!=null && !ma.equals("")) element.get(i).setManufacturer(ma);
+			if(p!=null) element.get(i).setPower(p);
+			if(t!=null) ((Arc) element.get(i)).setType(t);
 		}		
 	}
 
-	private void completeLaserData(LightSource newElem) {
+	private void completeLaserData(LightSource newElem,int i) {
 		//copy input fields
 		LightSource copyIn=null;
 		if(element!=null){
-			copyIn=new Laser((Laser)element);
+			copyIn=new Laser((Laser)element.get(i));
 		}
 
-		replaceData(newElem);
+		replaceData(newElem,i);
 
 		// set input field values again
 		if(copyIn!=null){
@@ -243,20 +259,20 @@ public class LightSourceModel
 			Length w=((Laser)copyIn).getWavelength();
 			Pulse pu=((Laser)copyIn).getPulse();
 
-			if(mo!=null && !mo.equals("")) element.setModel(mo);
-			if(ma!=null && !ma.equals("")) element.setManufacturer(ma);
-			if(p!=null) element.setPower(p);
-			if(t!=null) ((Laser) element).setType(t);
-			if(m!=null) ((Laser)element).setLaserMedium(m);
-			if(fM!=null) ((Laser)element).setFrequencyMultiplication(fM);
+			if(mo!=null && !mo.equals("")) element.get(i).setModel(mo);
+			if(ma!=null && !ma.equals("")) element.get(i).setManufacturer(ma);
+			if(p!=null) element.get(i).setPower(p);
+			if(t!=null) ((Laser) element.get(i)).setType(t);
+			if(m!=null) ((Laser)element.get(i)).setLaserMedium(m);
+			if(fM!=null) ((Laser)element.get(i)).setFrequencyMultiplication(fM);
 			if(tu!=null){
-				((Laser)element).setTuneable(tu);
+				((Laser)element.get(i)).setTuneable(tu);
 			}
-			if(po!=null) ((Laser)element).setPockelCell(po);
-			if(rr!=null) ((Laser)element).setRepetitionRate(rr);
-			if(w!=null) ((Laser)element).setWavelength(w);
-			if(pu!=null) ((Laser)element).setPulse(pu);
-			if(((Laser)newElem).getLinkedPump()!=null) ((Laser)element).linkPump(((Laser)newElem).getLinkedPump());
+			if(po!=null) ((Laser)element.get(i)).setPockelCell(po);
+			if(rr!=null) ((Laser)element.get(i)).setRepetitionRate(rr);
+			if(w!=null) ((Laser)element.get(i)).setWavelength(w);
+			if(pu!=null) ((Laser)element.get(i)).setPulse(pu);
+			if(((Laser)newElem).getLinkedPump()!=null) ((Laser)element.get(i)).linkPump(((Laser)newElem).getLinkedPump());
 		}		
 	}
 
@@ -265,22 +281,22 @@ public class LightSourceModel
 	 * @param newElem
 	 * @throws Exception
 	 */
-	private void completeData(LightSourceSettings newElem) throws Exception
+	private void completeData(LightSourceSettings newElem,int i) throws Exception
 	{
 		//copy input fields
 		LightSourceSettings copyIn=null;
 		if(settings!=null){
-			copyIn=new LightSourceSettings(settings);
+			copyIn=new LightSourceSettings(settings.get(i));
 		}
 
-		replaceData(newElem);
+		replaceData(newElem,i);
 
 		// set input field values again
 		if(copyIn!=null){
 			Length w=copyIn.getWavelength();
 			PercentFraction p=copyIn.getAttenuation();
-			if(w!=null) settings.setWavelength(w);
-			if(p!=null) settings.setAttenuation(p);
+			if(w!=null) settings.get(i).setWavelength(w);
+			if(p!=null) settings.get(i).setAttenuation(p);
 		}
 	}
 
@@ -289,13 +305,55 @@ public class LightSourceModel
 		return availableElem;
 	}
 
-	public LightSource getLightSource() {
-		return element;
+	public LightSource getLightSource(int i) {
+		return element.get(i);
 	}
 
-	public LightSourceSettings getSettings()
+	public LightSourceSettings getSettings(int i)
 	{
-		return settings;
+		return settings.get(i);
+	}
+	
+	/**
+	 * If index exits size, expand elements and settings list
+	 * @param size
+	 * @param index
+	 */
+	private void expandList(int size,int index,Object newElem) 
+	{
+		for(int i=size;i<index+1;i++){
+			element.add((LightSource) newElem);
+			settings.add(new LightSourceSettings());
+		}
+	}
+	
+	/**
+	 * Copy elements from given list to local list
+	 * @param list
+	 */
+	public void addToList(List<LightSource> list)
+	{
+		if(list==null || list.size()==0)
+			return;
+		
+		if(availableElem==null){
+
+			availableElem=new ArrayList<LightSource>();
+		}
+		for(int i=0; i<list.size(); i++){
+			availableElem.add(list.get(i));
+		}
+
+	}
+
+	public void clearList() {
+		availableElem=null;
+	}
+	public int getNumberOfLightSrc()
+	{
+		if(element==null)
+			return 0;
+		return element.size();
 	}
 
 }

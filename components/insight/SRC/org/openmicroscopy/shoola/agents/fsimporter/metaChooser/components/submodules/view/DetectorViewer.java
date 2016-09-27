@@ -20,11 +20,13 @@ import javax.swing.border.TitledBorder;
 
 import ome.units.quantity.ElectricPotential;
 import ome.units.unit.Unit;
+import ome.xml.model.Arc;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.EnumerationException;
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
@@ -41,6 +43,7 @@ public class DetectorViewer extends ModuleViewer{
 
 	private DetectorModel data;
 	private Box box;
+	private int index;
 
 	// available element tags
 	private TagData model;
@@ -68,9 +71,11 @@ public class DetectorViewer extends ModuleViewer{
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public DetectorViewer(DetectorModel model,ModuleConfiguration conf)
+	public DetectorViewer(DetectorModel model,ModuleConfiguration conf,int index)
 	{
+		System.out.println("# DetectorViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		this.data=model;
+		this.index=index;
 		initComponents(conf);
 		initTagList();
 		buildGUI();
@@ -172,7 +177,7 @@ public class DetectorViewer extends ModuleViewer{
 				Detector selected=creator.getDetector();  
 				if(selected!=null ){
 					try {
-						data.addData(selected, true);
+						data.addData(selected, true,index);
 					} catch (Exception e1) {
 						LOGGER.warn("Can't set data of selected detector! "+e1);
 					}
@@ -259,8 +264,11 @@ public class DetectorViewer extends ModuleViewer{
 	 */
 	private void setGUIData() 
 	{
-		Detector detector=data.getDetector();
+		if(data==null)
+			return;
+		Detector detector=data.getDetector(index);
 		if(detector!=null){
+			System.out.println("\t...set detector data "+index+detector.getID());
 			try{setModel(detector.getModel(), ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 			try{setManufact(detector.getManufacturer(),  ElementsCompUI.REQUIRED);
@@ -273,13 +281,13 @@ public class DetectorViewer extends ModuleViewer{
 			try{setAmplGain(detector.getAmplificationGain(),  ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 		}
-
-
 	}
 
 	private void setSettingsGUIData()
 	{
-		DetectorSettings settings = data.getSettings();
+		if(data==null)
+			return;
+		DetectorSettings settings = data.getSettings(index);
 		if(settings!=null){
 			try{setGain(settings.getGain(), ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
@@ -419,7 +427,7 @@ public class DetectorViewer extends ModuleViewer{
 		if(data==null)
 			data=new DetectorModel();
 		
-		Detector detector =data.getDetector();
+		Detector detector =data.getDetector(index);
 		if(detector==null)
 			detector = new Detector();
 
@@ -454,7 +462,7 @@ public class DetectorViewer extends ModuleViewer{
 			LOGGER.error("[DATA] can't read DETECTOR amplification gain input");
 		}
 		// --- Settings --------------------
-		DetectorSettings settings=data.getSettings();
+		DetectorSettings settings=data.getSettings(index);
 		if(settings==null)
 			settings = new DetectorSettings();
 

@@ -3,18 +3,13 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.CardLayout;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -28,12 +23,6 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import loci.common.services.ServiceFactory;
-import loci.formats.ImageReader;
-import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
-import loci.formats.services.OMEXMLService;
-import ome.xml.meta.IMetadata;
 import ome.xml.model.Annotation;
 import ome.xml.model.Channel;
 import ome.xml.model.Detector;
@@ -45,7 +34,6 @@ import ome.xml.model.Filter;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Instrument;
-import ome.xml.model.Laser;
 import ome.xml.model.LightPath;
 import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
@@ -55,36 +43,30 @@ import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
 import ome.xml.model.Plane;
-import ome.xml.model.Project;
 import ome.xml.model.StructuredAnnotations;
-import ome.xml.model.XMLAnnotation;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ImportUserData;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataControl;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ImageCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ImagingEnvironmentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneSliderCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.SampleCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ChannelViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ExperimentViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ImageEnvViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ImageViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.LightPathViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.LightSourceViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ObjectiveViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.SampleViewer;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotationXML;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 //import org.slf4j.LoggerFactory;
@@ -115,8 +97,8 @@ public class MetaDataUI extends JPanel
 	
 	/** view **/
 	private JTabbedPane experimentPane;
-	protected JPanel lightSrcPane;
-	protected JPanel detectorPane;
+	protected JPanel lightSrcPane2;
+	protected JPanel detectorPane2;
 	protected JPanel objectivePane;
 	protected JTabbedPane channelTab;
 	protected JPanel lightPathCardPane;
@@ -138,6 +120,12 @@ public class MetaDataUI extends JPanel
 	private ImageViewer imageUI;
 	private ExperimentViewer experimentUI;
 	private SampleViewer sampleUI;
+	private ObjectiveViewer objectiveUI;
+	private ImageEnvViewer imgEnvViewer;
+	private LightSourceViewer lightSrcViewer;
+	private LightPathViewer lightPathViewer;
+	private ChannelViewer channelViewer;
+	
 	
 	/** modul props */
 	private ModuleConfiguration expModul;
@@ -207,48 +195,37 @@ public class MetaDataUI extends JPanel
 		if(!componentsInit){
 			if(customSett.getObjConf()!=null && customSett.getObjConf().isVisible()){
 				LOGGER.info("[GUI] -- init OBJECTIVE modul");
-				ObjectiveCompUI oUI=new ObjectiveCompUI(customSett.getObjConf());
-				oUI.addToList(customSett.getMicObjList());
-				model.setObjectiveData(oUI); 
+				objectiveUI=new ObjectiveViewer(null,customSett.getObjConf());
 				initObjectiveUI=true;
 				objModul=customSett.getObjConf();
 
 			}
 			if(customSett.getDetectorConf()!=null && customSett.getDetectorConf().isVisible()){
 				LOGGER.info("[GUI] -- init DETECTOR modul");
-				DetectorCompUI dUI=new DetectorCompUI(customSett.getDetectorConf());
-				dUI.addToList(customSett.getMicDetectorList());
-				model.addDetectorData(dUI);
 				initDetectorUI=true;
 				detModul=customSett.getDetectorConf();
 			}
 			if(customSett.getLightSrcConf()!=null && customSett.getLightSrcConf().isVisible()){
 				LOGGER.info("[GUI] -- init LIGHTSRC modul");
-				LightSourceCompUI lUI=new LightSourceCompUI(customSett.getLightSrcConf());
-				lUI.addToList(customSett.getMicLightSrcList());
-				model.addLightSrcModul(lUI);
+				lightSrcViewer=new LightSourceViewer(null,customSett.getLightSrcConf(),0);
 				initLightSrcUI=true;
 				lightSModul=customSett.getLightSrcConf();
 			}
 			if(customSett.getChannelConf()!=null && customSett.getChannelConf().isVisible()){
 				LOGGER.info("[GUI] -- init CHANNEL modul");
-				ChannelCompUI chUI=new ChannelCompUI(customSett.getChannelConf()); 
-				model.addChannelData(chUI);
+				channelViewer=new ChannelViewer(null,customSett.getChannelConf(),0); 
 				initChannelUI=true;
 				chModul=customSett.getChannelConf();
 			}
 			if(customSett.getLightPathConf()!=null && customSett.getLightPathConf().isVisible()){
 				LOGGER.info("[GUI] -- init LIGHTPATH modul");
-				LightPathCompUI lpUI=new LightPathCompUI();
-				lpUI.addFilterToList(customSett.getMicLightPathFilterList());
-				model.addLightPath(lpUI);
+				lightPathViewer=new LightPathViewer(null,customSett.getLightPathConf(),0);
 				initLightPathUI=true;
 				lightPModul=customSett.getLightPathConf();
 			}
 			if(customSett.getImgEnvConf()!=null && customSett.getImgEnvConf().isVisible()){
 				LOGGER.info("[GUI] -- init IMAGEENV modul");
-				ImagingEnvironmentCompUI ieUI=new ImagingEnvironmentCompUI(customSett.getImgEnvConf());
-				model.setImagingEnv(ieUI);
+				imgEnvViewer=new ImageEnvViewer(null,customSett.getImgEnvConf());
 				initImageEnvUI=true;
 				imgEnvModul=customSett.getImgEnvConf();
 			}
@@ -267,8 +244,7 @@ public class MetaDataUI extends JPanel
 			}
 			if(customSett.getSampleConf()!=null && customSett.getSampleConf().isVisible()){
 				LOGGER.info("[GUI] -- init SAMPLE modul");
-				SampleCompUI sUI=new SampleCompUI(customSett.getSampleConf());
-				model.setSampleData(sUI);
+				sampleUI=new SampleViewer(null,customSett.getSampleConf());
 				initSampleUI=true;
 				sampleModul=customSett.getSampleConf();
 			}
@@ -308,10 +284,10 @@ public class MetaDataUI extends JPanel
 //			addProjectPartner(m.getProjectPartner(),true);
 			
 			addImageData(m.getImageData(),true);
-			addObjectData(m.getObjective(),m.getObjectiveSettings(),true);
+			addObjectData(m.getObjectiveData(),m.getObjectiveSettings(),true);
 			
 			for(int i=0; i<model.getNumberOfChannels();i++){
-				addChannelData(i,m.getChannel(i),true);
+				addChannelData(i,m.getChannelData(i),true);
 				addLightPathData(i,m.getLightPath(i),true);
 			}
 			for(int i=0; i<model.getNumberOfDetectors();i++){
@@ -333,74 +309,54 @@ public class MetaDataUI extends JPanel
 
 	private void addImageEnvData(ImagingEnvironment i, boolean overwrite)
 	{
-		ImagingEnvironmentCompUI iUI=model.getImgEnvModel();
-		if(iUI!=null && i!=null){
-			iUI.addData(i, overwrite);
-			iUI.setFieldsExtern(true);
+		if(i!=null){
+			model.addData(i, overwrite);
 		}
 	}
 	public void addSampleData(Sample s, boolean overwrite) 
 	{
-		SampleCompUI sUI=model.getSampleModul();
-		if(sUI!=null && s!=null){
-			sUI.addData(s,overwrite);
-			sUI.setFieldsExtern(true);
+		if(s!=null){
+			model.addData(s,overwrite);
 		}
 	}
 
-	private void addObjectData(Objective o,ObjectiveSettings os, boolean overwrite) 
+	private void addObjectData(Objective o,ObjectiveSettings os, boolean overwrite) throws Exception 
 	{
-		ObjectiveCompUI oUI=model.getObjectiveModul();
-		if(oUI!=null){
-			if(o!=null) oUI.addData(o,overwrite);
-			if(os!=null) oUI.addData(os, overwrite);
-			oUI.setFieldsExtern(true);
-		}
+		if(o!=null) model.addData(o,overwrite);
+		if(os!=null) model.addData(os, overwrite);
+
 	}
 
-	private void addLightSrcData(int i, LightSource ls,LightSourceSettings lss, boolean overwrite) 
+	private void addLightSrcData(int i, LightSource ls,LightSourceSettings lss, boolean overwrite) throws Exception 
 	{
-		LightSourceCompUI lsUI=model.getLightSourceModul(i);
-		if(lsUI!=null){
-			if(ls!=null) lsUI.addData(ls, overwrite); 
-			if(lss!=null) lsUI.addData(lss,overwrite);
-			lsUI.setFieldsExtern(true);
-		}
+			if(ls!=null) model.addData(ls, overwrite,i); 
+			if(lss!=null) model.addData(lss,overwrite,i);
 	}
 
 	private void addChannelData(int index, Channel c, boolean overwrite) 
 	{
-		ChannelCompUI cUI=model.getChannelModul(index);
-		if(cUI!=null && c!=null){
-			cUI.addData(c,overwrite);
-			cUI.setFieldsExtern(true);
+		if(c!=null){
+			model.addData(c,overwrite,index);
 		}
 	}
 	
-	/** add parent data*/
-	private void addDetectorData(int index,Detector d,DetectorSettings ds, boolean overwrite)
+	/** add parent data
+	 * @throws Exception */
+	private void addDetectorData(int index,Detector d,DetectorSettings ds, boolean overwrite) throws Exception
 	{
-		DetectorCompUI dUI=model.getDetectorModul(index);
-		if(dUI!=null){
 			if(d!=null){
-				dUI.addData(d,overwrite);
+				model.addData(d,overwrite,index);
 			}
 			if(ds!=null){
-				dUI.addData(ds, overwrite);
+				model.addData(ds, overwrite,index);
 			}
-			dUI.setFieldsExtern(true);
-		}
 	}
 	
-	private void addLightPathData(int i, LightPath lightPath, boolean b) 
+	private void addLightPathData(int i, LightPath lightPath, boolean b) throws Exception 
 	{
-		LightPathCompUI lUI=model.getLightPathModul(i);
-		if(lUI!=null){
 			if(lightPath!=null){
-				lUI.addData(lightPath, b);
-				lUI.setFieldsExtern(true);
+				model.addData(lightPath, b,i);
 			}
-		}
 	}
 
 	private void addImageData(Image i,boolean overwrite)  
@@ -527,9 +483,8 @@ public class MetaDataUI extends JPanel
 	{
 		if(initImageEnvUI){
 			ImagingEnvironment i=image.getImagingEnvironment();
-			ImagingEnvironmentCompUI iUI=model.getImgEnvModel();
 			if(i!=null){
-				iUI.addData(i,false);
+				model.addData(i,false);
 			}
 		}
 	}
@@ -571,70 +526,59 @@ public class MetaDataUI extends JPanel
 		if(initChannelUI)
 		{
 			for(int i=0; i<channels.size();i++){
-				ChannelCompUI cUI=null;
 				if(channels.get(i)!=null)
 				{
-					
-					if(i<model.getNumberOfChannels()){
-						cUI = model.getChannelModul(i); 
-						cUI.addData(channels.get(i), false);
-					}else{
-						cUI = new ChannelCompUI(channels.get(i),customSett.getChannelConf()); 
-						cUI.addData(channels.get(i), false);
-						model.addChannelData(cUI);
-					}
-					
-					
-					LOGGER.info("[DATA] -- load CHANNEL data "+cUI.getName());
+					model.addData(channels.get(i), false,i);
+					LOGGER.info("[DATA] -- load CHANNEL data "+channels.get(i).getName());
 
-					readLightPathData(channels.get(i),i,filters,dichroics);
-					readLightSource(channels.get(i),i,lightSources);
-					readDetectorData(channels.get(i),i,detectors);
+					try {
+						readLightPathData(channels.get(i),i,filters,dichroics);
+					} catch (Exception e2) {
+						LOGGER.warn("Can't read lightpath data of channel "+i+"! "+e2);
+						e2.printStackTrace();
+					}
+					try {
+						readLightSource(channels.get(i),i,lightSources);
+					} catch (Exception e1) {
+						LOGGER.warn("Can't read lightSrc data of channel "+i+"! "+e1);
+						e1.printStackTrace();
+					}
+					try {
+						readDetectorData(channels.get(i),i,detectors);
+					} catch (Exception e) {
+						LOGGER.warn("Can't read detector data of channel "+i+"! "+e);
+						e.printStackTrace();
+					}
 				}
 			}
 		}else{
-			readLightPathData(channels.get(0),0,filters,dichroics);
-			readLightSource(channels.get(0),0,lightSources);
-			readDetectorData(channels.get(0),0,detectors);
+			try {
+				readLightPathData(channels.get(0),0,filters,dichroics);
+			} catch (Exception e2) {
+				LOGGER.warn("Can't read lightpath data of channel 0!"+e2);
+				e2.printStackTrace();
+			}
+			try {
+				readLightSource(channels.get(0),0,lightSources);
+			} catch (Exception e1) {
+				LOGGER.warn("Can't read lightSrc data of channel 0! "+e1);
+				e1.printStackTrace();
+			}
+			try {
+				readDetectorData(channels.get(0),0,detectors);
+			} catch (Exception e) {
+				LOGGER.warn("Can't read detector data of channel 0! "+e);
+				e.printStackTrace();
+			}
 		}
 			
 	}
 	
 	
 
-//	private void readLightPathData(Channel channel, int i) 
-//	{
-//		if(initLightPathUI){
-//			boolean dataAvailable=false;
-//			LightPath lp=channel.getLightPath();
-//			LightPathCompUI lpUI=null;
-//			
-//			if(i<model.getNumberOfLightPath()){
-//				lpUI =model.getLightPathModul(i);
-//
-//			}else{
-//				lpUI = new LightPathCompUI();
-//				model.setLightPath(lpUI, i);
-//			}
-//			
-//			if(lp!=null &&(
-//					lp.sizeOfLinkedEmissionFilterList()!=0 || 
-//					lp.sizeOfLinkedExcitationFilterList()!=0 ||
-//					lp.getLinkedDichroic()!=null)){
-//				dataAvailable=true;
-//			}
-//			
-//			if(!dataAvailable){
-//				LOGGER.info("[DATA] -- LIGHTPATH data not available");
-//			}else{
-//				lpUI.setModel(model); 
-//				lpUI.addData(lp,false);
-//				lpUI.buildComponents();
-//			}
-//		}
-//	}
+
 	
-	private void readLightPathData(Channel channel, int i, List<Filter> filters, List<Dichroic> dichroics) 
+	private void readLightPathData(Channel channel, int i, List<Filter> filters, List<Dichroic> dichroics) throws Exception 
 	{
 		if(initLightPathUI){
 			if((filters!=null && !filters.isEmpty()) || (dichroics!=null && !dichroics.isEmpty()))
@@ -653,27 +597,16 @@ public class MetaDataUI extends JPanel
 					dataAvailable=true;
 				}
 				
-				if(i<model.getNumberOfLightPath()){
-					lpUI =model.getLightPathModul(i);
+			
 					if(!dataAvailable){
 						LOGGER.info("[DATA] -- LIGHTPATH  data not available");
 					}else{
-						lpUI.addData(lp,false);
+						model.addData(lp,false,i);
 					}
-				}else{
-					lpUI = new LightPathCompUI();
-					if(!dataAvailable){
-						LOGGER.info("[DATA] -- LIGHTPATH  data not available");
-					}else{
-						lpUI.addData(lp,false);
-					}
-					model.addLightPath(lpUI);
-				}
 
-				lpUI.clearList();
-				lpUI.addFilterToList(customSett.getMicLightPathFilterList());
-				lpUI.addFilterToList(filters);
-				lpUI.addDichroicToList(dichroics);
+				model.addFilterToList(customSett.getMicLightPathFilterList(),false);
+				model.addFilterToList(filters,true);
+				model.addDichroicToList(dichroics,true);
 				
 			}else{
 				LOGGER.info("[DATA] -- LIGHTPATH  data not available");
@@ -682,7 +615,7 @@ public class MetaDataUI extends JPanel
 	}
 
 	private void readLightSource(Channel channel, int i,
-			List<LightSource> lightSources) 
+			List<LightSource> lightSources) throws Exception 
 	{
 		if(initLightSrcUI){
 			
@@ -714,30 +647,17 @@ public class MetaDataUI extends JPanel
 				}
 
 				// visualization data
-				LightSourceCompUI lUI=null;
-				if(i<model.getNumberOfLightSrc()){
-					lUI =model.getLightSourceModul(i);
 					if(!dataAvailable){
 						LOGGER.info("[DATA] -- LIGHTSOURCE  data not available");
 					}else{
-						lUI.addData(l,false);
-						lUI.addData(ls,false);
+						model.addData(l,false,i);
+						model.addData(ls,false,i);
 					}
 
-				}else{
-					lUI = new LightSourceCompUI(customSett.getLightSrcConf());
-					if(!dataAvailable){
-						LOGGER.info("[DATA] -- LIGHTSOURCE  data not available");
-					}else{
-						lUI.addData(l,false);
-						lUI.addData(ls,false);
-					}
-					model.addLightSrcModul(lUI);
-				}
+				
 				// fill selection list
-				lUI.clearList();
-				lUI.addToList(customSett.getMicLightSrcList());
-				lUI.addToList(lightSources);
+				model.addToLightSrcList(customSett.getMicLightSrcList(),false);
+				model.addToLightSrcList(lightSources,true);
 
 			}
 			else{
@@ -748,7 +668,7 @@ public class MetaDataUI extends JPanel
 	}
 
 	private void readDetectorData(Channel channel, int i,
-			List<Detector> detectors) 
+			List<Detector> detectors) throws Exception 
 	{
 		if(initDetectorUI){
 			if(detectors!=null && !detectors.isEmpty())
@@ -777,32 +697,16 @@ public class MetaDataUI extends JPanel
 					}
 				}
 
-				DetectorCompUI dUI=null;
 
-				if(i<model.getNumberOfDetectors()){
-					dUI =model.getDetectorModul(i); 
-					if(!dDataAvailable){
-
-						LOGGER.info("[DATA] -- DETECTOR data not available");
-					}else{
-						dUI.addData(d, false);
-						dUI.addData(ds,false);
-					}
-
+				if(!dDataAvailable){
+					LOGGER.info("[DATA] -- DETECTOR data not available");
 				}else{
-					dUI = new DetectorCompUI(customSett.getDetectorConf());
-					if(!dDataAvailable){
-
-						LOGGER.info("[DATA] -- DETECTOR data not available");
-					}else{
-						dUI.addData(d, false);
-						dUI.addData(ds,false);
-					}
-					model.addDetectorData(dUI);
+					model.addData(d,false,i);
+					model.addData(ds,false,i);
 				}
-				dUI.clearList();
-				dUI.addToList(customSett.getMicDetectorList());
-				dUI.addToList(detectors);
+
+				model.addToDetectorList(customSett.getMicDetectorList(),false);
+				model.addToDetectorList(detectors,true);
 			}else{
 				LOGGER.info("[DATA] -- DETECTOR data not available");
 			}
@@ -812,8 +716,11 @@ public class MetaDataUI extends JPanel
 	private void readImageData(Image image, List<Objective> objList, StructuredAnnotations annot) 
 	{
 			model.addData(image, false);
-			
-			readObjectiveData(image,objList);
+			try{
+				readObjectiveData(image,objList);
+			}catch(Exception e){
+				LOGGER.warn("Can't read objective data! "+e);
+			}
 			readSampleData(image,annot);
 		
 	}
@@ -821,10 +728,9 @@ public class MetaDataUI extends JPanel
 	private void readSampleData(Image image, StructuredAnnotations annot) 
 	{
 		if(initSampleUI && annot!=null){
-			SampleCompUI sUI=model.getSampleModul();
 			Sample s=getSampleAnnotation(image,annot);
 			if(s!=null){
-				sUI.addData(s, false);
+				model.addData(s, false);
 			}else{
 				LOGGER.info("[DATA] Sample data not available!");
 			}
@@ -886,12 +792,11 @@ public class MetaDataUI extends JPanel
 		return map;
 	}
 
-	private void readObjectiveData(Image image, List<Objective> objList) 
+	private void readObjectiveData(Image image, List<Objective> objList) throws Exception
 	{
 		
 		if(initObjectiveUI && objList!=null && !objList.isEmpty())
 		{
-			ObjectiveCompUI oUI=model.getObjectiveModul();
 			boolean oDataAvailable=false;
 			String linkedObj=null;
 			
@@ -920,15 +825,12 @@ public class MetaDataUI extends JPanel
 			if(!oDataAvailable){
 				LOGGER.info("[DATA] -- file: OBJECTIVE data not available");
 			}else{
-				oUI.addData(o, false); 
-				oUI.addData(os,false); 
+				model.addData(o, false); 
+				model.addData(os,false); 
 			}
-			oUI.clearList();
-			oUI.addToList(customSett.getMicObjList());
-			oUI.addToList(objList);
+			model.addToObjList(customSett.getMicObjList(),false);
+			model.addToObjList(objList,true);
 			
-			// link object 
-//			model.getImageModul().setObjectiveSettings(osUI);
 		}
 		
 	}
@@ -1018,8 +920,9 @@ public class MetaDataUI extends JPanel
 	private void showOjectiveData(String name) 
 	{
 		if(initObjectiveUI){
-			objectivePane.add(control.activateObjectiveModulView(name),name);
-
+			objectiveUI=new ObjectiveViewer(model.getObjectiveModel(), objModul);
+			JPanel pane= control.createPropPane(objectiveUI, "Objective", "for image "+name);
+			objectivePane.add(pane,name);
 		}
 	}
 	
@@ -1027,7 +930,8 @@ public class MetaDataUI extends JPanel
 	{
 		if(initSampleUI){
 			samplePane=new JTabbedPane();
-			samplePane.add("Sample",control.activateSampleModuleView());
+			sampleUI=new SampleViewer(model.getSampleModel(), sampleModul);
+			samplePane.add("Sample",sampleUI);
 			addToPlaceholder(samplePane, sampleModul.getPosition(), sampleModul.getWidth());
 		}
 	}
@@ -1036,11 +940,10 @@ public class MetaDataUI extends JPanel
 	{
 		CardLayout cl;
 		cl=new CardLayout();
-		lightSrcPane=new JPanel(cl);
-		cl=new CardLayout();
-		detectorPane=new JPanel(cl);
-		cl=new CardLayout();
 		lightPathCardPane=new JPanel(cl);
+		detectorPane2=new JPanel();
+		lightSrcPane2=new JPanel();
+		
 		
 		if(initChannelUI){
 			channelTab=new JTabbedPane();
@@ -1056,23 +959,26 @@ public class MetaDataUI extends JPanel
 				}
 			});
 			
+			String chname= model.getChannelData(0)!=null ? model.getChannelData(0).getName() : "Channel";
+			setDetectorVisible(chname, 0);
+			setLightSrcVisible(chname, 0);
+			setLightPathVisible(chName,0);
+
 			for(int i=0; i<model.getNumberOfChannels();i++)
 			{
-				String name= model.getChannel(i)!=null ? model.getChannel(i).getName() : "Channel";
+				String name= model.getChannelData(i)!=null ? model.getChannelData(i).getName() : "Channel";
 				name= (name==null || name.isEmpty()) ? ((i==0 ? "Channel " : "# ")+String.valueOf(i)) : name;
-				detectorPane.add(control.activateDetectorModulView(i,name,customSett.getDetectorConf()),name);
 				
-				lightSrcPane.add(control.activateLightSrcModulView(i,name,customSett.getLightSrcConf()),name);
-				lightPathCardPane.add(control.activateLightPathModul(i,name),name); 
-				
-				channelTab.add(name,control.activateChannelModulView(i));
+				channelTab.add(name,new ChannelViewer(model.getChannelModel(), chModul, i));
 			}
 			addToPlaceholder(channelTab,chModul.getPosition(), chModul.getWidth()); 
 		}else{
 			String name="Channel";
-			detectorPane.add(control.activateDetectorModulView(0,name,customSett.getDetectorConf()),name);
-			lightSrcPane.add(control.activateLightSrcModulView(0,name,customSett.getLightSrcConf()),name);
-			lightPathCardPane.add(control.activateLightPathModul(0,name),name); 
+			
+			setDetectorVisible(name, 0);
+			setLightSrcVisible(name, 0);
+			setLightPathVisible(name,0);
+			channelTab.add(name,new ChannelViewer(model.getChannelModel(), chModul, 0));
 		}
 		
 		showLightSourceData();
@@ -1080,6 +986,24 @@ public class MetaDataUI extends JPanel
 		showLightPathData();
 	}
 
+	private void setDetectorVisible(String name, int index)
+	{
+		detectorPane2.removeAll();
+		DetectorViewer d=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),index);
+		detectorPane2.add(control.createPropPane(d, "Detector", "for "+ name));
+		detectorPane2.revalidate();
+		detectorPane2.repaint();
+	}
+	
+	private void setLightSrcVisible(String name,int index)
+	{
+		lightSrcPane2.removeAll();
+		LightSourceViewer l=new LightSourceViewer(model.getLightSourceModel(), lightSModul, index);
+		lightSrcPane2.add(control.createPropPane(l, "LightSource", "for "+name));
+		lightSrcPane2.revalidate();
+		lightSrcPane2.repaint();
+	}
+	
 	private void showLightPathData()
 	{
 		if(initLightPathUI)
@@ -1088,14 +1012,16 @@ public class MetaDataUI extends JPanel
 	private void showLightSourceData() 
 	{
 		if(initLightSrcUI){
-			addToPlaceholder(lightSrcPane, lightSModul.getPosition(), lightSModul.getWidth());
+			addToPlaceholder(lightSrcPane2, lightSModul.getPosition(), lightSModul.getWidth());
 		}
 	}
 
 	private void showDetectorData() 
 	{
-		if(initDetectorUI)
-			addToPlaceholder(detectorPane, detModul.getPosition(), detModul.getWidth());
+		if(initDetectorUI){
+		
+			addToPlaceholder(detectorPane2, detModul.getPosition(), detModul.getWidth());
+		}
 	}
 	
 	protected void selectChannel(int chNr) 
@@ -1104,26 +1030,22 @@ public class MetaDataUI extends JPanel
 			return;
 		
 		channelTab.setSelectedIndex(chNr);
-
-		ChannelCompUI channel=model.getChannelModul(chNr);
-		String chName=channel.getName();
+		String chName=channelTab.getTitleAt(chNr);
 		
 		LOGGER.info("[GUI-ACTION] -- select Channel "+chName);
-		
+		System.out.println("\t...select Channel "+chName);
 		
 		CardLayout cl;
 		
 		// update submodules
-		if(initLightSrcUI && lightSrcPane!=null){
+		if(initLightSrcUI ){
 			// show referenced lightSrc + settings
-			cl=(CardLayout) lightSrcPane.getLayout();
-			cl.show(lightSrcPane, chName);
+			setLightSrcVisible(chName, chNr);
 		}
 
-		if(initDetectorUI && detectorPane!=null){
+		if(initDetectorUI ){
 			// show referenced detector + settings
-			cl=(CardLayout) detectorPane.getLayout();
-			cl.show(detectorPane,chName);
+			setDetectorVisible(chName, chNr);
 		}
 
 		if(initLightPathUI && lightPathCardPane!=null){
@@ -1442,16 +1364,16 @@ public class MetaDataUI extends JPanel
 		d.setResizable(false);
 		return d;
 	}
-	protected JDialog createImgEnvDialog(ImagingEnvironmentCompUI p,String title, int width, int height)
+	protected JDialog createImgEnvDialog(ImageEnvModel p,String title, int width, int height)
 	{
 		JDialog d=new JDialog();
 		d.setTitle(title);
 		d.setSize(width,height);
 		d.setModal(true);
 		d.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		p.buildComponents();
+		imgEnvViewer=new ImageEnvViewer(p, imgEnvModul);
 //		centerOnParent(d, true);
-		d.add(p);
+		d.add(imgEnvViewer);
 		d.pack();
 //		d.setVisible(true);
 		return d;

@@ -22,6 +22,7 @@ import javax.swing.border.TitledBorder;
 
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
+import ome.xml.model.Arc;
 import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.Objective;
@@ -52,6 +53,8 @@ public class LightSourceViewer extends ModuleViewer{
 			LightSourceModel.ARC,LightSourceModel.FILAMENT,
 			LightSourceModel.GENERIC_EXCITATION,LightSourceModel.LIGHT_EMITTING_DIODE};
 	private JComboBox<String> sourceType;
+	
+	private int index;
 
 	//available element setting tags
 	private TagData waveLengthSett;
@@ -65,8 +68,10 @@ public class LightSourceViewer extends ModuleViewer{
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public LightSourceViewer(LightSourceModel model,ModuleConfiguration conf)
+	public LightSourceViewer(LightSourceModel model,ModuleConfiguration conf,int index)
 	{
+		System.out.println("# LightSrcViewer::newInstance("+(model!=null?"model":"null")+") "+index);
+		this.index=index;
 		this.data=model;
 		initComponents(conf);
 		buildGUI();
@@ -170,7 +175,7 @@ public class LightSourceViewer extends ModuleViewer{
 				if(l!=null ){
 					dataChanged=true;
 					try {
-						data.addData(l, true);
+						data.addData(l, true,index);
 					} catch (Exception e1) {
 						LOGGER.warn("Can't set data of selected lightSrc! "+e1);
 					}
@@ -239,7 +244,9 @@ public class LightSourceViewer extends ModuleViewer{
 
 	private void setSettingsGUIData()
 	{
-		LightSourceSettings settings = data.getSettings();
+		if(data==null)
+			return;
+		LightSourceSettings settings = data.getSettings(index);
 
 		if(settings!=null){
 			try{setWavelength(settings.getWavelength(), ElementsCompUI.REQUIRED);
@@ -285,7 +292,7 @@ public class LightSourceViewer extends ModuleViewer{
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).saveData();
 
 		// --- Settings --------------------
-		LightSourceSettings settings=data.getSettings();
+		LightSourceSettings settings=data.getSettings(index);
 		if(settings==null)
 			settings = new LightSourceSettings();
 

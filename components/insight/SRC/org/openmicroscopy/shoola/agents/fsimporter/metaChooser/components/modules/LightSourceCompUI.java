@@ -23,6 +23,8 @@ import ome.units.quantity.Frequency;
 import ome.units.quantity.Power;
 import ome.units.unit.Unit;
 import ome.xml.model.Arc;
+import ome.xml.model.Detector;
+import ome.xml.model.DetectorSettings;
 import ome.xml.model.Filament;
 import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.Laser;

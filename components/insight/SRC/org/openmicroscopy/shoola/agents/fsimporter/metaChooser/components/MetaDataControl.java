@@ -25,6 +25,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.module
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.SampleCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 
@@ -85,94 +86,29 @@ public class MetaDataControl implements PropertyChangeListener
 			
 	}
 
-//	public JPanel activateExperimentModulView() 
-//	{
-//		ExperimentCompUI e=model.getExpModul();
-//		e.buildComponents();
-//		// TODO Auto-generated method stub
-//		return e;
-//	}
-	
-	public SampleCompUI activateSampleModuleView() 
-	{
-		SampleCompUI s=model.getSampleModul();
-		s.buildComponents();
-		return s;
-	}
-	
-//	public Component activateImageModul() 
-//	{
-//		ImageCompUI i=model.getImageModul();
-//		i.buildComponents();
-//		return i;
-//	}
-	
-	public Component activateObjectiveModulView(String name) 
-	{
-		
-		ObjectiveCompUI o=model.getObjectiveModul();
-		o.buildComponents();
-		
-//		name=name.equals("image") ? "":name;
-		
-		return createPropPane(o, "Objective", "for image "+name);
-	}
 
-	public JPanel activateLightPathModul(int i, String name) 
-	{
-		LightPathCompUI d=null;
-		if(i< model.getNumberOfLightPath()){
-			d=model.getLightPathModul(i); 
-			
-		}else{
-			d=new LightPathCompUI();
-			model.addLightPath(d);
-//			d.showOptionPane();
-		}
-		d.buildComponents();
-		name=name.equals("Channel") ? "":name;
-		return createPropPane(d, "LightPath", "for Channel "+name);
-	}
+
+//	public JPanel activateLightPathModul(int i, String name) 
+//	{
+//		LightPathCompUI d=null;
+//		if(i< model.getNumberOfLightPath()){
+//			d=model.getLightPathModul(i); 
+//			
+//		}else{
+//			d=new LightPathCompUI();
+//			model.addLightPath(d);
+////			d.showOptionPane();
+//		}
+//		d.buildComponents();
+//		name=name.equals("Channel") ? "":name;
+//		return createPropPane(d, "LightPath", "for Channel "+name);
+//	}
 	
-	public JPanel activateDetectorModulView(int i,String name,ModuleConfiguration conf) 
-	{
-		DetectorCompUI d=null;
-		if(i< model.getNumberOfDetectors()){
-			d=model.getDetectorModul(i);
-			
-		}else{
-			d=new DetectorCompUI(conf);
-			model.addDetectorData(d);
-//			d.showOptionPane();
-		}
-		d.buildComponents();
-		name=name.equals("Channel") ? "":name;
-		return createPropPane(d, "Detector", "for Channel "+name);
-	}
 	
-	public Component activateLightSrcModulView(int i, String name,ModuleConfiguration conf) 
-	{
-		LightSourceCompUI l=null;
-		if(i<model.getNumberOfLightSrc()){
-			l=model.getLightSourceModul(i);
-			
-		}else{
-			System.out.println("# MetaDataControl::activateLightSrcModul() \n"
-					+ "Channel: "+i+" : no lightSrc available, create new");
-			l=new LightSourceCompUI(conf);
-			model.addLightSrcModul(l);
-		}
-		l.buildComponents();
-		name=name.equals("Channel") ? "":name;
-		return createPropPane(l, "LightSource", "for Channel "+name);
-	}
 	
-	public Component activateChannelModulView(int i) 
-	{
-		ChannelCompUI c=model.getChannelModul(i);
-		c.buildComponents();
-		return c;
-	}
+	
+	
+
 	
 	
 	
@@ -197,7 +133,7 @@ public class MetaDataControl implements PropertyChangeListener
 		return buildTabbedPaneWithLabel(lTab,labelText);
 	}
 	
-	protected JPanel createPropPane(ElementsCompUI main, String name,String labelText)
+	public JPanel createPropPane(JComponent main, String name,String labelText)
 	{
 		JTabbedPane lTab=new JTabbedPane();
 		JPanel lPanel=new JPanel();
