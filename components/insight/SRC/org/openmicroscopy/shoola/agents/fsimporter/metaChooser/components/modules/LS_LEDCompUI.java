@@ -111,8 +111,8 @@ public class LS_LEDCompUI extends LightSrcSubCompUI
 	@Override
 	protected void setAllValueChanged() {
 		System.out.println("# LS_LEDCompUI::setAllTagsChanged()");
-		if(manufact!=null) manufact.changeIsUpdated(false);
-		if(description!=null)description.changeIsUpdated(false);
-		if(model!=null)model.changeIsUpdated(false);
+		if(manufact!=null) manufact.dataSaved(false);
+		if(description!=null)description.dataSaved(false);
+		if(model!=null)model.dataSaved(false);
 	}
 }

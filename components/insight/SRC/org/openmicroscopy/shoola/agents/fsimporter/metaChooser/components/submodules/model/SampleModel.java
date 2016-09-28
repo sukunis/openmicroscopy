@@ -1,10 +1,15 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
+import java.util.List;
+
+import ome.units.unit.Unit;
 import ome.xml.model.primitives.Timestamp;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 public class SampleModel 
@@ -99,5 +104,54 @@ public class SampleModel
 	public Sample getSample()
 	{
 		return element;
+	}
+	public void update(List<TagData> changesSample) {
+		for(TagData t: changesSample){
+			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
+		}		
+	}
+	private void setTag(String name,String val,Unit unit)
+	{
+		switch (name) {
+		case TagNames.PREPDATE:// no pre value possible
+			element.setPrepDate(val.equals("")? 
+					null : Timestamp.valueOf(val));
+			break;
+		case TagNames.PREPDESC:// no pre value possible
+			element.setPrepDescription(val);
+			break;
+		case TagNames.RAWCODE:// no pre value possible
+			element.setRawMaterialCode(val); 
+			break;
+		case TagNames.RAWDESC:// no pre value possible
+			element.setRawMaterialDesc(val);
+			break;
+		case TagNames.GRIDBOXNR:// no pre value possible
+			element.setGridBoxNr(val);
+			break;
+		case TagNames.GRIDBOXTYPE:// no pre value possible
+			element.setGridBoxType(val);
+			break;
+		case TagNames.EXPGRID:// no pre value possible
+//			TODO:
+//			setExpGridNumber(new String[2], prop);
+			break;
+		case TagNames.EXPOBJNR:// no pre value possible
+			ObservedSample sample=element.getObservedSample(0);
+			if(sample==null)
+				sample=new ObservedSample();
+			sample.setObjectNumber(val);
+			element.setObservedSample(sample);
+			break;
+		case TagNames.EXPOBJTYPE: // no pre value possible
+			ObservedSample sample2=element.getObservedSample(0);
+			if(sample2==null)
+				sample2=new ObservedSample();
+			sample2.setObjectType(val);
+			element.setObservedSample(sample2);
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
 	}
 }

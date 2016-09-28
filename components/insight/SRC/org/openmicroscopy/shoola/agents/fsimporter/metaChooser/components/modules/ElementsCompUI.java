@@ -199,7 +199,7 @@ public abstract class ElementsCompUI extends JPanel
 		if(tagList!=null){
 			for(int i=0; i<tagList.size();i++){
 				if(tagList.get(i)!=null)
-					tagList.get(i).changeIsUpdated(b);
+					tagList.get(i).dataSaved(b);
 			}
 		}
 		dataChanged=!b;

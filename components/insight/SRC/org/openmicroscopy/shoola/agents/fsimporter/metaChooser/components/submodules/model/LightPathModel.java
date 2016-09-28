@@ -23,7 +23,10 @@ public class LightPathModel
 
 	private List<Object> availableElem;
 
-	public LightPathModel(){}
+	public LightPathModel()
+	{
+		element=new ArrayList<LightPath>();
+	}
 
 	public LightPathModel(LightPathModel orig)
 	{
@@ -161,33 +164,7 @@ public class LightPathModel
 		}
 	}
 	
-//	public void addFilterToList(List<Filter> list)
-//	{
-//		if(list==null || list.size()==0)
-//			return;
-//		
-//		if(availableElem==null){
-//
-//			availableElem=new ArrayList<Object>();
-//		}
-//		for(int i=0; i<list.size(); i++){
-//			availableElem.add(list.get(i));
-//		}
-//	}
-//	
-//	public void addDichroicToList(List<Dichroic> list)
-//	{
-//		if(list==null || list.size()==0)
-//			return;
-//		
-//		if(availableElem==null){
-//
-//			availableElem=new ArrayList<Object>();
-//		}
-//		for(int i=0; i<list.size(); i++){
-//			availableElem.add(list.get(i));
-//		}
-//	}
+
 	
 	public void clearList()
 	{

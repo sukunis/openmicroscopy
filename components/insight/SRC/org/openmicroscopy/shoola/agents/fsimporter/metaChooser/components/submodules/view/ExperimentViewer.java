@@ -366,7 +366,18 @@ private Experimenter parseExperimenter(String str)
 	}
 	return ex;
 }
+public List<TagData> getChangedTags() 
+{
+	List<TagData> list = new ArrayList<TagData>();
+	if(inputAt(projectName)) list.add(projectName);
+	if(inputAt(projectPartner))list.add(projectPartner);
+	if(inputAt(group))list.add(group);
+	if(inputAt(type)) list.add(type);
+	if(inputAt(description)) list.add(description);
+	if(inputAt(expName)) list.add(expName);
 
+	return list;
+}
 
 
 }

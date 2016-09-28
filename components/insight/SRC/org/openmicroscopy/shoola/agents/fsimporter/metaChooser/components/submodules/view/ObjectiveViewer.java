@@ -562,4 +562,20 @@ public class ObjectiveViewer extends ModuleViewer
 		return m;
 	}
 	
+	public List<TagData> getChangedTags() {
+		
+		List<TagData> list = new ArrayList<TagData>();
+		if(inputAt(model)) list.add(model);
+		if(inputAt(manufact)) list.add(manufact);
+		if(inputAt(nomMagn)) list.add(nomMagn);
+		if(inputAt(calMagn)) list.add(calMagn);
+		if(inputAt(lensNA)) list.add(lensNA);
+		if(inputAt(immersion)) list.add(immersion);
+		if(inputAt(correction)) list.add(correction);
+		if(inputAt(workDist)) list.add(workDist);
+		//if(isActive(iris)) list.add(iris);
+		
+		return list;
+	}
+	
 }

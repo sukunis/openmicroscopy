@@ -72,6 +72,8 @@ public class MetaDataModel
 	/** list of all lightSrc for current image */
 	private List<LightSource> lightSrcOrigList;
 	
+	private boolean userInput;
+	
 	
 	//-----------------------------------------
 	/** module for image data */ 
@@ -118,12 +120,24 @@ public class MetaDataModel
 	
 	private OME ome;
 
+	private List<TagData> changesImgEnv;
+
+	private List<TagData> changesObj;
+
+	private List<TagData> changesDetector;
+
+	private List<TagData> changesLightSrc;
+
+	private List<TagData> changesSample;
+	private List<TagData> changesExperiment;
+
 	
 	
 	
 	
 	public MetaDataModel()
 	{
+		userInput=false;
 		imageIndex=-1;
 		
 		channelModel=null;
@@ -184,127 +198,7 @@ public class MetaDataModel
 	
 	
 	
-	public boolean noticUserInput()
-	{
-		System.out.println("#MetaDataModel::noticeUserInput()");
-		componentsWithChanges.clear();
-		boolean hasUserInput=false;
-		boolean result=false;
-		
-		boolean changes;
-		
-		//Experiment
-//		if(experimentUI!=null){
-//			changes=((ExperimentCompUI) experimentUI).userInput();
-//			LOGGER.debug("changes in EXPERIMENT: "+changes);
-//			if(changes) componentsWithChanges.add(experimentUI);
-//			hasUserInput=hasUserInput || changes;
-//		}
-		
-		//Image
-//		if(imgModel!=null){ 
-//			changes=((ImageCompUI) image).userInput();
-//			LOGGER.debug("changes in IMAGE: "+changes);
-//			if(changes) componentsWithChanges.add(image);
-//			hasUserInput=hasUserInput ||changes;
-//		}
-		
-		//Objective
-//		if(objectiveUI!=null){ 
-//			changes=objectiveUI.userInput();
-//			LOGGER.info("[DEBUG] -- changes in OBJECT: "+changes);
-//			if(changes){ 
-//				componentsWithChanges.add(objectiveUI);
-//				hasUserInput=hasUserInput ||true;
-//			}
-//			
-//		}
-
-		//Detector
-//		for(int i=0; i<detectorList.size();i++){
-//			if(detectorList.get(i)!=null) {
-//				if(detectorList.get(i).userInput()){
-//					componentsWithChanges.add(detectorList.get(i));
-//					result=result ||true;
-//				}
-//			}
-//		}
-		hasUserInput=hasUserInput ||result;
-		LOGGER.debug("changes in DETECTOR: "+result);
-
-		//LightSrc
-		result=false;
-//		for(int i=0; i<lightSrcList.size();i++){
-//			if(lightSrcList.get(i)!=null){
-//				if(lightSrcList.get(i).userInput()){
-//					System.out.println("\t ...lightSrc ["+i+"] : user input=true");
-//					componentsWithChanges.add(lightSrcList.get(i));
-//					result=result || true;
-//				}
-//			}
-//		}
-		hasUserInput=hasUserInput ||result;
-		 LOGGER.debug("changes in LIGHTSRC: "+result);
-		 System.out.println("LightSrc has change: "+result);
-		 
-		 //Channel
-		 result=false;
-//		for(int i=0; i<channelModel.getNumberOfChannels();i++){
-//			if(channelModel.getChannel(i)!=null) {
-//				if(channelList.get(i).userInput()){
-//					componentsWithChanges.add(channelList.get(i));
-//					result=result || true;
-//				}
-//			}
-//		}
-		hasUserInput=hasUserInput ||result;
-		LOGGER.debug("changes in CHANNEL: "+result);
-		
-		//LightPath
-//		result=false;
-//		for(int i=0; i<lightPathList.size();i++){
-//			if(lightPathList.get(i)!=null) {
-//				if(lightPathList.get(i).userInput()){
-//					componentsWithChanges.add(lightPathList.get(i));
-//					result=result || true;
-//				}
-//			}
-//		}
-		hasUserInput=hasUserInput ||result;
-		LOGGER.debug("changes in LIGHTPATH: "+result);
-		
-		//Sample
-//		if(sampleUI!=null){ 
-//			changes=( sampleUI).userInput();
-//			if(changes) componentsWithChanges.add(sampleUI);
-//			LOGGER.debug("changes in SAMPLE: "+changes);
-//		hasUserInput=hasUserInput ||changes;
-//		}
-		
-//		//ImgEnv
-//		if(imgEnvUI!=null){ 
-//			changes=( imgEnvUI).userInput();
-//			LOGGER.debug("changes in IMGENV: "+changes);
-//			if(changes) componentsWithChanges.add(imgEnvUI);
-//			hasUserInput=hasUserInput || changes;
-//		}
-
-		//Planes
-		result=false;
-		for(int i=0; i<planeList.size();i++){
-			if(planeList.get(i)!=null) {
-				if(planeList.get(i).userInput()){
-					componentsWithChanges.add(planeList.get(i));
-					result=result ||true;
-				}
-			}
-		}
-		hasUserInput=hasUserInput ||result;
-		LOGGER.debug("changes in PLANE: "+result);
-		
-		
-		return hasUserInput;
-	}
+	
 	
 	public List<Object> getComponentsForUpdate()
 	{
@@ -524,7 +418,7 @@ public class MetaDataModel
 	 -------------------------------------------------------*/
 	public void addData(Detector d, boolean overwrite, int index) throws Exception 
 	{
-		System.out.println("# MetaDataModel::addData - Detector");
+		System.out.println("# MetaDataModel::addData - Detector "+index);
 		if(detectorModel==null)
 			detectorModel=new DetectorModel();
 		detectorModel.addData(d, overwrite,index);
@@ -534,7 +428,7 @@ public class MetaDataModel
 
 	public void addData(DetectorSettings ds, boolean overwrite, int index) throws Exception 
 	{
-		System.out.println("# MetaDataModel::addData - DetectorSettings");
+		System.out.println("# MetaDataModel::addData - DetectorSettings "+index);
 		if(detectorModel==null)
 			detectorModel=new DetectorModel();
 		detectorModel.addData(ds, overwrite,index);
@@ -640,6 +534,7 @@ public class MetaDataModel
 	 *--------------------------------------------*/
 	public void addData(LightPath lp, boolean overwrite, int i) throws Exception 
 	{
+		System.out.println("# MetaDataModel::addData - LightPath "+i);
 		if(lightPathModel==null)
 			lightPathModel=new LightPathModel();
 		
@@ -671,7 +566,7 @@ public class MetaDataModel
 	}
 	
 
-	public LightPathModel getLightPathModel(int index)
+	public LightPathModel getLightPathModel()
 	{
 		if(lightPathModel==null )
 			return null;
@@ -690,6 +585,7 @@ public class MetaDataModel
 	 *--------------------------------------------*/
 	public void addData(LightSource l, boolean overwrite, int i) throws Exception 
 	{
+		System.out.println("# MetaDataModel::addData - LightSource "+i);
 		if(lightSrcModel==null)
 			lightSrcModel=new LightSourceModel();
 		
@@ -873,6 +769,13 @@ public class MetaDataModel
 		if(objModel==null)
 			return null;
 		return objModel.getSettings();
+	}
+	
+	public void addToObjList(List<Objective> list, boolean append) 
+	{
+		if(!append)
+			objModel.clearList();
+		objModel.addToList(list);
 	}
 	/**
 	 * Get objective modul data
@@ -1258,7 +1161,7 @@ public class MetaDataModel
 //		
 //		componentsWithChanges.clear();
 //	}
-//	
+	
 	/**
 	 * Only for directories model! There are only one detector, channel, lightSrc, no planes
 	 * @param o
@@ -1308,20 +1211,79 @@ public class MetaDataModel
 
 
 
-	public void updateData(MetaDataModel metaDataModel) 
+	public void updateData(MetaDataModel metaDataModel) throws Exception 
 	{
-//		imgModel.update(metaDataModel.getChangesImage());
+		if(metaDataModel==null)
+			return;
+		System.out.println("# MetaDataModel::updateData()");
+		imgModel.update(metaDataModel.getChangesImage());
+		imgEnvModel.update(metaDataModel.getChangesImgEnv());
+//		objModel.update(metaDataModel.getChangesObject());
+//		detectorModel.update(metaDataModel.getChangesDetector());
+//		lightSrcModel.update(metaDataModel.getChangesLightSrc());
+		sampleModel.update(metaDataModel.getChangesSample()); 
+		expModel.update(metaDataModel.getChangesExperiment());
 	}
 
-
-
-	public void addToObjList(List<Objective> list, boolean append) 
+	
+	
+	public void setDataChange(boolean changes)
 	{
-		if(!append)
-			objModel.clearList();
-		objModel.addToList(list);
+		userInput=changes;
+	}
+	
+	public boolean noticUserInput()
+	{
+		return userInput;
 	}
 
+	public void setChangesImageEnv(List<TagData> newValue) {
+		changesImgEnv=newValue;
+	}
+	public List<TagData> getChangesImgEnv()
+	{
+		return changesImgEnv;
+	}
+
+	public void setChangesObject(List<TagData> newValue) {
+		changesObj=newValue;
+	}
+	public List<TagData> getChangesObject()
+	{
+		return changesObj;
+	}
+
+	public void setChangesDetector(List<TagData> newValue) {
+		changesDetector=newValue;		
+	}
+	public List<TagData> getChangesDetector()
+	{
+		return changesDetector;
+	}
+
+	public void setChangesLightSrc(List<TagData> newValue) {
+		changesLightSrc=newValue;		
+	}
+	public List<TagData> getChangesLightSrc()
+	{
+		return changesLightSrc;
+	}
+
+	public void setChangesSample(List<TagData> newValue) {
+		changesSample=newValue;
+	}
+	public List<TagData> getChangesSample()
+	{
+		return changesSample;
+	}
+
+	public void setChangesExperiment(List<TagData> newValue) {
+		changesExperiment=newValue;
+	}
+	public List<TagData> getChangesExperiment()
+	{
+		return changesExperiment;
+	}
 	
 
 	

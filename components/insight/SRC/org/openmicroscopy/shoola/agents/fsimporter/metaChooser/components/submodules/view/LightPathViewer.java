@@ -119,7 +119,7 @@ public class LightPathViewer extends ModuleViewer{
 	 */
 	private void setGUIData() 
 	{
-		if(data==null)
+		if(data==null || data.getNumberOfLightPaths()==0)
 			return;
 
 		LightPath lightPath=data.getLightPath(index);

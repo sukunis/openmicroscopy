@@ -128,10 +128,10 @@ public class LS_GESCompUI extends LightSrcSubCompUI
 	@Override
 	protected void setAllValueChanged() {
 		System.out.println("# LS_GESCompUI::setAllTagsChanged()");
-		if(manufact!=null)manufact.changeIsUpdated(false);
-		if(map!=null)map.changeIsUpdated(false);
-		if(power!=null)power.changeIsUpdated(false);
-		if(model!=null)model.changeIsUpdated(false);
+		if(manufact!=null)manufact.dataSaved(false);
+		if(map!=null)map.dataSaved(false);
+		if(power!=null)power.dataSaved(false);
+		if(model!=null)model.dataSaved(false);
 	}
 
 }

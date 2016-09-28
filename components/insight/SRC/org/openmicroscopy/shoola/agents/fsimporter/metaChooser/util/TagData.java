@@ -917,7 +917,7 @@ public class TagData
 		return valChanged;
 	}
 	
-	public void changeIsUpdated(boolean b){
+	public void dataSaved(boolean b){
 		valChanged=!b;
 	}
 

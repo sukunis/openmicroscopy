@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -28,6 +29,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.module
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 public class MetaDataControl implements PropertyChangeListener
 {
@@ -80,9 +82,34 @@ public class MetaDataControl implements PropertyChangeListener
 	private void handlePropertyChangedEvent(PropertyChangeEvent evt) 
 	{
 		String name=evt.getPropertyName();
-		if(MetaDataUI.CHANGE_IMGDATA.equals(name)){
-//			model.addComponentForUpdate(model.getImageModel());
+		switch(name){
+		case MetaDataUI.CHANGE_IMGDATA:
+			model.setChangesImage((List<TagData>) evt.getNewValue());
+			break;
+		case MetaDataUI.CHANGE_IMGENVDATA:
+			model.setChangesImageEnv((List<TagData>) evt.getNewValue());
+			break;
+		case MetaDataUI.CHANGE_OBJDATA:
+			model.setChangesObject((List<TagData>) evt.getNewValue());
+			break;
+		case MetaDataUI.CHANGE_DETDATA:
+			model.setChangesDetector((List<TagData>) evt.getNewValue());
+			break;
+		case MetaDataUI.CHANGE_LSDATA:
+			model.setChangesLightSrc((List<TagData>) evt.getNewValue());
+			break;
+		case MetaDataUI.CHANGE_SAMPLEDATA:
+			model.setChangesSample((List<TagData>) evt.getNewValue());
+			break;
+		case MetaDataUI.CHANGE_EXPDATA:
+			model.setChangesExperiment((List<TagData>) evt.getNewValue());
+			break;
+//		case MetaDataUI.CHANGE_LPGDATA:
+//			model.setChangesImage((List<TagData>) evt.getNewValue());
+//			break;
+			default:break;
 		}
+		
 			
 	}
 

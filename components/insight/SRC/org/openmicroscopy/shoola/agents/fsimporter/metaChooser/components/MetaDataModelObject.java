@@ -61,10 +61,10 @@ public class MetaDataModelObject
 	}
 
 	// TODO: at the moment not for series data
-	public void updateData(MetaDataModelObject newData) 
+	public void updateData(MetaDataModelObject newData) throws Exception 
 	{
 		List<MetaDataModel> modelList_new=newData.getList();
-//		list.get(0).updateData(modelList_new.get(0));
+		list.get(0).updateData(modelList_new.get(0));
 	}
 
 	

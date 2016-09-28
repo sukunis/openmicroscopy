@@ -258,7 +258,17 @@ public void saveData()
 		LOGGER.error("[DATA] can't read IMAGE ENV co2 percent input");
 	}
 }
-
+public List<TagData> getChangedTags() {
+	List<TagData> list = new ArrayList<TagData>();
+	if(inputAt(temperature)) list.add(temperature);
+	if(inputAt(airPressure)) list.add(airPressure);
+	if(inputAt(humidity)) list.add(humidity);
+	if(inputAt(co2Percent)) list.add(co2Percent);
+	
+	return list;
+	
+	
+}
 }
 
 

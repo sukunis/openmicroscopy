@@ -234,7 +234,7 @@ protected void initTag(TagConfiguration t)
  */
 private void setGUIData() 
 {
-	if(data==null)
+	if(data==null || data.getNumberOfChannels()==0)
 		return;
 	Channel channel=data.getChannel(index);
 	
@@ -397,10 +397,10 @@ public void saveData()
 {
 	if(data==null)
 		data=new ChannelModel();
+	if(data.getNumberOfChannels()==0)
+		data.addData(new Channel(), true, index);
 	
 	Channel channel=data.getChannel(index);
-	if(channel==null)
-		channel=new Channel();
 	//TODO format check
 	try{
 		channel.setName(name.getTagValue());
@@ -488,7 +488,24 @@ private AcquisitionMode parseAcqMode(String c) throws EnumerationException {
 	return AcquisitionMode.fromString(c);
 }
 
-
+public List<TagData> getChangedTags() 
+{
+	List<TagData> list = new ArrayList<TagData>();
+	if(inputAt(name)) list.add(name);
+	if(inputAt(color)) list.add(color);
+	if(inputAt(fluorophore)) list.add(fluorophore);
+	if(inputAt(illumType)) list.add(illumType);
+	if(inputAt(exposureTime)) list.add(exposureTime);
+	if(inputAt(excitWavelength)) list.add(excitWavelength);
+	if(inputAt(emissionWavelength)) list.add(emissionWavelength);
+	if(inputAt(imagingMode)) list.add(imagingMode);
+	if(inputAt(illuminationMode)) list.add(illuminationMode);
+	if(inputAt(contrastMethod)) list.add(contrastMethod);
+	if(inputAt(ndFilter)) list.add(ndFilter);
+	if(inputAt(pinholeSize)) list.add(pinholeSize);
+	
+	return list;
+}
 
 
 }

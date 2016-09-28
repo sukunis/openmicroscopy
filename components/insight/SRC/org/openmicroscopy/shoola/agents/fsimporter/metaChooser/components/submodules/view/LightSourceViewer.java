@@ -189,12 +189,17 @@ public class LightSourceViewer extends ModuleViewer{
 		add(box,BorderLayout.NORTH);
 		add(editBtn,BorderLayout.SOUTH);
 
-		// init tag layout
-		List<TagConfiguration> list=conf.getTagList();
-		List<TagConfiguration> settList=conf.getSettingList();
-		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).initTags(list);
-		initTags(settList);
+		// init tags
+		globalPane.add(new LS_LaserViewer(null, conf, index),LightSourceModel.LASER);
+		globalPane.add(new LS_ArcViewer(null, conf, index),LightSourceModel.ARC);
+		globalPane.add(new LS_FilamentViewer(null, conf, index),LightSourceModel.FILAMENT);
+		globalPane.add(new LS_GESViewer(null, conf, index),LightSourceModel.GENERIC_EXCITATION);
+		globalPane.add(new LS_LEDViewer(null, conf, index),LightSourceModel.LIGHT_EMITTING_DIODE);
+		
+		initTags(conf.getSettingList());
 	}
+
+	
 
 	/**
 	 * Show tags for selected lightSrc element. Doesn't save previously define values.
@@ -238,8 +243,11 @@ public class LightSourceViewer extends ModuleViewer{
 	 */
 	private void setGUIData() 
 	{
+		if(data==null || data.getNumberOfLightSrc()==0)
+			return;
+		System.out.println("\t... set "+data.getLightSource(index).getClass().getSimpleName()+" data : "
+			+data.getLightSource(index).getID());
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).setGUIData();
-
 	}
 
 	private void setSettingsGUIData()
@@ -329,6 +337,17 @@ public class LightSourceViewer extends ModuleViewer{
 			}
 		}
 		return (result);
+	}
+	
+	public List<TagData> getChangedTags() {
+		List<TagData> result=new ArrayList<TagData>();
+		for(TagData t:((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getChangedTags()){
+			result.add(t); 
+		}
+		if(inputAt(waveLengthSett)) result.add(waveLengthSett);
+		if(inputAt(attenuation)) result.add(attenuation);
+		result.add(new TagData("SourceType", String.valueOf(sourceType.getSelectedIndex()), OPTIONAL, TagData.TEXTFIELD));
+		return result;
 	}
 
 }

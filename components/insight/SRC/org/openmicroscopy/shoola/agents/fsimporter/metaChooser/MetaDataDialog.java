@@ -899,22 +899,24 @@ private boolean hardwareDataVisible;
     }
 
     /**
-     * save data model of  node, if any user input available and update childs
+     * save data model of  node, if any user input available and update child tags
      */
     private void saveInputToModel(FNode node) 
     {
     	if(node!=null){
     		if(node.getView()!=null && node.getView().getModelObject()!=null &&node.getView().hasUserInput()){
-    			System.out.println("# MeatDataDialog:: saveInputToModel("+node.getAbsolutePath()+")");
+    			System.out.println("# MeatDataDialog:: saveInputToModel("+node.getAbsolutePath()+") -- save");
     			LOGGER.debug("[SAVE] -- SAVE MODEL FOR: "+node.getAbsolutePath());
     			node.setModelObject(((MetaDataView) node.getView()).getModelObject());
     			updateChildDirectories(node);
+    		}else{
+    			System.out.println("# MeatDataDialog:: saveInputToModel("+node.getAbsolutePath()+")-- nothing to save");
     		}
     	}
     }
 
     /**
-     * Update all childs of type directory with existing model
+     * Update all childs of type directory with existing model with tags changes
      * @param node
      */
     private void updateChildDirectories(FNode node) 
@@ -926,7 +928,12 @@ private boolean hardwareDataVisible;
 			if(child.hasModelObject()){
 				System.out.println("\t ...update "+child.getAbsolutePath());
 				LOGGER.debug("Update "+child.getAbsolutePath());
-				child.getModelObject().updateData(node.getModelObject());
+				try {
+					child.getModelObject().updateData(node.getModelObject());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				if(!child.isLeaf()){
 					updateChildDirectories(child);
 				}
@@ -1172,6 +1179,7 @@ private boolean hardwareDataVisible;
     public void refreshFileView(List<ImportableFile> files, FileFilter fileFilter)
     {
         this.fileFilter=fileFilter;
+        metaPanel.removeAll();
         createNodes(files);
     }
     

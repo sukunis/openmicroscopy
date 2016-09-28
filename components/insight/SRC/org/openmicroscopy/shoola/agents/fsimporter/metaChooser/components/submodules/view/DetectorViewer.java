@@ -264,7 +264,7 @@ public class DetectorViewer extends ModuleViewer{
 	 */
 	private void setGUIData() 
 	{
-		if(data==null)
+		if(data==null || data.getNumberOfElements()==0)
 			return;
 		Detector detector=data.getDetector(index);
 		if(detector!=null){
@@ -495,7 +495,6 @@ public class DetectorViewer extends ModuleViewer{
 		}
 		
 		dataChanged=false;
-
 	}
 	private DetectorType parseDetectorType(String c) 
 	{
@@ -526,6 +525,19 @@ public class DetectorViewer extends ModuleViewer{
 			return null;
 
 		return Binning.fromString(c);
+	}
+	
+	public List<TagData> getChangedTags()
+	{
+		List<TagData> list = new ArrayList<TagData>();
+		if(inputAt(model)) list.add(model);
+		if(inputAt(manufact)) list.add(manufact);
+		if(inputAt(type)) list.add(type);
+		if(inputAt(zoom)) list.add(zoom);
+		if(inputAt(amplGain)) list.add(amplGain);
+		
+		
+		return list;
 	}
 
 }

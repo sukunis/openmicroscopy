@@ -253,19 +253,19 @@ public class LS_LaserCompUI extends LightSrcSubCompUI
 	@Override
 	protected void setAllValueChanged() {
 		System.out.println("# LS_LaserCompUI::setAllTagsChanged()");
-		if(manufact!=null)manufact.changeIsUpdated(false);
-		if(type!=null)type.changeIsUpdated(false);
-		if(power!=null)power.changeIsUpdated(false);
-		if(model!=null)model.changeIsUpdated(false);
+		if(manufact!=null)manufact.dataSaved(false);
+		if(type!=null)type.dataSaved(false);
+		if(power!=null)power.dataSaved(false);
+		if(model!=null)model.dataSaved(false);
 		
-		if(medium!=null)medium.changeIsUpdated(false);
-		if(freqMul!=null)freqMul.changeIsUpdated(false);
-		if(tunable!=null)tunable.changeIsUpdated(false);
-		if(pulse!=null)pulse.changeIsUpdated(false);
-		if(pockelCell!=null)pockelCell.changeIsUpdated(false);
-		if(repRate!=null)repRate.changeIsUpdated(false);
-		if(pump!=null)pump.changeIsUpdated(false);
-		if(waveLength!=null)waveLength.changeIsUpdated(false);
+		if(medium!=null)medium.dataSaved(false);
+		if(freqMul!=null)freqMul.dataSaved(false);
+		if(tunable!=null)tunable.dataSaved(false);
+		if(pulse!=null)pulse.dataSaved(false);
+		if(pockelCell!=null)pockelCell.dataSaved(false);
+		if(repRate!=null)repRate.dataSaved(false);
+		if(pump!=null)pump.dataSaved(false);
+		if(waveLength!=null)waveLength.dataSaved(false);
 	}
 	
 }

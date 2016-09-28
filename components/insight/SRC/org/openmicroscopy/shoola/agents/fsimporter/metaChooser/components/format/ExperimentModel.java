@@ -3,18 +3,24 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.forma
 import java.util.ArrayList;
 import java.util.List;
 
+import loci.formats.FormatException;
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterListModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
+import ome.units.unit.Unit;
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
 import ome.xml.model.MapAnnotation;
 import ome.xml.model.MapPair;
 import ome.xml.model.MapPairs;
+import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.ExperimentType;
+import ome.xml.model.enums.handlers.ExperimentTypeEnumHandler;
 
 public class ExperimentModel {
 	
@@ -301,5 +307,70 @@ public class ExperimentModel {
 		return null;
 	}
 
+	public void update(List<TagData> changesExperiment) throws Exception 
+	{
+		for(TagData t: changesExperiment){
+			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
+		}
+	}
+	private void setTag(String name,String val,Unit unit) throws Exception
+	{
+		switch (name) {
+		case TagNames.TYPE:
+			experiment.setType(getExperimentType(val));
+			break;
+		case TagNames.DESC:
+			experiment.setDescription(val);
+			break;
+			//Set by system
+		case TagNames.GROUP:
+			setGroupName(val);
+			break;
+		case TagNames.EXPNAME:
+			experimenter=parseExperimenter(val);
+			break;
+			//set by system
+		case TagNames.PROJECTNAME:
+			setProjectName(val);
+			break;
+		case TagNames.PROJECTPARTNER:
+			
+				setProjectPartner(val);
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
+	}
+
+	private ExperimentType getExperimentType(String value)  throws FormatException
+	  {
+		if(value==null)
+			return null;
+		
+	    ExperimentTypeEnumHandler handler = new ExperimentTypeEnumHandler();
+	    try {
+	      return (ExperimentType) handler.getEnumeration(value);
+	    }
+	    catch (EnumerationException e) {
+	      throw new FormatException("ExperimentType creation failed", e);
+	    }
+	  }
+	
+	private Experimenter parseExperimenter(String str)
+	{
+		Experimenter ex= null;
+		
+		if(str!=null && str.length()>0){
+			String[] split=str.split("\\s+");
+			if(split.length >1){
+				ex=new Experimenter();
+				ex.setFirstName(split[0]);
+				ex.setLastName(split[1]);
+			}else{
+				return null;
+			}
+		}
+		return ex;
+	}
 	
 }

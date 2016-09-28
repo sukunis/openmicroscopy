@@ -112,7 +112,6 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 	public void setType(Enumeration value,boolean prop)
 	{
 		String val;
-		System.out.println("\n ...classification lightSrc: "+classification);
 		
 		switch(classification){
 		case "Laser":
@@ -339,5 +338,27 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		default:
 			System.out.println("[CONF] unknown tag: "+name );break;
 		}
+	}
+	
+	public List<TagData> getChangedTags() {
+		List<TagData> list = new ArrayList<TagData>();
+		if(inputAt(model)) list.add(model);
+		if(inputAt(manufact)) list.add(manufact);
+		if(inputAt(type)) list.add(type);
+		if(inputAt(power)) list.add(power);
+		if(inputAt(description)) list.add(description);
+		if(inputAt(map)) list.add(map);
+		if(inputAt(medium)) list.add(medium);
+		if(inputAt(freqMul)) list.add(freqMul);
+		if(inputAt(tunable)) list.add(tunable);
+		if(inputAt(pulse)) list.add(pulse);
+		if(inputAt(pockelCell)) list.add(pockelCell);
+		if(inputAt(repRate)) list.add(repRate);
+		if(inputAt(pump)) list.add(pump);
+		if(inputAt(waveLength)) list.add(waveLength);
+		
+		return list;
+		
+		
 	}
 }

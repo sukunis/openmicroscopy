@@ -311,6 +311,8 @@ public class LightSourceModel
 
 	public LightSourceSettings getSettings(int i)
 	{
+		if(i>=settings.size())
+			return null;
 		return settings.get(i);
 	}
 	

@@ -135,10 +135,10 @@ public class LS_ArcCompUI extends LightSrcSubCompUI
 	protected void setAllValueChanged() 
 	{
 		System.out.println("# LS_ArcCompUI::setAllTagsChanged()");
-		if(manufact!=null)manufact.changeIsUpdated(false);
-		if(type!=null)type.changeIsUpdated(false);
-		if(power!=null)power.changeIsUpdated(false);
-		if(model!=null)model.changeIsUpdated(false);
+		if(manufact!=null)manufact.dataSaved(false);
+		if(type!=null)type.dataSaved(false);
+		if(power!=null)power.dataSaved(false);
+		if(model!=null)model.dataSaved(false);
 	}
 	
 }

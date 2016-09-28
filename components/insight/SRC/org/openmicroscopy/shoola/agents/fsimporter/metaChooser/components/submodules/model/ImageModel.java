@@ -9,6 +9,7 @@ import ome.xml.model.Detector;
 import ome.xml.model.Image;
 import ome.xml.model.Pixels;
 import ome.xml.model.StageLabel;
+import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -37,7 +38,6 @@ public class ImageModel
 	
 	public boolean addData(Image img, boolean overwrite)
 	{
-		System.out.println("# ImageModel::addData()");
 		boolean conflicts=false;
 		if(overwrite){
 			replaceData(img);
@@ -110,59 +110,59 @@ public class ImageModel
 		return element;
 	}
 
-//	public void update(List<TagData> changesImage) 
-//	{
-//		for(TagData t: changesImage){
-//			updateTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
-//		}
-//	}
+	public void update(List<TagData> changesImage) throws Exception 
+	{
+		for(TagData t: changesImage){
+			updateTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
+		}
+	}
 
-//	private void updateTag(String tagName, Object value, Unit tagUnit) 
-//	{
-//		switch (tagName) {
-//		case TagNames.IMG_NAME:
-//			element.setName(value);
-//			break;
-//		case TagNames.ACQTIME:
-//			element.setAcquisitionDate(Timestamp.valueOf(value));
-//			break;
-//		case TagNames.DIMXY:
+	private void updateTag(String tagName, String value, Unit tagUnit) throws Exception 
+	{
+		if(value.equals(""))
+			return;
+		switch (tagName) {
+		case TagNames.IMG_NAME:
+			element.setName(value);
+			break;
+		case TagNames.ACQTIME:
+			element.setAcquisitionDate(Timestamp.valueOf(value));
+			break;
+		case TagNames.DIMXY:
+//			TODO:
 //			setDimXY(new String[2], prop);
-//			dimXY.setVisible(true);
-//			break;
-//		case TagNames.PIXELTYPE:
-//			setPixelType(null, prop);
-//			pixelType.setVisible(true);
-//			break;
-//		case TagNames.PIXELSIZE:
+			break;
+		case TagNames.PIXELTYPE:
+			element.getPixels().setType(PixelType.fromString(value));
+			break;
+		case TagNames.PIXELSIZE:
+//			TODO:
 //			setPixelSizeXY(null, null, prop);
-//			pixelSize.setVisible(true);
-//			break;
-//		case TagNames.DIMZTC:
+			break;
+		case TagNames.DIMZTC:
+//			TODO:
 //			setDimZTC(new String[3], prop);
-//			dimZTC.setVisible(true);
-//			break;
-//		case TagNames.STAGEPOS:
+			break;
+		case TagNames.STAGEPOS:
+			//TODO:
 //			setStagePos(null,null, prop);
-//			stagePos.setVisible(true);
-//			break;
-//		case TagNames.STEPSIZE:
+			break;
+		case TagNames.STEPSIZE:
+			//TODO:
 //			setStepSize(null, prop);
-//			stepSize.setVisible(true);
-//			break;
-//		case TagNames.TIMEINC:
-//			setTimeIncrement(null, prop);
-//			timeIncrement.setVisible(true);
-//			break;
-//		case TagNames.WELLNR:
+			break;
+		case TagNames.TIMEINC:
+			element.getPixels().setTimeIncrement(new Time(Double.valueOf(value),tagUnit));
+			break;
+		case TagNames.WELLNR:
+			//TODO:
 //			setWellNr(null, prop);
-//			wellNr.setVisible(true);
-//			break;
-//		default:
-//			LOGGER.warn("[CONF] unknown tag: "+name );break;
-//		}
-//		
-//	}
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+tagName );break;
+		}
+		
+	}
 
 
 

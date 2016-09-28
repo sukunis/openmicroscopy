@@ -396,7 +396,20 @@ public void saveData()
 	
 	
 }
-
+public List<TagData> getChangedTags() {
+	List<TagData> list = new ArrayList<TagData>();
+	if(inputAt(preparationDate)) list.add(preparationDate);
+	if(inputAt(preparationDescription)) list.add(preparationDescription);
+	
+	if(inputAt(rawMaterialCode)) list.add(rawMaterialCode);
+	if(inputAt(rawMaterialDesc)) list.add(rawMaterialDesc);
+	if(inputAt(expGrid)) list.add(expGrid);
+	if(inputAt(expObjectNr)) list.add(expObjectNr);
+	if(inputAt(expObjectType)) list.add(expObjectType);
+	if(inputAt(gridBoxNumber)) list.add(gridBoxNumber);
+	if(inputAt(gridBoxType)) list.add(gridBoxType);
+	return list;
+}
 
 
 }

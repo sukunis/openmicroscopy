@@ -1,9 +1,14 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
+import java.util.List;
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
+import ome.units.unit.Unit;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.primitives.PercentFraction;
 
@@ -76,5 +81,35 @@ public class ImageEnvModel
 	public ImagingEnvironment getImgEnv()
 	{
 		return element;
+	}
+
+	public void update(List<TagData> changesImgEnv) {
+		for(TagData t: changesImgEnv){
+			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
+		}
+	}
+	
+	private void setTag(String name,String val,Unit unit)
+	{
+		switch (name) {
+		case TagNames.TEMP:
+			element.setTemperature(val.equals("") ?
+					null : new Temperature(Double.valueOf(val), unit));
+			break;
+		case TagNames.AIRPRESS:
+			element.setAirPressure(val.equals("") ? 
+					null : new Pressure(Double.valueOf(val),unit));
+			break;
+		case TagNames.HUMIDITY:
+			element.setHumidity(val.equals("")? 
+					null : new PercentFraction(Float.valueOf(val)/100));
+			break;
+		case TagNames.CO2:
+			element.setCO2Percent(val.equals("")?
+					null : new PercentFraction(Float.valueOf(val)/100));
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
 	}
 }

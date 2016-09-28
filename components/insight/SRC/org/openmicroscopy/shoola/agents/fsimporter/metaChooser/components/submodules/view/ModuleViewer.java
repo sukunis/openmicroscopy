@@ -38,6 +38,13 @@ public abstract class ModuleViewer extends JPanel
 	public abstract void saveData();
 	protected abstract void initTag(TagConfiguration t); 
 	
+	protected boolean inputAt(TagData tag)
+	{
+		if(tag != null && tag.valueChanged()){
+			return true;
+		}
+		return false;
+	}
 	
 	public boolean hasDataToSave() 
 	{
