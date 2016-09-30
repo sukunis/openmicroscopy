@@ -84,14 +84,13 @@ public class MetaDataView extends JPanel
     
     /**
      * Metadata GUI for file.
-     * @param sett GUI properties
      * @param fName file name
      * @param importData given import information for this data.
-	 * @param parentData given parent information for this data.
-	 * @param parentPanel parent JPanel of this component.
+     * @param parentData given parent information for this data.
+     * @param parentPanel parent JPanel of this component.
      */
-	public MetaDataView(CustomViewProperties sett,String fName,
-			ImportUserData importData, MetaDataModel parentData, JPanel parentPanel) throws Exception
+	public MetaDataView(String fName,ImportUserData importData,
+			MetaDataModel parentData, JPanel parentPanel) throws Exception
 	{
 		super(new BorderLayout());
 		this.setBorder(BorderFactory.createEmptyBorder());
@@ -110,7 +109,7 @@ public class MetaDataView extends JPanel
 		parentPanel.setCursor(cursor);
 		if(data==null){ 
 			readFile=false;
-			singleView=new MetaDataUI(sett);
+			singleView=new MetaDataUI(parentPanel); 
 			return ;
 		}
 
@@ -122,7 +121,7 @@ public class MetaDataView extends JPanel
 			LOGGER.info("[DATA] -- no series data");
 			seriesData=false;
 			// create with profile and hardware configurations
-			singleView=new MetaDataUI(sett);
+			singleView=new MetaDataUI(parentPanel);
 
 			// load importData
 			singleView.setImportData(importData);
@@ -153,7 +152,7 @@ public class MetaDataView extends JPanel
 						": "+data.getImageName(j)+"---------------------" );
 				reader.setSeries(j);
 				//new metaUI tab
-				MetaDataUI metaUI=new MetaDataUI(sett);
+				MetaDataUI metaUI=new MetaDataUI(parentPanel);
 
 				//load importData
 				metaUI.setImportData(importData);
@@ -208,8 +207,8 @@ public class MetaDataView extends JPanel
 	 * @param parentData given parent information for this dataset.
 	 * @param dirData metadata model for current directory
 	 */
-	public MetaDataView(CustomViewProperties sett, String name, 
-			ImportUserData importData, MetaDataModel parentData, MetaDataModel dirData)
+	public MetaDataView(String name, 
+			ImportUserData importData, MetaDataModel parentData, MetaDataModel dirData,JPanel parent)
 	{
 		super(new BorderLayout());
 		LOGGER.info("[GUI] -- select directory");
@@ -217,7 +216,7 @@ public class MetaDataView extends JPanel
 		
 		srcFile=null;
 		seriesData=false;
-		singleView= new MetaDataUI(sett);
+		singleView= new MetaDataUI(parent);
 		
 		//set importData
 		singleView.setImportData(importData);
@@ -308,10 +307,11 @@ public class MetaDataView extends JPanel
 			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
 			if(seriesData){
 				for(Component comp:cardPane.getComponents()){
-					((MetaDataUI) comp).save();
+//					((MetaDataUI) comp).save();
 					list.add(((MetaDataUI) comp).getModel());
 				}
 			}else{
+//				singleView.save();
 				list.add(singleView.getModel());
 			}
 			MetaDataModelObject obj=new MetaDataModelObject(seriesData,list);
@@ -327,16 +327,16 @@ public class MetaDataView extends JPanel
 	 * 
 	 * @return metaData model that holds a list of all series data models of current img data.
 	 */
-	public MetaDataModelObject getUpdatedModelObject() 
+	public MetaDataModelObject getSavedModelObject() 
 	{
 		try{
 			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
 			if(seriesData){
 				for(Component comp:cardPane.getComponents()){
-					list.add(((MetaDataUI) comp).getUpdatedModel());
+					list.add(((MetaDataUI) comp).getSavedModel());
 				}
 			}else{
-				list.add(singleView.getUpdatedModel());
+				list.add(singleView.getSavedModel());
 			}
 			MetaDataModelObject obj=new MetaDataModelObject(seriesData,list);
 
@@ -350,7 +350,7 @@ public class MetaDataView extends JPanel
 	/**
 	 * Save data from GUI to file.
 	 */
-	public void save() throws Exception
+	public void saveToFile() throws Exception
 	{
 		if(ome!=null){
 //			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
@@ -362,13 +362,13 @@ public class MetaDataView extends JPanel
 //				}
 				LOGGER.info("[SAVE] -- save series data to "+srcFile.getAbsolutePath());
 				System.out.println("Save series data");
-				SaveMetadata saver=new SaveMetadata(ome, getUpdatedModelObject(), null, srcFile);
+				SaveMetadata saver=new SaveMetadata(ome, getSavedModelObject(), null, srcFile);
 				saver.save();
 				
 			}else{
 				if(singleView!=null){
 					LOGGER.info("[SAVE] -- save single data to "+srcFile.getAbsolutePath());
-					SaveMetadata saver=new SaveMetadata(ome, singleView.getUpdatedModel(), null, srcFile);
+					SaveMetadata saver=new SaveMetadata(ome, singleView.getSavedModel(), null, srcFile);
 					saver.save();
 				}
 			}
@@ -377,7 +377,7 @@ public class MetaDataView extends JPanel
 			//dir
 			if(singleView!=null){
 				LOGGER.info("[SAVE] -- save model for directory");
-				singleView.getUpdatedModel();
+				singleView.getSavedModel();
 			}
 		}
 	}
@@ -438,7 +438,7 @@ public class MetaDataView extends JPanel
 				currentCardIndex=getCurrentCardIndex();
 			if(currentCardIndex!=-1){
 				MetaDataUI currentComp=(MetaDataUI) cardPane.getComponent(currentCardIndex);
-				MetaDataModel currentModel=currentComp.getUpdatedModel();
+				MetaDataModel currentModel=currentComp.getSavedModel();
 				if(currentComp.experimentUIInput() || currentComp.sampleUIInput())
 				{
 					for(Component comp:cardPane.getComponents()){

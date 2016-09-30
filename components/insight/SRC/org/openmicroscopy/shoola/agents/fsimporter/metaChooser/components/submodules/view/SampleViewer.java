@@ -342,10 +342,12 @@ public void saveData()
 	Sample sample=data.getSample();
 	//TODO input checker
 	try{sample.setPrepDate(preparationDate.getTagValue().equals("")? 
-			null : Timestamp.valueOf(preparationDate.getTagValue()));}
-	catch(Exception e){}
+			null : Timestamp.valueOf(preparationDate.getTagValue()));
+	preparationDate.dataSaved(true);
+	}catch(Exception e){}
 	try{
 		sample.setPrepDescription(preparationDescription.getTagValue());
+		preparationDescription.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE preparation description input");
 	}
@@ -353,6 +355,8 @@ public void saveData()
 		String g1=gridBoxNumber!=null ? gridBoxNumber.getTagValue() : null;
 		String g2=gridBoxType!=null ? gridBoxType.getTagValue(): null;
 		sample.setGridBoxData(g1, g2);
+		gridBoxNumber.dataSaved(true);
+		gridBoxType.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE grid box data input");
 		e.printStackTrace();
@@ -362,33 +366,35 @@ public void saveData()
 	observedSample.setSampleID(MetadataTools.createLSID("ObservedSample", 0));
 	try{
 		observedSample.setObjectNumber(expObjectNr!=null ? expObjectNr.getTagValue(): null);
+		expObjectNr.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE observed sample object nr input");
 	}
 	try{
 		observedSample.setObjectType(expObjectType!=null ? expObjectType.getTagValue():null);
+		expObjectType.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE observed sample object type input");
 	}
 	try{
 		observedSample.setGridNumberX(expGrid!=null ? expGrid.getTagValue(0):null);
-	}catch(Exception e){
-		LOGGER.error("[DATA] can't read SAMPLE observed sample grid number x input");
-	}
-	try{
 		observedSample.setGridNumberY(expGrid!=null ?expGrid.getTagValue(1):null);
+		expGrid.dataSaved(true);
 	}catch(Exception e){
-		LOGGER.error("[DATA] can't read SAMPLE observed sample grid number y input");
+		LOGGER.error("[DATA] can't read SAMPLE observed sample grid number x/y input");
 	}
+	
 	sample.setObservedSample(observedSample);
 	
 	try{
 		sample.setRawMaterialDesc(rawMaterialDesc!=null ? rawMaterialDesc.getTagValue():null); 
+		rawMaterialDesc.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE raw material description input");
 	}
 	try{
 		sample.setRawMaterialCode(rawMaterialCode!=null ? rawMaterialCode.getTagValue():null); 
+		rawMaterialCode.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE raw material code input");
 	}

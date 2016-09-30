@@ -105,13 +105,19 @@ public class SampleModel
 	{
 		return element;
 	}
-	public void update(List<TagData> changesSample) {
+	public void update(List<TagData> changesSample) 
+	{
+		
+		if(changesSample==null)
+			return;
+		System.out.println("# SampleModel::update()");
 		for(TagData t: changesSample){
 			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
 		}		
 	}
 	private void setTag(String name,String val,Unit unit)
 	{
+		System.out.println("\t...update "+name+" : "+val);
 		switch (name) {
 		case TagNames.PREPDATE:// no pre value possible
 			element.setPrepDate(val.equals("")? 

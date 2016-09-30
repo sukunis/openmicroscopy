@@ -386,12 +386,14 @@ For example in a video stream.
 
 		try{
 			image.setName(name.getTagValue());
+			name.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE name input");
 		}
 		try{
 			image.setAcquisitionDate(acqTime.getTagValue().equals("") ? 
 					null : Timestamp.valueOf(acqTime.getTagValue()));
+			acqTime.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE acquisition date input");
 		}
@@ -401,18 +403,21 @@ For example in a video stream.
 
 			image.getPixels().setSizeY(dimXY.getTagValue(1).equals("") ?
 					null : PositiveInteger.valueOf(dimXY.getTagValue(1)));
+			dimXY.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE dimension x,y input");
 		}
 		try{
 			image.getPixels().setType(pixelType.getTagValue().equals("") ?
 					null : PixelType.fromString(pixelType.getTagValue()));
+			pixelType.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE pixel type input");
 		}
 		try{
 			image.getPixels().setPhysicalSizeX(parseToLength(pixelSize.getTagValue(0),pixelSize.getTagUnit()));
 			image.getPixels().setPhysicalSizeY(parseToLength(pixelSize.getTagValue(1),pixelSize.getTagUnit()));
+			pixelSize.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE pixel size input");
 		}
@@ -424,12 +429,14 @@ For example in a video stream.
 					null : PositiveInteger.valueOf(dimZTC.getTagValue(1)));
 			image.getPixels().setSizeC(dimZTC.getTagValue(2).equals("")?
 					null : PositiveInteger.valueOf(dimZTC.getTagValue(2)));
+			dimZTC.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE dimension z,t,c input");
 		}
 		try{
 			image.getPixels().setTimeIncrement(timeIncrement.getTagValue().equals("")?
 					null : new Time(Double.valueOf(timeIncrement.getTagValue()),timeIncrement.getTagUnit()));
+			timeIncrement.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE time increment input");
 		}
@@ -438,6 +445,7 @@ For example in a video stream.
 		try {
 			image.getStageLabel().setX(parseToLength(stagePos.getTagValue(0),stagePos.getTagUnit()));
 			image.getStageLabel().setY(parseToLength(stagePos.getTagValue(1),stagePos.getTagUnit()));
+			stagePos.dataSaved(true);
 		} catch (Exception e) {
 			LOGGER.error("[DATA] can't read IMAGE stage position input");
 		}

@@ -44,11 +44,21 @@ public class MetaDataModelObject
 		this.list = list;
 	}
 	
+	
+
+	// TODO: at the moment not for series data
+	public void updateData(MetaDataModelObject newData) throws Exception 
+	{
+		List<MetaDataModel> modelList_new=newData.getList();
+		list.get(0).updateData(modelList_new.get(0));
+	}
+
+
 	/**
 	 * 
-	 * @return true, if some changes of datas available
+	 * @return true if model has notice user input/changes on tags
 	 */
-	public boolean hasToUpdate()
+	public boolean hasBeenModified() 
 	{
 		boolean res=false;
 		if(list==null || list.isEmpty()){
@@ -60,22 +70,14 @@ public class MetaDataModelObject
 		return res;
 	}
 
-	// TODO: at the moment not for series data
-	public void updateData(MetaDataModelObject newData) throws Exception 
+	public void clearListOfModifications() 
 	{
-		List<MetaDataModel> modelList_new=newData.getList();
-		list.get(0).updateData(modelList_new.get(0));
-	}
-
-	
-
-	public void isUpToDate(boolean b) 
-	{
-//		System.out.println("# MetaDataModel::isUpToDate("+b+")");
-//		if(list==null || list.isEmpty())
-//			return;
-//		for(MetaDataModel m:list){
-//			m.isUpToDate(b);
-//		}
+		if(list==null || list.isEmpty()){
+			return;
+		}
+		for(MetaDataModel m: list){
+			m.setDataChange(false);
+		}
+		
 	}
 }

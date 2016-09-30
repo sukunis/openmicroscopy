@@ -84,6 +84,9 @@ public class ImageEnvModel
 	}
 
 	public void update(List<TagData> changesImgEnv) {
+		if(changesImgEnv==null)
+			return;
+		System.out.println("# ImgEnvModel::update()");
 		for(TagData t: changesImgEnv){
 			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
 		}
@@ -91,6 +94,7 @@ public class ImageEnvModel
 	
 	private void setTag(String name,String val,Unit unit)
 	{
+		System.out.println("\t...update "+name+" : "+val);
 		switch (name) {
 		case TagNames.TEMP:
 			element.setTemperature(val.equals("") ?

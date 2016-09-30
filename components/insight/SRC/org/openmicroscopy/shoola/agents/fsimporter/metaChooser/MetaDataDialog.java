@@ -224,6 +224,8 @@ private boolean hardwareDataVisible;
     
     private static final int CMD_VIEWFILE=10;
     private static final int CMD_VIEWDIR=11;
+
+	public static final String CHANGE_CUSTOMSETT = "changesCustomSettings";
     
     
     
@@ -730,13 +732,16 @@ private boolean hardwareDataVisible;
     		viewFileDataButton.setSelected(true);
     	}
 
+    	// TODO: new View with available model
     	// if a view still available
     	MetaDataView view=node.getView();
 
     	// is selection a file or directory
     	if(file.equals("")){
     		if(node.hasModelObject()){
-    			view = node.getView();
+//    			view = node.getView();
+    			view = loadAndShowDataForDirectory(node, file, importData,
+    					null, view);
     		}else{
     			view = loadAndShowDataForDirectory(node, file, importData,
     					parentModel, view);
@@ -795,7 +800,7 @@ private boolean hardwareDataVisible;
 		String hasParentModel=parentModel==null ? "null" : "available";
 		LOGGER.debug("load and show data for file: parentModel="+hasParentModel);
 		
-		    view = new MetaDataView(customSettings, file, importData, parentModel,this);
+		    view = new MetaDataView(file, importData, parentModel, this);
 		    view.setVisible();
 		return view;
 	}
@@ -822,7 +827,7 @@ private boolean hardwareDataVisible;
 		LOGGER.debug("load and show data for directory: parentModel="+hasParentModel
 				+", current model = "+hasCurrentModel);
 		try {
-		    view = new MetaDataView(customSettings, file, importData, parentModel, currentDirModel);
+		    view = new MetaDataView(file, importData, parentModel, currentDirModel,this);
 		    view.setVisible();
 		} catch (Exception e) {
 //				catch (DependencyException | ServiceException e) {
@@ -891,7 +896,7 @@ private boolean hardwareDataVisible;
 
         MetaDataView dataView=null;
         try {
-            dataView=new MetaDataView(customSettings, node.getAbsolutePath(), importData, parentModel,this);
+            dataView=new MetaDataView(node.getAbsolutePath(), importData, parentModel, this);
         } catch (Exception e) {
             return null;
         }
@@ -904,13 +909,13 @@ private boolean hardwareDataVisible;
     private void saveInputToModel(FNode node) 
     {
     	if(node!=null){
-    		if(node.getView()!=null && node.getView().getModelObject()!=null &&node.getView().hasUserInput()){
-    			System.out.println("# MeatDataDialog:: saveInputToModel("+node.getAbsolutePath()+") -- save");
-    			LOGGER.debug("[SAVE] -- SAVE MODEL FOR: "+node.getAbsolutePath());
-    			node.setModelObject(((MetaDataView) node.getView()).getModelObject());
-    			updateChildDirectories(node);
-    		}else{
-    			System.out.println("# MeatDataDialog:: saveInputToModel("+node.getAbsolutePath()+")-- nothing to save");
+    		// save input
+    		node.saveModel();
+    		// has data saved?
+    		if(node.getModelObject()!=null && node.getModelObject().hasBeenModified()){ 
+    			LOGGER.debug("Update childs of "+node.getAbsolutePath());
+    			System.out.println("# MeatDataDialog:: saveInputToModel("+node.getAbsolutePath()+")-- update childs");
+    			updateChildsOfDirectory(node);
     		}
     	}
     }
@@ -919,23 +924,24 @@ private boolean hardwareDataVisible;
      * Update all childs of type directory with existing model with tags changes
      * @param node
      */
-    private void updateChildDirectories(FNode node) 
+    private void updateChildsOfDirectory(FNode node) 
     {
     	System.out.println("# MetaDataDialog::updateChildDirectories("+node.getAbsolutePath()+")");
 		int numChilds=node.getChildCount();
 		for(int i=0; i<numChilds;i++){
 			FNode child = (FNode) node.getChildAt(i);
-			if(child.hasModelObject()){
+			if(child.hasModelObject() && node.hasModelObject()){
 				System.out.println("\t ...update "+child.getAbsolutePath());
 				LOGGER.debug("Update "+child.getAbsolutePath());
 				try {
 					child.getModelObject().updateData(node.getModelObject());
+					node.getModelObject().clearListOfModifications();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				if(!child.isLeaf()){
-					updateChildDirectories(child);
+					updateChildsOfDirectory(child);
 				}
 			}
 		}
@@ -951,7 +957,7 @@ private boolean hardwareDataVisible;
     	
 		if(node.getView()!=null){
 			LOGGER.debug("[Save] -- save gui model for: "+node.getAbsolutePath());
-			node.setModelObject(((MetaDataView) node.getView()).getUpdatedModelObject());
+			node.setModelObject(((MetaDataView) node.getView()).getSavedModelObject());
 		}else{
 			// save model of parent
 			FNode parent=(FNode) node.getParent();
@@ -1314,6 +1320,7 @@ private boolean hardwareDataVisible;
             customSettings=profileWriter.getProperties();
             //TODO reload current view if changes
             loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
+            firePropertyChange(CHANGE_CUSTOMSETT, null, customSettings);
             break;
         case CMD_SPECIFICATION:
             LOGGER.info("[GUI-ACTION] -- load specification file");
@@ -1398,14 +1405,14 @@ private boolean hardwareDataVisible;
     {
         LOGGER.info("[DEBUG] -- save node "+srcFile);
         
-        ((MetaDataView)metaPanel.getComponent(0)).save();
+        ((MetaDataView)metaPanel.getComponent(0)).saveToFile();
     }
     
     private void saveMetadataForNode(String srcFile,MetaDataView view)
     {
         LOGGER.debug("[SAVE] -- save node "+srcFile);
         try {
-			view.save();
+			view.saveToFile();
 		} catch (Exception e) {
 			LOGGER.error("Can't save metadata for "+srcFile);
 			LOGGER.debug(e.getStackTrace().toString());
@@ -1520,7 +1527,10 @@ private boolean hardwareDataVisible;
 		
 	} 
 
-
+	public CustomViewProperties getCustomViewProperties()
+	{
+		return customSettings;
+	}
     
     
 

@@ -46,10 +46,10 @@ import ome.xml.model.Plane;
 import ome.xml.model.StructuredAnnotations;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ImportUserData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataControl;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
@@ -57,6 +57,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.module
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneSliderCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ChannelViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
@@ -187,12 +188,22 @@ public class MetaDataUI extends JPanel
 
 	public static final String CHANGE_LSDATA = "changesLightSrcData";
 	
-	public MetaDataUI(CustomViewProperties sett)
+	public MetaDataUI(JPanel parent)
 	{
 		
 		this.setBorder(BorderFactory.createEmptyBorder());
-		customSett=sett;
+		customSett=((MetaDataDialog) parent).getCustomViewProperties();
 		
+		resetInitialisation();
+		
+		// create model
+		model=new MetaDataModel();
+		initModelComponents();
+		control=new MetaDataControl(model,this);
+	}
+	
+	private void resetInitialisation()
+	{
 		componentsInit=false;
 		
 		initChannelUI=false;
@@ -205,11 +216,13 @@ public class MetaDataUI extends JPanel
 		initImageEnvUI=false;
 		initSampleUI=false;
 		initExperimentUI=false;
-		
-		// create model
-		model=new MetaDataModel();
+	}
+	
+	public void resetCustomSettings(CustomViewProperties sett)
+	{
+		System.out.println("# MetaDataUI::resetCustomSettings()");
+		customSett=sett;
 		initModelComponents();
-		control=new MetaDataControl(model,this);
 	}
 	
 	/** init modul components respective to settings*/ 
@@ -281,7 +294,7 @@ public class MetaDataUI extends JPanel
 		return model;
 	}
 	/** return model object*/
-	public MetaDataModel getUpdatedModel() throws Exception
+	public MetaDataModel getSavedModel() throws Exception
 	{
 		//read input data
 		save();
@@ -1410,17 +1423,25 @@ public class MetaDataUI extends JPanel
 	{
 		boolean result=false;
 		
-		if(initImageUI && imageUI!=null)
-			result=result || imageUI.hasDataToSave();
-		if(initExperimentUI && experimentUI!=null)
-			result=result || experimentUI.hasDataToSave();
-		if(initObjectiveUI && objectiveUI!=null)
-			result=result || objectiveUI.hasDataToSave();
-		if(initSampleUI && sampleUI!=null)
-			result = result || sampleUI.hasDataToSave();
-		if(initImageEnvUI && imgEnvViewer!=null)
-			result=result || imgEnvViewer.hasDataToSave();
-		
+		if(initImageUI && imageUI!=null){
+			result=result || imageUI.hasDataToSave() || model.getChangesImage()!=null;
+		}
+		if(initExperimentUI && experimentUI!=null){
+			result=result || experimentUI.hasDataToSave() || model.getChangesExperiment()!=null;
+			System.out.println("\t ... Experiment : changed data - "+
+			(experimentUI.hasDataToSave()||model.getChangesExperiment()!=null));
+		}
+		if(initObjectiveUI && objectiveUI!=null){
+			result=result || objectiveUI.hasDataToSave()|| model.getChangesObject()!=null;
+		}
+		if(initSampleUI && sampleUI!=null){
+			result = result || sampleUI.hasDataToSave()|| model.getChangesSample()!=null;
+			System.out.println("\t ... Sample : changed data - "+
+			(sampleUI.hasDataToSave()||model.getChangesSample()!=null));
+		}
+		if(initImageEnvUI && imgEnvViewer!=null){
+			result=result || imgEnvViewer.hasDataToSave() || model.getChangesImgEnv()!=null;
+		}
 		
 		if(initChannelUI  && model.getNumberOfChannels()>0){
 			if(channelTab!=null){
@@ -1435,14 +1456,14 @@ public class MetaDataUI extends JPanel
 			if(initLightSrcUI )
 				result=result || lightSrcInput;
 		}else{
-			if(initChannelUI && channelTab!=null)
+			if(initChannelUI && channelTab!=null && channelTab.getTabCount()>0)
 				result=result || ((ChannelViewer) channelTab.getTabComponentAt(0)).hasDataToSave();
 			if(initDetectorUI && detectorViewer!=null)
-				result=result || detectorViewer.hasDataToSave();
+				result=result || detectorViewer.hasDataToSave() || model.getChangesDetector()!=null;
 			if(initLightPathUI && lightPathViewer!=null)
 				result=result || lightPathViewer.hasDataToSave();
 			if(initLightSrcUI && lightSrcViewer!=null)
-				result=result || lightSrcViewer.hasDataToSave();
+				result=result || lightSrcViewer.hasDataToSave()||model.getChangesLightSrc()!=null;
 		}
 		
 		model.setDataChange(result);
@@ -1451,38 +1472,50 @@ public class MetaDataUI extends JPanel
 
 	public void save() 
 	{
+		System.out.println("# MetaDataUI::save()");
 		if(imageUI!=null && imageUI.hasDataToSave()){
 			List<TagData> list=imageUI.getChangedTags();
+			printList("Image",list);
 			imageUI.saveData();
-			firePropertyChange(CHANGE_IMGDATA, null, list);
+			model.setChangesImage(list);
+//			firePropertyChange(CHANGE_IMGDATA, null, list);
 		}
 		if(experimentUI!=null && experimentUI.hasDataToSave()){
 			List<TagData> list=experimentUI.getChangedTags();
 			experimentUI.saveData();
-			firePropertyChange(CHANGE_EXPDATA,null,list);
+			model.setChangesExperiment(list);
+//			firePropertyChange(CHANGE_EXPDATA,null,list);
 		}
 		if(sampleUI!=null && sampleUI.hasDataToSave()){
 			List<TagData> list=sampleUI.getChangedTags();
+			printList("Sample",list);
 			sampleUI.saveData();
-			firePropertyChange(CHANGE_SAMPLEDATA, null, list);
+			model.setChangesSample(list);
+//			firePropertyChange(CHANGE_SAMPLEDATA, null, list);
 		}
 		if(objectiveUI!=null && objectiveUI.hasDataToSave()){
 			List<TagData> list=objectiveUI.getChangedTags();
 			objectiveUI.saveData();
-			firePropertyChange(CHANGE_OBJDATA, null, list);
+			model.setChangesObject(list);
+//			firePropertyChange(CHANGE_OBJDATA, null, list);
 		}
 		if(imgEnvViewer!=null && imgEnvViewer.hasDataToSave()){
 			List<TagData> list=imgEnvViewer.getChangedTags();
 			imgEnvViewer.saveData();
-			firePropertyChange(CHANGE_IMGENVDATA, null, list);
+			model.setChangesImageEnv(list);
+//			firePropertyChange(CHANGE_IMGENVDATA, null, list);
 		}
 		
 		
-		
-		for(int i=0; i<channelTab.getTabCount(); i++)
-		{
-			if(((ChannelViewer) channelTab.getTabComponentAt(i)).hasDataToSave())
-				((ChannelViewer) channelTab.getTabComponentAt(i)).saveData();
+		if(channelTab!=null && channelTab.getTabCount()>0){
+			for(int i=0; i<channelTab.getTabCount(); i++)
+			{
+				if(channelTab.getTabComponentAt(i) instanceof ChannelViewer){
+					if(((ChannelViewer) channelTab.getTabComponentAt(i)).hasDataToSave())
+						((ChannelViewer) channelTab.getTabComponentAt(i)).saveData();
+				}
+				
+			}
 		}
 		// save selected component, other saved by deselect the channel
 		if(detectorViewer!=null && detectorViewer.hasDataToSave()){
@@ -1506,6 +1539,14 @@ public class MetaDataUI extends JPanel
 
 
 	
+	private void printList(String string, List<TagData> list) 
+	{
+		System.out.println("\t Changes in "+string);
+		for(TagData t:list){
+			System.out.println("\t\t "+t.getTagName()+" = "+t.getTagValue());
+		}
+	}
+
 	public boolean experimentUIInput()
 	{
 		return experimentUI.hasDataToSave();

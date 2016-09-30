@@ -2,13 +2,8 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.DateFormat;
@@ -20,45 +15,23 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.control.DatePicker;
-import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.ListCellRenderer;
-import javax.swing.UIManager;
-import javax.swing.plaf.ColorUIResource;
-import javax.swing.text.JTextComponent;
-
 import loci.common.DateTools;
 import ome.units.UNITS;
 import ome.units.unit.Unit;
 import ome.xml.model.Experimenter;
-import ome.xml.model.primitives.Timestamp;
-
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.joda.time.format.DateTimeFormat;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ScrollablePanel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
-import org.openmicroscopy.shoola.util.ui.UIUtilities;
 import org.slf4j.LoggerFactory;
 
 public class TagData 
@@ -297,6 +270,28 @@ public class TagData
 		visible=false;
 	}
 
+	
+	/**
+	 * Returns <code>true</code> if the data object has been edited,
+	 * <code>false</code> otherwise.
+	 * @see AnnotationUI#hasDataToSave()
+	 */
+//	public boolean hasDataToSave()
+//	{
+//		if (model.isMultiSelection()) 
+//		    return false;
+//		
+//		String oldVal = originalVal;
+//		String value = descriptionWiki.getText();
+//		value = value.trim();
+//		if (name == null) return value.length() != 0;
+//		name = OMEWikiComponent.prepare(name.trim(), true);
+//		value = OMEWikiComponent.prepare(value.trim(), true);
+//		if (DEFAULT_DESCRIPTION_TEXT.equals(name) && 
+//				DEFAULT_DESCRIPTION_TEXT.equals(value)) return false;
+//		return !name.equals(value);
+//	}
+	
 	private void initTimeStampField() 
 	{
 //		inputField = Box.createHorizontalBox();

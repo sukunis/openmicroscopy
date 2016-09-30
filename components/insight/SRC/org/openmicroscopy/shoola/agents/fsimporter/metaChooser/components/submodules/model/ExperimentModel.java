@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.List;
 import loci.formats.FormatException;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterListModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
@@ -309,17 +308,25 @@ public class ExperimentModel {
 
 	public void update(List<TagData> changesExperiment) throws Exception 
 	{
+		if(changesExperiment==null)
+			return;
+		System.out.println("# ExperimentModel::update()");
 		for(TagData t: changesExperiment){
 			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
 		}
 	}
 	private void setTag(String name,String val,Unit unit) throws Exception
 	{
+		System.out.println("\t...update "+name+" : "+val);
 		switch (name) {
 		case TagNames.TYPE:
+			if(experiment==null)
+				experiment=new Experiment();
 			experiment.setType(getExperimentType(val));
 			break;
 		case TagNames.DESC:
+			if(experiment==null)
+				experiment=new Experiment();
 			experiment.setDescription(val);
 			break;
 			//Set by system

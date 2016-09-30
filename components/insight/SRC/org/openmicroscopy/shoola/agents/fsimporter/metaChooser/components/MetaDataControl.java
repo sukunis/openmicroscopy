@@ -17,6 +17,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.LayerUI;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
@@ -28,6 +29,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.module
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.SampleCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
@@ -43,19 +45,19 @@ public class MetaDataControl implements PropertyChangeListener
 		this.view=view;
 	}
 
-	public JPanel showData()
-	{
-		JPanel pane=new JPanel();
-		
-		try {
-//			if(model.initObjective())showObjectiveData();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return pane;
-	}
+//	public JPanel showData()
+//	{
+//		JPanel pane=new JPanel();
+//		
+//		try {
+////			if(model.initObjective())showObjectiveData();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		return pane;
+//	}
 	
 //	private void showObjectiveData() throws Exception
 //	{
@@ -82,33 +84,35 @@ public class MetaDataControl implements PropertyChangeListener
 	private void handlePropertyChangedEvent(PropertyChangeEvent evt) 
 	{
 		String name=evt.getPropertyName();
-		switch(name){
-		case MetaDataUI.CHANGE_IMGDATA:
-			model.setChangesImage((List<TagData>) evt.getNewValue());
-			break;
-		case MetaDataUI.CHANGE_IMGENVDATA:
-			model.setChangesImageEnv((List<TagData>) evt.getNewValue());
-			break;
-		case MetaDataUI.CHANGE_OBJDATA:
-			model.setChangesObject((List<TagData>) evt.getNewValue());
-			break;
-		case MetaDataUI.CHANGE_DETDATA:
-			model.setChangesDetector((List<TagData>) evt.getNewValue());
-			break;
-		case MetaDataUI.CHANGE_LSDATA:
-			model.setChangesLightSrc((List<TagData>) evt.getNewValue());
-			break;
-		case MetaDataUI.CHANGE_SAMPLEDATA:
-			model.setChangesSample((List<TagData>) evt.getNewValue());
-			break;
-		case MetaDataUI.CHANGE_EXPDATA:
-			model.setChangesExperiment((List<TagData>) evt.getNewValue());
-			break;
-//		case MetaDataUI.CHANGE_LPGDATA:
+//		switch(name){
+//		case MetaDataUI.CHANGE_IMGDATA:
 //			model.setChangesImage((List<TagData>) evt.getNewValue());
 //			break;
-			default:break;
-		}
+//		case MetaDataUI.CHANGE_IMGENVDATA:
+//			model.setChangesImageEnv((List<TagData>) evt.getNewValue());
+//			break;
+//		case MetaDataUI.CHANGE_OBJDATA:
+//			model.setChangesObject((List<TagData>) evt.getNewValue());
+//			break;
+//		case MetaDataUI.CHANGE_DETDATA:
+//			model.setChangesDetector((List<TagData>) evt.getNewValue());
+//			break;
+//		case MetaDataUI.CHANGE_LSDATA:
+//			model.setChangesLightSrc((List<TagData>) evt.getNewValue());
+//			break;
+//		case MetaDataUI.CHANGE_SAMPLEDATA:
+//			model.setChangesSample((List<TagData>) evt.getNewValue());
+//			break;
+//		case MetaDataUI.CHANGE_EXPDATA:
+//			model.setChangesExperiment((List<TagData>) evt.getNewValue());
+//			break;
+////		case MetaDataUI.CHANGE_LPGDATA:
+////			model.setChangesImage((List<TagData>) evt.getNewValue());
+////			break;
+//		case MetaDataDialog.CHANGE_CUSTOMSETT:
+//			view.resetCustomSettings((CustomViewProperties) evt.getNewValue());
+//			default:break;
+//		}
 		
 			
 	}

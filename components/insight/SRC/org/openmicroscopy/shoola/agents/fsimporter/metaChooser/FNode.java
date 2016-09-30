@@ -130,6 +130,17 @@ public class FNode extends DefaultMutableTreeNode
 		this.view = view;
 	}
 	
+	/**
+	 * Save model if view exists.
+	 */
+	public void saveModel() 
+	{
+		if(view==null)
+			return;
+
+		modelObj = view.getSavedModelObject();
+	}
+	
 //	public void addFiles(int showHidden) {
 //		File[] files = getFile().listFiles();
 //		for (File f : files) {

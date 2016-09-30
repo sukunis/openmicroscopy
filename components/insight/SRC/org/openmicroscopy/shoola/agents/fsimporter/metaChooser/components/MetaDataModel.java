@@ -25,7 +25,6 @@ import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.FilterType;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
@@ -42,6 +41,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.module
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.SampleCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ChannelModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightPathModel;
@@ -72,7 +72,6 @@ public class MetaDataModel
 	/** list of all lightSrc for current image */
 	private List<LightSource> lightSrcOrigList;
 	
-	private boolean userInput;
 	
 	
 	//-----------------------------------------
@@ -110,11 +109,6 @@ public class MetaDataModel
 	
 	//TODO
 //	private ElementsCompUI stage;
-	
-	
-	// list of component with changes
-	private List<Object> componentsWithChanges;
-	
 	private Image imageOME;
 	private int imageIndex;
 	
@@ -137,7 +131,6 @@ public class MetaDataModel
 	
 	public MetaDataModel()
 	{
-		userInput=false;
 		imageIndex=-1;
 		
 		channelModel=null;
@@ -146,39 +139,12 @@ public class MetaDataModel
 		
 		lightPathModel=null;
 		
-		componentsWithChanges=new ArrayList<Object>();
 		
 		imgModel=new ImageModel();
 		
 	}
 
-	public void clearData()
-	{
-		imageIndex=-1;
-		
-		imageOME=null;
-		ome=null;
-		imgModel=null;
-		
-		expModel=null;
-		sampleModel=null;
-		objModel=null;
-		imgEnvModel=null;
-		planeSliderUI=null;
-		
-		filterList=null;
-		dichroicList=null;
-//		linkedChannelForDichroic=null;
-//		linkedChannelForFilter=null;
-		
-		channelModel=null;
-		planeList=new ArrayList<ElementsCompUI>();
-		lightSrcModel=null;
-		detectorModel=null;
-		
-		lightPathModel=null;
-		componentsWithChanges=new ArrayList<Object>();
-	}
+	
 	
 	public void resetData()
 	{
@@ -200,10 +166,7 @@ public class MetaDataModel
 	
 	
 	
-	public List<Object> getComponentsForUpdate()
-	{
-		return componentsWithChanges;
-	}
+	
 	
 //	public void setImageProp(int imgIdx, int _numOfChannels)
 //	{
@@ -1104,101 +1067,10 @@ public class MetaDataModel
 		return planeList!=null ? planeList.size():0;
 	}
 
-	
-
-//	public void isUpToDate(boolean b) 
-//	{
-////		for(Object o: componentsWithChanges){
-////			if(o instanceof ElementsCompUI){
-////				System.out.println("Set "+o.getClass().getSimpleName() + " as updated");
-////				((ElementsCompUI) o).isUpToDate(b);
-////			}else if(o instanceof List){
-////				for(ElementsCompUI e :(List<ElementsCompUI>) o){
-////					e.isUpToDate(b);
-////				}
-////			}
-////		}
-////		try{
-////			image.isUpToDate(b);
-////		}catch(Exception e){}
-//		try{
-//			imgEnvUI.isUpToDate(b);
-//		}catch(Exception e){}
-//		try{
-//			for(ElementsCompUI e :planeList){
-//				e.isUpToDate(b);
-//			}
-//		}catch(Exception e){}
-//		try{
-//			objectiveUI.isUpToDate(b);
-//		}catch(Exception e){}
-//		try{
-//			for(ElementsCompUI e :detectorList){
-//				e.isUpToDate(b);
-//			}
-//		}catch(Exception e){}
-//		try{
-//			for(ElementsCompUI e :lightSrcList){
-//				e.isUpToDate(b);
-//			}
-//		}catch(Exception e){}
-//		try{
-//			for(ElementsCompUI e :channelList){
-//				e.isUpToDate(b);
-//			}
-//		}catch(Exception e){}
-//		try{
-//			for(ElementsCompUI e :lightPathList){
-//				e.isUpToDate(b);
-//			}
-//		}catch(Exception e){}
-//		try{
-//			sampleUI.isUpToDate(b);
-//		}catch(Exception e){}
-//		try{
-//			experimentUI.isUpToDate(b);
-//		}catch(Exception e){}
-//		
-//		componentsWithChanges.clear();
-//	}
-	
 	/**
-	 * Only for directories model! There are only one detector, channel, lightSrc, no planes
-	 * @param o
+	 * Set list of modified tags for image view
+	 * @param list
 	 */
-//	protected void updateComponentsOfDirModel(Object o) 
-//	{
-//		List<TagData> tagList=o.getActiveTags();
-//		
-//		if(tagList==null){
-//			System.out.println(o.getClass().getName()+": No tags available for update");
-//			return;
-//		}
-//		
-//		if(o instanceof ExperimentCompUI)
-//			experimentUI.update(tagList);
-//		else if(o instanceof ImageModel){
-//			imgModel.update(((ImageModel) o).getChangedTags());
-//		}
-//		else if(o instanceof ImagingEnvironmentCompUI)
-//			imgEnvUI.update(tagList);
-//		else if(o instanceof ObjectiveCompUI)
-//			objectiveUI.update(tagList);
-//		else if(o instanceof SampleCompUI)
-//			sampleUI.update(tagList);
-//		else if(o instanceof DetectorCompUI)
-//			detectorList.get(0).update(tagList);
-//		else if(o instanceof ChannelCompUI)
-//			channelList.get(0).update(tagList);
-//		else if(o instanceof LightSourceCompUI){
-//			lightSrcList.get(0).update(tagList);
-//		}
-//		else if(o instanceof LightPathCompUI)
-//			lightPathList.get(0).update(tagList);
-//	}
-
-
-
 	public void setChangesImage(List<TagData> list)
 	{
 		changesImg=list;
@@ -1215,26 +1087,65 @@ public class MetaDataModel
 	{
 		if(metaDataModel==null)
 			return;
-		System.out.println("# MetaDataModel::updateData()");
-		imgModel.update(metaDataModel.getChangesImage());
-		imgEnvModel.update(metaDataModel.getChangesImgEnv());
+		
+		if(imageOME==null){
+			//update all modules
+			System.out.println("# MetaDataModel::updateData() -- DIR");
+			update(metaDataModel,0);
+		}else{
+			System.out.println("# MetaDataModel::updateData() -- FILE");
+			if(getNumberOfChannels()>1){
+				
+			}else{
+				update(metaDataModel,0);
+			}
+		}
+		
+		
+	}
+	
+	private void update(MetaDataModel metaDataModel,int index) throws Exception
+	{
+		if(imgModel!=null)imgModel.update(metaDataModel.getChangesImage());
+		if(imgEnvModel!=null)imgEnvModel.update(metaDataModel.getChangesImgEnv());
 //		objModel.update(metaDataModel.getChangesObject());
 //		detectorModel.update(metaDataModel.getChangesDetector());
 //		lightSrcModel.update(metaDataModel.getChangesLightSrc());
-		sampleModel.update(metaDataModel.getChangesSample()); 
-		expModel.update(metaDataModel.getChangesExperiment());
+		if(sampleModel!=null)sampleModel.update(metaDataModel.getChangesSample()); 
+		if(expModel!=null)expModel.update(metaDataModel.getChangesExperiment());
 	}
 
 	
-	
-	public void setDataChange(boolean changes)
+	/**
+	 * Clear list of changes if status=false
+	 * @param changes
+	 */
+	public void setDataChange(boolean status)
 	{
-		userInput=changes;
+		if(!status){
+			// reset state
+			changesImg=null;
+			changesImgEnv=null;
+			changesObj=null;
+			changesDetector=null;
+			changesLightSrc=null;
+			changesSample=null;
+			changesExperiment=null;
+		}
 	}
 	
 	public boolean noticUserInput()
 	{
-		return userInput;
+		boolean res=false;
+		res=res || (changesImg!=null && !changesImg.isEmpty())
+				|| (changesImgEnv!=null && !changesImgEnv.isEmpty())
+				|| (changesObj!=null && !changesObj.isEmpty())
+				|| (changesDetector!=null && !changesDetector.isEmpty())
+				|| (changesLightSrc!=null && !changesLightSrc.isEmpty())
+				|| (changesSample!=null && !changesSample.isEmpty())
+				|| (changesExperiment!=null && !changesExperiment.isEmpty());
+				
+		return res;
 	}
 
 	public void setChangesImageEnv(List<TagData> newValue) {
