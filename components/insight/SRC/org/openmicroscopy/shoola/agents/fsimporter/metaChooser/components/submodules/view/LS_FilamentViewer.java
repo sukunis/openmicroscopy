@@ -65,10 +65,26 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 	}
 
 	@Override
-	public void saveData() {
-		Filament lightSrc=(Filament) data.getLightSource(index);
-		if(lightSrc==null)
+	public void saveData() 
+	{
+		if(data==null)
+			data=new LightSourceModel();
+		
+		Filament lightSrc=null;
+		try{
+			lightSrc=	(Filament) data.getLightSource(index);
+		}catch(ClassCastException e){
+			System.out.println("\t...overwrite lightSrc with another type of lightSrc.");
+		}
+		if(lightSrc==null){
 			lightSrc=new Filament();
+			try {
+				data.addData(lightSrc, true, index);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		try{
 			((Filament)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 

@@ -64,6 +64,7 @@ public class LightSourceModel
 	 */
 	public void addData(LightSource newElem,boolean overwrite,int i) throws Exception
 	{
+		System.out.println("# LightSrcModel::addData() listSize: "+element.size());
 		if(element.size()<=i){
 			switch(newElem.getClass().getSimpleName()){
 			case LASER: expandList(element.size(),i,new Laser());break;
@@ -71,7 +72,7 @@ public class LightSourceModel
 			case FILAMENT: expandList(element.size(),i,new Filament());break;
 			case GENERIC_EXCITATION:expandList(element.size(),i,new GenericExcitationSource());break;
 			case LIGHT_EMITTING_DIODE: expandList(element.size(),i,new LightEmittingDiode());break;
-			default: break;
+			default: System.out.println("\t...unknown type");break;
 			}
 			
 		}
@@ -92,8 +93,10 @@ public class LightSourceModel
 	 */
 	public void addData(LightSourceSettings newElem,boolean overwrite,int i) throws Exception
 	{
-		if(element.size()<=i){
-			LOGGER.warn("No lightSrc available for given lightSrcSettings "+i);
+		if(settings.size()<=i){
+			for(int j=settings.size();j<i+1;j++){
+				settings.add(new LightSourceSettings());
+			}
 		}
 		if(overwrite){
 			replaceData(newElem,i);
@@ -305,7 +308,10 @@ public class LightSourceModel
 		return availableElem;
 	}
 
-	public LightSource getLightSource(int i) {
+	public LightSource getLightSource(int i) 
+	{
+		if(i>=element.size())
+			return null;
 		return element.get(i);
 	}
 
@@ -325,7 +331,7 @@ public class LightSourceModel
 	{
 		for(int i=size;i<index+1;i++){
 			element.add((LightSource) newElem);
-			settings.add(new LightSourceSettings());
+//			settings.add(new LightSourceSettings());
 		}
 	}
 	
@@ -356,6 +362,11 @@ public class LightSourceModel
 		if(element==null)
 			return 0;
 		return element.size();
+	}
+
+	public void remove(int index) {
+		if(element!=null && !element.isEmpty())
+			element.remove(index);		
 	}
 
 }

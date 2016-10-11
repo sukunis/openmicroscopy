@@ -3,11 +3,16 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.List;
 
@@ -16,10 +21,13 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -72,6 +80,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.ui.ClosableTabbedPaneComponent;
 //import org.slf4j.LoggerFactory;
 import org.slf4j.LoggerFactory;
 
@@ -131,17 +140,6 @@ public class MetaDataUI extends JPanel
 	private DetectorViewer detectorViewer;
 	
 	
-	/** module configuration */
-	private ModuleConfiguration expModul;
-	private ModuleConfiguration detModul;
-	private ModuleConfiguration chModul;
-	private ModuleConfiguration objModul;
-	private ModuleConfiguration imgModul;
-	private ModuleConfiguration imgEnvModul;
-	private ModuleConfiguration lightSModul;
-	private ModuleConfiguration lightPModul;
-	private ModuleConfiguration planeModul;
-	private ModuleConfiguration sampleModul;
 	
 	/** true if module is visible*/
 	private boolean initChannelUI;
@@ -188,16 +186,49 @@ public class MetaDataUI extends JPanel
 
 	public static final String CHANGE_LSDATA = "changesLightSrcData";
 	
-	public MetaDataUI(JPanel parent)
+	private boolean directoryPane;
+
+	private int numChannelTabs;
+
+	private ChangeListener channelChangeListener;
+
+	private int lastChannelSelectionIndex; 
+	
+	/**
+	 * Constructor
+	 * @param parent panel
+	 * @param dir =true if selected node is a directory, else false
+	 */
+	public MetaDataUI(JPanel parent,boolean dir)
 	{
-		
 		this.setBorder(BorderFactory.createEmptyBorder());
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
+		directoryPane=dir;
 		
 		resetInitialisation();
 		
 		// create model
 		model=new MetaDataModel();
+		initModelComponents();
+		control=new MetaDataControl(model,this);
+	}
+	
+	/**
+	 * Constructor
+	 * @param parent panel
+	 * @param dir =true if selected node is a directory, else false
+	 * @param model
+	 */
+	public MetaDataUI(JPanel parent,boolean dir,MetaDataModel model)
+	{
+		this.setBorder(BorderFactory.createEmptyBorder());
+		customSett=((MetaDataDialog) parent).getCustomViewProperties();
+		directoryPane=dir;
+		
+		resetInitialisation();
+		
+		// create model
+		this.model=model;
 		initModelComponents();
 		control=new MetaDataControl(model,this);
 	}
@@ -232,56 +263,45 @@ public class MetaDataUI extends JPanel
 			if(customSett.getObjConf()!=null && customSett.getObjConf().isVisible()){
 				LOGGER.info("[GUI] -- init OBJECTIVE modul");
 				initObjectiveUI=true;
-				objModul=customSett.getObjConf();
-
 			}
 			if(customSett.getDetectorConf()!=null && customSett.getDetectorConf().isVisible()){
 				LOGGER.info("[GUI] -- init DETECTOR modul");
 				initDetectorUI=true;
 				detectorInput=false;
-				detModul=customSett.getDetectorConf();
 			}
 			if(customSett.getLightSrcConf()!=null && customSett.getLightSrcConf().isVisible()){
 				LOGGER.info("[GUI] -- init LIGHTSRC modul");
 				initLightSrcUI=true;
-				lightSModul=customSett.getLightSrcConf();
 			}
 			if(customSett.getChannelConf()!=null && customSett.getChannelConf().isVisible()){
 				LOGGER.info("[GUI] -- init CHANNEL modul");
 				initChannelUI=true;
-				chModul=customSett.getChannelConf();
 			}
 			if(customSett.getLightPathConf()!=null && customSett.getLightPathConf().isVisible()){
 				LOGGER.info("[GUI] -- init LIGHTPATH modul");
 				initLightPathUI=true;
-				lightPModul=customSett.getLightPathConf();
 			}
 			if(customSett.getImgEnvConf()!=null && customSett.getImgEnvConf().isVisible()){
 				LOGGER.info("[GUI] -- init IMAGEENV modul");
 				initImageEnvUI=true;
-				imgEnvModul=customSett.getImgEnvConf();
 			}
 			if(customSett.getPlaneConf()!=null && customSett.getPlaneConf().isVisible()){
 				LOGGER.info("[GUI] -- init PLANE modul");
 				PlaneCompUI pUI=new PlaneCompUI(null);
 				model.addPlaneModul(pUI);
 				initPlanesUI=true;
-				planeModul=customSett.getPlaneConf();
 			}
 			if(customSett.getExpConf()!=null && customSett.getExpConf().isVisible()){
 				LOGGER.info("[GUI] -- init EXPERIMENT modul");
 				initExperimentUI=true;
-				expModul=customSett.getExpConf();
 			}
 			if(customSett.getSampleConf()!=null && customSett.getSampleConf().isVisible()){
 				LOGGER.info("[GUI] -- init SAMPLE modul");
 				initSampleUI=true;
-				sampleModul=customSett.getSampleConf();
 			}
 			if(customSett.getImageConf()!=null && customSett.getImageConf().isVisible()){
 				LOGGER.info("[GUI] -- init IMAGE modul");
 				initImageUI=true;
-				imgModul =customSett.getImageConf();
 			}
 
 			componentsInit=true;
@@ -298,6 +318,11 @@ public class MetaDataUI extends JPanel
 	{
 		//read input data
 		save();
+		System.out.println("\t...Model::Channels: "+model.getNumberOfChannels());
+		System.out.println("\t...Model::Detector: "+model.getNumberOfDetectors());
+		System.out.println("\t...Model::LightSrc: "+model.getNumberOfLightSrc());
+		System.out.println("\t...Model::LightPath: "+model.getNumberOfLightPath());
+		
 		return model;
 	}
 	
@@ -305,31 +330,31 @@ public class MetaDataUI extends JPanel
 
 	/** add data from a parent model
 	 * @throws Exception */
-	public void addData(MetaDataModel m) throws Exception
+	public void addData(MetaDataModel newModel) throws Exception
 	{
-		if(m!=null && model!=null){
-			addExperimentData(m.getExperimentModel(), true);
+		if(newModel!=null && model!=null){
+			addExperimentData(newModel.getExperimentModel(), true);
 //			addProjectPartner(m.getProjectPartner(),true);
 			
-			addImageData(m.getImageData(),true);
-			addObjectData(m.getObjectiveData(),m.getObjectiveSettings(),true);
+			addImageData(newModel.getImageData(),true);
+			addObjectData(newModel.getObjectiveData(),newModel.getObjectiveSettings(),true);
 			
 			for(int i=0; i<model.getNumberOfChannels();i++){
-				addChannelData(i,m.getChannelData(i),true);
-				addLightPathData(i,m.getLightPath(i),true);
+				addChannelData(i,newModel.getChannelData(i),true);
+				addLightPathData(i,newModel.getLightPath(i),true);
 			}
 			for(int i=0; i<model.getNumberOfDetectors();i++){
-				addDetectorData(i, m.getDetector(i),m.getDetectorSettings(i), true);
+				addDetectorData(i, newModel.getDetector(i),newModel.getDetectorSettings(i), true);
 			}
 			
 			for(int i=0; i<model.getNumberOfLightSrc(); i++){
-				addLightSrcData(i,m.getLightSourceData(i),m.getLightSourceSettings(i),true); 
+				addLightSrcData(i,newModel.getLightSourceData(i),newModel.getLightSourceSettings(i),true); 
 			}
 			
 			
 			
-			addSampleData(m.getSample(),true);
-			addImageEnvData(m.getImgagingEnv(),true);
+			addSampleData(newModel.getSample(),true);
+			addImageEnvData(newModel.getImgagingEnv(),true);
 //			addPlaneData();
 		}
 	}
@@ -907,6 +932,7 @@ public class MetaDataUI extends JPanel
 	private void showExperimentData() {
 		if(initExperimentUI){
 			experimentPane=new JTabbedPane();
+			ModuleConfiguration expModul=customSett.getExpConf();
 			experimentUI=new ExperimentViewer(model.getExperimentModel(), expModul);
 			experimentPane.add("Experiment",experimentUI);
 			addToPlaceholder(experimentPane,expModul.getPosition(), expModul.getWidth());
@@ -917,6 +943,7 @@ public class MetaDataUI extends JPanel
 	{
 		imagePane=new JTabbedPane();
 		if(initImageUI){
+			ModuleConfiguration imgModul =customSett.getImageConf();
 			imageUI=new ImageViewer(model.getImageModel(), imgModul);
 			imagePane.add("Image",imageUI);
 			JComponent img=imagePane;
@@ -946,6 +973,7 @@ public class MetaDataUI extends JPanel
 	{
 		if(initObjectiveUI){
 			objectivePane=new JPanel(new CardLayout());
+			ModuleConfiguration objModul=customSett.getObjConf();
 			objectiveUI=new ObjectiveViewer(model.getObjectiveModel(), objModul);
 			JPanel pane= control.createPropPane(objectiveUI, "Objective", "for image "+name);
 			objectivePane.add(pane,name);
@@ -957,6 +985,7 @@ public class MetaDataUI extends JPanel
 	{
 		if(initSampleUI){
 			samplePane=new JTabbedPane();
+			ModuleConfiguration sampleModul=customSett.getSampleConf();
 			sampleUI=new SampleViewer(model.getSampleModel(), sampleModul);
 			samplePane.add("Sample",sampleUI);
 			addToPlaceholder(samplePane, sampleModul.getPosition(), sampleModul.getWidth());
@@ -966,15 +995,52 @@ public class MetaDataUI extends JPanel
 	private void showChannelData() throws Exception 
 	{
 		channelTab=new JTabbedPane();
-		if(initChannelUI){
-			for(int i=0; i<model.getNumberOfChannels();i++)
-			{
-				String name= model.getChannelData(i)!=null ? model.getChannelData(i).getName() : "Channel";
-				name= (name==null || name.isEmpty()) ? ((i==0 ? "Channel " : "# ")+String.valueOf(i)) : name;
-				channelTab.add(name,new ChannelViewer(model.getChannelModel(), chModul, i));
+		numChannelTabs=0;
+		lastChannelSelectionIndex=0;
+		channelChangeListener=new ChangeListener() {
+			public void stateChanged(ChangeEvent changeEvent) {
+				JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
+				int index = sourceTabbedPane.getSelectedIndex();
+				if(directoryPane && index==(numChannelTabs-1)){
+					addNewChannelTab();
+				}else{
+					if(model.getNumberOfChannels()>0){
+						if(index >=0){
+							selectChannel(index);
+						}
+					}
+				}
 			}
-			if(model.getNumberOfChannels()==0)
-				channelTab.add("",new ChannelViewer(model.getChannelModel(), chModul, 0));
+		};
+		
+		
+		if(initChannelUI){
+			ModuleConfiguration chModul=customSett.getChannelConf();
+			if(model.getNumberOfChannels()==0){
+				channelTab.add(new ChannelViewer(model.getChannelModel(), chModul, 0),"Channel 0",numChannelTabs++);
+			}else{
+				for(int i=0; i<model.getNumberOfChannels();i++)
+				{
+					String name= model.getChannelData(i)!=null ? model.getChannelData(i).getName() : "Channel";
+					if(directoryPane){
+						name= (name==null || name.isEmpty()) ? "Channel "+String.valueOf(i) : name;
+					}else{
+						name= (name==null || name.isEmpty()) ? ((i==0 ? "Channel " : "# ")+String.valueOf(i)) : name;
+					}
+					channelTab.add(new ChannelViewer(model.getChannelModel(), chModul, i),name,numChannelTabs++);
+				}
+				// set last channel as removable
+				if(directoryPane && numChannelTabs>2){
+					channelTab.setTabComponentAt(numChannelTabs-2, new DemoCustomTab(channelTab));
+				}
+			}
+			
+			
+			
+			if(directoryPane){
+				// add tab to add new tab when click
+				channelTab.add(new JPanel(),"+",numChannelTabs++);
+			}
 			
 			addToPlaceholder(channelTab,chModul.getPosition(), chModul.getWidth()); 
 		}
@@ -984,17 +1050,37 @@ public class MetaDataUI extends JPanel
 		showDetectorData(chname,0);
 		showLightPathData(chname,0);
 		
-		channelTab.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent changeEvent) {
-				if(model.getNumberOfChannels()>0){
-					JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
-					int index = sourceTabbedPane.getSelectedIndex();
-					if(index >=0){
-						selectChannel(index);
-					}
-				}
-			}
-		});
+		channelTab.addChangeListener(channelChangeListener);
+	}
+	
+	/**
+	 * Add new ChannelTab for directory view. Add also new Detector, LightSrc and LightPath pane.
+	 */
+	private void addNewChannelTab()
+	{
+		System.out.println("# MetaDataUI::addNewChannelTab()");
+		 int index = numChannelTabs - 1;
+	        if (channelTab.getSelectedIndex() == index) { /* if click new tab */
+	        	// add new channel model
+	        	model.getChannelModel().addData(null, true, index);
+	        	channelTab.removeChangeListener(channelChangeListener);
+	            /* add new tab */
+	        	channelTab.add(new ChannelViewer(model.getChannelModel(), customSett.getChannelConf(), index),
+	        			"Channel " + String.valueOf(index), index);
+	            /* set last channel tab as custom tab and remove delete sign from tab before*/
+	        	if(directoryPane){
+	        		if(index>1){
+	        			DemoCustomTab lastTab=(DemoCustomTab) channelTab.getTabComponentAt(index-1);
+	        			if(lastTab!=null) lastTab.hideRemove();
+	        		}
+	        		channelTab.setTabComponentAt(index, new DemoCustomTab(channelTab));
+	        	}
+	        	
+	        	selectChannel(index);
+//	        	channelTab.setSelectedIndex(index);
+	        	channelTab.addChangeListener(channelChangeListener);
+	        	numChannelTabs++;
+	        }
 	}
 
 	private void setLightPathVisible(String name, int index) 
@@ -1002,11 +1088,11 @@ public class MetaDataUI extends JPanel
 		if(lightPathPane==null){
 			showLightPathData(name,index);
 		}else{
-		lightPathPane.removeAll();
-		lightPathViewer=new LightPathViewer(model.getLightPathModel(),customSett.getLightPathConf(),index);
-		lightPathPane.add(control.createPropPane(lightPathViewer, "LightPath", "for "+name));
-		lightPathPane.revalidate();
-		lightPathPane.repaint();
+			lightPathPane.removeAll();
+			lightPathViewer=new LightPathViewer(model.getLightPathModel(),customSett.getLightPathConf(),index);
+			lightPathPane.add(control.createPropPane(lightPathViewer, "LightPath", "for "+name));
+//			lightPathPane.revalidate();
+//			lightPathPane.repaint();
 		}
 	}
 
@@ -1017,9 +1103,9 @@ public class MetaDataUI extends JPanel
 			showDetectorData(name,index);
 		}else{
 			System.out.println("\t...Set visible Detector for Channel "+name);
-		detectorPane2.removeAll();
-		detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),index);
-		detectorPane2.add(control.createPropPane(detectorViewer, "Detector", "for "+ name));
+			detectorPane2.removeAll();
+			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),index);
+			detectorPane2.add(control.createPropPane(detectorViewer, "Detector", "for "+ name));
 		}
 	}
 	
@@ -1028,9 +1114,10 @@ public class MetaDataUI extends JPanel
 		if(lightSrcPane2==null){
 			showLightSourceData(name,index);
 		}else{
-		lightSrcPane2.removeAll();
-		lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), lightSModul, index);
-		lightSrcPane2.add(control.createPropPane(lightSrcViewer, "LightSource", "for "+name));
+			lightSrcPane2.removeAll();
+			ModuleConfiguration lightSModul=customSett.getLightSrcConf();
+			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), lightSModul, index);
+			lightSrcPane2.add(control.createPropPane(lightSrcViewer, "LightSource", "for "+name));
 		}
 	}
 	
@@ -1038,6 +1125,7 @@ public class MetaDataUI extends JPanel
 	{
 		if(initLightPathUI){
 			lightPathPane=new JPanel(new CardLayout());
+			ModuleConfiguration lightPModul=customSett.getLightPathConf();
 			lightPathViewer=new LightPathViewer(model.getLightPathModel(), customSett.getLightPathConf(), index);
 			lightPathPane.add(control.createPropPane(lightPathViewer, "LightPath", "for "+name));
 			addToPlaceholder(lightPathPane, lightPModul.getPosition(), lightPModul.getWidth());
@@ -1047,6 +1135,7 @@ public class MetaDataUI extends JPanel
 	{
 		if(initLightSrcUI){
 			lightSrcPane2=new JPanel(new CardLayout());
+			ModuleConfiguration lightSModul=customSett.getLightSrcConf();
 			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), customSett.getLightSrcConf(), index);
 			lightSrcPane2.add(control.createPropPane(lightSrcViewer, "LightSource", "for "+name));
 			addToPlaceholder(lightSrcPane2, lightSModul.getPosition(), lightSModul.getWidth());
@@ -1057,16 +1146,31 @@ public class MetaDataUI extends JPanel
 	{
 		if(initDetectorUI){
 			detectorPane2=new JPanel(new CardLayout());
+			ModuleConfiguration detModul=customSett.getDetectorConf();
 			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),index);
 			detectorPane2.add(control.createPropPane(detectorViewer, "Detector", "for "+ name));
 			addToPlaceholder(detectorPane2, detModul.getPosition(), detModul.getWidth());
 		}
 	}
 	
+	/**
+	 * Shows/brings on top channel number chNr and his linked lightSrc, detector and lightPath.
+	 * @param chNr
+	 */
 	protected void selectChannel(int chNr) 
 	{	
+		System.out.println("# MetaDataUI::selectChannel() : old = "+lastChannelSelectionIndex+", new = "+chNr);
 		if(model.getNumberOfChannels() <chNr )
 			return;
+		
+		// something to save at channel?
+		ChannelViewer lastSelection=null;
+		if( channelTab.getComponentAt(lastChannelSelectionIndex) instanceof ChannelViewer){
+			lastSelection=(ChannelViewer) channelTab.getComponentAt(lastChannelSelectionIndex);
+		}
+		if(lastSelection!=null && lastSelection.hasDataToSave()){
+			lastSelection.saveData();
+		}
 		
 		channelTab.setSelectedIndex(chNr);
 		String chName=channelTab.getTitleAt(chNr);
@@ -1083,6 +1187,7 @@ public class MetaDataUI extends JPanel
 			}
 			// show referenced lightSrc + settings
 			setLightSrcVisible(chName, chNr);
+			System.out.println("\t...select lightSrc "+chNr+" of "+model.getNumberOfLightSrc());
 		}
 
 		if(initDetectorUI ){
@@ -1090,9 +1195,11 @@ public class MetaDataUI extends JPanel
 			if(input){
 				detectorInput=true;
 				detectorViewer.saveData();
+				
 			}
 			// show referenced detector + settings
 			setDetectorVisible(chName, chNr);
+		System.out.println("\t...select detector "+chNr+" of "+model.getNumberOfDetectors());
 		}
 
 		if(initLightPathUI ){
@@ -1103,10 +1210,12 @@ public class MetaDataUI extends JPanel
 			}
 			//update lightPath
 			setLightPathVisible(chName, chNr);
+			System.out.println("\t...select lightPath "+chNr+" of "+model.getNumberOfLightPath());
 		}
 		revalidate();
 		repaint();
 
+		lastChannelSelectionIndex=chNr;
 	}
 	
 
@@ -1188,75 +1297,25 @@ public class MetaDataUI extends JPanel
 			add(comp,"0,0");
 			break;
 		case Pos_B:
-//			if(layout.getNumRow()<1)
-//				layout.insertRow(1, TableLayout.FILL);
-//			
-//			if(layout.getNumColumn()<2)
-//				layout.insertColumn(1, TableLayout.FILL);
-//			
-//			add(comp,"1,0");
-//			System.out.println("PosB: ");
 			insertModule(0,1,comp);
 			break;
 		case Pos_C:
-//			if(layout.getNumRow()<1)
-//				layout.insertRow(1, TableLayout.FILL);
-//			
-//			if(layout.getNumColumn()<3)
-//				layout.insertColumn(2, TableLayout.FILL);
-//			
-//			add(comp,"2,0");
-//			System.out.println("PosC: ");
 			insertModule(0,2,comp);
 			break;
 		case Pos_D:
-//			if(layout.getNumRow()<1)
-//				layout.insertRow(1, TableLayout.FILL);
-//			
-//			if(layout.getNumColumn()<4)
-//				layout.insertColumn(3, TableLayout.FILL);
-//			
-//			add(comp,"3,0");
-//			System.out.println("PosD: ");
 			insertModule(0,3,comp);
 			break;
 			//----------------------------------------------
 		case Pos_E:
-//			if(layout.getNumRow()<2)
-//				layout.insertRow(1, TableLayout.FILL);
-//			
-//			add(comp,"0,1");
-//			System.out.println("PosE: ");
 			insertModule(1,0,comp);
 			break;
 		case Pos_F:
-//			if(layout.getNumRow()<2)
-//				layout.insertRow(1, TableLayout.FILL);
-//			
-//			if(layout.getNumColumn()<2)
-//				layout.insertColumn(1, TableLayout.FILL);
-//			add(comp,"1,1");
-//			System.out.println("PosF: ");
 			insertModule(1,1,comp);
 			break;
 		case Pos_G:
-//			if(layout.getNumRow()<2)
-//				layout.insertRow(1, TableLayout.FILL);
-//			
-//			if(layout.getNumColumn()<3)
-//				layout.insertColumn(2, TableLayout.PREFERRED);
-//			add(comp,"2,1");
-//			System.out.println("PosG: ");
 			insertModule(1,2,comp);
 			break;
 		case Pos_H:
-//			if(layout.getNumRow()<2)
-//				layout.insertRow(1, TableLayout.FILL);
-//			
-//			if(layout.getNumColumn()<4)
-//				layout.insertColumn(3, TableLayout.PREFERRED);
-//			add(comp,"3,1");
-//			System.out.println("PosH: ");
 			insertModule(1,3,comp);
 			break;
 		default:
@@ -1411,7 +1470,7 @@ public class MetaDataUI extends JPanel
 		d.setSize(width,height);
 		d.setModal(true);
 		d.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		imgEnvViewer=new ImageEnvViewer(p, imgEnvModul);
+		imgEnvViewer=new ImageEnvViewer(p, customSett.getImgEnvConf());
 //		centerOnParent(d, true);
 		d.add(imgEnvViewer);
 		d.pack();
@@ -1503,33 +1562,33 @@ public class MetaDataUI extends JPanel
 			List<TagData> list=imgEnvViewer.getChangedTags();
 			imgEnvViewer.saveData();
 			model.setChangesImageEnv(list);
-//			firePropertyChange(CHANGE_IMGENVDATA, null, list);
 		}
 		
-		
-		if(channelTab!=null && channelTab.getTabCount()>0){
-			for(int i=0; i<channelTab.getTabCount(); i++)
-			{
-				if(channelTab.getTabComponentAt(i) instanceof ChannelViewer){
-					if(((ChannelViewer) channelTab.getTabComponentAt(i)).hasDataToSave())
-						((ChannelViewer) channelTab.getTabComponentAt(i)).saveData();
-				}
-				
+
+		//save current selected channel
+		if(channelTab!=null && 
+				channelTab.getSelectedComponent()!=null && 
+				channelTab.getSelectedComponent() instanceof ChannelViewer){
+			if(((ChannelViewer) channelTab.getSelectedComponent()).hasDataToSave()){
+				((ChannelViewer) channelTab.getSelectedComponent()).saveData();
+				System.out.println("\t...Save current Channel ");
 			}
 		}
 		// save selected component, other saved by deselect the channel
 		if(detectorViewer!=null && detectorViewer.hasDataToSave()){
 			List<TagData> list=detectorViewer.getChangedTags();
 			detectorViewer.saveData();
-			firePropertyChange(CHANGE_DETDATA, null, list); 
+			model.setChangesDetector(list,detectorViewer.getIndex());
 		}
 		if(lightPathViewer!=null && lightPathViewer.hasDataToSave()){
+			List<TagData> list=lightPathViewer.getChangedTags();
 			lightPathViewer.saveData();
+			model.setChangesLightPath(list,lightPathViewer.getIndex());
 		}
 		if(lightSrcViewer!=null && lightSrcViewer.hasDataToSave()){
 			List<TagData> list=lightSrcViewer.getChangedTags();
 			lightSrcViewer.saveData();
-			firePropertyChange(CHANGE_LSDATA, null, list);
+			model.setChangesLightSrc(list,lightSrcViewer.getIndex());
 		}
 		
 		detectorInput=false;
@@ -1556,39 +1615,137 @@ public class MetaDataUI extends JPanel
 		return sampleUI.hasDataToSave();
 	}
 
-	/**
-	 * 
-	 */
-//	public void save() 
-//	{
-//			if(ome!=null && model!=null){
-//				model.save();
-//				//					SaveMetadataUserDefinedUI pane = new SaveMetadataUserDefinedUI(ome,model,null,file);
-//				//					JDialog diag=createSaveDialog(pane,"Save MetaData", 600,600);
-//				if(file!=null){
-//					LOGGER.info("[SAVE] -- save to "+file.getAbsolutePath());
-//					SaveMetadata saver=new SaveMetadata(ome, model, null, file);
-//					saver.save();
-//				}else{
-////					LOGGER.severe("[SAVE] -- no destination file is given");
-//					LOGGER.error("[SAVE] -- no destination file is given");
-//					ExceptionDialog ld = new ExceptionDialog("Save File Error!", 
-//							"No file is given!");
-//					ld.setVisible(true);
-//				}
-//			}else{
-//				String b1=(ome!=null) ? "available": "not available";
-//				String b2=(model!=null) ? "available": "not available";
-//				String fileName=file!=null ? file.getName() : "";
-//				LOGGER.error("--CAN'T SAVE "+fileName+" : OME = "+b1+", MODEL = "+b2);
-//				ExceptionDialog ld = new ExceptionDialog("Can't save "+fileName+"!",
-//						"OME = "+b1+", MODEL = "+b2); 
-//
-//				ld.setVisible(true);
-//			}
-//		
-//	}
+
 	
 	
+	class DemoCustomTab extends JPanel {
+		 
+	    JTabbedPane customJTabbedPane;
+	    CustomButton removeButton;
+	 
+	    /** JPanel contain a JLabel and a JButton to close */
+	    public DemoCustomTab(JTabbedPane customJTabbedPane) {
+	        this.customJTabbedPane = customJTabbedPane;
+	        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+	        setBorder(new EmptyBorder(5, 2, 2, 2));
+	        setOpaque(false);
+	        addLabel();
+	        removeButton=new CustomButton("x");
+	        add(removeButton);
+	    }
+	 
+	   
+
+		public void hideRemove() 
+		{
+			removeButton.setVisible(false);
+		}
+		
+		public void showRemove() 
+		{
+			removeButton.setVisible(true);
+		}
+
+
+
+		private void addLabel() {
+	        JLabel label = new JLabel() {
+	            /** set text for JLabel, it will title of tab */
+	            public String getText() {
+	                int index = customJTabbedPane.indexOfTabComponent(DemoCustomTab.this);
+	                if (index != -1) {
+	                    return customJTabbedPane.getTitleAt(index);
+	                }
+	                return null;
+	            }
+	        };
+	        /** add more space between the label and the button */
+	        label.setBorder(new EmptyBorder(0, 0, 0, 10));
+	        add(label);
+	    }
+	 
+	    class CustomButton extends JButton implements MouseListener {
+	        public CustomButton(String text) {
+	            int size = 15;
+	            setText(text);
+	            /** set size for button close */
+	            setPreferredSize(new Dimension(size, size));
+	 
+	            setToolTipText("close the Tab");
+	 
+	            /** set transparent */
+	            setContentAreaFilled(false);
+	 
+	            /** set border for button */
+	            setBorder(new EtchedBorder());
+	            /** don't show border */
+	            setBorderPainted(false);
+	 
+	            setFocusable(false);
+	 
+	            /** add event with mouse */
+	            addMouseListener(this);
+	 
+	        }
+	 
+	        /** when click button, tab will close */
+	        @Override
+	        public void mouseClicked(MouseEvent e) {
+	            int index = customJTabbedPane.indexOfTabComponent(DemoCustomTab.this);
+	            if (index != -1) {
+	            	// remove channel and his linked detector, lightSrc, lightPath
+	            	MetaDataUI.this.model.getChannelModel().remove(index); 
+	            	MetaDataUI.this.model.getDetectorModel().remove(index);
+	            	MetaDataUI.this.model.getLightSourceModel().remove(index);
+	            	MetaDataUI.this.model.getLightPathModel().remove(index);
+	                customJTabbedPane.remove(index);
+	                numChannelTabs--;
+	            
+	                System.out.println("\t...Remove tab- index: "+index+", numTabs: "+numChannelTabs);
+//	                 set last channel as removable
+					if(directoryPane && numChannelTabs>2){
+						DemoCustomTab lastTab=(DemoCustomTab) channelTab.getTabComponentAt(index-1);
+						if(lastTab!=null) 
+							lastTab.showRemove();
+						else
+							channelTab.setTabComponentAt(index-1, new DemoCustomTab(channelTab));
+					}
+					
+	                if (index == numChannelTabs - 1 && index > 0) {
+	                	customJTabbedPane.setSelectedIndex(numChannelTabs - 2);
+	                } else {
+	                	customJTabbedPane.setSelectedIndex(index);
+	                }
+	         
+	                if (numChannelTabs == 1) {
+	                    addNewChannelTab();
+	                }
+	              
+	            }
+	        }
+	 
+	        @Override
+	        public void mousePressed(MouseEvent e) {
+	        }
+	 
+	        @Override
+	        public void mouseReleased(MouseEvent e) {
+	        }
+	 
+	        /** show border button when mouse hover */
+	        @Override
+	        public void mouseEntered(MouseEvent e) {
+	            setBorderPainted(true);
+	            setForeground(Color.RED);
+	        }
+	 
+	        /** hide border when mouse not hover */
+	        @Override
+	        public void mouseExited(MouseEvent e) {
+	            setBorderPainted(false);
+	            setForeground(Color.BLACK);
+	        }
+	    }
+	}
 	
 }

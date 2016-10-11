@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ome.units.quantity.Length;
+import ome.units.unit.Unit;
 import ome.xml.model.Channel;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
@@ -11,6 +12,7 @@ import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.ContrastMethod;
 import ome.xml.model.primitives.Color;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 public class ChannelModel 
@@ -32,7 +34,7 @@ public class ChannelModel
 	
 	public Channel getChannel(int index)
 	{
-		if(element==null)
+		if(index>=element.size())
 			return null;
 		
 		return element.get(index);
@@ -149,5 +151,44 @@ public class ChannelModel
 		for(int i=size;i<index+1;i++){
 			element.add(new Channel());
 		}
+	}
+
+	public void remove(int index) 
+	{
+		if(element!=null && !element.isEmpty())
+			element.remove(index);
+	}
+
+	public void update(List<List<TagData>> changesChannel) throws Exception
+	{
+		if(changesChannel==null)
+			return;
+		int index=0;
+		for(List<TagData> list : changesChannel){
+			if(element.size()<=index){
+				element.add(new Channel());
+			}
+			for(TagData t: list){
+				updateTag(index, t.getTagName(),t.getTagValue(),t.getTagUnit());
+			}
+			index++;
+		}
+	}
+
+	private void updateTag(int index, String tagName, String tagValue,
+			Unit tagUnit) 
+	{
+		if(tagValue.equals(""))
+			return;
+//		switch (tagName) 
+//		{
+//		
+//		case value:
+//			
+//			break;
+//
+//		default:
+//			break;
+//		}
 	}
 }

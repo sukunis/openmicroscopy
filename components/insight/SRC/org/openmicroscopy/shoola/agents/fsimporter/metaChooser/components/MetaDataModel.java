@@ -118,12 +118,16 @@ public class MetaDataModel
 
 	private List<TagData> changesObj;
 
-	private List<TagData> changesDetector;
+	private List<List<TagData>> changesDetector;
 
-	private List<TagData> changesLightSrc;
+	private List<List<TagData>> changesLightSrc;
 
 	private List<TagData> changesSample;
 	private List<TagData> changesExperiment;
+
+	private List<List<TagData>> changesChannel;
+
+	private List<List<TagData>> changesLightPath;
 
 	
 	
@@ -532,7 +536,7 @@ public class MetaDataModel
 	public LightPathModel getLightPathModel()
 	{
 		if(lightPathModel==null )
-			return null;
+			lightPathModel=new LightPathModel();
 		return lightPathModel;
 	}
 	
@@ -1108,6 +1112,7 @@ public class MetaDataModel
 	{
 		if(imgModel!=null)imgModel.update(metaDataModel.getChangesImage());
 		if(imgEnvModel!=null)imgEnvModel.update(metaDataModel.getChangesImgEnv());
+		if(channelModel!=null)channelModel.update(metaDataModel.getChangesChannel()); 
 //		objModel.update(metaDataModel.getChangesObject());
 //		detectorModel.update(metaDataModel.getChangesDetector());
 //		lightSrcModel.update(metaDataModel.getChangesLightSrc());
@@ -1129,6 +1134,8 @@ public class MetaDataModel
 			changesObj=null;
 			changesDetector=null;
 			changesLightSrc=null;
+			changesLightPath=null;
+			changesChannel=null;
 			changesSample=null;
 			changesExperiment=null;
 		}
@@ -1136,14 +1143,22 @@ public class MetaDataModel
 	
 	public boolean noticUserInput()
 	{
+		System.out.println("# MetaDataModel::noticeUserInput()");
 		boolean res=false;
 		res=res || (changesImg!=null && !changesImg.isEmpty())
 				|| (changesImgEnv!=null && !changesImgEnv.isEmpty())
 				|| (changesObj!=null && !changesObj.isEmpty())
 				|| (changesDetector!=null && !changesDetector.isEmpty())
 				|| (changesLightSrc!=null && !changesLightSrc.isEmpty())
+				|| (changesLightPath!=null && !changesLightPath.isEmpty())
+				|| (changesChannel!=null && !changesChannel.isEmpty())
 				|| (changesSample!=null && !changesSample.isEmpty())
 				|| (changesExperiment!=null && !changesExperiment.isEmpty());
+		
+		System.out.println("\t...Changes Detector: "+(changesDetector!=null && !changesDetector.isEmpty()));
+		System.out.println("\t...Changes LightSrc: "+(changesLightSrc!=null && !changesLightSrc.isEmpty()));
+		System.out.println("\t...Changes LightPath: "+(changesLightPath!=null && !changesLightPath.isEmpty()));
+		System.out.println("\t...Changes Channel: "+(changesChannel!=null && !changesChannel.isEmpty()));
 				
 		return res;
 	}
@@ -1164,20 +1179,68 @@ public class MetaDataModel
 		return changesObj;
 	}
 
-	public void setChangesDetector(List<TagData> newValue) {
-		changesDetector=newValue;		
+	public List<List<TagData>> getChangesChannel()
+	{
+		return changesChannel;
 	}
-	public List<TagData> getChangesDetector()
+	
+	public void setChangesChannel(List<TagData> newValue,int index)
+	{
+		if(changesChannel==null)
+			changesChannel=new ArrayList<List<TagData>>();
+		
+		if(index>=changesChannel.size()){
+			//expand list
+			while(changesChannel.size()<=index)
+				changesChannel.add(null);
+		}
+		changesChannel.set(index, newValue);
+	}
+	
+	public void setChangesDetector(List<TagData> newValue,int index) 
+	{
+		if(changesDetector==null)
+			changesDetector=new ArrayList<List<TagData>>();
+		if(index>=changesDetector.size()){
+			while(changesDetector.size()<=index)
+				changesDetector.add(null);
+		}
+		changesDetector.set(index, newValue);		
+	}
+	public List<List<TagData>> getChangesDetector()
 	{
 		return changesDetector;
 	}
 
-	public void setChangesLightSrc(List<TagData> newValue) {
-		changesLightSrc=newValue;		
+	public void setChangesLightSrc(List<TagData> newValue,int index) {
+		if(changesLightSrc==null)
+			changesLightSrc=new ArrayList<List<TagData>>();
+		
+		if(index>=changesLightSrc.size()){
+			//expand list
+			while(changesLightSrc.size()<=index)
+				changesLightSrc.add(null);
+		}
+		changesLightSrc.set(index, newValue);	
 	}
-	public List<TagData> getChangesLightSrc()
+	public List<List<TagData>> getChangesLightSrc()
 	{
 		return changesLightSrc;
+	}
+	public void setChangesLightPath(List<TagData> newValue,int index) {
+		if(changesLightPath==null)
+			changesLightPath=new ArrayList<List<TagData>>();
+		
+		if(index>=changesLightPath.size()){
+			//expand list
+			while(changesLightPath.size()<=index)
+				changesLightPath.add(null);
+		}
+		changesLightPath.set(index, newValue);
+	}
+	public List<List<TagData>> getChangesLightPath()
+	{
+		return changesLightPath;
 	}
 
 	public void setChangesSample(List<TagData> newValue) {

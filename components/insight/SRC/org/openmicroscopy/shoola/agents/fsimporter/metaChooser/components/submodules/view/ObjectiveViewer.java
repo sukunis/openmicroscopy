@@ -21,6 +21,7 @@ import javax.swing.border.TitledBorder;
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
 import ome.xml.model.Arc;
+import ome.xml.model.Filament;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.Correction;
@@ -449,8 +450,15 @@ public class ObjectiveViewer extends ModuleViewer
 	public void saveData() 
 	{
 		Objective objective =data.getObjective();
-		if(objective==null)
+		if(objective==null){
 			objective = new Objective();
+			try {
+				data.addData(objective,true);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		try{
 			objective.setModel(model.getTagValue());
 		}catch(Exception e){

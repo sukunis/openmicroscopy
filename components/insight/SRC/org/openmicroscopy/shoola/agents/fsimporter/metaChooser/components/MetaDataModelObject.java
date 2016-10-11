@@ -60,13 +60,16 @@ public class MetaDataModelObject
 	 */
 	public boolean hasBeenModified() 
 	{
+		System.out.println("# MetaDataModel::hasBeenModified()");
 		boolean res=false;
 		if(list==null || list.isEmpty()){
+			System.out.println("\t...return false");
 			return res;
 		}
 		for(MetaDataModel m: list){
 			res= res || m.noticUserInput();
 		}
+		System.out.println("\t...return false");
 		return res;
 	}
 

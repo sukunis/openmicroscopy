@@ -42,9 +42,11 @@ public class LightPathModel
 	 */
 	public void addData(LightPath newElem,boolean overwrite,int i) throws Exception
 	{
+		System.out.println("# LightPathModel::addData()");
 		if(element.size()<=i){
 			expandList(element.size(),i);
 		}
+		
 		if(overwrite){
 			replaceData(newElem,i);
 			LOGGER.info("[DATA] -- replace LightPath data");
@@ -121,7 +123,10 @@ public class LightPathModel
 		return availableElem;
 	}
 
-	public LightPath getLightPath(int i) {
+	public LightPath getLightPath(int i) 
+	{
+		if(i>=element.size())
+			return null;
 		return element.get(i);
 	}
 
@@ -177,6 +182,11 @@ public class LightPathModel
 			return 0;
 		
 		return element.size();
+	}
+
+	public void remove(int index) {
+		if(element!=null && !element.isEmpty())
+			element.remove(index);		
 	}
 
 }

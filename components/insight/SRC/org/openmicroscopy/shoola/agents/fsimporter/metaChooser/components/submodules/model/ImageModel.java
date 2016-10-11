@@ -121,6 +121,7 @@ public class ImageModel
 
 	private void updateTag(String tagName, String value, Unit tagUnit) throws Exception 
 	{
+		// no delete of value possible?
 		if(value.equals(""))
 			return;
 		switch (tagName) {

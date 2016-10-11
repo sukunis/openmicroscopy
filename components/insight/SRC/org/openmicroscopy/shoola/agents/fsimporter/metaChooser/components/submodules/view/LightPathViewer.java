@@ -23,6 +23,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.module
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightPathModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 public class LightPathViewer extends ModuleViewer{
@@ -81,6 +82,9 @@ public class LightPathViewer extends ModuleViewer{
 		editBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
+				if(data==null)
+					data=new LightPathModel();
+				
 				LightPathEditor creator = new LightPathEditor(new JFrame(),"Edit LightPath",
 						data.getList(),data.getLightPath(index));
 				useEditor=true;
@@ -170,10 +174,13 @@ public class LightPathViewer extends ModuleViewer{
 	@Override
 	public void saveData()  
 	{
+		System.out.println("# LightPathViewer::saveData()");
 		List<Object> lightPathList=lightPathTable.getLightPathList();
 
 		if(data==null)
 			data=new LightPathModel();
+		
+		
 		try {
 			createLightPath(lightPathList);
 		} catch (Exception e) {
@@ -237,6 +244,18 @@ public class LightPathViewer extends ModuleViewer{
 			}
 			data.addData(newElement, true, index);
 		}
+	}
+
+
+
+	public int getIndex() {
+		return index;
+	}
+
+
+
+	public List<TagData> getChangedTags() {
+		return null;
 	}
 
 

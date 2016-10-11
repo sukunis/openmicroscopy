@@ -241,4 +241,9 @@ public class DetectorModel
 	public int getNumberOfElements() {
 		return element.size();
 	}
+
+	public void remove(int index) {
+		if(element!=null && !element.isEmpty())
+			element.remove(index);		
+	}
 }

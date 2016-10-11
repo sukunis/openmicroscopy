@@ -821,7 +821,8 @@ private boolean hardwareDataVisible;
 		lastSelectionType=DIR;
 		
 		MetaDataModel currentDirModel=getCurrentSelectionMetaDataModel(node);
-		
+		if(currentDirModel!=null)
+			System.out.println("\t...load available model, num channels: "+currentDirModel.getNumberOfChannels());
 		String hasParentModel=parentModel==null ? "null" : "available";
 		String hasCurrentModel=currentDirModel==null ? "null" : "available";
 		LOGGER.debug("load and show data for directory: parentModel="+hasParentModel

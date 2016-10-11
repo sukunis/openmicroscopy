@@ -7,6 +7,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import ome.xml.model.Arc;
+import ome.xml.model.Filament;
 import ome.xml.model.Laser;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -105,10 +106,25 @@ tagList=new ArrayList<TagData>();
 	@Override
 	public void saveData() 
 	{
-		Laser lightSrc=(Laser) data.getLightSource(index);
-		if(lightSrc==null)
-			lightSrc=new Laser();
+		System.out.println("# LS_LaserViewer::saveData()");
+		if(data==null)
+			data=new LightSourceModel();
 		
+		Laser lightSrc=null;
+		try{
+			lightSrc=(Laser) data.getLightSource(index);
+		}catch(ClassCastException e){
+			System.out.println("\t...overwrite lightSrc with another type of lightSrc.");
+		}
+		if(lightSrc==null){
+			lightSrc=new Laser();
+			try {
+				data.addData(lightSrc, true, index);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		try{
 			((Laser)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
 					null : manufact.getTagValue());

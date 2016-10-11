@@ -21,6 +21,7 @@ import javax.swing.border.TitledBorder;
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
 import ome.xml.model.Channel;
+import ome.xml.model.Filament;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.AcquisitionMode;
@@ -395,12 +396,24 @@ private void setNDFilter(Double value, boolean prop)
 @Override
 public void saveData() 
 {
+	
+	System.out.println("# ChannelViewer::saveData()");
 	if(data==null)
 		data=new ChannelModel();
-	if(data.getNumberOfChannels()==0)
-		data.addData(new Channel(), true, index);
+//	if(data.getNumberOfChannels()==0)
+//		data.addData(new Channel(), true, index);
 	
 	Channel channel=data.getChannel(index);
+	if(channel==null){
+		channel=new Channel();
+		try {
+			data.addData(channel, true, index);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+		
 	//TODO format check
 	try{
 		channel.setName(name.getTagValue());

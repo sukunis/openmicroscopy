@@ -23,6 +23,10 @@ import javax.swing.border.TitledBorder;
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
 import ome.xml.model.Arc;
+import ome.xml.model.Filament;
+import ome.xml.model.GenericExcitationSource;
+import ome.xml.model.Laser;
+import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.Objective;
@@ -190,11 +194,11 @@ public class LightSourceViewer extends ModuleViewer{
 		add(editBtn,BorderLayout.SOUTH);
 
 		// init tags
-		globalPane.add(new LS_LaserViewer(null, conf, index),LightSourceModel.LASER);
-		globalPane.add(new LS_ArcViewer(null, conf, index),LightSourceModel.ARC);
-		globalPane.add(new LS_FilamentViewer(null, conf, index),LightSourceModel.FILAMENT);
-		globalPane.add(new LS_GESViewer(null, conf, index),LightSourceModel.GENERIC_EXCITATION);
-		globalPane.add(new LS_LEDViewer(null, conf, index),LightSourceModel.LIGHT_EMITTING_DIODE);
+		globalPane.add(new LS_LaserViewer(data, conf, index),LightSourceModel.LASER);
+		globalPane.add(new LS_ArcViewer(data, conf, index),LightSourceModel.ARC);
+		globalPane.add(new LS_FilamentViewer(data, conf, index),LightSourceModel.FILAMENT);
+		globalPane.add(new LS_GESViewer(data, conf, index),LightSourceModel.GENERIC_EXCITATION);
+		globalPane.add(new LS_LEDViewer(data, conf, index),LightSourceModel.LIGHT_EMITTING_DIODE);
 		
 		initTags(conf.getSettingList());
 	}
@@ -208,7 +212,6 @@ public class LightSourceViewer extends ModuleViewer{
 	 */
 	protected void showSubCompForSelection(String sType) throws Exception 
 	{
-		System.out.println("# LightSrcCompUI::showSubCompForSelection("+sType+"]");
 		lightSrcCard.show(globalPane,sType);
 		dataChanged=true;
 	}
@@ -243,10 +246,17 @@ public class LightSourceViewer extends ModuleViewer{
 	 */
 	private void setGUIData() 
 	{
-		if(data==null || data.getNumberOfLightSrc()==0)
+		if(data==null || data.getNumberOfLightSrc()==0 || data.getLightSource(index)==null)
 			return;
-		System.out.println("\t... set "+data.getLightSource(index).getClass().getSimpleName()+" data : "
-			+data.getLightSource(index).getID());
+		
+		switch (data.getLightSource(index).getClass().getSimpleName()) {
+		case LightSourceModel.LASER: sourceType.setSelectedIndex(0);break;
+		case LightSourceModel.ARC: sourceType.setSelectedIndex(1);break;
+		case LightSourceModel.FILAMENT: sourceType.setSelectedIndex(2);break;
+		case LightSourceModel.GENERIC_EXCITATION:sourceType.setSelectedIndex(3);break;
+		case LightSourceModel.LIGHT_EMITTING_DIODE: sourceType.setSelectedIndex(4);break;
+		default: System.out.println("\t...unknown type");break;
+		}
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).setGUIData();
 	}
 
@@ -296,14 +306,22 @@ public class LightSourceViewer extends ModuleViewer{
 
 	@Override
 	public void saveData() 
-	{
+	{		
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).saveData();
 
 		// --- Settings --------------------
 		LightSourceSettings settings=data.getSettings(index);
-		if(settings==null)
+		if(settings==null){
 			settings = new LightSourceSettings();
+			try {
+				data.addData(settings, true, index);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
+		
 		try{
 			settings.setWavelength(parseToLength(waveLengthSett.getTagValue(),waveLengthSett.getTagUnit()));
 		}catch(Exception e){
@@ -348,6 +366,10 @@ public class LightSourceViewer extends ModuleViewer{
 		if(inputAt(attenuation)) result.add(attenuation);
 		result.add(new TagData("SourceType", String.valueOf(sourceType.getSelectedIndex()), OPTIONAL, TagData.TEXTFIELD));
 		return result;
+	}
+
+	public int getIndex() {
+		return index;
 	}
 
 }

@@ -109,7 +109,7 @@ public class MetaDataView extends JPanel
 		parentPanel.setCursor(cursor);
 		if(data==null){ 
 			readFile=false;
-			singleView=new MetaDataUI(parentPanel); 
+			singleView=new MetaDataUI(parentPanel,false); 
 			return ;
 		}
 
@@ -121,7 +121,7 @@ public class MetaDataView extends JPanel
 			LOGGER.info("[DATA] -- no series data");
 			seriesData=false;
 			// create with profile and hardware configurations
-			singleView=new MetaDataUI(parentPanel);
+			singleView=new MetaDataUI(parentPanel,false);
 
 			// load importData
 			singleView.setImportData(importData);
@@ -152,7 +152,7 @@ public class MetaDataView extends JPanel
 						": "+data.getImageName(j)+"---------------------" );
 				reader.setSeries(j);
 				//new metaUI tab
-				MetaDataUI metaUI=new MetaDataUI(parentPanel);
+				MetaDataUI metaUI=new MetaDataUI(parentPanel,false);
 
 				//load importData
 				metaUI.setImportData(importData);
@@ -216,23 +216,29 @@ public class MetaDataView extends JPanel
 		
 		srcFile=null;
 		seriesData=false;
-		singleView= new MetaDataUI(parent);
+		if(dirData==null)
+			singleView= new MetaDataUI(parent,true);
+		else
+			singleView = new MetaDataUI(parent,true,dirData);
 		
 		//set importData
 		singleView.setImportData(importData);
 		
 		//set parentData
-		loadParentData(parentData,singleView);
+		//	else not necessary, if parent change, all child directories will be updated
+		if(dirData==null)
+			loadParentData(parentData,singleView);
 		
 		// set saved data for this directory
-		if(dirData!=null){
-			try {
-				singleView.addData(dirData);
-			} catch (Exception e) {
-				LOGGER.warn("[DATA] -- Can't add metadata from dir model "+name);
-				e.printStackTrace();
-			}
-		}
+//		if(dirData!=null){
+//			try {
+//				singleView.addData(dirData);
+//			} catch (Exception e) {
+//				LOGGER.warn("[DATA] -- Can't add metadata from dir model "+name);
+//				System.out.println("[DATA] -- Can't add metadata from dir model "+name);
+//				e.printStackTrace();
+//			}
+//		}
 
 		add(singleView,BorderLayout.CENTER);
 		revalidate();
@@ -248,6 +254,7 @@ public class MetaDataView extends JPanel
 	 */
 	private void loadParentData(MetaDataModel parentData,MetaDataUI pane) 
 	{
+		System.out.println("# MetaDataView::loadParentData()");
 		if(parentData!=null){
 			try {
 				pane.addData(parentData);

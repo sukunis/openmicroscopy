@@ -268,7 +268,6 @@ public class DetectorViewer extends ModuleViewer{
 			return;
 		Detector detector=data.getDetector(index);
 		if(detector!=null){
-			System.out.println("\t...set detector data "+index+detector.getID());
 			try{setModel(detector.getModel(), ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 			try{setManufact(detector.getManufacturer(),  ElementsCompUI.REQUIRED);
@@ -428,9 +427,17 @@ public class DetectorViewer extends ModuleViewer{
 			data=new DetectorModel();
 		
 		Detector detector =data.getDetector(index);
-		if(detector==null)
+		if(detector==null){
 			detector = new Detector();
+			try {
+				data.addData(detector, true, index);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
+		System.out.println("# DetectorViewer::saveData() "+index);
 		try{
 			detector.setModel(model.getTagValue().equals("")?
 					null : model.getTagValue());
@@ -540,5 +547,9 @@ public class DetectorViewer extends ModuleViewer{
 		return list;
 	}
 
+	public int getIndex()
+	{
+		return index;
+	}
 }
 

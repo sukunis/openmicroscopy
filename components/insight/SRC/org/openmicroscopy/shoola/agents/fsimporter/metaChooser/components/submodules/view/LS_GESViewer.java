@@ -7,6 +7,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import ome.xml.model.Arc;
+import ome.xml.model.Filament;
 import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.LightEmittingDiode;
 
@@ -62,10 +63,27 @@ public class LS_GESViewer extends LightSourceSubViewer
 	}
 
 	@Override
-	public void saveData() {
-		GenericExcitationSource lightSrc=(GenericExcitationSource) data.getLightSource(index);
-		if(lightSrc==null)
+	public void saveData() 
+	{
+		if(data==null)
+			data=new LightSourceModel();
+		
+		GenericExcitationSource lightSrc=null;
+		try{
+			lightSrc=(GenericExcitationSource) data.getLightSource(index);
+		}catch(ClassCastException e){
+			System.out.println("\t...overwrite lightSrc with another type of lightSrc.");
+		}
+		if(lightSrc==null){
 			lightSrc=new GenericExcitationSource();
+			try {
+				data.addData(lightSrc, true, index);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		try{
 			((GenericExcitationSource)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
 					null : manufact.getTagValue());
