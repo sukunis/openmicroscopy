@@ -222,6 +222,7 @@ public class LightSourceViewer extends ModuleViewer{
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
+		predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
@@ -364,7 +365,9 @@ public class LightSourceViewer extends ModuleViewer{
 		}
 		if(inputAt(waveLengthSett)) result.add(waveLengthSett);
 		if(inputAt(attenuation)) result.add(attenuation);
+		
 		result.add(new TagData("SourceType", String.valueOf(sourceType.getSelectedIndex()), OPTIONAL, TagData.TEXTFIELD));
+		
 		return result;
 	}
 

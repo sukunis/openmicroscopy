@@ -153,6 +153,7 @@ public class ImageViewer extends ModuleViewer{
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
+		predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
@@ -379,10 +380,19 @@ For example in a video stream.
 	@Override
 	public void saveData() 
 	{
-		if(data==null)
+		if(data==null){
 			data=new ImageModel();
-		
+		}
 		Image image=data.getImage();
+		if(image==null){
+			image = new Image();
+			try {
+				data.addData(image,true);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		try{
 			image.setName(name.getTagValue());

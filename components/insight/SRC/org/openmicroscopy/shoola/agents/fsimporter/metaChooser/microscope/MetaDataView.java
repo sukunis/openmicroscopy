@@ -68,9 +68,11 @@ public class MetaDataView extends JPanel
     
     private boolean seriesData;
     
-    private boolean readFile;
+    private boolean fileDataLoaded;
     
     private JPanel parent;
+
+	private boolean parentDataLoaded;
     
     
     /**
@@ -80,6 +82,8 @@ public class MetaDataView extends JPanel
     {
     	super(new BorderLayout());
 		this.setBorder(BorderFactory.createEmptyBorder());
+		parentDataLoaded=false;
+		fileDataLoaded=false;
 	}
     
     /**
@@ -103,12 +107,14 @@ public class MetaDataView extends JPanel
 		
 		Cursor cursor=parentPanel.getCursor();
 		parentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		readFile=true;
+		
 		data = readMetadataFromFile(fName, reader);
-
+		fileDataLoaded=true;
+		
+		
 		parentPanel.setCursor(cursor);
 		if(data==null){ 
-			readFile=false;
+			fileDataLoaded=false;
 			singleView=new MetaDataUI(parentPanel,false); 
 			return ;
 		}
@@ -225,10 +231,11 @@ public class MetaDataView extends JPanel
 		singleView.setImportData(importData);
 		
 		//set parentData
-		//	else not necessary, if parent change, all child directories will be updated
-		if(dirData==null)
+		//	if model for this directory exists- load parent data not necessary, 
+		// because all child directories with model will be updated if parent change
+		if(dirData==null){
 			loadParentData(parentData,singleView);
-		
+		}
 		// set saved data for this directory
 //		if(dirData!=null){
 //			try {
@@ -255,10 +262,13 @@ public class MetaDataView extends JPanel
 	private void loadParentData(MetaDataModel parentData,MetaDataUI pane) 
 	{
 		System.out.println("# MetaDataView::loadParentData()");
+	
 		if(parentData!=null){
 			try {
 				pane.addData(parentData);
+				parentDataLoaded=true;
 			} catch (Exception e) {
+				parentDataLoaded=false;
 				LOGGER.warn("[DATA] -- Can't add metadata from parent model");
 				e.printStackTrace();
 			}
@@ -482,7 +492,7 @@ public class MetaDataView extends JPanel
 	}
 
 	public boolean isLoaded() {
-		return readFile;
+		return fileDataLoaded;
 	}
 
 	
@@ -498,7 +508,7 @@ public class MetaDataView extends JPanel
 			
 			Cursor cursor=parent.getCursor();
 			parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			readFile=true;
+			fileDataLoaded=true;
 			data = readMetadataFromFile(srcFile.getAbsolutePath(), reader);
 
 			parent.setCursor(cursor);
@@ -543,7 +553,7 @@ public class MetaDataView extends JPanel
 			
 			Cursor cursor=parent.getCursor();
 			parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			readFile=true;
+			fileDataLoaded=true;
 			data = readMetadataFromFile(srcFile.getAbsolutePath(), reader);
 
 			parent.setCursor(cursor);
@@ -592,4 +602,29 @@ public class MetaDataView extends JPanel
 		return false;
 	}
 	
+	public boolean fileDataAreLoaded()
+	{
+		return fileDataLoaded;
+	}
+	
+	public boolean parentDataAreLoaded()
+	{
+		return parentDataLoaded;
+	}
+	
+	public boolean predefineDataLoaded()
+	{
+		if(seriesData){
+			boolean result=false;
+			for(Component comp:cardPane.getComponents()){
+				result=result ||((MetaDataUI) comp).predefinitionsAreLoaded();
+			}
+			return result;
+		}else{
+			if(singleView!=null){
+				return singleView.predefinitionsAreLoaded();
+			}
+		}
+		return false;
+	}
 }

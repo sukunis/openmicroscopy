@@ -5,6 +5,7 @@ import java.util.List;
 
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
+import ome.units.unit.Unit;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.LightSource;
@@ -14,6 +15,10 @@ import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.Medium;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 public class DetectorModel 
@@ -245,5 +250,92 @@ public class DetectorModel
 	public void remove(int index) {
 		if(element!=null && !element.isEmpty())
 			element.remove(index);		
+	}
+
+	/**
+	 * Update list of detectors with given modified tags.
+	 * Do nothing if detector at index doesn't exists.
+	 * @param changesDetector
+	 * @throws Exception
+	 */
+	public void update(List<List<TagData>> changesDetector) throws Exception 
+	{
+		if(changesDetector==null)
+			return;
+		int index=0;
+		for(List<TagData> list :changesDetector){
+			if(list!=null && element.size()>index 
+					&& element.get(index)!=null){
+				Detector detector=element.get(index);
+				DetectorSettings sett=settings.get(index);
+				for(TagData t: list){
+					updateTag(detector,sett,t.getTagName(),t.getTagValue(),t.getTagUnit());
+				}
+			}
+			index++;
+		}
+	}
+
+	/**
+	 * Update tag of given channel if value!=""
+	 * @param detector
+	 * @param tagName
+	 * @param tagValue
+	 * @param tagUnit
+	 * @throws Exception 
+	 */
+	private void updateTag(Detector detector, DetectorSettings sett,String tagName, String tagValue,
+			Unit tagUnit) throws Exception 
+	{
+		if(tagValue.equals(""))
+			return;
+		
+		switch (tagName) 
+		{
+		case TagNames.MODEL: 
+			detector.setModel(tagValue);		
+			break;
+		case TagNames.MANUFAC: 
+			detector.setManufacturer(tagValue);			
+			break;
+		case TagNames.TYPE:
+			detector.setType(DetectorViewer.parseDetectorType(tagValue));
+			break;
+		case TagNames.ZOOM:
+			detector.setZoom(ModuleViewer.parseToDouble(tagValue));
+			break;
+		case TagNames.AMPLGAIN:
+			detector.setAmplificationGain(ModuleViewer.parseToDouble(tagValue));
+			break;
+			case TagNames.GAIN:
+				if(sett!=null){
+					sett.setGain(ModuleViewer.parseToDouble(tagValue));
+				}
+				break;
+			case TagNames.VOLTAGE:
+				if(sett!=null){
+					sett.setVoltage(DetectorViewer.parseElectricPotential(tagValue,tagUnit));
+				}
+				break;
+			case TagNames.OFFSET:
+				if(sett!=null){
+					sett.setOffset(ModuleViewer.parseToDouble(tagValue));
+				}
+				break;
+			case TagNames.CONFZOOM:
+				if(sett!=null){
+					sett.setZoom(ModuleViewer.parseToDouble(tagValue));
+				}
+				break;
+			case TagNames.BINNING:
+				if(sett!=null){
+					sett.setBinning(DetectorViewer.parseBinning(tagValue));
+				}
+				break;
+			case TagNames.SUBARRAY:
+				//TODO
+				break;
+		default: LOGGER.warn("[CONF] unknown tag: "+tagName );break;
+		}
 	}
 }

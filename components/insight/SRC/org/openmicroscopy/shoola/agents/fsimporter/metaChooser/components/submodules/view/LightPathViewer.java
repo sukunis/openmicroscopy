@@ -179,8 +179,6 @@ public class LightPathViewer extends ModuleViewer{
 
 		if(data==null)
 			data=new LightPathModel();
-		
-		
 		try {
 			createLightPath(lightPathList);
 		} catch (Exception e) {
@@ -251,13 +249,6 @@ public class LightPathViewer extends ModuleViewer{
 	public int getIndex() {
 		return index;
 	}
-
-
-
-	public List<TagData> getChangedTags() {
-		return null;
-	}
-
 
 
 }

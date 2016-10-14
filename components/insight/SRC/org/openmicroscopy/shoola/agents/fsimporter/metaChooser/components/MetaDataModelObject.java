@@ -69,7 +69,7 @@ public class MetaDataModelObject
 		for(MetaDataModel m: list){
 			res= res || m.noticUserInput();
 		}
-		System.out.println("\t...return false");
+		System.out.println("\t...return "+res);
 		return res;
 	}
 

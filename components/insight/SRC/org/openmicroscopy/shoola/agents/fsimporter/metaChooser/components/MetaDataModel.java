@@ -127,7 +127,7 @@ public class MetaDataModel
 
 	private List<List<TagData>> changesChannel;
 
-	private List<List<TagData>> changesLightPath;
+	private List<LightPath> changesLightPath;
 
 	
 	
@@ -727,7 +727,7 @@ public class MetaDataModel
 	public ObjectiveModel getObjectiveModel()
 	{
 		if(objModel==null)
-			return new ObjectiveModel();
+			objModel=new ObjectiveModel();
 		return objModel;
 	}
 	
@@ -1086,7 +1086,12 @@ public class MetaDataModel
 	}
 
 
-
+/**
+ * Adapt number of channel, detector, lightSrc and lightPath, check lightSrc types 
+ * and update data
+ * @param metaDataModel
+ * @throws Exception
+ */
 	public void updateData(MetaDataModel metaDataModel) throws Exception 
 	{
 		if(metaDataModel==null)
@@ -1095,6 +1100,91 @@ public class MetaDataModel
 		if(imageOME==null){
 			//update all modules
 			System.out.println("# MetaDataModel::updateData() -- DIR");
+			// adapt number of channels, detectors, lightPath and LightSrc
+			
+			//channels
+			int childNumberOfObjects=this.getNumberOfChannels();
+			int parentNumberOfObjects=metaDataModel.getNumberOfChannels();
+			if(childNumberOfObjects < parentNumberOfObjects && 
+					metaDataModel.getChangesChannel()!=null){
+				for(int i=childNumberOfObjects;i<parentNumberOfObjects;i++){
+					this.addData(metaDataModel.getChannelData(i), true, i);
+					//this channel doesn't have to update, because it was added directly
+					metaDataModel.getChangesChannel().set(i, null);
+				}
+			}
+			else if(childNumberOfObjects > parentNumberOfObjects){
+				//something deleted
+				for(int i=parentNumberOfObjects; i<childNumberOfObjects;i++){
+					this.getChannelModel().remove(i);
+				}
+			}
+			
+			//detector
+			childNumberOfObjects=this.getNumberOfDetectors();
+			parentNumberOfObjects=metaDataModel.getNumberOfDetectors();
+			if(childNumberOfObjects < parentNumberOfObjects && 
+					metaDataModel.getChangesDetector()!=null){
+				for(int i=childNumberOfObjects;i<parentNumberOfObjects;i++){
+					this.addData(metaDataModel.getDetector(i), true, i);
+					this.addData(metaDataModel.getDetectorSettings(i),true,i);
+					//this detector doesn't have to update, because it was added directly
+					metaDataModel.getChangesDetector().set(i, null);
+				}
+			}else if(childNumberOfObjects > parentNumberOfObjects){
+				//something deleted
+				for(int i=parentNumberOfObjects; i<childNumberOfObjects;i++){
+					this.getDetectorModel().remove(i);
+				}
+			}
+			
+			//lightSrc
+			childNumberOfObjects=this.getNumberOfLightSrc();
+			parentNumberOfObjects=metaDataModel.getNumberOfLightSrc();
+			if(metaDataModel.getChangesLightSrc()!=null){
+				//check first if available lightSrc of child the type has changed
+				for(int i=0; i<childNumberOfObjects;i++){
+					List<TagData> changes=metaDataModel.getChangesLightSrc().get(i);
+					String type=changes.get(changes.size()-1).getTagValue();
+					if(!this.getLightSourceModel().getLightSource(i).getClass().getSimpleName().equals(type)){
+						this.addData(metaDataModel.getLightSourceData(i), true, i);
+					}
+				}
+			}
+			
+			if(childNumberOfObjects < parentNumberOfObjects && 
+					metaDataModel.getChangesLightSrc()!=null){
+				for(int i=childNumberOfObjects;i<parentNumberOfObjects;i++){
+					this.addData(metaDataModel.getLightSourceData(i), true, i);
+					this.addData(metaDataModel.getLightSourceSettings(i), true, i);
+					//this lightsrc doesn't have to update, because it was added directly
+					metaDataModel.getChangesLightSrc().set(i, null);
+				}
+			}else if(childNumberOfObjects > parentNumberOfObjects){
+				//something deleted
+				for(int i=parentNumberOfObjects; i<childNumberOfObjects;i++){
+					this.getLightSourceModel().remove(i);
+				}
+			}
+			
+			//lightPath
+			childNumberOfObjects=this.getNumberOfLightPath();
+			parentNumberOfObjects=metaDataModel.getNumberOfLightPath();
+			if(childNumberOfObjects < parentNumberOfObjects && 
+					metaDataModel.getChangesLightPath()!=null){
+				for(int i=childNumberOfObjects;i<parentNumberOfObjects;i++){
+					this.addData(metaDataModel.getLightPath(i), true, i);
+					//this lightpath doesn't have to update, because it was added directly
+						metaDataModel.getChangesLightPath().set(i, null);
+				}
+			}else if(childNumberOfObjects > parentNumberOfObjects){
+				//something deleted
+				for(int i=parentNumberOfObjects; i<childNumberOfObjects;i++){
+					this.getLightPathModel().remove(i);
+				}
+			}
+			
+			
 			update(metaDataModel,0);
 		}else{
 			System.out.println("# MetaDataModel::updateData() -- FILE");
@@ -1113,9 +1203,10 @@ public class MetaDataModel
 		if(imgModel!=null)imgModel.update(metaDataModel.getChangesImage());
 		if(imgEnvModel!=null)imgEnvModel.update(metaDataModel.getChangesImgEnv());
 		if(channelModel!=null)channelModel.update(metaDataModel.getChangesChannel()); 
-//		objModel.update(metaDataModel.getChangesObject());
-//		detectorModel.update(metaDataModel.getChangesDetector());
+		if(objModel!=null)objModel.update(metaDataModel.getChangesObject()); 
+		if(detectorModel!=null) detectorModel.update(metaDataModel.getChangesDetector());
 //		lightSrcModel.update(metaDataModel.getChangesLightSrc());
+		if(lightPathModel!=null) lightPathModel.update(metaDataModel.getChangesLightPath());
 		if(sampleModel!=null)sampleModel.update(metaDataModel.getChangesSample()); 
 		if(expModel!=null)expModel.update(metaDataModel.getChangesExperiment());
 	}
@@ -1155,11 +1246,17 @@ public class MetaDataModel
 				|| (changesSample!=null && !changesSample.isEmpty())
 				|| (changesExperiment!=null && !changesExperiment.isEmpty());
 		
+		System.out.println("\t...Changes Image: "+(changesImg!=null && !changesImg.isEmpty()));
+		System.out.println("\t...Changes Objective: "+(changesObj!=null && !changesObj.isEmpty()));
 		System.out.println("\t...Changes Detector: "+(changesDetector!=null && !changesDetector.isEmpty()));
 		System.out.println("\t...Changes LightSrc: "+(changesLightSrc!=null && !changesLightSrc.isEmpty()));
 		System.out.println("\t...Changes LightPath: "+(changesLightPath!=null && !changesLightPath.isEmpty()));
 		System.out.println("\t...Changes Channel: "+(changesChannel!=null && !changesChannel.isEmpty()));
+		System.out.println("\t...Changes Sample: "+(changesSample!=null && !changesSample.isEmpty()));
+		System.out.println("\t...Changes Experiment: "+(changesExperiment!=null && !changesExperiment.isEmpty()));
+		System.out.println("\t...Changes ImgEnv: "+(changesImgEnv!=null && !changesImgEnv.isEmpty()));
 				
+		System.out.println("\t...return "+res);
 		return res;
 	}
 
@@ -1227,18 +1324,20 @@ public class MetaDataModel
 	{
 		return changesLightSrc;
 	}
-	public void setChangesLightPath(List<TagData> newValue,int index) {
+	
+	public void setChangesLightPath(LightPath lightPath,int index) 
+	{
 		if(changesLightPath==null)
-			changesLightPath=new ArrayList<List<TagData>>();
+			changesLightPath=new ArrayList<LightPath>();
 		
 		if(index>=changesLightPath.size()){
 			//expand list
 			while(changesLightPath.size()<=index)
 				changesLightPath.add(null);
 		}
-		changesLightPath.set(index, newValue);
+		changesLightPath.set(index, lightPath);
 	}
-	public List<List<TagData>> getChangesLightPath()
+	public List<LightPath> getChangesLightPath()
 	{
 		return changesLightPath;
 	}

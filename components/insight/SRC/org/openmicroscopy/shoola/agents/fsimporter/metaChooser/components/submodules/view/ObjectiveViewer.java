@@ -65,10 +65,10 @@ public class ObjectiveViewer extends ModuleViewer
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public ObjectiveViewer(ObjectiveModel model,ModuleConfiguration conf)
+	public ObjectiveViewer(ObjectiveModel objModel,ModuleConfiguration conf)
 	{
-		System.out.println("# ObjectiveViewer::newInstance("+(model!=null?"model":"null")+")");
-		this.data=model;
+		System.out.println("# ObjectiveViewer::newInstance("+(objModel!=null?"model":"null")+")");
+		this.data=objModel;
 		initComponents(conf);
 		initTagList();
 		buildGUI();
@@ -199,6 +199,7 @@ public class ObjectiveViewer extends ModuleViewer
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
+		predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
@@ -449,6 +450,10 @@ public class ObjectiveViewer extends ModuleViewer
 	@Override
 	public void saveData() 
 	{
+		System.out.println("# ObjectiveViewer::saveData() ");
+		if(data==null){
+			data=new ObjectiveModel();
+		}
 		Objective objective =data.getObjective();
 		if(objective==null){
 			objective = new Objective();
@@ -503,11 +508,19 @@ public class ObjectiveViewer extends ModuleViewer
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read OBJECTIVE working distance input");
 		}
+		
 		// --- Settings --------------------
 		ObjectiveSettings settings=data.getSettings();
-		if(settings==null)
-			settings = new ObjectiveSettings();
 		
+		if(settings==null){
+			settings = new ObjectiveSettings();
+			try {
+				data.addData(settings, true);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		//TODO input checker
 		try{
 			settings.setRefractiveIndex(parseToDouble(refractIndex.getTagValue()));
@@ -525,9 +538,10 @@ public class ObjectiveViewer extends ModuleViewer
 			LOGGER.error("[DATA] can't read OBJECTIVE SETT correction collar input");
 		}
 		dataChanged=false;
+		
 	}
 	
-	private Medium parseMedium(String c) 
+	public static Medium parseMedium(String c) 
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -542,7 +556,7 @@ public class ObjectiveViewer extends ModuleViewer
 		return a;
 	}
 	
-	private Immersion parseImmersion(String c) 
+	public static Immersion parseImmersion(String c) 
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -556,7 +570,7 @@ public class ObjectiveViewer extends ModuleViewer
 		return m;
 	}
 	
-	private Correction parseCorrection(String c) 
+	public static Correction parseCorrection(String c) 
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -583,6 +597,11 @@ public class ObjectiveViewer extends ModuleViewer
 		if(inputAt(workDist)) list.add(workDist);
 		//if(isActive(iris)) list.add(iris);
 		
+		//settings
+		if(inputAt(iris))list.add(iris);
+		if(inputAt(corCollar))list.add(corCollar);
+		if(inputAt(medium))list.add(medium);
+		if(inputAt(refractIndex))list.add(refractIndex);
 		return list;
 	}
 	

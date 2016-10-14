@@ -94,6 +94,9 @@ public class ImageEnvModel
 	
 	private void setTag(String name,String val,Unit unit)
 	{
+		if(val.equals(""))
+			return;
+		
 		System.out.println("\t...update "+name+" : "+val);
 		switch (name) {
 		case TagNames.TEMP:

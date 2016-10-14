@@ -192,18 +192,21 @@ public class MetaDataUI extends JPanel
 
 	private ChangeListener channelChangeListener;
 
-	private int lastChannelSelectionIndex; 
+	private int lastChannelSelectionIndex;
+
+	private boolean predefinitionsLoaded; 
 	
 	/**
 	 * Constructor
 	 * @param parent panel
-	 * @param dir =true if selected node is a directory, else false
+	 * @param isdir =true if selected node is a directory, else false
 	 */
-	public MetaDataUI(JPanel parent,boolean dir)
+	public MetaDataUI(JPanel parent,boolean isdir)
 	{
 		this.setBorder(BorderFactory.createEmptyBorder());
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
-		directoryPane=dir;
+		
+		directoryPane=isdir;
 		
 		resetInitialisation();
 		
@@ -223,12 +226,19 @@ public class MetaDataUI extends JPanel
 	{
 		this.setBorder(BorderFactory.createEmptyBorder());
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
+		
 		directoryPane=dir;
 		
 		resetInitialisation();
 		
 		// create model
 		this.model=model;
+		System.out.println("# MetaDataUI::new Instance with existing model - obj model : "
+				+(model.getObjectiveModel()!=null?"exists":"doesn't exists")+", obj= "
+				+(model.getObjectiveModel().getObjective()!=null?"exists":"doesn't exist"));
+		System.out.println("img model : "+(model.getImageModel()!=null?"exists":"doesn't exist")+
+				"img : "+(model.getImageModel().getImage()!=null?"exists":"doesn't exist"));
+		
 		initModelComponents();
 		control=new MetaDataControl(model,this);
 	}
@@ -318,6 +328,7 @@ public class MetaDataUI extends JPanel
 	{
 		//read input data
 		save();
+		System.out.println("\t...Model::Objective: "+(model.getObjectiveModel().getObjective()!=null?"1":"0"));
 		System.out.println("\t...Model::Channels: "+model.getNumberOfChannels());
 		System.out.println("\t...Model::Detector: "+model.getNumberOfDetectors());
 		System.out.println("\t...Model::LightSrc: "+model.getNumberOfLightSrc());
@@ -328,34 +339,53 @@ public class MetaDataUI extends JPanel
 	
 	
 
-	/** add data from a parent model
+	/** add data from given parent model
 	 * @throws Exception */
-	public void addData(MetaDataModel newModel) throws Exception
+	public void addData(MetaDataModel parentModel) throws Exception
 	{
-		if(newModel!=null && model!=null){
-			addExperimentData(newModel.getExperimentModel(), true);
+		if(parentModel==null)
+			return;
+		
+		if(model!=null){
+			addExperimentData(parentModel.getExperimentModel(), true);
 //			addProjectPartner(m.getProjectPartner(),true);
 			
-			addImageData(newModel.getImageData(),true);
-			addObjectData(newModel.getObjectiveData(),newModel.getObjectiveSettings(),true);
-			
-			for(int i=0; i<model.getNumberOfChannels();i++){
-				addChannelData(i,newModel.getChannelData(i),true);
-				addLightPathData(i,newModel.getLightPath(i),true);
-			}
-			for(int i=0; i<model.getNumberOfDetectors();i++){
-				addDetectorData(i, newModel.getDetector(i),newModel.getDetectorSettings(i), true);
-			}
-			
-			for(int i=0; i<model.getNumberOfLightSrc(); i++){
-				addLightSrcData(i,newModel.getLightSourceData(i),newModel.getLightSourceSettings(i),true); 
-			}
-			
-			
-			
-			addSampleData(newModel.getSample(),true);
-			addImageEnvData(newModel.getImgagingEnv(),true);
+			addImageData(parentModel.getImageData(),true);
+			addObjectiveData(parentModel.getObjectiveData(),parentModel.getObjectiveSettings(),true);
+			addSampleData(parentModel.getSample(),true);
+			addImageEnvData(parentModel.getImgagingEnv(),true);
 //			addPlaneData();
+			
+			if(directoryPane){
+				// inheritance for directory
+				for(int i=0; i<parentModel.getNumberOfChannels();i++){
+					addChannelData(i,parentModel.getChannelData(i),true);
+				}
+				for(int i=0; i<parentModel.getNumberOfDetectors();i++){
+					addDetectorData(i,parentModel.getDetector(i),parentModel.getDetectorSettings(i),true);
+				}
+				for(int i=0; i<parentModel.getNumberOfLightSrc();i++){
+					addLightSrcData(i,parentModel.getLightSourceData(i),parentModel.getLightSourceSettings(i),true);
+				}
+				for(int i=0; i<parentModel.getNumberOfLightPath();i++){
+					addLightPathData(i,parentModel.getLightPath(i),true);
+				}
+				
+			}else{
+				//inheritance for file
+				for(int i=0; i<model.getNumberOfChannels();i++){
+					addChannelData(i,parentModel.getChannelData(i),true);
+					addLightPathData(i,parentModel.getLightPath(i),true);
+				}
+				for(int i=0; i<model.getNumberOfDetectors();i++){
+					addDetectorData(i, parentModel.getDetector(i),parentModel.getDetectorSettings(i), true);
+				}
+
+				for(int i=0; i<model.getNumberOfLightSrc(); i++){
+					addLightSrcData(i,parentModel.getLightSourceData(i),parentModel.getLightSourceSettings(i),true); 
+				}
+			}
+			
 		}
 	}
 	
@@ -373,7 +403,7 @@ public class MetaDataUI extends JPanel
 		}
 	}
 
-	private void addObjectData(Objective o,ObjectiveSettings os, boolean overwrite) throws Exception 
+	private void addObjectiveData(Objective o,ObjectiveSettings os, boolean overwrite) throws Exception 
 	{
 		if(o!=null) model.addData(o,overwrite);
 		if(os!=null) model.addData(os, overwrite);
@@ -649,18 +679,18 @@ public class MetaDataUI extends JPanel
 						lp.getLinkedDichroic()!=null)){
 					dataAvailable=true;
 				}
-				
-			
-					if(!dataAvailable){
-						LOGGER.info("[DATA] -- LIGHTPATH  data not available");
-					}else{
-						model.addData(lp,false,i);
-					}
+
+
+				if(!dataAvailable){
+					LOGGER.info("[DATA] -- LIGHTPATH  data not available");
+				}else{
+					model.addData(lp,false,i);
+				}
 
 				model.addFilterToList(customSett.getMicLightPathFilterList(),false);
 				model.addFilterToList(filters,true);
 				model.addDichroicToList(dichroics,true);
-				
+
 			}else{
 				LOGGER.info("[DATA] -- LIGHTPATH  data not available");
 			}
@@ -709,6 +739,7 @@ public class MetaDataUI extends JPanel
 
 				
 				// fill selection list
+				
 				model.addToLightSrcList(customSett.getMicLightSrcList(),false);
 				model.addToLightSrcList(lightSources,true);
 
@@ -758,6 +789,7 @@ public class MetaDataUI extends JPanel
 					model.addData(ds,false,i);
 				}
 
+			
 				model.addToDetectorList(customSett.getMicDetectorList(),false);
 				model.addToDetectorList(detectors,true);
 			}else{
@@ -881,6 +913,7 @@ public class MetaDataUI extends JPanel
 				model.addData(o, false); 
 				model.addData(os,false); 
 			}
+					
 			model.addToObjList(customSett.getMicObjList(),false);
 			model.addToObjList(objList,true);
 			
@@ -965,11 +998,11 @@ public class MetaDataUI extends JPanel
 		String name=model.getImageData()!=null ? model.getImageData().getName() : null;
 
 		
-		showOjectiveData(name);
+		showObjectiveData(name);
 		
 	}
 
-	private void showOjectiveData(String name) 
+	private void showObjectiveData(String name) 
 	{
 		if(initObjectiveUI){
 			objectivePane=new JPanel(new CardLayout());
@@ -1169,7 +1202,9 @@ public class MetaDataUI extends JPanel
 			lastSelection=(ChannelViewer) channelTab.getComponentAt(lastChannelSelectionIndex);
 		}
 		if(lastSelection!=null && lastSelection.hasDataToSave()){
+			List<TagData> list=lastSelection.getChangedTags();
 			lastSelection.saveData();
+			model.setChangesChannel(list, lastSelection.getIndex());
 		}
 		
 		channelTab.setSelectedIndex(chNr);
@@ -1183,7 +1218,9 @@ public class MetaDataUI extends JPanel
 			boolean input=lightSrcViewer.hasDataToSave();
 			if(input){
 				lightSrcInput=true;
+				List<TagData> list=lightSrcViewer.getChangedTags();
 				lightSrcViewer.saveData();
+				model.setChangesDetector(list,detectorViewer.getIndex());
 			}
 			// show referenced lightSrc + settings
 			setLightSrcVisible(chName, chNr);
@@ -1194,8 +1231,9 @@ public class MetaDataUI extends JPanel
 			boolean input=detectorViewer.hasDataToSave();
 			if(input){
 				detectorInput=true;
+				List<TagData> list=detectorViewer.getChangedTags();
 				detectorViewer.saveData();
-				
+				model.setChangesDetector(list,detectorViewer.getIndex());
 			}
 			// show referenced detector + settings
 			setDetectorVisible(chName, chNr);
@@ -1206,6 +1244,12 @@ public class MetaDataUI extends JPanel
 			boolean input=lightPathViewer.hasDataToSave();
 			if(input){
 				lightPathInput=true;
+				try {
+					model.setChangesLightPath(model.getLightPath(lightPathViewer.getIndex()),lightPathViewer.getIndex());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				lightPathViewer.saveData();
 			}
 			//update lightPath
@@ -1541,6 +1585,7 @@ public class MetaDataUI extends JPanel
 		}
 		if(experimentUI!=null && experimentUI.hasDataToSave()){
 			List<TagData> list=experimentUI.getChangedTags();
+			printList("Experiment",list);
 			experimentUI.saveData();
 			model.setChangesExperiment(list);
 //			firePropertyChange(CHANGE_EXPDATA,null,list);
@@ -1554,12 +1599,14 @@ public class MetaDataUI extends JPanel
 		}
 		if(objectiveUI!=null && objectiveUI.hasDataToSave()){
 			List<TagData> list=objectiveUI.getChangedTags();
+			printList("Objective",list);
 			objectiveUI.saveData();
 			model.setChangesObject(list);
 //			firePropertyChange(CHANGE_OBJDATA, null, list);
 		}
 		if(imgEnvViewer!=null && imgEnvViewer.hasDataToSave()){
 			List<TagData> list=imgEnvViewer.getChangedTags();
+			printList("ImgEnv",list);
 			imgEnvViewer.saveData();
 			model.setChangesImageEnv(list);
 		}
@@ -1568,25 +1615,38 @@ public class MetaDataUI extends JPanel
 		//save current selected channel
 		if(channelTab!=null && 
 				channelTab.getSelectedComponent()!=null && 
-				channelTab.getSelectedComponent() instanceof ChannelViewer){
-			if(((ChannelViewer) channelTab.getSelectedComponent()).hasDataToSave()){
-				((ChannelViewer) channelTab.getSelectedComponent()).saveData();
+				channelTab.getSelectedComponent() instanceof ChannelViewer)
+		{
+			ChannelViewer chViewer=(ChannelViewer) channelTab.getSelectedComponent();
+			if(chViewer.hasDataToSave())
+			{
+				List<TagData> list=chViewer.getChangedTags();
+				printList("Channel "+chViewer.getIndex(),list);
+				chViewer.saveData();
+				model.setChangesChannel(list, chViewer.getIndex());
 				System.out.println("\t...Save current Channel ");
 			}
 		}
 		// save selected component, other saved by deselect the channel
 		if(detectorViewer!=null && detectorViewer.hasDataToSave()){
 			List<TagData> list=detectorViewer.getChangedTags();
+			printList("Detector "+detectorViewer.getIndex(),list);
 			detectorViewer.saveData();
 			model.setChangesDetector(list,detectorViewer.getIndex());
 		}
 		if(lightPathViewer!=null && lightPathViewer.hasDataToSave()){
-			List<TagData> list=lightPathViewer.getChangedTags();
+			int index=lightPathViewer.getIndex();
 			lightPathViewer.saveData();
-			model.setChangesLightPath(list,lightPathViewer.getIndex());
+			try {
+				model.setChangesLightPath(model.getLightPath(index),lightPathViewer.getIndex());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		if(lightSrcViewer!=null && lightSrcViewer.hasDataToSave()){
 			List<TagData> list=lightSrcViewer.getChangedTags();
+			printList("LightSrc "+lightSrcViewer.getIndex(),list);
 			lightSrcViewer.saveData();
 			model.setChangesLightSrc(list,lightSrcViewer.getIndex());
 		}
@@ -1746,6 +1806,39 @@ public class MetaDataUI extends JPanel
 	            setForeground(Color.BLACK);
 	        }
 	    }
+	}
+	
+	public boolean predefinitionsAreLoaded()
+	{
+		if(customSett==null )
+			return false;
+		
+		boolean result=false;
+		if(imageUI!=null)
+			result=result || imageUI.predefinitionValAreLoaded();
+		
+		if(imgEnvViewer!=null)
+			result=result|| imgEnvViewer.predefinitionValAreLoaded();
+		
+		if(objectiveUI!=null)
+			result=result|| objectiveUI.predefinitionValAreLoaded();
+		
+		if(detectorViewer!=null)
+			result=result|| detectorViewer.predefinitionValAreLoaded();
+		
+		if(lightSrcViewer!=null)
+			result=result|| lightSrcViewer.predefinitionValAreLoaded();
+		
+		if(lightPathViewer!=null)
+			result=result|| lightPathViewer.predefinitionValAreLoaded();
+		
+		if(sampleUI!=null)
+			result=result|| sampleUI.predefinitionValAreLoaded();
+		
+		if(experimentUI!=null)
+			result=result|| experimentUI.predefinitionValAreLoaded();
+		//TODO channel
+		return result;
 	}
 	
 }

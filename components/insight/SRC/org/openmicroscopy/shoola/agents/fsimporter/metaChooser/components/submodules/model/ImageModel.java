@@ -110,6 +110,11 @@ public class ImageModel
 		return element;
 	}
 
+	/**
+	 * Update data model for given modified tags.
+	 * @param changesImage list of modified tags
+	 * @throws Exception
+	 */
 	public void update(List<TagData> changesImage) throws Exception 
 	{
 		if(changesImage==null)
@@ -119,11 +124,20 @@ public class ImageModel
 		}
 	}
 
+	/**
+	 * Update tag of this model with given value!="" and unit.
+	 * @param tagName
+	 * @param value
+	 * @param tagUnit
+	 * @throws Exception
+	 */
 	private void updateTag(String tagName, String value, Unit tagUnit) throws Exception 
 	{
 		// no delete of value possible?
 		if(value.equals(""))
 			return;
+		
+		
 		switch (tagName) {
 		case TagNames.IMG_NAME:
 			element.setName(value);

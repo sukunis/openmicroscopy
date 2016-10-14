@@ -62,6 +62,7 @@ import omero.gateway.model.ProjectData;
 import omero.gateway.model.ScreenData;
 
 import org.apache.commons.io.FilenameUtils;
+import org.openmicroscopy.shoola.agents.events.treeviewer.ShowProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
@@ -140,13 +141,10 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private JButton saveAllDataButton;
     
     
-    private JToggleButton viewFileDataButton;
-    private JToggleButton viewDirDataButton;
-    
     private JCheckBox showFileData;
     private JCheckBox showDirData;
     private JCheckBox showCustomData;
-    private JCheckBox showHardwareData;
+//    private JCheckBox showHardwareData;
     
     /** Test text area*/
     public JTextArea textArea; 
@@ -464,7 +462,7 @@ private boolean hardwareDataVisible;
       
 //	    loadHardwareSpecButton.setEnabled(false);
         
-        resetFileDataButton=new JButton("Reset/Clear");
+        resetFileDataButton=new JButton("Clear Data");
         resetFileDataButton.setBackground(UIUtilities.BACKGROUND);
         resetFileDataButton.setToolTipText("Reset metadata. Show only metadata of selected image file.");
         resetFileDataButton.setActionCommand("" + CMD_RESET);
@@ -482,29 +480,10 @@ private boolean hardwareDataVisible;
         saveAllDataButton.setActionCommand("" + CMD_SAVEALL);
         saveAllDataButton.addActionListener(this);
         
-        viewFileDataButton=new JToggleButton("File Data",false);
-        viewFileDataButton.setBackground(UIUtilities.BACKGROUND);
-        viewFileDataButton.setName(VIEWFILE);
-        viewFileDataButton.setActionCommand("" + CMD_VIEWFILE);
-        viewFileDataButton.addActionListener(this);
-        viewFileDataButton.setEnabled(false);
+     
         
-        viewDirDataButton=new JToggleButton("File + Directory Data",true);
-        viewDirDataButton.setBackground(UIUtilities.BACKGROUND);
-        viewDirDataButton.setName(VIEWDIR);
-        viewDirDataButton.setActionCommand("" + CMD_VIEWFILE);
-        viewDirDataButton.addActionListener(this);
-        viewDirDataButton.setEnabled(false);
-        
-        
-        showDirData=new JCheckBox("Dir data");
-        showDirData.addItemListener(this);
-        
+        initFilterViewBar();
        
-        
-        ButtonGroup bg = new ButtonGroup();
-        bg.add(viewDirDataButton);
-        bg.add(viewFileDataButton);
         
         UOSProfileReader propReader=new UOSProfileReader(new File("profileUOSImporter.xml"));
 
@@ -548,6 +527,22 @@ private boolean hardwareDataVisible;
     }
     
     /**
+     * Init GUI of filter view panel to filter which data should displayed
+     */
+    private void initFilterViewBar() 
+    {
+    	
+    	showFileData=new JCheckBox("File Data");
+    	showFileData.addItemListener(this);
+    	 showDirData=new JCheckBox("Parent Data");
+         showDirData.addItemListener(this);
+         showCustomData=new JCheckBox("Predefined Data");
+         showCustomData.addItemListener(this);
+         
+	}
+
+
+	/**
      * Builds and lays out file view right side
      * @return JPanel
      */
@@ -642,13 +637,7 @@ private boolean hardwareDataVisible;
         barL.add(loadHardwareSpecButton);
         barL.add(Box.createHorizontalStrut(10));
         
-        JPanel barM=new JPanel(new FlowLayout(FlowLayout.LEFT));
-        barM.add(new JLabel("View: "));
-        barM.add(Box.createHorizontalStrut(5));
-        barM.add(viewFileDataButton);
-        barM.add(Box.createHorizontalStrut(5));
-        barM.add(viewDirDataButton);
-        barM.add(Box.createHorizontalStrut(10));
+        JPanel barM = buildFilterViewBar();
         
         JPanel barR = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         //reset
@@ -666,6 +655,26 @@ private boolean hardwareDataVisible;
         bar.add(barR);
         return bar;
     }
+
+
+	/**
+	 * @return
+	 */
+	private JPanel buildFilterViewBar() 
+	{
+		JPanel barM=new JPanel(new FlowLayout(FlowLayout.LEFT));
+        barM.add(new JLabel("View: "));
+        barM.add(Box.createHorizontalStrut(5));
+        barM.add(showFileData);
+        barM.add(Box.createHorizontalStrut(5));
+        barM.add(showDirData);
+        barM.add(Box.createHorizontalStrut(5));
+        barM.add(showCustomData);
+        barM.add(Box.createHorizontalStrut(10));
+		return barM;
+		
+		
+	}
     
 
     private void buildGUI()
@@ -718,7 +727,7 @@ private boolean hardwareDataVisible;
 
     	LOGGER.debug("[TREE] -- Node: "+node.toString()+" ##############################################");
 
-    	JComponent panel=null;
+    	
 
     	//import user data
     	ImportUserData importData = getImportData();
@@ -726,11 +735,7 @@ private boolean hardwareDataVisible;
     	//get parent dir model data
     	MetaDataModel parentModel=getParentMetaDataModel(node);
 
-    	if(parentModel!=null)
-    		viewDirDataButton.setSelected(true);
-    	else{
-    		viewFileDataButton.setSelected(true);
-    	}
+    	
 
     	// TODO: new View with available model
     	// if a view still available
@@ -765,10 +770,23 @@ private boolean hardwareDataVisible;
     		}
     	}
 //    	view.getModelObject().isUpToDate(true);
-    	panel=view;
+    	
+    	showMetaDataView(view);
+    	setFilterView(view);
+    	
+    	revalidate();
+    	repaint();
+    }
 
 
-    	metaPanel.removeAll();
+	/**
+	 * @param panel
+	 * @param view
+	 */
+	public void showMetaDataView(MetaDataView view) {
+		JComponent panel=null;
+		panel=view;
+		metaPanel.removeAll();
     	if(panel!=null){
     		metaPanel.add(panel,BorderLayout.CENTER);
     		DefaultListModel list=view.getSeries();
@@ -779,9 +797,18 @@ private boolean hardwareDataVisible;
     			seriesList.setModel(new DefaultListModel());
     		}
     	}
-    	revalidate();
-    	repaint();
-    }
+	}
+
+    /**
+     * Set values of filter view bar according of data that will be set inside the given view
+     * @param view
+     */
+	private void setFilterView(MetaDataView view) 
+	{
+		showDirData.setSelected(view.parentDataAreLoaded());
+		showFileData.setSelected(view.fileDataAreLoaded());
+		showCustomData.setSelected(view.predefineDataLoaded());
+	}
 
 
 	/**
@@ -927,23 +954,25 @@ private boolean hardwareDataVisible;
      */
     private void updateChildsOfDirectory(FNode node) 
     {
-    	System.out.println("# MetaDataDialog::updateChildDirectories("+node.getAbsolutePath()+")");
+    	System.out.println("# MetaDataDialog::updateChildDirectories of "+node.getAbsolutePath());
 		int numChilds=node.getChildCount();
 		for(int i=0; i<numChilds;i++){
 			FNode child = (FNode) node.getChildAt(i);
-			if(child.hasModelObject() && node.hasModelObject()){
-				System.out.println("\t ...update "+child.getAbsolutePath());
-				LOGGER.debug("Update "+child.getAbsolutePath());
-				try {
-					child.getModelObject().updateData(node.getModelObject());
-					node.getModelObject().clearListOfModifications();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if(!child.isLeaf()){
-					updateChildsOfDirectory(child);
-				}
+			if(node.hasModelObject()){
+				if(child.hasModelObject() ){
+					System.out.println("\t ...update "+child.getAbsolutePath());
+					LOGGER.debug("Update "+child.getAbsolutePath());
+					try {
+						child.getModelObject().updateData(node.getModelObject());
+						node.getModelObject().clearListOfModifications();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if(!child.isLeaf()){
+						updateChildsOfDirectory(child);
+					}
+				}//else load data at loadParentData
 			}
 		}
 //		node.getModelObject().isUpToDate(true);
@@ -1295,19 +1324,28 @@ private boolean hardwareDataVisible;
         case CMD_RESET:
         	LOGGER.info("[GUI-ACTION] -- reset");
         	System.out.println("+++++ EVENT RESET ++++++++++++");
-        	JComponent panel=null;
+        	FNode selection=(FNode)fileTree.getLastSelectedPathComponent();
         	//TODO: profile default data eliminate
         	//file
-        	String file = getSelectedFilePath((FNode)fileTree.getLastSelectedPathComponent());
+        	String file = getSelectedFilePath(selection);
         	//clear node model data
-        	((FNode)fileTree.getLastSelectedPathComponent()).setModelObject(null);
+        	selection.setModelObject(null);
         	MetaDataView view=null;
         	try {
-        		((MetaDataView)metaPanel.getComponent(0)).reset();
+        		
+        		if(selection.isLeaf()){
+        			view = loadAndShowDataForDirectory(selection, file, null,
+        					null, view);
+        		}else{
+        			view = loadAndShowDataForFile(file, null, null, view);
+        		}
+//        		((MetaDataView)metaPanel.getComponent(0)).reset();
         	} catch (Exception e) {
         		// TODO Auto-generated catch block
         		e.printStackTrace();
         	}
+        	showMetaDataView(view);
+        	setFilterView(view);
         	revalidate();
         	repaint();
             
@@ -1332,18 +1370,7 @@ private boolean hardwareDataVisible;
         case CMD_VIEWFILE:
             Border redline = BorderFactory.createLineBorder(Color.red);
             Border compound= BorderFactory.createRaisedBevelBorder();
-            if(((JToggleButton)evt.getSource()).getName().equals(VIEWFILE)){
-//				viewFileDataButton.setBorder(BorderFactory.createCompoundBorder(redline, compound));
-//				viewDirDataButton.setBorder(compound);
-                viewFileDataButton.setBackground(Color.GREEN);
-                viewDirDataButton.setBackground(Color.gray);
-            }else{
-                viewFileDataButton.setBackground(Color.gray);
-                viewDirDataButton.setBackground(Color.GREEN);
-                
-//				viewFileDataButton.setBorder(compound);
-//				viewDirDataButton.setBorder(BorderFactory.createCompoundBorder(redline, compound));
-            }
+            
                 
             break;
         
@@ -1508,8 +1535,9 @@ private boolean hardwareDataVisible;
 	{
 		Object source=e.getItemSelectable();
 		if(source==showDirData || source==showFileData ||
-				source==showCustomData || source==showHardwareData){
-			showFilteredData(showDirData.isSelected(),showFileData.isSelected(),showCustomData.isSelected(),showHardwareData.isSelected());
+				source==showCustomData ){
+//			System.out.println("# ")
+//			showFilteredData(showDirData.isSelected(),showFileData.isSelected(),showCustomData.isSelected(),showHardwareData.isSelected());
 		}
 		
 //		  if (e.getStateChange() == ItemEvent.DESELECTED){

@@ -25,6 +25,7 @@ public abstract class ModuleViewer extends JPanel
 	public static final boolean REQUIRED=true;
 	public static final boolean OPTIONAL =false;
 	
+	protected boolean predefinitionValLoaded;
 	
 	protected GridBagConstraints c;
 	protected GridBagLayout gridbag;
@@ -93,7 +94,7 @@ public abstract class ModuleViewer extends JPanel
 	}
 	
 	/**
-	 * Init given tags and mark it as visible.
+	 * Init given tags and mark it as visible.(Predefinition of gui and values)
 	 * @param list
 	 */
 	protected void initTags(List<TagConfiguration> list) 
@@ -154,5 +155,10 @@ public abstract class ModuleViewer extends JPanel
 				container.add(fields.get(i), c);
 				
 			}
+		}
+		
+		public boolean predefinitionValAreLoaded()
+		{
+			return predefinitionValLoaded;
 		}
 }

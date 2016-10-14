@@ -6,7 +6,10 @@ import java.util.List;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Power;
+import ome.units.unit.Unit;
 import ome.xml.model.Arc;
+import ome.xml.model.Detector;
+import ome.xml.model.DetectorSettings;
 import ome.xml.model.Filament;
 import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.Laser;
@@ -21,6 +24,7 @@ import ome.xml.model.enums.Pulse;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 public class LightSourceModel
@@ -367,6 +371,44 @@ public class LightSourceModel
 	public void remove(int index) {
 		if(element!=null && !element.isEmpty())
 			element.remove(index);		
+	}
+
+	/**
+	 * Update list of lightSrc with given modified tags.
+	 * Do nothing if lightSrc at index doesn't exists.
+	 * @param changesLightSrc
+	 * @throws Exception
+	 */
+	public void update(List<List<TagData>> changesLightSrc) throws Exception 
+	{
+		if(changesLightSrc==null)
+			return;
+		int index=0;
+		for(List<TagData> list :changesLightSrc){
+			if(list!=null && element.size()>index 
+					&& element.get(index)!=null){
+				LightSource lightSrc=element.get(index);
+				LightSourceSettings sett=settings.get(index);
+				if(lightSrc.getClass().getSimpleName().equals(list.get(list.size()-1))){
+					//				TODO: switch(lightSrcclass)
+					for(TagData t: list){
+						updateTag(lightSrc,sett,t.getTagName(),t.getTagValue(),t.getTagUnit());
+					}
+				}
+			}
+			index++;
+		}		
+	}
+
+	
+	private void updateTag(LightSource lightSrc, LightSourceSettings sett,
+			String tagName, String tagValue, Unit tagUnit) throws Exception 
+	{
+//		if(tagValue.equals(""))
+//			return;
+//		
+//		switch (tagName) 
+//		{
 	}
 
 }

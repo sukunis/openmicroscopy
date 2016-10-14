@@ -67,6 +67,8 @@ public class DetectorViewer extends ModuleViewer{
 	private TagData binning;
 	private TagData subarray;
 
+	
+
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
@@ -206,13 +208,13 @@ public class DetectorViewer extends ModuleViewer{
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
+		predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
 		case TagNames.MODEL: 
 			setModel(null,OPTIONAL);
 			model.setVisible(true);
-
 			break;
 		case TagNames.MANUFAC: 
 			setManufact(null, OPTIONAL);
@@ -503,7 +505,7 @@ public class DetectorViewer extends ModuleViewer{
 		
 		dataChanged=false;
 	}
-	private DetectorType parseDetectorType(String c) 
+	public static DetectorType parseDetectorType(String c) 
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -517,7 +519,7 @@ public class DetectorViewer extends ModuleViewer{
 		}
 		return m;
 	}
-	private ElectricPotential parseElectricPotential(String c, Unit unit) 
+	public static ElectricPotential parseElectricPotential(String c, Unit unit) 
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -526,7 +528,7 @@ public class DetectorViewer extends ModuleViewer{
 
 		return new ElectricPotential(Double.valueOf(c), unit);
 	}
-	private Binning parseBinning(String c) throws EnumerationException
+	public static Binning parseBinning(String c) throws EnumerationException
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -543,7 +545,13 @@ public class DetectorViewer extends ModuleViewer{
 		if(inputAt(zoom)) list.add(zoom);
 		if(inputAt(amplGain)) list.add(amplGain);
 		
-		
+		// settings
+		if(inputAt(gain))list.add(gain);
+		if(inputAt(voltage))list.add(voltage);
+		if(inputAt(offset))list.add(offset);
+		if(inputAt(confocalZoom))list.add(confocalZoom);
+		if(inputAt(binning))list.add(binning);
+		if(inputAt(subarray))list.add(subarray);
 		return list;
 	}
 
@@ -551,5 +559,6 @@ public class DetectorViewer extends ModuleViewer{
 	{
 		return index;
 	}
+	
 }
 

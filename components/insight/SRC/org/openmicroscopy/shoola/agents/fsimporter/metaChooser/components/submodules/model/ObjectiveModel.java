@@ -3,9 +3,14 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submo
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ObjectiveViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
 import ome.units.quantity.Length;
+import ome.units.unit.Unit;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.Correction;
@@ -79,6 +84,7 @@ public class ObjectiveModel
 	private void replaceData(Objective newElem)
 	{
 		if(newElem!=null){
+			System.out.println("# ObjectiveModel::replaceData()");
 			element=newElem;
 		}
 	}
@@ -188,6 +194,63 @@ public class ObjectiveModel
 	public void clearList() 
 	{
 		availableElem=null;
+	}
+
+	public void update(List<TagData> changesObjective) throws Exception 
+	{
+		if(changesObjective==null){
+			return;
+		}
+		
+		for(TagData t: changesObjective){
+			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
+		}
+	}
+
+	private void setTag(String tagName, String tagValue, Unit tagUnit) throws Exception 
+	{
+		if(tagValue.equals(""))
+			return;
+		
+
+		switch (tagName) {
+		case TagNames.MODEL:
+			element.setModel(tagValue);
+			break;
+		case TagNames.MANUFAC:
+			element.setManufacturer(tagValue);
+			break;
+		case TagNames.NOMMAGN:
+			element.setNominalMagnification(ModuleViewer.parseToDouble(tagValue));
+			break;
+		case TagNames.CALMAGN:
+			element.setCalibratedMagnification(ModuleViewer.parseToDouble(tagValue));
+			break;
+		case TagNames.LENSNA:
+			element.setLensNA(ModuleViewer.parseToDouble(tagValue));
+			break;
+		case TagNames.IMMERSION:
+			element.setImmersion(ObjectiveViewer.parseImmersion(tagValue));
+			break;
+		case TagNames.CORRECTION:
+			element.setCorrection(ObjectiveViewer.parseCorrection(tagValue));
+			break;
+		case TagNames.WORKDIST:
+			element.setWorkingDistance(ModuleViewer.parseToLength(tagValue, tagUnit));
+			break;
+		case TagNames.CORCOLLAR: 
+			settings.setCorrectionCollar(ModuleViewer.parseToDouble(tagValue));
+			break;
+		case TagNames.OBJ_MEDIUM:
+			settings.setMedium(ObjectiveViewer.parseMedium(tagValue));
+			break;
+		case TagNames.REFINDEX:
+			settings.setRefractiveIndex(ModuleViewer.parseToDouble(tagValue));
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+tagName );break;
+		}
+		
 	}
 			
 }

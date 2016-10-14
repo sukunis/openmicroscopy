@@ -143,6 +143,7 @@ public class ExperimentViewer extends ModuleViewer{
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
+		predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {

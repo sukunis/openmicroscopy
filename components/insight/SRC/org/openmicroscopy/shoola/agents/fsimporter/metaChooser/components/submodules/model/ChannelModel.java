@@ -10,8 +10,13 @@ import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.ContrastMethod;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.Color;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ChannelViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
@@ -159,36 +164,83 @@ public class ChannelModel
 			element.remove(index);
 	}
 
+	/**
+	 * Update list of channels with given modified tags.
+	 * Do nothing if channel at index doesn't exist. 
+	 * @param changesChannel
+	 * @throws Exception
+	 */
 	public void update(List<List<TagData>> changesChannel) throws Exception
 	{
 		if(changesChannel==null)
 			return;
 		int index=0;
 		for(List<TagData> list : changesChannel){
-			if(element.size()<=index){
-				element.add(new Channel());
-			}
-			for(TagData t: list){
-				updateTag(index, t.getTagName(),t.getTagValue(),t.getTagUnit());
+			if(list!=null && element.size()>index && element.get(index)!=null){
+				Channel ch=element.get(index);
+				for(TagData t: list){
+					updateTag(ch, t.getTagName(),t.getTagValue(),t.getTagUnit());
+				}
 			}
 			index++;
+			
 		}
 	}
 
-	private void updateTag(int index, String tagName, String tagValue,
-			Unit tagUnit) 
+	/**
+	 * Update tag of given channel if value!="". 
+	 * @param channel
+	 * @param tagName
+	 * @param tagValue
+	 * @param tagUnit
+	 * @throws Exception 
+	 */
+	private void updateTag(Channel channel, String tagName, String tagValue,
+			Unit tagUnit) throws Exception 
 	{
 		if(tagValue.equals(""))
 			return;
-//		switch (tagName) 
-//		{
-//		
-//		case value:
-//			
-//			break;
-//
-//		default:
-//			break;
-//		}
+		
+		switch (tagName) 
+		{
+		case TagNames.CH_NAME:
+			channel.setName(tagValue);
+			break;
+		case TagNames.COLOR:
+			channel.setColor(ChannelViewer.parseColor(tagValue));
+			break;
+		case TagNames.FLUOROPHORE:
+			channel.setFluor(tagValue);
+			break;
+		case TagNames.ILLUMTYPE:
+			channel.setIlluminationType(ChannelViewer.parseIllumType(tagValue));
+			break;
+		case TagNames.EXPOSURETIME:
+//TODO			channel.setE
+			break;
+		case TagNames.EXCITWAVELENGTH:
+			channel.setExcitationWavelength(ModuleViewer.parseToLength(tagValue,tagUnit));
+			break;
+		case TagNames.EMISSIONWAVELENGTH:
+			channel.setEmissionWavelength(ModuleViewer.parseToLength(tagValue,tagUnit));
+			break;
+		case TagNames.IMAGINGMODE:
+			//TODO
+			break;
+		case TagNames.ILLUMINATIONMODE:
+			//TODO
+			break;
+		case TagNames.CONTRASTMETHOD:
+			channel.setContrastMethod(ChannelViewer.parseContrastMethod(tagValue));
+			break;
+		case TagNames.NDFILTER:
+			channel.setNDFilter(ModuleViewer.parseToDouble(tagValue));
+			break;
+		case TagNames.PINHOLESIZE:
+			channel.setPinholeSize(ModuleViewer.parseToLength(tagValue,tagUnit));
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+tagName );break;
+		}
 	}
 }

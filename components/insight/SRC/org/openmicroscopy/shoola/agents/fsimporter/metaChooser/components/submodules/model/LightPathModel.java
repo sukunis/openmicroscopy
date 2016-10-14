@@ -189,4 +189,21 @@ public class LightPathModel
 			element.remove(index);		
 	}
 
+	// replace lightPaths with changed lightPaths
+	public void update(List<LightPath> changesLightPath) 
+	{
+		if(changesLightPath==null)
+			return;
+		int index=0;
+		for(LightPath lp:changesLightPath)
+		{
+			if(lp!=null && element.size()>index){
+				element.set(index, lp);
+			}
+			index++;
+		}
+	}
+
+	
+
 }

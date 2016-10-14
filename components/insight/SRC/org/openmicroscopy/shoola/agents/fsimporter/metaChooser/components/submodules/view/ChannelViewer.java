@@ -174,6 +174,7 @@ private void initComponents(ModuleConfiguration conf)
  */
 protected void initTag(TagConfiguration t) 
 {
+	predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 	String name=t.getName();
 	Boolean prop=t.getProperty();
 	switch (name) {
@@ -472,21 +473,21 @@ public void saveData()
 	}
 
 }
-private ContrastMethod parseContrastMethod(String c) throws EnumerationException
+public static ContrastMethod parseContrastMethod(String c) throws EnumerationException
 {
 	if(c.equals(""))
 		return null;
 	
 	return ContrastMethod.fromString(c);
 }
-private Color parseColor(String c)
+public static Color parseColor(String c)
 {
 	if(c.equals(""))
 		return null;
 	
 	return new Color(Integer.valueOf(c, 16).intValue());//Integer.valueOf(c));
 }
-private IlluminationType parseIllumType(String c) throws EnumerationException 
+public static IlluminationType parseIllumType(String c) throws EnumerationException 
 {
 	if(c.equals(""))
 		return null;
@@ -518,6 +519,10 @@ public List<TagData> getChangedTags()
 	if(inputAt(pinholeSize)) list.add(pinholeSize);
 	
 	return list;
+}
+
+public int getIndex() {
+	return index;
 }
 
 
