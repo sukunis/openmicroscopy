@@ -1,17 +1,12 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
-
 import loci.formats.MetadataTools;
 import ome.xml.model.Channel;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
-import ome.xml.model.Experiment;
-import ome.xml.model.Experimenter;
 import ome.xml.model.Filter;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
@@ -24,21 +19,11 @@ import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.FilterType;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ImageCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ImagingEnvironmentCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveSettingsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneSliderCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.SampleCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ChannelModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
@@ -48,7 +33,6 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.SampleModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
@@ -277,17 +261,24 @@ public class MetaDataModel
 		if(expModel==null)
 			expModel=new ExperimentModel();
 		
+		expModel.addData(e.getExperiment(), overwrite);
+		expModel.addData(e.getExperimenter(), overwrite);	
+		
 		if(overwrite){
-			expModel=new ExperimentModel(e);
+			expModel.setProjectPartner(e.getProjectPartnerName());
 		}else{
-			expModel.addData(e.getExperiment(), overwrite);
-			expModel.addData(e.getExperimenter(), overwrite);			
-			if(expModel.getGroupName()==null || expModel.getGroupName().equals(""))
-					expModel.setGroupName(e.getGroupName());
-			if(expModel.getProjectName()==null || expModel.getProjectName().equals(""))
-				expModel.setProjectName(e.getProjectName());
+					
+//			if(expModel.getGroupName()==null || expModel.getGroupName().equals("")){
+//					expModel.setGroupName(e.getGroupName());
+//					System.out.println("\t...group name = "+e.getGroupName());
+//			}else{
+//				System.out.println("\t...group name doesn't set");
+//			}
+//			if(expModel.getProjectName()==null || expModel.getProjectName().equals(""))
+//				expModel.setProjectName(e.getProjectName());
 			if(expModel.getProjectPartnerName()==null || expModel.getProjectPartnerName().equals(""))
 				expModel.setProjectPartner(e.getProjectPartnerName());
+			
 		}
 	}
 	/**
@@ -300,7 +291,6 @@ public class MetaDataModel
 		if(expModel==null)
 			expModel=new ExperimentModel();
 		
-		System.out.println("\t...group="+expCont.getGroupName());
 		expModel.setGroupName(expCont.getGroupName());
 		expModel.setProjectName(expCont.getProjectName());
 		expModel.setExperimenter(expCont.getExperimenter());
@@ -1256,7 +1246,6 @@ public class MetaDataModel
 		System.out.println("\t...Changes Experiment: "+(changesExperiment!=null && !changesExperiment.isEmpty()));
 		System.out.println("\t...Changes ImgEnv: "+(changesImgEnv!=null && !changesImgEnv.isEmpty()));
 				
-		System.out.println("\t...return "+res);
 		return res;
 	}
 
