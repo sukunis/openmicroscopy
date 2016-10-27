@@ -17,6 +17,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import ome.units.quantity.ElectricPotential;
 import ome.units.unit.Unit;
@@ -73,7 +75,7 @@ public class DetectorViewer extends ModuleViewer{
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public DetectorViewer(DetectorModel model,ModuleConfiguration conf,int index)
+	public DetectorViewer(DetectorModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
 		System.out.println("# DetectorViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		this.data=model;
@@ -81,6 +83,8 @@ public class DetectorViewer extends ModuleViewer{
 		initComponents(conf);
 		initTagList();
 		buildGUI();
+		showPredefinitions(conf.getTagList(), showPreValues);
+		showPredefinitions(conf.getSettingList(), showPreValues);
 	}
 
 	private void initTagList()
@@ -168,13 +172,13 @@ public class DetectorViewer extends ModuleViewer{
 		box=Box.createVerticalBox();
 		box.add(globalPane);
 
-		JButton editBtn=new JButton("Selection");
+		JButton editBtn=new JButton("Choose...");
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		editBtn.setEnabled(true);
 		editBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				DetectorEditor creator = new DetectorEditor(new JFrame(),"Select Detector",
+				DetectorEditor creator = new DetectorEditor(new JFrame(),"Choose Detector",
 						data.getList());
 				Detector selected=creator.getDetector();  
 				if(selected!=null ){
@@ -208,7 +212,7 @@ public class DetectorViewer extends ModuleViewer{
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
-		predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
+		
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
@@ -260,6 +264,111 @@ public class DetectorViewer extends ModuleViewer{
 		default: LOGGER.warn("[CONF] unknown tag: "+name );break;
 		}
 	}
+	
+	/**
+	 * set predefined tag value.
+	 * @param t
+	 */
+	protected void setPredefinedTag(TagConfiguration t) 
+	{
+		if(t.getValue()==null || t.getValue().equals(""))
+			return;
+		
+		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
+		String name=t.getName();
+		Boolean prop=t.getProperty();
+		switch (name) {
+		case TagNames.MODEL: 
+			if(model!=null && !model.getTagValue().equals(""))
+				return;
+			setModel(t.getValue(),OPTIONAL);
+			break;
+		case TagNames.MANUFAC: 
+			if(manufact!=null && !manufact.getTagValue().equals(""))
+				return;
+			setManufact(t.getValue(), OPTIONAL);
+			break;
+		case TagNames.TYPE:
+			if(type!=null && !type.getTagValue().equals(""))
+				return;
+			DetectorType d=parseDetectorType(t.getValue());
+			if(d==null)
+				type.setTagInfo(ERROR_PREVALUE+t.getValue());
+			setType(d,OPTIONAL);
+			break;
+		case TagNames.ZOOM:
+			if(zoom!=null && !zoom.getTagValue().equals(""))
+				return;
+			try{
+			setZoom(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
+			}catch(NumberFormatException e){
+				zoom.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.AMPLGAIN:
+			if(amplGain!=null && !amplGain.getTagValue().equals(""))
+				return;
+			try{
+			setAmplGain(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
+			}catch(NumberFormatException e){
+				amplGain.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.GAIN:
+			if(gain!=null && !gain.getTagValue().equals(""))
+				return;
+			try{
+			setGain(ModuleViewer.parseToDouble(t.getValue()),OPTIONAL);
+			}catch(NumberFormatException e){
+				gain.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.VOLTAGE:
+			if(voltage!=null && !voltage.getTagValue().equals(""))
+				return;
+			try{
+			setVoltage(parseElectricPotential(t.getValue(),t.getUnit()), OPTIONAL);
+			}catch(Exception e){
+				voltage.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnit()+"]");
+			}
+			break;
+		case TagNames.OFFSET:
+			if(offset!=null && !offset.getTagValue().equals(""))
+				return;
+			try{
+			setOffset(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
+			}catch(NumberFormatException e){
+				offset.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.CONFZOOM:
+			if(confocalZoom!=null && !confocalZoom.getTagValue().equals(""))
+				return;
+			try{
+			setConfocalZoom(ModuleViewer.parseToDouble(t.getValue()), prop);
+			}catch(NumberFormatException e){
+				confocalZoom.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.BINNING:
+			if(binning!=null && !binning.getTagValue().equals(""))
+				return;
+			try {
+				setBinning(parseBinning(t.getValue()), prop);
+			} catch (EnumerationException e) {
+				binning.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.SUBARRAY:
+			if(subarray!=null && !subarray.getTagValue().equals(""))
+				return;
+			//TODO
+			setSubarray(t.getValue(), prop);
+			break;
+		default: LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
+	}
+
 
 	/**
 	 * Show data of detector
@@ -274,7 +383,8 @@ public class DetectorViewer extends ModuleViewer{
 			} catch (NullPointerException e) { }
 			try{setManufact(detector.getManufacturer(),  ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
-			try{setType(detector.getType(),  ElementsCompUI.REQUIRED);
+			try{
+				setType(detector.getType(),  ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 
 			try{setZoom(detector.getZoom(), ElementsCompUI.REQUIRED);
@@ -342,9 +452,10 @@ public class DetectorViewer extends ModuleViewer{
 	public void setAmplGain(Double value, boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
-		if(amplGain == null) 
+		if(amplGain == null) {
 			amplGain = new TagData(TagNames.AMPLGAIN,val,prop,TagData.TEXTFIELD);
-		else 
+			amplGain.addDocumentListener(createDocumentListenerDouble(amplGain,"Invalid input. Use float!"));
+		}else 
 			amplGain.setTagValue(val,prop);
 	}
 
@@ -352,12 +463,16 @@ public class DetectorViewer extends ModuleViewer{
 	public void setZoom(Double value, boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
-		if(zoom == null) 
+		if(zoom == null) {
 			zoom = new TagData(TagNames.ZOOM,val,prop,TagData.TEXTFIELD);
-		else 
+			zoom.addDocumentListener(createDocumentListenerDouble(zoom,"Invalid input. Use float!"));
+		}else 
 			zoom.setTagValue(val,prop);
 	}
 
+
+
+	
 
 	/*------------------------------------------------------
 	 * Set methods settings Values
@@ -365,9 +480,10 @@ public class DetectorViewer extends ModuleViewer{
 	public void setGain(Double value, boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
-		if(gain == null) 
+		if(gain == null){ 
 			gain = new TagData(TagNames.GAIN,val,prop,TagData.TEXTFIELD);
-		else 
+			gain.addDocumentListener(createDocumentListenerDouble(gain,"Invalid input. Use float!"));
+		}else 
 			gain.setTagValue(val,prop);
 	}
 	//TODO
@@ -391,17 +507,19 @@ public class DetectorViewer extends ModuleViewer{
 	public void setOffset(Double value, boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
-		if(offset == null) 
+		if(offset == null) {
 			offset = new TagData(TagNames.OFFSET,val,prop,TagData.TEXTFIELD);
-		else 
+			offset.addDocumentListener(createDocumentListenerDouble(offset,"Invalid input. Use float!"));
+		}else 
 			offset.setTagValue(val,prop);
 	}
 	public void setConfocalZoom(Double value, boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
-		if(confocalZoom == null) 
+		if(confocalZoom == null) {
 			confocalZoom = new TagData(TagNames.CONFZOOM,val,prop,TagData.TEXTFIELD);
-		else 
+			confocalZoom.addDocumentListener(createDocumentListenerDouble(confocalZoom,"Invalid input. Use float!"));
+		}else 
 			confocalZoom.setTagValue(val,prop);
 	}
 	public void setSubarray(String value, boolean prop)
@@ -436,10 +554,9 @@ public class DetectorViewer extends ModuleViewer{
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+		}
 		}
 
-		System.out.println("# DetectorViewer::saveData() "+index);
 		try{
 			detector.setModel(model.getTagValue().equals("")?
 					null : model.getTagValue());
@@ -515,11 +632,11 @@ public class DetectorViewer extends ModuleViewer{
 			m=DetectorType.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("DetectorType: "+c+" is not supported");
-			m=DetectorType.OTHER;
+//			m=DetectorType.OTHER;
 		}
 		return m;
 	}
-	public static ElectricPotential parseElectricPotential(String c, Unit unit) 
+	public static ElectricPotential parseElectricPotential(String c, Unit unit) throws Exception
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -559,6 +676,8 @@ public class DetectorViewer extends ModuleViewer{
 	{
 		return index;
 	}
+	
+	
 	
 }
 

@@ -12,9 +12,12 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+
 import javafx.util.StringConverter;
 
 import javax.swing.Box;
@@ -27,10 +30,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.event.DocumentListener;
+
 import loci.common.DateTools;
 import ome.units.UNITS;
 import ome.units.unit.Unit;
 import ome.xml.model.Experimenter;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +53,9 @@ public class TagData
 //	Color noInfo=new Color(217,229,220);//green;
 	Color noInfo=Color.white;
 	Color resetInfo=Color.white;
+	
+	  private final Border normalBorder = UIManager.getBorder("TextField.border");
+	    private final Border errorBorder = javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 51, 51));
 	
 	public static final String[] DATE_FORMATS_TAGS = {
 	    "yyyy:MM:dd HH:mm:ss",
@@ -108,8 +119,8 @@ public class TagData
 	// kind of inputfields
 	public static final int TEXTFIELD=0;
 	public static final int COMBOBOX=1;
-	public static final int TEXTPANE=2;
-	public static final int CHECKBOX=3;
+	public static final int TEXTPANE=2; //unused?
+	public static final int CHECKBOX=3; //unused?
 	public static final int ARRAYFIELDS=4;
 	public static final int TIMESTAMP=5;
 	public static final int LIST=6;
@@ -122,15 +133,35 @@ public class TagData
 	private boolean prop;
 	private int type;
 	private boolean visible;
-
 	private boolean valChanged;
-
 	private String name;
 	private Boolean markedToStore;
-
+	private String tagInfo;
+	
 	private KeyListener fieldKeyListener;
 	private ActionListener fieldActionListener;
 
+	private boolean actionListenerActiv;
+
+	//copy constructor
+	public TagData(TagData orig)
+	{
+		label=orig.label;
+		inputField=orig.inputField;
+		unit=orig.unit;
+		status=orig.status;
+		prop=orig.prop;
+		type=orig.type;
+		visible=orig.visible;
+		valChanged=orig.valChanged;
+		name=orig.name;
+		markedToStore=orig.markedToStore;
+		tagInfo=orig.tagInfo;
+		fieldKeyListener=orig.fieldKeyListener;
+		fieldActionListener=orig.fieldActionListener;
+		actionListenerActiv=orig.actionListenerActiv;
+	}
+	
 	/**
 	 * Constructor for TagData element for array fields
 	 * @param name label for tagdata element
@@ -147,6 +178,7 @@ public class TagData
 		this.type=type;
 		this.name=name;
 		label = new JLabel(name+":");
+		tagInfo="";
 		int size=val!=null ? val.length : 1;
 		switch (type) {
 		case ARRAYFIELDS:
@@ -161,6 +193,7 @@ public class TagData
 		setTagValue(val);
 		setTagProp(prop);
 		visible=false;
+		actionListenerActiv=true;
 	}
 	
 	public TagData(String name, String[] val, Unit unit, boolean prop,
@@ -173,6 +206,7 @@ public class TagData
 		this.type=type;
 		this.name=name;
 		label = new JLabel(name+" ["+unit.getSymbol()+"]:");
+		tagInfo="";
 		int size=val!=null ? val.length : 1;
 		switch (type) {
 		case ARRAYFIELDS:
@@ -187,6 +221,7 @@ public class TagData
 		setTagValue(val);
 		setTagProp(prop);
 		visible=false;
+		actionListenerActiv=true;
 	}
 	/**
 	 * Constructor for TagData element for list fields
@@ -202,6 +237,7 @@ public class TagData
 		this.type=type;
 		this.name=name;
 		label = new JLabel(name+":");
+		tagInfo="";
 		
 		switch (type) {
 		case LIST:
@@ -215,6 +251,7 @@ public class TagData
 		label.setLabelFor(inputField);
 		setTagProp(prop);
 		visible=false;
+		actionListenerActiv=true;
 	}
 
 	public TagData(String name, String val, boolean prop,int type) 
@@ -228,6 +265,7 @@ public class TagData
 		this.unit=unit;
 		label= new JLabel(name+" ["+unit.getSymbol()+"]:");
 		label.setLabelFor(inputField);
+		tagInfo="";
 	}
 
 	public TagData(String name, String val, boolean prop,int type, String[] defaultVal) 
@@ -237,6 +275,7 @@ public class TagData
 		this.type=type;
 		this.name=name;
 		label = new JLabel(name+":");
+		tagInfo="";
 		switch (type) {
 		case TEXTFIELD:
 			initTextField();
@@ -268,45 +307,14 @@ public class TagData
 		setTagValue(val);
 		setTagProp(prop);
 		visible=false;
+		actionListenerActiv=true;
 	}
 
 	
-	/**
-	 * Returns <code>true</code> if the data object has been edited,
-	 * <code>false</code> otherwise.
-	 * @see AnnotationUI#hasDataToSave()
-	 */
-//	public boolean hasDataToSave()
-//	{
-//		if (model.isMultiSelection()) 
-//		    return false;
-//		
-//		String oldVal = originalVal;
-//		String value = descriptionWiki.getText();
-//		value = value.trim();
-//		if (name == null) return value.length() != 0;
-//		name = OMEWikiComponent.prepare(name.trim(), true);
-//		value = OMEWikiComponent.prepare(value.trim(), true);
-//		if (DEFAULT_DESCRIPTION_TEXT.equals(name) && 
-//				DEFAULT_DESCRIPTION_TEXT.equals(value)) return false;
-//		return !name.equals(value);
-//	}
+
 	
 	private void initTimeStampField() 
 	{
-//		inputField = Box.createHorizontalBox();
-//		
-////		GridPane dateGrid=new GridPane();
-//		DatePicker dPicker=new DatePicker();
-//		MyStringConverter converter = new MyStringConverter();
-//		dPicker.setConverter(converter);
-//		dPicker.setPromptText(datePattern.toLowerCase());
-//		JFXPanel fxPane=new JFXPanel();
-////		dateGrid.add(dPicker,0,0);
-//		fxPane.add(dPicker);
-//		inputField.add(fxPane);
-		
-		
 		inputField = new JTextField(10);
 		inputField.setToolTipText("Format e.g: "+datePattern+" or dd.MM.yyyy");
 		inputField.addKeyListener(fieldKeyListener);
@@ -339,7 +347,7 @@ public class TagData
 	private void initCheckBox(String val)
 	{
 		inputField = new JCheckBox("",Boolean.parseBoolean(val));
-		((JCheckBox) inputField).addActionListener(fieldActionListener);
+		addActionListener(fieldActionListener);
 	}
 
 	private void initArrayTextField(int size)
@@ -371,7 +379,9 @@ public class TagData
 //		((JComboBox<String>) inputField).setModel(model);
 //		((JComboBox<String>) inputField).setRenderer(new CBoxRenderer());
 		
-		((JComboBox<String>) inputField).addActionListener(fieldActionListener);
+		addActionListener(fieldActionListener);
+//		((JComboBox<String>) inputField).addActionListener(fieldActionListener);
+		
 		//			((JComboBox<String>) inputField).addActionListener(new ActionListener(){
 		//				public void actionPerformed(ActionEvent evt) 
 		//				{
@@ -392,10 +402,12 @@ public class TagData
 
 			@Override
 			public void keyTyped(KeyEvent e) {
+//				System.out.println("Field key typed action");
 				// TODO Auto-generated method stub
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {
+//				System.out.println("Field key released action");
 				valChanged=true;	
 				if(inputField instanceof JTextField){
 					if(inputField.getForeground()==Color.gray ){
@@ -408,6 +420,7 @@ public class TagData
 			}
 			@Override
 			public void keyPressed(KeyEvent e) {
+//				System.out.println("Field key pressed action");
 				// TODO Auto-generated method stub
 			}
 		};
@@ -416,12 +429,21 @@ public class TagData
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				valChanged=true;
+				if(inputField.getBorder().equals(errorBorder) && actionListenerActiv){
+					setTagInfo("");
+				}
 			}
 		};
 
 
 	}
 
+	public void activateActionListener(boolean a)
+	{
+		actionListenerActiv=a;
+	}
+	
+	
 	/** Action Listener for tagData*/
 	public void addActionListener(ActionListener l)
 	{
@@ -433,7 +455,6 @@ public class TagData
 			((JComboBox)inputField).addActionListener(l); 
 			break;
 		case TEXTPANE:
-
 			break;
 		case TEXTAREA:
 			break;
@@ -447,6 +468,32 @@ public class TagData
 			break;
 		default:
 			((JTextField)inputField).addActionListener(l);
+			break;
+		}
+	}
+	
+	public void addDocumentListener(DocumentListener l)
+	{
+		switch (type) {
+		case TEXTFIELD:
+			((JTextField)inputField).getDocument().addDocumentListener(l);
+			break;
+		case COMBOBOX:
+			break;
+		case TEXTPANE:
+			((JTextPane)inputField).getDocument().addDocumentListener(l);
+			break;
+		case TEXTAREA:
+			((JTextArea)inputField).getDocument().addDocumentListener(l);
+			break;
+		case CHECKBOX:
+			break;
+		case ARRAYFIELDS:
+			break;
+		case TIMESTAMP:
+			break;
+		default:
+			((JTextField)inputField).getDocument().addDocumentListener(l);
 			break;
 		}
 	}
@@ -472,6 +519,7 @@ public class TagData
 
 	public JComponent getInputField()
 	{
+//		inputField.setToolTipText(tagInfo);
 		return inputField;
 	}
 	
@@ -559,6 +607,7 @@ public class TagData
 	
 	public void setTagValue(Experimenter val)
 	{
+		activateActionListener(false);
 		if(val==null || val.equals("")){
 			inputField.setBackground(noInfo);
 		}else{
@@ -567,10 +616,12 @@ public class TagData
 		if(type==LIST){
 			((ExperimenterBox) inputField).addElement(val);
 		}
+		activateActionListener(true);
 	}
 	
 	public void setTagValue(List<Experimenter> val)
 	{
+		activateActionListener(false);
 		if(val==null || val.isEmpty()){
 			inputField.setBackground(noInfo);
 		}else{
@@ -579,10 +630,12 @@ public class TagData
 		if(type==LIST){
 			((ExperimenterBox) inputField).addExperimenterList(val);
 		}
+		activateActionListener(true);
 	}
 	
 	public void setTagValue(String val,Unit unit, boolean property)
 	{
+		activateActionListener(false);
 		if(this.unit!=unit){
 			String unitSymbol=unit.equals(UNITS.REFERENCEFRAME)? "rf" : unit.getSymbol();
 			label.setText(this.name+" ["+unitSymbol+"]:");
@@ -591,33 +644,41 @@ public class TagData
 		setTagValue(val);
 		setTagProp(property);
 		valChanged=false;
+		activateActionListener(true);
 	}
 
 	public void setTagValue(String val, boolean property)
 	{
+		activateActionListener(false);
 		setTagValue(val);
 		setTagProp(property);
 		valChanged=false;
+		activateActionListener(true);
 	}
 
 	public void setTagValue(String val, int index, boolean property)
 	{
+		activateActionListener(false);
 		setTagValue(val,index);
 		setTagProp(property);
 		valChanged=false;
+		activateActionListener(true);
 	}
 
 	public void setTagValue(String[] val, boolean property)
 	{
+		activateActionListener(false);
 		if(val== null)
 			val=new String[1];
 		setTagValue(val);
 		setTagProp(property);
 		valChanged=false;
+		activateActionListener(true);
 	}
 
 	private void setTagValue(String val, int index)
 	{
+		activateActionListener(false);
 		switch (type) {
 		case ARRAYFIELDS:
 			// split string
@@ -628,11 +689,12 @@ public class TagData
 			break;
 		}
 		setTagStatus( val.equals("") ? EMPTY : (status==EMPTY ? SET : OVERWRITE));
+		activateActionListener(true);
 	}
 
 	private void setTagValue(String[] val) 
 	{
-
+		activateActionListener(false);
 		switch (type) {
 		case ARRAYFIELDS:
 			// split string 
@@ -643,10 +705,12 @@ public class TagData
 			break;
 		}
 		setTagStatus( (val.length==0) ? EMPTY : (status==EMPTY ? SET : OVERWRITE));
+		activateActionListener(true);
 	}
 
 	public void setTagValue(String val) 
 	{
+		activateActionListener(false);
 		if(val==null || val.equals("")){
 			val="";
 			inputField.setBackground(noInfo);
@@ -680,6 +744,7 @@ public class TagData
 		}
 		setTagStatus( val.equals("") ? EMPTY : (status==EMPTY ? SET : OVERWRITE));
 		valChanged=false;
+		activateActionListener(true);
 	}
 	
 	private String readTimestamp(String val) 
@@ -922,6 +987,26 @@ public class TagData
 
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+	}
+
+	public String getTagInfo() {
+		return tagInfo;
+	}
+
+	public void setTagInfo(String tagInfo) 
+	{
+		this.tagInfo = tagInfo;
+		
+		if(!tagInfo.equals("")){
+			inputField.setBorder(errorBorder);
+			
+			inputField.setToolTipText(tagInfo);
+		}else{
+			inputField.setToolTipText(null);
+			inputField.setBorder(normalBorder);
+		}
+		
+		
 	}
 
 	class MyStringConverter extends StringConverter<LocalDate>

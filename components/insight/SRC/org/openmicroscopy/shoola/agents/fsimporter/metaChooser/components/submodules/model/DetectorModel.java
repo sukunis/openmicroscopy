@@ -12,12 +12,14 @@ import ome.xml.model.LightSource;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
+import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.Medium;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
@@ -87,15 +89,24 @@ public class DetectorModel
 	}
 	
 	/**
-	 * Overwrite data with given data
+	 * Overwrite data with copy of given data
 	 * @param newElem
 	 */
 	private void replaceData(Detector newElem,int index)
 	{
-			
 		if(newElem!=null){
-			element.set(index, newElem);
+			System.out.println("# DetectorModel::replaceData() - index: "+index);
+			element.set(index, new Detector(newElem));
+			DetectorType t=newElem.getType();
+			if(t!=null)
+				System.out.println("\t...orig Detector type = "+t.getValue());
+			t=element.get(index).getType();
+			if(t!=null)
+				System.out.println("\t...new Detector type = "+t.getValue());
+		}else{
+			System.out.println("# DetectorModel::replaceData() - empty element");
 		}
+		
 	}
 	
 	/**
@@ -170,6 +181,7 @@ public class DetectorModel
 	 */
 	private void completeData(DetectorSettings newElem,int index) throws Exception
 	{
+		System.out.println("# DetectorModel::completeData()");
 		if(settings.size()<=index){
 			expandList(settings.size(),index);
 		}
@@ -338,4 +350,26 @@ public class DetectorModel
 		default: LOGGER.warn("[CONF] unknown tag: "+tagName );break;
 		}
 	}
+	
+	
+//	public void showPredefinitions(List<TagConfiguration> list)
+//	{
+//		System.out.println("#DetectorModel::showPreVal()");
+//		for(int j=0; j<element.size();j++){
+//			Detector detector=element.get(j);
+//			DetectorSettings sett=getSettings(j);
+//			for(int i=0; i<list.size();i++){
+//				TagConfiguration t=list.get(i);
+//				if(t.getName()!=null){
+//					try {
+//						updateTag(detector, sett, t.getName(), t.getValue(), t.getUnit());
+//					} catch (Exception e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//		}
+//	}
+
 }

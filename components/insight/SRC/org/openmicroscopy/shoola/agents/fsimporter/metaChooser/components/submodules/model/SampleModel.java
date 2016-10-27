@@ -8,6 +8,7 @@ import ome.xml.model.primitives.Timestamp;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.SampleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
@@ -139,8 +140,12 @@ public class SampleModel
 			element.setGridBoxType(val);
 			break;
 		case TagNames.EXPGRID:// no pre value possible
-//			TODO:
-//			setExpGridNumber(new String[2], prop);
+			ObservedSample sample3=element.getObservedSample(0);
+			if(sample3==null)
+				sample3=new ObservedSample();
+			sample3.setGridNumberX(SampleViewer.parseExpGrid(val)[0]);
+			sample3.setGridNumberX(SampleViewer.parseExpGrid(val)[1]);
+			element.setObservedSample(sample3);
 			break;
 		case TagNames.EXPOBJNR:// no pre value possible
 			ObservedSample sample=element.getObservedSample(0);

@@ -76,7 +76,7 @@ public class LightPathViewer extends ModuleViewer{
 		lightPathTable=new LightPathTableSmall();
 		setLayout(new BorderLayout(5,5));
 
-		JButton editBtn=new JButton("Edit");
+		JButton editBtn=new JButton("Choose...");
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
 		editBtn.addActionListener(new ActionListener() {
@@ -194,6 +194,11 @@ public class LightPathViewer extends ModuleViewer{
 	protected void initTag(TagConfiguration t) {
 		// TODO Auto-generated method stub
 
+	}
+	@Override
+	protected void setPredefinedTag(TagConfiguration t) 
+	{
+		//no predefinitions possible
 	}
 
 	/**

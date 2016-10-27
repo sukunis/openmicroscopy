@@ -65,13 +65,15 @@ public class ObjectiveViewer extends ModuleViewer
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public ObjectiveViewer(ObjectiveModel objModel,ModuleConfiguration conf)
+	public ObjectiveViewer(ObjectiveModel objModel,ModuleConfiguration conf,boolean showPreValues)
 	{
 		System.out.println("# ObjectiveViewer::newInstance("+(objModel!=null?"model":"null")+")");
 		this.data=objModel;
 		initComponents(conf);
 		initTagList();
 		buildGUI();
+		showPredefinitions(conf.getTagList(), showPreValues);
+		showPredefinitions(conf.getSettingList(), showPreValues);
 	}
 	
 	private void initTagList()
@@ -159,7 +161,7 @@ public class ObjectiveViewer extends ModuleViewer
 		box=Box.createVerticalBox();
 		box.add(globalPane);
 		
-		JButton editBtn=new JButton("Selection");
+		JButton editBtn=new JButton("Choose...");
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		editBtn.setEnabled(true);
 		editBtn.addActionListener(new ActionListener() {
@@ -199,7 +201,6 @@ public class ObjectiveViewer extends ModuleViewer
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
-		predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
@@ -246,6 +247,107 @@ public class ObjectiveViewer extends ModuleViewer
 		case TagNames.WORKDIST:
 			setWorkingDist(null,prop);
 			workDist.setVisible(true);
+			break;
+		default:LOGGER.warn("[CONF] OBJECTIVE  unknown tag: "+name );break;
+		}
+	}
+	
+	protected void setPredefinedTag(TagConfiguration t) 
+	{
+		if(t.getValue()==null)
+			return;
+		
+		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
+		String name=t.getName();
+		Boolean prop=t.getProperty();
+		switch (name) {
+		case TagNames.CORCOLLAR: 
+			if(corCollar!=null && !corCollar.getTagValue().equals(""))
+				return;
+			try{
+				setCorCollar(ModuleViewer.parseToDouble(t.getValue()), prop);
+			}catch(Exception e){
+				corCollar.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.OBJ_MEDIUM: 
+			if(medium!=null && !medium.getTagValue().equals(""))
+				return;
+			Medium m=parseMedium(t.getValue());
+			if(m==null)
+				medium.setTagInfo(ERROR_PREVALUE+t.getValue());
+			setMedium(m,prop);
+			break;
+		case TagNames.REFINDEX:
+			if(refractIndex!=null && !refractIndex.getTagValue().equals(""))
+				return;
+			try{
+			setRefractIndex(ModuleViewer.parseToDouble(t.getValue()), prop);
+			}catch(Exception e){
+				refractIndex.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.MODEL:
+			if(model!=null && !model.getTagValue().equals(""))
+				return;
+			setModel(t.getValue(),prop);
+			break;
+		case TagNames.MANUFAC:
+			if(manufact!=null && !manufact.getTagValue().equals(""))
+				return;
+			setManufact(t.getValue(),prop);
+			break;
+		case TagNames.NOMMAGN:
+			if(nomMagn!=null && !nomMagn.getTagValue().equals(""))
+				return;
+			try{
+			setNomMagnification(ModuleViewer.parseToDouble(t.getValue()), prop);
+			}catch(Exception e){
+				nomMagn.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.CALMAGN:
+			if(calMagn!=null && !calMagn.getTagValue().equals(""))
+				return;
+			try{
+			setCalMagnification(ModuleViewer.parseToDouble(t.getValue()),prop);
+			}catch(Exception e){
+				calMagn.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.LENSNA:
+			if(lensNA!=null && !lensNA.getTagValue().equals(""))
+				return;
+			try{
+			setLensNA(ModuleViewer.parseToDouble(t.getValue()),prop);
+			}catch(Exception e){
+				lensNA.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.IMMERSION:
+			if(immersion!=null && !immersion.getTagValue().equals(""))
+				return;
+			Immersion i=parseImmersion(t.getValue());
+			if(i==null)
+				immersion.setTagInfo(ERROR_PREVALUE+t.getValue());
+			setImmersion(i, prop);
+			break;
+		case TagNames.CORRECTION:
+			if(correction!=null && !correction.getTagValue().equals(""))
+				return;
+			Correction c=parseCorrection(t.getValue());
+			if(c==null)
+				correction.setTagInfo(ERROR_PREVALUE+t.getValue());
+			setCorrection(c, prop);
+			break;
+		case TagNames.WORKDIST:
+			if(workDist!=null && !workDist.getTagValue().equals(""))
+				return;
+			try {
+				setWorkingDist(ModuleViewer.parseToLength(t.getValue(),t.getUnit()),prop);
+			} catch (Exception e) {
+				workDist.setTagInfo(ERROR_PREVALUE+t.getValue()+"["+t.getUnitSymbol()+"]");
+			}
 			break;
 		default:LOGGER.warn("[CONF] OBJECTIVE  unknown tag: "+name );break;
 		}
@@ -326,9 +428,10 @@ public class ObjectiveViewer extends ModuleViewer
 	private void setNomMagnification(Double value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
-		if(nomMagn == null) 
+		if(nomMagn == null) {
 			nomMagn = new TagData(TagNames.NOMMAGN,val,prop,TagData.TEXTFIELD);
-		else 
+			nomMagn.addDocumentListener(createDocumentListenerDouble(nomMagn,"Invalid input. Use float!"));
+		}else 
 			nomMagn.setTagValue(val,prop);
 	}
 	
@@ -342,9 +445,10 @@ public class ObjectiveViewer extends ModuleViewer
 	private void setCalMagnification(Double value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
-		if(calMagn == null) 
+		if(calMagn == null) {
 			calMagn = new TagData(TagNames.CALMAGN,val,prop,TagData.TEXTFIELD);
-		else 
+			calMagn.addDocumentListener(createDocumentListenerDouble(calMagn,"Invalid input. Use float!"));
+		}else 
 			calMagn.setTagValue(val,prop);
 	}
 	private void setCalMagnification(Double value)
@@ -355,9 +459,10 @@ public class ObjectiveViewer extends ModuleViewer
 	private void setLensNA(Double value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
-		if(lensNA == null) 
+		if(lensNA == null) {
 			lensNA = new TagData(TagNames.LENSNA,val,prop,TagData.TEXTFIELD);
-		else 
+			lensNA.addDocumentListener(createDocumentListenerDouble(lensNA,"Invalid input. Use float!"));
+		}else 
 			lensNA.setTagValue(val,prop);
 	}
 	private void setLensNA(Double value)
@@ -395,9 +500,10 @@ public class ObjectiveViewer extends ModuleViewer
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		Unit unit=(value!=null) ? value.unit() : TagNames.WORKDIST_UNIT;
-		if(workDist == null) 
+		if(workDist == null) {
 			workDist = new TagData(TagNames.WORKDIST,val,unit,prop,TagData.TEXTFIELD);
-		else 
+			workDist.addDocumentListener(createDocumentListenerDouble(workDist,"Invalid input. Use float!"));
+		}else 
 			workDist.setTagValue(val,unit,prop);
 	}
 	private void setWorkingDist(Length value)
@@ -425,9 +531,10 @@ public class ObjectiveViewer extends ModuleViewer
 	private void setCorCollar(Double value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
-		if(corCollar == null) 
+		if(corCollar == null) {
 			corCollar = new TagData(TagNames.CORCOLLAR,val,prop,TagData.TEXTFIELD);
-		else 
+			corCollar.addDocumentListener(createDocumentListenerDouble(corCollar,"Invalid input. Use float!"));
+		}else 
 			corCollar.setTagValue(val,prop);
 	}
 	private void setMedium(Medium value,boolean prop)
@@ -441,9 +548,10 @@ public class ObjectiveViewer extends ModuleViewer
 	private void setRefractIndex(Double value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
-		if(refractIndex == null) 
+		if(refractIndex == null) {
 			refractIndex = new TagData(TagNames.REFINDEX,val,prop,TagData.TEXTFIELD);
-		else 
+			refractIndex.addDocumentListener(createDocumentListenerDouble(refractIndex,"Invalid input. Use float!"));
+		}else 
 			refractIndex.setTagValue(val,prop);
 	}
 
@@ -551,7 +659,7 @@ public class ObjectiveViewer extends ModuleViewer
 			a=Medium.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("Medium: "+c+" is not supported");
-			a=Medium.OTHER;
+//			a=Medium.OTHER;
 		}
 		return a;
 	}
@@ -565,7 +673,7 @@ public class ObjectiveViewer extends ModuleViewer
 			m=Immersion.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("Immersion: "+c+" is not supported");
-			m=Immersion.OTHER;
+//			m=Immersion.OTHER;
 		}
 		return m;
 	}
@@ -579,7 +687,7 @@ public class ObjectiveViewer extends ModuleViewer
 			m=Correction.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("Correction: "+c+" is not supported");
-			m=Correction.OTHER;
+//			m=Correction.OTHER;
 		}
 		return m;
 	}

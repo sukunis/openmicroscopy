@@ -24,6 +24,7 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -58,11 +59,14 @@ public class MetaDataView extends JPanel
     
     private OME ome;
     private File srcFile;
+    
+    // MetaDataUI
     private MetaDataUI singleView;
+    private CardLayout seriesCard; 
     
     private DefaultListModel seriesListModel;
     private JPanel cardPane; 
-    private CardLayout seriesCard; 
+   
     private List<String> cardNames;
     private int currentCardIndex;
     
@@ -73,6 +77,8 @@ public class MetaDataView extends JPanel
     private JPanel parent;
 
 	private boolean parentDataLoaded;
+	
+	private CustomViewProperties customSett;
     
     
     /**
@@ -92,9 +98,11 @@ public class MetaDataView extends JPanel
      * @param importData given import information for this data.
      * @param parentData given parent information for this data.
      * @param parentPanel parent JPanel of this component.
+     * @param showFileData TODO
+     * @param showPreValues TODO
      */
 	public MetaDataView(String fName,ImportUserData importData,
-			MetaDataModel parentData, JPanel parentPanel) throws Exception
+			MetaDataModel parentData, JPanel parentPanel, boolean showFileData, boolean showPreValues) throws Exception
 	{
 		super(new BorderLayout());
 		this.setBorder(BorderFactory.createEmptyBorder());
@@ -113,9 +121,17 @@ public class MetaDataView extends JPanel
 		
 		
 		parentPanel.setCursor(cursor);
-		if(data==null){ 
+		if(data==null || !showFileData){ 
+			System.out.println("\t...no file data loaded");
 			fileDataLoaded=false;
-			singleView=new MetaDataUI(parentPanel,false); 
+			seriesData=false;
+			singleView=new MetaDataUI(parentPanel,false, showPreValues); 
+			
+			//load parent data
+			loadParentData(parentData, singleView);
+			// load importData
+			singleView.setImportData(importData);
+			add(singleView,BorderLayout.CENTER);
 			return ;
 		}
 
@@ -127,13 +143,14 @@ public class MetaDataView extends JPanel
 			LOGGER.info("[DATA] -- no series data");
 			seriesData=false;
 			// create with profile and hardware configurations
-			singleView=new MetaDataUI(parentPanel,false);
+			singleView=new MetaDataUI(parentPanel,false, showPreValues);
 
 			// load importData
 			singleView.setImportData(importData);
 
 			//load parent data
 			loadParentData(parentData, singleView);
+			
 
 			//load data from file
 			try{
@@ -158,7 +175,7 @@ public class MetaDataView extends JPanel
 						": "+data.getImageName(j)+"---------------------" );
 				reader.setSeries(j);
 				//new metaUI tab
-				MetaDataUI metaUI=new MetaDataUI(parentPanel,false);
+				MetaDataUI metaUI=new MetaDataUI(parentPanel,false, showPreValues);
 
 				//load importData
 				metaUI.setImportData(importData);
@@ -207,14 +224,16 @@ public class MetaDataView extends JPanel
 	
 	/**
 	 * Metadata GUI for directory.
-	 * @param sett GUI properties
 	 * @param name directory name
 	 * @param importData given import information for this dataset.
 	 * @param parentData given parent information for this dataset.
 	 * @param dirData metadata model for current directory
+	 * @param showPreValues TODO
+	 * @param sett GUI properties
 	 */
 	public MetaDataView(String name, 
-			ImportUserData importData, MetaDataModel parentData, MetaDataModel dirData,JPanel parent)
+			ImportUserData importData, MetaDataModel parentData, MetaDataModel dirData,
+			JPanel parent, boolean showPreValues)
 	{
 		super(new BorderLayout());
 		LOGGER.info("[GUI] -- select directory");
@@ -222,10 +241,12 @@ public class MetaDataView extends JPanel
 		
 		srcFile=null;
 		seriesData=false;
-		if(dirData==null)
-			singleView= new MetaDataUI(parent,true);
-		else
-			singleView = new MetaDataUI(parent,true,dirData);
+		
+		if(dirData==null){
+			singleView= new MetaDataUI(parent,true, showPreValues);
+		}else{
+			singleView = new MetaDataUI(parent,true,dirData, showPreValues);
+		}
 		
 		//set importData
 		singleView.setImportData(importData);
@@ -236,6 +257,7 @@ public class MetaDataView extends JPanel
 		if(dirData==null){
 			loadParentData(parentData,singleView);
 		}
+		
 		// set saved data for this directory
 //		if(dirData!=null){
 //			try {
@@ -277,6 +299,10 @@ public class MetaDataView extends JPanel
 		}
 	}
 	
+
+	
+	
+	
 	
 	/**
 	 * Read meta data from given file into OMEXMLMetadata format and set it as the MetadataStore 
@@ -293,6 +319,7 @@ public class MetaDataView extends JPanel
 		//record metadata to ome-xml format
 		ServiceFactory factory=new ServiceFactory();
 		OMEXMLService service = factory.getInstance(OMEXMLService.class);
+//		IMetadata omeMetaData= MetadataTools.createOMEXMLMetadata();
 		IMetadata metadata =  service.createOMEXMLMetadata();
 		reader.setMetadataStore((MetadataStore) metadata);
 		
@@ -496,95 +523,6 @@ public class MetaDataView extends JPanel
 	}
 
 	
-	/**
-	 * Clear all data in the view. Set file data for file. Parent should be not null!
-	 */
-	public void reset() throws Exception
-	{
-		if(ome!=null){
-			
-			ImageReader reader = new ImageReader();
-			IMetadata data=null;
-			
-			Cursor cursor=parent.getCursor();
-			parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			fileDataLoaded=true;
-			data = readMetadataFromFile(srcFile.getAbsolutePath(), reader);
-
-			parent.setCursor(cursor);
-
-			//file
-			if(seriesData){
-				int j=0;
-				for(Component comp:cardPane.getComponents()){
-					((MetaDataUI) comp).getModel().resetData();
-					reader.setSeries(j);
-					//load data from file
-					loadFileData(srcFile.getAbsolutePath(), ome, j, (MetaDataUI) comp);
-					j++;
-				}
-			}else{
-				if(singleView!=null){
-					singleView.getModel().resetData();
-					//set data from file
-					loadFileData(srcFile.getAbsolutePath(), ome, 0, singleView);
-				}
-			}
-
-		}else{
-			//dir
-			if(singleView!=null){
-				LOGGER.info("[SAVE] -- reset directory view");
-				singleView.getModel().resetData();
-			}
-		}	
-		setVisible();
-	}
-	
-	/**
-	 * Clear all data in the view. Show selected kind of data.
-	 */
-	public void reset(boolean fileData,boolean dirData, boolean customData, boolean hardwareData) throws Exception
-	{
-		if(ome!=null){
-			
-			ImageReader reader = new ImageReader();
-			IMetadata data=null;
-			
-			Cursor cursor=parent.getCursor();
-			parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			fileDataLoaded=true;
-			data = readMetadataFromFile(srcFile.getAbsolutePath(), reader);
-
-			parent.setCursor(cursor);
-
-			//file
-			if(seriesData){
-				int j=0;
-				for(Component comp:cardPane.getComponents()){
-					((MetaDataUI) comp).getModel().resetData();
-					reader.setSeries(j);
-					//load data from file
-					loadFileData(srcFile.getAbsolutePath(), ome, j, (MetaDataUI) comp);
-					j++;
-				}
-			}else{
-				if(singleView!=null){
-					singleView.getModel().resetData();
-					//set data from file
-					loadFileData(srcFile.getAbsolutePath(), ome, 0, singleView);
-				}
-			}
-
-		}else{
-			//dir
-			if(singleView!=null){
-				LOGGER.info("[SAVE] -- reset directory view");
-				singleView.getModel().resetData();
-			}
-		}	
-		setVisible();
-	}
 	
 	public boolean hasUserInput()
 	{
@@ -626,5 +564,9 @@ public class MetaDataView extends JPanel
 			}
 		}
 		return false;
+	}
+
+	public void setParentDataLoaded(boolean b) {
+		parentDataLoaded=b;		
 	}
 }

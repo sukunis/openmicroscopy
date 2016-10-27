@@ -194,20 +194,24 @@ public class MetaDataUI extends JPanel
 
 	private int lastChannelSelectionIndex;
 
-	private boolean predefinitionsLoaded; 
+	private boolean predefinitionsLoaded;
+
+	private boolean showPreValues; 
 	
 	/**
 	 * Constructor
 	 * @param parent panel
 	 * @param isdir =true if selected node is a directory, else false
+	 * @param showPreValues TODO
 	 */
-	public MetaDataUI(JPanel parent,boolean isdir)
+	public MetaDataUI(JPanel parent,boolean isdir, boolean showPreValues)
 	{
+		System.out.println("# MetaDataUI::new Instance : "+isdir+", "+showPreValues);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
 		
 		directoryPane=isdir;
-		
+		this.showPreValues=showPreValues;
 		resetInitialisation();
 		
 		// create model
@@ -221,23 +225,20 @@ public class MetaDataUI extends JPanel
 	 * @param parent panel
 	 * @param dir =true if selected node is a directory, else false
 	 * @param model
+	 * @param showPreValues TODO
 	 */
-	public MetaDataUI(JPanel parent,boolean dir,MetaDataModel model)
+	public MetaDataUI(JPanel parent,boolean dir,MetaDataModel model, boolean showPreValues)
 	{
+		System.out.println("# MetaDataUI::new Instance : "+dir+", model,"+showPreValues);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
 		
 		directoryPane=dir;
-		
+		this.showPreValues=showPreValues;
 		resetInitialisation();
 		
 		// create model
 		this.model=model;
-		System.out.println("# MetaDataUI::new Instance with existing model - obj model : "
-				+(model.getObjectiveModel()!=null?"exists":"doesn't exists")+", obj= "
-				+(model.getObjectiveModel().getObjective()!=null?"exists":"doesn't exist"));
-		System.out.println("img model : "+(model.getImageModel()!=null?"exists":"doesn't exist")+
-				"img : "+(model.getImageModel().getImage()!=null?"exists":"doesn't exist"));
 		
 		initModelComponents();
 		control=new MetaDataControl(model,this);
@@ -328,11 +329,11 @@ public class MetaDataUI extends JPanel
 	{
 		//read input data
 		save();
-		System.out.println("\t...Model::Objective: "+(model.getObjectiveModel().getObjective()!=null?"1":"0"));
-		System.out.println("\t...Model::Channels: "+model.getNumberOfChannels());
-		System.out.println("\t...Model::Detector: "+model.getNumberOfDetectors());
-		System.out.println("\t...Model::LightSrc: "+model.getNumberOfLightSrc());
-		System.out.println("\t...Model::LightPath: "+model.getNumberOfLightPath());
+//		System.out.println("\t...Model::Objective: "+(model.getObjectiveModel().getObjective()!=null?"1":"0"));
+//		System.out.println("\t...Model::Channels: "+model.getNumberOfChannels());
+//		System.out.println("\t...Model::Detector: "+model.getNumberOfDetectors());
+//		System.out.println("\t...Model::LightSrc: "+model.getNumberOfLightSrc());
+//		System.out.println("\t...Model::LightPath: "+model.getNumberOfLightPath());
 		
 		return model;
 	}
@@ -925,6 +926,7 @@ public class MetaDataUI extends JPanel
 	public void setImportData(ImportUserData data)
 	{
 		if(data!=null){
+			System.out.println("# MetaDataUI::setImportData()");
 			LOGGER.info("[DATA] -- add IMPORT USER data");
 			importUserData=data;
 			try {
@@ -966,7 +968,7 @@ public class MetaDataUI extends JPanel
 		if(initExperimentUI){
 			experimentPane=new JTabbedPane();
 			ModuleConfiguration expModul=customSett.getExpConf();
-			experimentUI=new ExperimentViewer(model.getExperimentModel(), expModul);
+			experimentUI=new ExperimentViewer(model.getExperimentModel(), expModul,showPreValues);
 			experimentPane.add("Experiment",experimentUI);
 			addToPlaceholder(experimentPane,expModul.getPosition(), expModul.getWidth());
 		}
@@ -1007,7 +1009,7 @@ public class MetaDataUI extends JPanel
 		if(initObjectiveUI){
 			objectivePane=new JPanel(new CardLayout());
 			ModuleConfiguration objModul=customSett.getObjConf();
-			objectiveUI=new ObjectiveViewer(model.getObjectiveModel(), objModul);
+			objectiveUI=new ObjectiveViewer(model.getObjectiveModel(), objModul,showPreValues);
 			JPanel pane= control.createPropPane(objectiveUI, "Objective", "for image "+name);
 			objectivePane.add(pane,name);
 			addToPlaceholder(objectivePane, objModul.getPosition(), objModul.getWidth());
@@ -1019,7 +1021,7 @@ public class MetaDataUI extends JPanel
 		if(initSampleUI){
 			samplePane=new JTabbedPane();
 			ModuleConfiguration sampleModul=customSett.getSampleConf();
-			sampleUI=new SampleViewer(model.getSampleModel(), sampleModul);
+			sampleUI=new SampleViewer(model.getSampleModel(), sampleModul,showPreValues);
 			samplePane.add("Sample",sampleUI);
 			addToPlaceholder(samplePane, sampleModul.getPosition(), sampleModul.getWidth());
 		}
@@ -1137,7 +1139,7 @@ public class MetaDataUI extends JPanel
 		}else{
 			System.out.println("\t...Set visible Detector for Channel "+name);
 			detectorPane2.removeAll();
-			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),index);
+			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),index,showPreValues);
 			detectorPane2.add(control.createPropPane(detectorViewer, "Detector", "for "+ name));
 		}
 	}
@@ -1149,7 +1151,7 @@ public class MetaDataUI extends JPanel
 		}else{
 			lightSrcPane2.removeAll();
 			ModuleConfiguration lightSModul=customSett.getLightSrcConf();
-			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), lightSModul, index);
+			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), lightSModul, index,showPreValues);
 			lightSrcPane2.add(control.createPropPane(lightSrcViewer, "LightSource", "for "+name));
 		}
 	}
@@ -1169,7 +1171,7 @@ public class MetaDataUI extends JPanel
 		if(initLightSrcUI){
 			lightSrcPane2=new JPanel(new CardLayout());
 			ModuleConfiguration lightSModul=customSett.getLightSrcConf();
-			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), customSett.getLightSrcConf(), index);
+			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), customSett.getLightSrcConf(), index,showPreValues);
 			lightSrcPane2.add(control.createPropPane(lightSrcViewer, "LightSource", "for "+name));
 			addToPlaceholder(lightSrcPane2, lightSModul.getPosition(), lightSModul.getWidth());
 		}
@@ -1180,7 +1182,7 @@ public class MetaDataUI extends JPanel
 		if(initDetectorUI){
 			detectorPane2=new JPanel(new CardLayout());
 			ModuleConfiguration detModul=customSett.getDetectorConf();
-			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),index);
+			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),index,showPreValues);
 			detectorPane2.add(control.createPropPane(detectorViewer, "Detector", "for "+ name));
 			addToPlaceholder(detectorPane2, detModul.getPosition(), detModul.getWidth());
 		}
@@ -1436,6 +1438,7 @@ public class MetaDataUI extends JPanel
 	protected JButton initPlaneBtn() 
 	{
 		JButton btnPlanePos=new JButton("Plane/Stage Positions");
+		btnPlanePos.setEnabled(false);
 		btnPlanePos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PlaneSliderCompUI plane=null;
@@ -1514,7 +1517,7 @@ public class MetaDataUI extends JPanel
 		d.setSize(width,height);
 		d.setModal(true);
 		d.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		imgEnvViewer=new ImageEnvViewer(p, customSett.getImgEnvConf());
+		imgEnvViewer=new ImageEnvViewer(p, customSett.getImgEnvConf(),showPreValues);
 //		centerOnParent(d, true);
 		d.add(imgEnvViewer);
 		d.pack();
@@ -1840,5 +1843,7 @@ public class MetaDataUI extends JPanel
 		//TODO channel
 		return result;
 	}
+	
+
 	
 }

@@ -18,7 +18,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 public class LS_FilamentViewer extends LightSourceSubViewer
 {
-	public LS_FilamentViewer(LightSourceModel model,ModuleConfiguration conf,int index)
+	public LS_FilamentViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
 		classification=LightSourceModel.FILAMENT;
 		this.data=model;
@@ -26,6 +26,7 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 		initComponents(conf);
 		buildGUI();
 		initTagList();
+		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 
 	@Override

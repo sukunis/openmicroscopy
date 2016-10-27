@@ -72,14 +72,15 @@ public class LightSourceViewer extends ModuleViewer{
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public LightSourceViewer(LightSourceModel model,ModuleConfiguration conf,int index)
+	public LightSourceViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
 		System.out.println("# LightSrcViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		this.index=index;
 		this.data=model;
-		initComponents(conf);
+		initComponents(conf,showPreValues);
 		buildGUI();
 		initTagList();
+		showPredefinitions(conf.getSettingList(), showPreValues);
 	}
 
 	private void initTagList()
@@ -134,7 +135,7 @@ public class LightSourceViewer extends ModuleViewer{
 	/**
 	 * Initialize components.
 	 */
-	private void initComponents(ModuleConfiguration conf) 
+	private void initComponents(ModuleConfiguration conf,boolean showPreValues) 
 	{
 		// init view layout
 		setLayout(new BorderLayout(5,5));
@@ -167,7 +168,7 @@ public class LightSourceViewer extends ModuleViewer{
 		sourceType.addActionListener(aListener);
 
 
-		JButton editBtn=new JButton("Selection");
+		JButton editBtn=new JButton("Choose...");
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		editBtn.setEnabled(true);
 		editBtn.addActionListener(new ActionListener() {
@@ -194,11 +195,11 @@ public class LightSourceViewer extends ModuleViewer{
 		add(editBtn,BorderLayout.SOUTH);
 
 		// init tags
-		globalPane.add(new LS_LaserViewer(data, conf, index),LightSourceModel.LASER);
-		globalPane.add(new LS_ArcViewer(data, conf, index),LightSourceModel.ARC);
-		globalPane.add(new LS_FilamentViewer(data, conf, index),LightSourceModel.FILAMENT);
-		globalPane.add(new LS_GESViewer(data, conf, index),LightSourceModel.GENERIC_EXCITATION);
-		globalPane.add(new LS_LEDViewer(data, conf, index),LightSourceModel.LIGHT_EMITTING_DIODE);
+		globalPane.add(new LS_LaserViewer(data, conf, index,showPreValues),LightSourceModel.LASER);
+		globalPane.add(new LS_ArcViewer(data, conf, index,showPreValues),LightSourceModel.ARC);
+		globalPane.add(new LS_FilamentViewer(data, conf, index,showPreValues),LightSourceModel.FILAMENT);
+		globalPane.add(new LS_GESViewer(data, conf, index,showPreValues),LightSourceModel.GENERIC_EXCITATION);
+		globalPane.add(new LS_LEDViewer(data, conf, index,showPreValues),LightSourceModel.LIGHT_EMITTING_DIODE);
 		
 		initTags(conf.getSettingList());
 	}
@@ -222,7 +223,6 @@ public class LightSourceViewer extends ModuleViewer{
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
-		predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
@@ -235,6 +235,38 @@ public class LightSourceViewer extends ModuleViewer{
 			setAttenuation(null, prop);
 			attenuation.setVisible(true);
 
+			break;
+		default: 
+			LOGGER.warn("[CONF] LIGHTSRC SETT unknown tag: "+name );
+			break;
+		}
+	}
+	protected void setPredefinedTag(TagConfiguration t) 
+	{
+		if(t.getValue()==null)
+			return;
+		
+		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
+		String name=t.getName();
+		Boolean prop=t.getProperty();
+		switch (name) {
+		case TagNames.SET_WAVELENGTH:
+			if(waveLengthSett!=null && !waveLengthSett.getTagValue().equals(""))
+				return;
+			try {
+				setWavelength(parseToLength(t.getValue(),t.getUnit()), prop);
+			} catch (Exception e) {
+				waveLengthSett.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnitSymbol()+"]");
+			}
+			break;
+		case TagNames.ATTENUATION:
+			if(attenuation!=null && !attenuation.getTagValue().equals(""))
+				return;
+			try{
+			setAttenuation(parseAttenuation(t.getValue()), prop);
+			}catch(Exception e){
+				attenuation.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
 			break;
 		default: 
 			LOGGER.warn("[CONF] LIGHTSRC SETT unknown tag: "+name );
@@ -290,18 +322,20 @@ public class LightSourceViewer extends ModuleViewer{
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
 		Unit unit=(value!=null) ? value.unit():TagNames.WAVELENGTH_UNIT;
-		if(waveLengthSett == null) 
+		if(waveLengthSett == null){ 
 			waveLengthSett = new TagData(TagNames.SET_WAVELENGTH,val,unit,prop,TagData.TEXTFIELD);
-		else 
+			waveLengthSett.addDocumentListener(createDocumentListenerDouble(waveLengthSett,"Invalid input. Use float!"));
+		}else 
 			waveLengthSett.setTagValue(val,unit,prop);
 
 	}
 	public void setAttenuation(PercentFraction value, boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value.getNumberValue()):"";
-		if(attenuation == null) 
+		if(attenuation == null) {
 			attenuation = new TagData(TagNames.ATTENUATION,val,prop,TagData.TEXTFIELD);
-		else 
+			attenuation.addDocumentListener(createDocumentListenerDouble(attenuation,"Invalid input. Use float!"));
+		}else 
 			attenuation.setTagValue(val,prop);
 	}
 
@@ -336,7 +370,7 @@ public class LightSourceViewer extends ModuleViewer{
 		}
 		dataChanged=false;
 	}
-	private PercentFraction parseAttenuation(String c)
+	private PercentFraction parseAttenuation(String c) throws Exception
 	{
 		if(c==null || c.equals(""))
 			return null;

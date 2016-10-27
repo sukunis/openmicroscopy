@@ -62,12 +62,13 @@ private TagData rawMaterialCode;
  * Creates a new instance.
  * @param model Reference to model.
  */
-public SampleViewer(SampleModel model,ModuleConfiguration conf)
+public SampleViewer(SampleModel model,ModuleConfiguration conf,boolean showPreValues)
 {
 	this.data=model;
 	initComponents(conf);
 	initTagList();
 	buildGUI();
+	showPredefinitions(conf.getTagList(), showPreValues);
 }
 
 private void initTagList()
@@ -154,7 +155,6 @@ private void initComponents(ModuleConfiguration conf)
  */
 protected void initTag(TagConfiguration t) 
 {
-	predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 	String name=t.getName();
 	Boolean prop=t.getProperty();
 	switch (name) {
@@ -197,6 +197,85 @@ protected void initTag(TagConfiguration t)
 	default:
 		LOGGER.warn("[CONF] unknown tag: "+name );break;
 	}
+}
+
+protected void setPredefinedTag(TagConfiguration t) 
+{
+	if(t.getValue()==null)
+		return;
+	
+	predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
+	String name=t.getName();
+	Boolean prop=t.getProperty();
+	switch (name) {
+	case TagNames.PREPDATE:
+		if(preparationDate!=null && !preparationDate.getTagValue().equals(""))
+			return;
+		setPreparationDate(t.getValue().equals("")? 
+				null : Timestamp.valueOf(t.getValue()), prop);
+		break;
+	case TagNames.PREPDESC:
+		if(preparationDescription!=null && !preparationDescription.getTagValue().equals(""))
+			return;
+		setPreparationDescription(t.getValue(), prop);
+		break;
+	case TagNames.RAWCODE:
+		if(rawMaterialCode!=null && !rawMaterialCode.getTagValue().equals(""))
+			return;
+		setRawMaterialCode(t.getValue(), prop); 
+		break;
+	case TagNames.RAWDESC:
+		if(rawMaterialDesc!=null && !rawMaterialDesc.getTagValue().equals(""))
+			return;
+		System.out.println("Raw desc = "+t.getValue());
+		setRawMaterialDesc(t.getValue(), prop);
+		break;
+	case TagNames.GRIDBOXNR:
+		if(gridBoxNumber!=null && !gridBoxNumber.getTagValue().equals(""))
+			return;
+		setGridBoxNumber(t.getValue(), prop);
+		break;
+	case TagNames.GRIDBOXTYPE:
+		if(gridBoxType!=null && !gridBoxType.getTagValue().equals(""))
+			return;
+		setGridType(t.getValue(), prop);
+		break;
+	case TagNames.EXPGRID:
+		if(expGrid!=null && !expGrid.getTagValue().equals(""))
+			return;
+		//TODO
+		setExpGridNumber(parseExpGrid(t.getValue()), prop);
+		break;
+	case TagNames.EXPOBJNR:
+		if(expObjectNr!=null && !expObjectNr.getTagValue().equals(""))
+			return;
+		setExpObjectNr(t.getValue(), prop);
+		break;
+	case TagNames.EXPOBJTYPE: 
+		if(expObjectType!=null && !expObjectType.getTagValue().equals(""))
+			return;
+		setExpObjectType(t.getValue(), prop);
+		break;
+	default:
+		LOGGER.warn("[CONF] unknown tag: "+name );break;
+	}
+}
+
+/**
+ * TODO: parse x,y to stringarray={x,y}
+ * @param value
+ * @return
+ */
+public static String[] parseExpGrid(String value) 
+{
+	String delims="[,]";
+	String[] splitting =value.split(delims);	
+
+	String[] result=new String[2];
+	result[0]=splitting.length==0 ? "":splitting[0];
+	result[1]=splitting.length<2 ? "":splitting[1];
+	
+	return result;
 }
 
 /**

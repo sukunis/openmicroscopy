@@ -64,13 +64,14 @@ public class ExperimentViewer extends ModuleViewer{
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public ExperimentViewer(ExperimentModel model,ModuleConfiguration conf)
+	public ExperimentViewer(ExperimentModel model,ModuleConfiguration conf,boolean showPreValues)
 	{
 		System.out.println("# ExperimentModel::new Instance("+(model!=null?"model":"null")+")");
 		this.data=model;
 		initComponents(conf);
 		initTagList();
 		buildGUI();
+		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 
 	private void initTagList()
@@ -143,7 +144,6 @@ public class ExperimentViewer extends ModuleViewer{
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
-		predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
@@ -173,6 +173,53 @@ public class ExperimentViewer extends ModuleViewer{
 		case TagNames.PROJECTPARTNER:
 			setProjectPartner(null, prop);
 			projectPartner.setVisible(true);
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
+	}
+	
+	protected void setPredefinedTag(TagConfiguration t) 
+	{
+		if(t.getValue()==null)
+			return;
+		
+		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
+		String name=t.getName();
+		Boolean prop=t.getProperty();
+		switch (name) {
+		case TagNames.TYPE:
+			if(type!=null && !type.getTagValue().equals(""))
+				return;
+			ExperimentType et=parseExperimentType(t.getValue());
+			if(et==null)
+				type.setTagInfo(ERROR_PREVALUE+t.getValue());
+			setType(et, prop);
+			break;
+		case TagNames.DESC:
+			if(description!=null && !description.getTagValue().equals(""))
+				return;
+			setDescription(t.getValue(), prop);
+			break;
+			//Set by system
+		case TagNames.GROUP:
+//			if(type!=null && !type.getTagValue().equals(""))
+//				return;
+//			setGroupName(t.getValue(), prop);
+			break;
+		case TagNames.EXPNAME:
+			if(expName!=null && !expName.getTagValue().equals(""))
+				return;
+			setName(t.getValue(), prop);
+			break;
+			//set by system
+		case TagNames.PROJECTNAME:
+//			setProjectName(t.getValue(), prop);
+			break;
+		case TagNames.PROJECTPARTNER:
+			if(projectPartner!=null && !projectPartner.getTagValue().equals(""))
+				return;
+			setProjectPartner(t.getValue(), prop);
 			break;
 		default:
 			LOGGER.warn("[CONF] unknown tag: "+name );break;
@@ -223,18 +270,26 @@ public class ExperimentViewer extends ModuleViewer{
 			type.setTagValue(val,prop);	
 	}
 
-	private ExperimentType getExperimentType(String value)  throws FormatException
+	private ExperimentType parseExperimentType(String value)
 	{
-		if(value==null)
+		if(value==null || value.equals(""))
 			return null;
 
-		ExperimentTypeEnumHandler handler = new ExperimentTypeEnumHandler();
-		try {
-			return (ExperimentType) handler.getEnumeration(value);
+		ExperimentType t=null;
+		try{
+			t=ExperimentType.fromString(value);
+		}catch(EnumerationException e){
+			LOGGER.warn("ExperimentType: "+value+"is not supported");
 		}
-		catch (EnumerationException e) {
-			throw new FormatException("ExperimentType creation failed", e);
-		}
+		return t;
+		
+//		ExperimentTypeEnumHandler handler = new ExperimentTypeEnumHandler();
+//		try {
+//			return (ExperimentType) handler.getEnumeration(value);
+//		}
+//		catch (EnumerationException e) {
+//			throw new FormatException("ExperimentType creation failed", e);
+//		}
 	}
 
 	private void setDescription(String value, boolean prop)
@@ -331,7 +386,7 @@ public class ExperimentViewer extends ModuleViewer{
 			LOGGER.error("[DATA] can't read EXPERIMENT description input");
 		}
 		try{
-			data.getExperiment().setType(getExperimentType(type.getTagValue()));
+			data.getExperiment().setType(parseExperimentType(type.getTagValue()));
 			type.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read EXPERIMENT type input");

@@ -7,11 +7,15 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
@@ -38,6 +42,13 @@ public abstract class ModuleViewer extends JPanel
 	
 	public abstract void saveData();
 	protected abstract void initTag(TagConfiguration t); 
+	protected abstract void setPredefinedTag(TagConfiguration t);
+	
+	private static String pattern_double ="\\d*+\\.\\d{1,}";
+	
+	protected final String ERROR_PREVALUE="Invalid predefined value: ";
+	
+	
 	
 	protected boolean inputAt(TagData tag)
 	{
@@ -69,12 +80,19 @@ public abstract class ModuleViewer extends JPanel
 //	    return Arrays.stream(e.getEnumConstants()).map(Enum::name).toArray(String[]::new);
 	}
 	
-	public static PositiveInteger parseToPositiveInt(String c)
+	public static PositiveInteger parseToPositiveInt(String c) throws Exception
 	{
 		if(c==null || c.equals(""))
 			return null;
-		
-		return new PositiveInteger(Integer.parseInt(c));
+		PositiveInteger result=null;
+		Integer t=Integer.parseInt(c);
+//		if(t!=null && t>0){
+//			System.out.println("\t...parseToPositiveInt() "+t);
+			result=new PositiveInteger(t);
+//		}else{
+//			System.out.println("ERROR: parseToPositiveInt() "+c);
+//		}
+		return result;
 	}
 	
 	public static Length parseToLength(String c, Unit<Length> unit) throws Exception
@@ -106,6 +124,23 @@ public abstract class ModuleViewer extends JPanel
 			TagConfiguration t=list.get(i);
 			if(t.getName()!=null){
 				initTag(t);
+			}
+		}
+	}
+	
+	/**
+	 * Show predefined values if showPreValues==true and the field is init but empty
+	 * @param list
+	 * @param showPreValues
+	 */
+	public void showPredefinitions(List<TagConfiguration> list,boolean showPreValues)
+	{
+		if(showPreValues){
+			for(int i=0; i<list.size();i++){
+				TagConfiguration t=list.get(i);
+				if(t.getName()!=null){
+					setPredefinedTag(t);
+				}
 			}
 		}
 	}
@@ -157,8 +192,72 @@ public abstract class ModuleViewer extends JPanel
 			}
 		}
 		
+//		protected void addLabelTextRows(List<TagData> tags,GridBagLayout gridbag,Container container) {
+//			GridBagConstraints c = new GridBagConstraints();
+//			c.anchor = GridBagConstraints.NORTHWEST;
+//			c.insets = new Insets( 0, 0, 1, 0);
+//			int numLabels = tags.size();
+//
+//			for (int i = 0; i < numLabels; i++) {
+//				c.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
+//				c.fill = GridBagConstraints.NONE;      //reset to default
+//				c.weightx = 0.0;                       //reset to default
+//				container.add(tags.get(i).getTagLabel(), c);
+//
+//				c.gridwidth = GridBagConstraints.REMAINDER;     //end row
+//				c.fill = GridBagConstraints.HORIZONTAL;
+//				c.weightx = 1.0;
+//				container.add(tags.get(i).getInputField(), c);
+//				
+//			}
+//		}
+		
 		public boolean predefinitionValAreLoaded()
 		{
 			return predefinitionValLoaded;
+		}
+		
+		protected void validateDoubleInput(TagData tag,String error) 
+		{
+			String text = tag.getTagValue();
+			Pattern r= Pattern.compile(pattern_double);
+			Matcher m= r.matcher(text);
+			if(m.matches()){
+				tag.setTagInfo("");
+			}else{
+				tag.setTagInfo(error);
+			}
+		}
+		/**
+		 * @return
+		 */
+		public DocumentListener createDocumentListenerDouble(TagData tag, String error) {
+			return new DocumentListenerForDouble(tag,error); 
+				
+		}
+		
+		class DocumentListenerForDouble implements DocumentListener
+		{
+			private TagData tag;
+			private String error;
+			public DocumentListenerForDouble(TagData tag,String error)
+			{
+				this.tag=tag;
+				this.error=error;
+			}
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+			
+			}
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				validateDoubleInput(tag,error);
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+//					System.out.println("Zoom changeUpdate listener");
+				
+			}
+			
 		}
 }

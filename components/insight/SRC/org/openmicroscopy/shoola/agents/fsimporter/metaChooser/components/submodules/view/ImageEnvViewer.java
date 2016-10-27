@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
+import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.unit.Unit;
@@ -39,6 +40,8 @@ import org.slf4j.LoggerFactory;
 
 public class ImageEnvViewer extends ModuleViewer{
 
+	
+
 	private static final org.slf4j.Logger LOGGER =
 			LoggerFactory.getLogger(ImageEnvViewer.class);
 
@@ -56,12 +59,14 @@ public class ImageEnvViewer extends ModuleViewer{
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public ImageEnvViewer(ImageEnvModel model,ModuleConfiguration conf)
+	public ImageEnvViewer(ImageEnvModel model,ModuleConfiguration conf,boolean showPreValues)
 	{
+		System.out.println("# ImageEnvViewer::new Instance()");
 		this.data=model;
 		initComponents(conf);
 		initTagList();
 		buildGUI();
+		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 
 	private void initTagList()
@@ -128,7 +133,6 @@ public class ImageEnvViewer extends ModuleViewer{
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
-		predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
@@ -152,6 +156,67 @@ public class ImageEnvViewer extends ModuleViewer{
 			LOGGER.warn("[CONF] unknown tag: "+name );break;
 		}
 	}
+	
+	protected void setPredefinedTag(TagConfiguration t) 
+	{
+		if(t.getValue()==null)
+			return;
+		
+		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
+		String name=t.getName();
+		Boolean prop=t.getProperty();
+		switch (name) {
+		case TagNames.TEMP:
+			if(temperature!=null && !temperature.getTagValue().equals(""))
+				return;
+			try{
+				Temperature v=parseTemperature(t.getValue(), t.getUnit());
+				setTemperature(v, prop);
+			}catch(Exception e){
+				String unitError=t.getUnitSymbol();
+				if(t.getUnit()==null){
+					unitError="Unknown unit, use default "+TagNames.TEMPERATURE_UNIT.getSymbol();
+					
+				}
+				temperature.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+unitError+"]");
+			}
+			
+
+			break;
+		case TagNames.AIRPRESS:
+			if(airPressure!=null && !airPressure.getTagValue().equals(""))
+				return;
+			try{
+				Pressure p=parsePressure(t.getValue(), t.getUnit());
+				setAirPressure(p, prop);
+			}catch(Exception e){
+				airPressure.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnit()+"]");
+			}
+			
+			break;
+		case TagNames.HUMIDITY:
+			if(humidity!=null && !humidity.getTagValue().equals(""))
+				return;
+			try{
+				setHumidity(parsePercentFraction(t.getValue()), prop);
+			}catch(Exception e){
+				humidity.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		case TagNames.CO2:
+			if(co2Percent!=null && !co2Percent.getTagValue().equals(""))
+				return;
+			try{
+				PercentFraction p= parsePercentFraction(t.getValue());
+				setCo2Percent(p, prop);
+			}catch(Exception e){
+				co2Percent.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
+			break;
+		default:
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
+		}
+	}
 
 	/**
 	 * Show data of objective
@@ -160,7 +225,6 @@ public class ImageEnvViewer extends ModuleViewer{
 	{
 		if(data==null)
 			return;
-
 		ImagingEnvironment env=data.getImgEnv();
 		if(env!=null){
 			try {if(temperature!=null) setTemperature(env.getTemperature(), ElementsCompUI.REQUIRED);	} 
@@ -293,6 +357,35 @@ public class ImageEnvViewer extends ModuleViewer{
 
 
 	}
+	
+	public static Temperature parseTemperature(String c, Unit unit) throws Exception
+	{
+		if(c==null || c.equals(""))
+			return null;
+
+		
+		return new Temperature(Double.valueOf(c), unit);
+	}
+	
+	public static Pressure parsePressure(String c, Unit unit) throws Exception
+	{
+		if(c==null || c.equals(""))
+			return null;
+
+		
+		return new Pressure(Double.valueOf(c), unit);
+	}
+	
+	public static PercentFraction parsePercentFraction(String c) throws Exception
+	{
+		if(c==null || c.equals(""))
+			return null;
+
+		
+		return new PercentFraction(Float.valueOf(c)/100);
+	}
+	
+	
 }
 
 

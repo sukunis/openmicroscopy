@@ -18,7 +18,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 public class LS_ArcViewer extends LightSourceSubViewer 
 {
 	
-	public LS_ArcViewer(LightSourceModel model,ModuleConfiguration conf,int index)
+	public LS_ArcViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
 		classification=LightSourceModel.ARC;
 		this.data=model;
@@ -26,6 +26,7 @@ public class LS_ArcViewer extends LightSourceSubViewer
 		initComponents(conf);
 		buildGUI();
 		initTagList();
+		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 	@Override
 	protected void initTagList() {
@@ -96,7 +97,7 @@ public class LS_ArcViewer extends LightSourceSubViewer
 			LOGGER.error("[DATA] can't read LIGHTSRC arc model input");
 		}
 		try{
-			((Arc)lightSrc).setPower(LightSourceCompUI.parsePower(power.getTagValue(),power.getTagUnit()));
+			((Arc)lightSrc).setPower(LightSourceSubViewer.parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC arc power input. "+e.getMessage());
 		}
@@ -107,5 +108,7 @@ public class LS_ArcViewer extends LightSourceSubViewer
 			LOGGER.error("[DATA] can't read LIGHTSRC arc type input");
 		}
 	}
+	
+	
 
 }

@@ -19,7 +19,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 public class LS_GESViewer extends LightSourceSubViewer
 {
-	public LS_GESViewer(LightSourceModel model,ModuleConfiguration conf,int index)
+	public LS_GESViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
 		classification=LightSourceModel.GENERIC_EXCITATION;
 		this.data=model;
@@ -27,6 +27,7 @@ public class LS_GESViewer extends LightSourceSubViewer
 		initComponents(conf);
 		buildGUI();
 		initTagList();
+		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 
 	@Override

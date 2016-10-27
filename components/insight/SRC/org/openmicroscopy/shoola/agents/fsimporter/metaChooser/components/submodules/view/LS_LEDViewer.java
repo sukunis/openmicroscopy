@@ -17,7 +17,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 public class LS_LEDViewer extends LightSourceSubViewer 
 {
-	public LS_LEDViewer(LightSourceModel model,ModuleConfiguration conf,int index)
+	public LS_LEDViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
 		classification=LightSourceModel.LIGHT_EMITTING_DIODE;
 		this.data=model;
@@ -25,6 +25,7 @@ public class LS_LEDViewer extends LightSourceSubViewer
 		initComponents(conf);
 		buildGUI();
 		initTagList();
+		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 
 	@Override

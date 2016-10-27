@@ -23,7 +23,7 @@ public class LS_LaserViewer extends LightSourceSubViewer
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public LS_LaserViewer(LightSourceModel model,ModuleConfiguration conf,int index)
+	public LS_LaserViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
 		classification=LightSourceModel.LASER;
 		this.data=model;
@@ -31,6 +31,7 @@ public class LS_LaserViewer extends LightSourceSubViewer
 		initComponents(conf);
 		buildGUI();
 		initTagList();
+		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 	
 	@Override
@@ -139,22 +140,24 @@ tagList=new ArrayList<TagData>();
 		}
 		try{
 			if(power.getTagValue()!=null)
-				((Laser)lightSrc).setPower(LightSourceCompUI.parsePower(power.getTagValue(),power.getTagUnit()));
+				((Laser)lightSrc).setPower(LightSourceSubViewer.parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC power input");
 		}
 		try{
-			((Laser)lightSrc).setType(LightSourceCompUI.parseLaserType(type.getTagValue()));
+			((Laser)lightSrc).setType(LightSourceSubViewer.parseLaserType(type.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC type input");
 		}
 		try{
 			((Laser)lightSrc).setFrequencyMultiplication(parseToPositiveInt(freqMul.getTagValue()));
+			freqMul.setTagInfo("");
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC freq multiplication input");
+			freqMul.setTagInfo("Can't parse input value"+freqMul.getTagValue());
 		}
 		try{
-			((Laser)lightSrc).setLaserMedium(LightSourceCompUI.parseMedium(medium.getTagValue()));
+			((Laser)lightSrc).setLaserMedium(LightSourceSubViewer.parseMedium(medium.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC medium input");
 		}
@@ -166,7 +169,7 @@ tagList=new ArrayList<TagData>();
 		}
 		try{
 
-			((Laser)lightSrc).setPulse(LightSourceCompUI.parsePulse(pulse.getTagValue()));
+			((Laser)lightSrc).setPulse(LightSourceSubViewer.parsePulse(pulse.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC pulse input");
 		}
@@ -177,7 +180,7 @@ tagList=new ArrayList<TagData>();
 			LOGGER.error("[DATA] can't read LIGHTSRC pockell cell input");
 		}
 		try{
-			((Laser)lightSrc).setRepetitionRate(LightSourceCompUI.parseFrequency(repRate.getTagValue(), repRate.getTagUnit()));
+			((Laser)lightSrc).setRepetitionRate(LightSourceSubViewer.parseFrequency(repRate.getTagValue(), repRate.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC repetition rate input");
 		}

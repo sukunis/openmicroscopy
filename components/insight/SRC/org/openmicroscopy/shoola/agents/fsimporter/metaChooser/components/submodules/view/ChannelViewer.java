@@ -1,29 +1,18 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
 import ome.xml.model.Channel;
-import ome.xml.model.Filament;
-import ome.xml.model.Objective;
-import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.ContrastMethod;
 import ome.xml.model.enums.EnumerationException;
@@ -31,9 +20,7 @@ import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.Color;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ChannelModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
@@ -174,7 +161,6 @@ private void initComponents(ModuleConfiguration conf)
  */
 protected void initTag(TagConfiguration t) 
 {
-	predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 	String name=t.getName();
 	Boolean prop=t.getProperty();
 	switch (name) {
@@ -229,6 +215,12 @@ protected void initTag(TagConfiguration t)
 	default:
 		LOGGER.warn("[CONF] unknown tag: "+name );break;
 	}
+}
+
+@Override
+protected void setPredefinedTag(TagConfiguration t) 
+{
+	//no predefinitions posiible for channel
 }
 
 /**
@@ -401,8 +393,6 @@ public void saveData()
 	System.out.println("# ChannelViewer::saveData()");
 	if(data==null)
 		data=new ChannelModel();
-//	if(data.getNumberOfChannels()==0)
-//		data.addData(new Channel(), true, index);
 	
 	Channel channel=data.getChannel(index);
 	if(channel==null){

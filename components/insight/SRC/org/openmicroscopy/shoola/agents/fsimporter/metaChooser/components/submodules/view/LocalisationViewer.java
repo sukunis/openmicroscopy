@@ -41,6 +41,10 @@ public class LocalisationViewer extends ModuleViewer{
 		// TODO Auto-generated method stub
 		
 	}
+	protected void setPredefinedTag(TagConfiguration t) 
+	{
+		
+	}
 
 //	private static final org.slf4j.Logger LOGGER =
 //    	    LoggerFactory.getLogger(ObjectiveViewer.class);

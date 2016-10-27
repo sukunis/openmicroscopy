@@ -109,7 +109,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     /** Reference to the model.*/
     private Importer importer;
     
-    /** The type associated to the import. */
+    /** The type associated to the import.The type of dialog e.g. screen view. */
     private int type;
     
     /** The approval option the user chose. */
@@ -188,12 +188,9 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     
 private List<String> unreadableFileList;
 
-private boolean dirDataVisible;
+private boolean disableItemListener;
 
-private boolean fileDataVisible;
 
-private boolean customDataVisible;
-private boolean hardwareDataVisible;
 
     private static final String VIEWFILE ="View File Data";
     private static final String VIEWDIR ="View File and Dir Data";
@@ -222,6 +219,7 @@ private boolean hardwareDataVisible;
     
     private static final int CMD_VIEWFILE=10;
     private static final int CMD_VIEWDIR=11;
+    private static final int CMD_LOADPREVAL=12;
 
 	public static final String CHANGE_CUSTOMSETT = "changesCustomSettings";
     
@@ -239,8 +237,9 @@ private boolean hardwareDataVisible;
      *            The selected container if any.
      * @param objects
      *            The possible objects.
-     * @param type
-     *            One of the type constants.
+     *            
+     * @param type TODO: necessary?
+     *            The type of dialog e.g. screen view.
      * @param importerAction
      *            The cancel-all-imports action.
      */
@@ -248,9 +247,6 @@ private boolean hardwareDataVisible;
             ImporterAction importerAction, Importer importer)
     {
         super(1, TITLE, TITLE);
-        
-        // init logger
-//		UOSMetadataLogger.init();
         
         this.owner = owner;
         this.type = type;
@@ -462,7 +458,7 @@ private boolean hardwareDataVisible;
       
 //	    loadHardwareSpecButton.setEnabled(false);
         
-        resetFileDataButton=new JButton("Clear Data");
+        resetFileDataButton=new JButton("Clear Input");
         resetFileDataButton.setBackground(UIUtilities.BACKGROUND);
         resetFileDataButton.setToolTipText("Reset metadata. Show only metadata of selected image file.");
         resetFileDataButton.setActionCommand("" + CMD_RESET);
@@ -635,6 +631,7 @@ private boolean hardwareDataVisible;
         barL.add(Box.createHorizontalStrut(5));
         //load Hardware specification
         barL.add(loadHardwareSpecButton);
+        loadHardwareSpecButton.setEnabled(false);
         barL.add(Box.createHorizontalStrut(10));
         
         JPanel barM = buildFilterViewBar();
@@ -670,6 +667,7 @@ private boolean hardwareDataVisible;
         barM.add(showDirData);
         barM.add(Box.createHorizontalStrut(5));
         barM.add(showCustomData);
+//        showCustomData.setEnabled(false);
         barM.add(Box.createHorizontalStrut(10));
 		return barM;
 		
@@ -677,9 +675,13 @@ private boolean hardwareDataVisible;
 	}
     
 
+	/**
+	 * Init and layout gui components 
+	 */
     private void buildGUI()
     {
         setLayout(new BorderLayout(0,0));
+        
         JSplitPane splitPane;		
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,buildFileViewExtended(),metaPanel);
         splitPane.setResizeWeight(0.5);
@@ -700,15 +702,17 @@ private boolean hardwareDataVisible;
         // Lays out the buttons.
         JPanel bar = new JPanel();
         bar.setLayout(new BoxLayout(bar, BoxLayout.X_AXIS));
-//		bar.add(buildToolBarLeft());
-//		bar.add(buildToolBarRight());
         bar.add(buildToolBarMetaUI());
         controls.add(new JSeparator());
         controls.add(bar);
-        add(controls, BorderLayout.SOUTH);
         
-//		micList.setSelectedIndex(0);
+        this.add(controls, BorderLayout.SOUTH);
     }
+    
+    /**
+     * 
+     * @return name of microscope of loaded hardware or predefined values.
+     */
     public String getMicName() {
         return micName;
     }
@@ -718,7 +722,63 @@ private boolean hardwareDataVisible;
         this.micName = micName;
     }
 
+    /**
+     * Generate MetaDataView for selected node and load predefined value, parent, import and model data
+     * if there was selected in the bottom filter bar.
+     * @param node selected node in the filetree
+     * @param parentVisible =true shows also parent data
+     * @param fileVisible = true shows also file data
+     * @param predefinedVisible = true shows also predefine values
+     */
+    private void loadAndShowFilteredDataForSelection(FNode node,
+    		boolean parentVisible,boolean fileVisible,boolean predefinedVisible)
+    {
+    	String file=null;
+    	if(node==null || (file=getSelectedFilePath(node))==null)
+    		return;
 
+    	LOGGER.debug("[TREE] -- FILTER VIEW Node: "+node.toString()+" ##############################################");
+
+    	//import user data
+    	ImportUserData importData = getImportData();
+
+    	//get parent dir model data 
+    	MetaDataModel parentModel=null;
+    	if(parentVisible)
+    		parentModel=getParentMetaDataModel(node);
+
+    	MetaDataView view=null;
+
+    	// is selection a file or directory
+    	if(file.equals("")){
+    			view = loadAndShowDataForDirectory(node, file, importData,
+    					parentModel, view, true, predefinedVisible);
+    	}else{
+    		try{
+   				view = loadAndShowDataForFile(file, importData, parentModel, view, fileVisible, predefinedVisible);
+    		}catch(Exception e){
+    			LOGGER.error("[DATA] CAN'T read METADATA");
+    			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
+    					"Can't read given metadata of "+file,e,
+    					this.getClass().getSimpleName());
+    			ld.setVisible(true);
+    			fileTree.setSelectionPath(fileTree.getSelectionPath().getParentPath());
+    			this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    			return;
+    		}
+    	}
+    	showMetaDataView(view);
+    	
+    	setFilterView(view);
+    	
+    	revalidate();
+    	repaint();
+    }
+    
+    /**
+     * Generate MetaDataView for selected node and load predefined value, parent, import and model data.
+     * @param node selected node in the filetree
+     */
     private void loadAndShowDataForSelection(FNode node)
     {
     	String file=null;
@@ -727,37 +787,35 @@ private boolean hardwareDataVisible;
 
     	LOGGER.debug("[TREE] -- Node: "+node.toString()+" ##############################################");
 
-    	
-
     	//import user data
     	ImportUserData importData = getImportData();
 
-    	//get parent dir model data
+    	//get parent dir model data 
     	MetaDataModel parentModel=getParentMetaDataModel(node);
 
-    	
-
     	// TODO: new View with available model
-    	// if a view still available
+    	// if a view still available, load it 
     	MetaDataView view=node.getView();
-
+    	// an update of parent data was happend?
+    	boolean loadParentDataAtUpdate=false;
+    	if(view!=null){
+    		loadParentDataAtUpdate=view.parentDataAreLoaded();
+    	}
     	// is selection a file or directory
     	if(file.equals("")){
-    		if(node.hasModelObject()){
-//    			view = node.getView();
     			view = loadAndShowDataForDirectory(node, file, importData,
-    					null, view);
-    		}else{
-    			view = loadAndShowDataForDirectory(node, file, importData,
-    					parentModel, view);
-    		}
+    					parentModel, view, true, true);
+    		
+    			boolean pLoad=loadParentDataAtUpdate || view.parentDataAreLoaded();
+    			System.out.println("# MetaDataView::setParentDataLoaded(): "+pLoad+" - of node "+node.getAbsolutePath());
+    			view.setParentDataLoaded(pLoad);
     	}else{
     		try{
     			//if model still exists, it was still updated by parent data at deselectedNodeAction()
     			if(node.hasModelObject())
     				view = node.getView();
     			else
-    				view = loadAndShowDataForFile(file, importData, parentModel, view);
+    				view = loadAndShowDataForFile(file, importData, parentModel, view, true, true);
     		}catch(Exception e){
     			LOGGER.error("[DATA] CAN'T read METADATA");
     			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
@@ -780,6 +838,7 @@ private boolean hardwareDataVisible;
 
 
 	/**
+	 * Add MetaDataView to main panel and show list of series if exists.
 	 * @param panel
 	 * @param view
 	 */
@@ -800,62 +859,73 @@ private boolean hardwareDataVisible;
 	}
 
     /**
-     * Set values of filter view bar according of data that will be set inside the given view
+     * Set values of filter view bar according of data that will be set inside the given view.
+     * While the values are set, the listener is disabled.
      * @param view
      */
 	private void setFilterView(MetaDataView view) 
 	{
+		disableItemListener=true;
 		showDirData.setSelected(view.parentDataAreLoaded());
 		showFileData.setSelected(view.fileDataAreLoaded());
 		showCustomData.setSelected(view.predefineDataLoaded());
+		disableItemListener=false;
 	}
 
 
 	/**
+	 * Generate MetaDataView for selected file and load predefined value, parent, import and model data.
 	 * @param file
 	 * @param importData
 	 * @param parentModel
 	 * @param view
+	 * @param showFileData TODO
+	 * @param showPreValues TODO
 	 * @return
 	 */
 	public MetaDataView loadAndShowDataForFile(String file,
 			ImportUserData importData, MetaDataModel parentModel,
-			MetaDataView view) throws Exception
+			MetaDataView view, boolean showFileData, boolean showPreValues) throws Exception
 	{
 		lastSelectionType=FILE;
 		
 		String hasParentModel=parentModel==null ? "null" : "available";
 		LOGGER.debug("load and show data for file: parentModel="+hasParentModel);
 		
-		    view = new MetaDataView(file, importData, parentModel, this);
+		    view = new MetaDataView(file, importData, parentModel, this, showFileData, showPreValues);
 		    view.setVisible();
 		return view;
 	}
 
 
 	/**
+	 * Generate MetaDataView for selected directory and load predefined value, parent, import and model data.
 	 * @param node
 	 * @param file
 	 * @param importData
 	 * @param parentModel
 	 * @param view
+	 * @param useCurrentModel TODO
+	 * @param showPreValues TODO
 	 * @return
 	 */
 	public MetaDataView loadAndShowDataForDirectory(FNode node, String file,
 			ImportUserData importData, MetaDataModel parentModel,
-			MetaDataView view) 
+			MetaDataView view, boolean useCurrentModel, boolean showPreValues) 
 	{
 		lastSelectionType=DIR;
 		
-		MetaDataModel currentDirModel=getCurrentSelectionMetaDataModel(node);
-		if(currentDirModel!=null)
-			System.out.println("\t...load available model, num channels: "+currentDirModel.getNumberOfChannels());
+		MetaDataModel currentDirModel=null;
+		if(useCurrentModel)
+			currentDirModel=getCurrentSelectionMetaDataModel(node);
+		
 		String hasParentModel=parentModel==null ? "null" : "available";
 		String hasCurrentModel=currentDirModel==null ? "null" : "available";
 		LOGGER.debug("load and show data for directory: parentModel="+hasParentModel
 				+", current model = "+hasCurrentModel);
+		
 		try {
-		    view = new MetaDataView(file, importData, parentModel, currentDirModel,this);
+		    view = new MetaDataView(file, importData, parentModel, currentDirModel,this, showPreValues);
 		    view.setVisible();
 		} catch (Exception e) {
 //				catch (DependencyException | ServiceException e) {
@@ -871,7 +941,8 @@ private boolean hardwareDataVisible;
 	
 
 	/**
-	 * 
+	 * Call routines after deselect a node.
+	 * This routines are: save view, save input to model and update childs of the node, notice deselected node.
 	 */
 	public void deselectNodeAction(FNode node) {
 		
@@ -882,12 +953,12 @@ private boolean hardwareDataVisible;
         	saveInputToModel(node);
         	lastNode=node;
         }
-		
 	}
     
 	/**
+	 * 
 	 * @param panel
-	 * @return active view component from metapanel
+	 * @return active MetaDataView component from metapanel
 	 */
     private MetaDataView getMetaDataView(JPanel panel)
     {
@@ -924,7 +995,7 @@ private boolean hardwareDataVisible;
 
         MetaDataView dataView=null;
         try {
-            dataView=new MetaDataView(node.getAbsolutePath(), importData, parentModel, this);
+            dataView=new MetaDataView(node.getAbsolutePath(), importData, parentModel, this, true, true);
         } catch (Exception e) {
             return null;
         }
@@ -1335,9 +1406,9 @@ private boolean hardwareDataVisible;
         		
         		if(selection.isLeaf()){
         			view = loadAndShowDataForDirectory(selection, file, null,
-        					null, view);
+        					null, view, true, true);
         		}else{
-        			view = loadAndShowDataForFile(file, null, null, view);
+        			view = loadAndShowDataForFile(file, null, null, view, true, true);
         		}
 //        		((MetaDataView)metaPanel.getComponent(0)).reset();
         	} catch (Exception e) {
@@ -1359,7 +1430,7 @@ private boolean hardwareDataVisible;
             customSettings=profileWriter.getProperties();
             //TODO reload current view if changes
             loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
-            firePropertyChange(CHANGE_CUSTOMSETT, null, customSettings);
+//            firePropertyChange(CHANGE_CUSTOMSETT, null, customSettings); MetaDataControl
             break;
         case CMD_SPECIFICATION:
             LOGGER.info("[GUI-ACTION] -- load specification file");
@@ -1370,9 +1441,9 @@ private boolean hardwareDataVisible;
         case CMD_VIEWFILE:
             Border redline = BorderFactory.createLineBorder(Color.red);
             Border compound= BorderFactory.createRaisedBevelBorder();
-            
-                
             break;
+        case CMD_LOADPREVAL:
+        	break;
         
         }
         
@@ -1479,18 +1550,29 @@ private boolean hardwareDataVisible;
 	   if(selectedNode!=null ){
 		   System.out.println("# MetaDataDialog::selectNodeAction("+selectedNode.getAbsolutePath()+")");
 		   LOGGER.debug("Select node action for "+selectedNode.getAbsolutePath());
-           if(selectedNode.isLeaf()){
+           
+		   enableSaveButtons(selectedNode.isLeaf());
+           loadAndShowDataForSelection(selectedNode);
+           
+           revalidate();
+           repaint();
+       }		
+	}
+
+
+	/**
+	 * If selected node is a leaf (file or dir without childs) set save enabled and disabled save all.
+	 * @param isLeaf
+	 */
+	public void enableSaveButtons(boolean isLeaf) 
+	{
+		if(isLeaf){
                saveDataButton.setEnabled(true);
                saveAllDataButton.setEnabled(false);
            }else{
                saveDataButton.setEnabled(false);
                saveAllDataButton.setEnabled(true);
            }
-           loadAndShowDataForSelection(selectedNode);
-           
-           revalidate();
-           repaint();
-       }		
 	}
 
 
@@ -1533,27 +1615,34 @@ private boolean hardwareDataVisible;
 	@Override
 	public void itemStateChanged(ItemEvent e) 
 	{
-		Object source=e.getItemSelectable();
-		if(source==showDirData || source==showFileData ||
-				source==showCustomData ){
-//			System.out.println("# ")
-//			showFilteredData(showDirData.isSelected(),showFileData.isSelected(),showCustomData.isSelected(),showHardwareData.isSelected());
-		}
+//		Object source=e.getItemSelectable();
+//		if(source==showDirData )
+//		{
+//			if(e.getStateChange() == ItemEvent.SELECTED) 
+//			{
+//				System.out.println("\t...SELECT Show dir data! "
+//						+ "(showCustomData= "+showCustomData.isSelected()
+//						+", showFileData= "+showFileData.isSelected());
+//			}else{
+//				System.out.println("\t...DESELECT Show dir data! "
+//						+ "(showCustomData= "+showCustomData.isSelected()
+//						+", showFileData= "+showFileData.isSelected());
+//			}
+//		}
+		if(!disableItemListener)
+			showFilteredData(showDirData.isSelected(),showFileData.isSelected(),showCustomData.isSelected());
 		
-//		  if (e.getStateChange() == ItemEvent.DESELECTED){
-//			  
-//		  }
+
 	}
 
 
 	private void showFilteredData(boolean dirData, boolean fileData,
-			boolean customData, boolean hardwareData) 
+			boolean customData) 
 	{
-		dirDataVisible=dirData;
-		fileDataVisible=fileData;
-		customDataVisible=customData;
-		hardwareDataVisible=hardwareData;
+		System.out.println("# MetaDataDialog::showFilteredData(): "+dirData+", "+fileData+", "+customData);
 		
+		loadAndShowFilteredDataForSelection((FNode)fileTree.getLastSelectedPathComponent(),
+				dirData,fileData,customData);
 	} 
 
 	public CustomViewProperties getCustomViewProperties()

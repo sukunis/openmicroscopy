@@ -153,7 +153,6 @@ public class ImageViewer extends ModuleViewer{
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
-		predefinitionValLoaded=predefinitionValLoaded || (t.getValue()!=null && !t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
@@ -200,6 +199,12 @@ public class ImageViewer extends ModuleViewer{
 		default:
 			LOGGER.warn("[CONF] unknown tag: "+name );break;
 		}
+	}
+	
+	@Override	
+	protected void setPredefinedTag(TagConfiguration t) 
+	{
+		//no predefinitions possible
 	}
 
 	/**
