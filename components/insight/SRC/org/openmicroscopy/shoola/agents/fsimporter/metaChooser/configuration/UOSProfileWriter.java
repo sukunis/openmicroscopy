@@ -1,6 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,7 +38,19 @@ public class UOSProfileWriter
 	 */
 	public void save(File file, CustomViewProperties prop)
 	{
-		if(file==null || !file.isFile()){
+		if(file==null)
+			return;
+		
+		if(!file.exists()){
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+			
+		if(!file.isFile()){
 			System.out.println("Can't access file "+(file==null?"!":file.getAbsolutePath()));
 			LOGGER.warn("[PROFILE EDITOR]: Can't access file "+(file==null?"!":file.getAbsolutePath()));
 			return;
@@ -45,7 +58,7 @@ public class UOSProfileWriter
 
 
 		LOGGER.info("[PROFILE EDITOR]: Save to "+file.getAbsolutePath());
-		System.out.println(file.getAbsolutePath());
+		System.out.println("# UOSProfileWriter::save() "+file.getAbsolutePath());
 		
 		view=prop;
 		view.setFile(file);
@@ -68,7 +81,7 @@ public class UOSProfileWriter
 
 			transformer.transform(source, result);
 
-			System.out.println("File saved!");
+			System.out.println("\t...File saved!");
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
