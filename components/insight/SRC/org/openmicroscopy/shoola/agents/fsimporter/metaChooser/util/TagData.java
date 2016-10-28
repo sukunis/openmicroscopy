@@ -647,6 +647,7 @@ public class TagData
 		}else{
 			inputField.setBackground(fillInfo);
 		}
+//		inputField.setBorder(normalBorder);
 		if(type==LIST){
 			((ExperimenterBox) inputField).addElement(val);
 		}
@@ -661,6 +662,7 @@ public class TagData
 		}else{
 			inputField.setBackground(fillInfo);
 		}
+//		inputField.setBorder(normalBorder);
 		if(type==LIST){
 			((ExperimenterBox) inputField).addExperimenterList(val);
 		}
@@ -716,6 +718,7 @@ public class TagData
 		switch (type) {
 		case ARRAYFIELDS:
 			// split string
+//			inputField.setBorder(normalBorder);
 			setValArrayField(val, index);
 			break;
 		default:
@@ -731,6 +734,7 @@ public class TagData
 		activateActionListener(false);
 		switch (type) {
 		case ARRAYFIELDS:
+//			inputField.setBorder(normalBorder);
 			// split string 
 			for(int i=0; i<val.length; i++){
 				setValArrayField(val[i], i);
@@ -745,6 +749,7 @@ public class TagData
 	public void setTagValue(String val) 
 	{
 		activateActionListener(false);
+//		inputField.setBorder(normalBorder);
 		if(val==null || val.equals("")){
 			val="";
 			inputField.setBackground(noInfo);

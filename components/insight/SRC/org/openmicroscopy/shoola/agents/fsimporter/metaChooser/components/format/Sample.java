@@ -89,12 +89,14 @@ public class Sample
 	//copy constructor
 	public Sample(Sample orig)
 	{
+		if(orig!=null){
 		preparationDate=orig.preparationDate;
 		preparationDescription=orig.preparationDescription;
 		rawMaterialDesc=orig.rawMaterialDesc;
 		rawMaterialCode=orig.rawMaterialCode;
 		gridBox=new GridBox(orig.gridBox);
 		obSample=new ObservedSample(orig.obSample);
+		}
 	}
 	
 	//parse string of xmlannotation object to sample object
@@ -628,9 +630,11 @@ public class Sample
 		 */
 		public GridBox(GridBox orig) 
 		{
-			this.id=orig.id;
-			this.nr=orig.nr;
-			this.type=orig.type;
+			if(orig!=null){
+				this.id=orig.id;
+				this.nr=orig.nr;
+				this.type=orig.type;
+			}
 		}
 
 		/**

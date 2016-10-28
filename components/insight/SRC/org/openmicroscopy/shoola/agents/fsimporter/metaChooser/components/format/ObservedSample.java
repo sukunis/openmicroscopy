@@ -76,12 +76,14 @@ public class ObservedSample
 	//copy constructor
 	public ObservedSample(ObservedSample orig)
 	{
+		if(orig!=null){
 		sampleID=orig.sampleID;
 		gridboxID=orig.gridboxID;
 		gridNumberX=orig.gridNumberX;
 		gridNumberY=orig.gridNumberY;
 		objectNumber=orig.objectNumber;
 		objectType=orig.objectType;
+		}
 	}
 	
 	//parse string of xmlannotation object to sample object
