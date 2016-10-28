@@ -69,20 +69,20 @@ public class LS_GESViewer extends LightSourceSubViewer
 		if(data==null)
 			data=new LightSourceModel();
 		
-		GenericExcitationSource lightSrc=null;
-		try{
-			lightSrc=(GenericExcitationSource) data.getLightSource(index);
-		}catch(ClassCastException e){
-			System.out.println("\t...overwrite lightSrc with another type of lightSrc.");
-		}
-		if(lightSrc==null){
-			lightSrc=new GenericExcitationSource();
+		
+		if(data.getLightSource(index)==null){
 			try {
-				data.addData(lightSrc, true, index);
+				data.addData(new GenericExcitationSource(), true, index);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		GenericExcitationSource lightSrc=null;
+		try{
+			lightSrc=(GenericExcitationSource) data.getLightSource(index);
+		}catch(ClassCastException e){
+			System.out.println("ERROR...overwrite lightSrc with another type of lightSrc.");
 		}
 		
 		try{

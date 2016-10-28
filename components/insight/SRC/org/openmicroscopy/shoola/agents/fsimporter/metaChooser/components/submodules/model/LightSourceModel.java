@@ -118,7 +118,17 @@ public class LightSourceModel
 	private void replaceData(LightSource newElem,int i)
 	{
 		if(newElem!=null){
-			element.set(i,newElem);
+			if(newElem instanceof Arc){
+				element.set(i,new Arc((Arc) newElem));
+			}else if(newElem instanceof Laser){
+				element.set(i,new Laser((Laser) newElem));
+			}else if(newElem instanceof GenericExcitationSource){
+				element.set(i,new GenericExcitationSource((GenericExcitationSource) newElem));
+			}else if(newElem instanceof Filament){
+				element.set(i,new Filament((Filament) newElem));
+			}else if(newElem instanceof LightEmittingDiode){
+				element.set(i,new LightEmittingDiode((LightEmittingDiode) newElem));
+			}
 		}
 	}
 
@@ -129,7 +139,7 @@ public class LightSourceModel
 	private void replaceData(LightSourceSettings newElem,int i)
 	{
 		if(newElem!=null){
-			settings.set(i, newElem);
+			settings.set(i, new LightSourceSettings(newElem));
 		}
 	}
 

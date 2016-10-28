@@ -85,7 +85,7 @@ public class ObjectiveModel
 	{
 		if(newElem!=null){
 			System.out.println("# ObjectiveModel::replaceData()");
-			element=newElem;
+			element=new Objective(newElem);
 		}
 	}
 	
@@ -96,7 +96,7 @@ public class ObjectiveModel
 	private void replaceData(ObjectiveSettings newElem)
 	{
 		if(newElem!=null){
-			settings=newElem;
+			settings=new ObjectiveSettings(newElem);
 		}
 	}
 	

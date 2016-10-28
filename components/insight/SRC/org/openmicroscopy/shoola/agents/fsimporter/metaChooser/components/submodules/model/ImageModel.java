@@ -56,7 +56,7 @@ public class ImageModel
 	private void replaceData(Image i)
 	{
 		if(i!=null){
-			element=i;
+			element=new Image(i);
 
 		}
 	}

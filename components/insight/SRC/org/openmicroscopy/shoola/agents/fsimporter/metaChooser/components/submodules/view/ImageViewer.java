@@ -388,16 +388,18 @@ For example in a video stream.
 		if(data==null){
 			data=new ImageModel();
 		}
-		Image image=data.getImage();
-		if(image==null){
-			image = new Image();
+		
+		
+		if(data.getImage()==null){
 			try {
-				data.addData(image,true);
+				data.addData(new Image(),true);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		
+		Image image=data.getImage();
 
 		try{
 			image.setName(name.getTagValue());

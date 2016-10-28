@@ -345,17 +345,15 @@ public class LightSourceViewer extends ModuleViewer{
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).saveData();
 
 		// --- Settings --------------------
-		LightSourceSettings settings=data.getSettings(index);
-		if(settings==null){
-			settings = new LightSourceSettings();
+		if(data.getSettings(index)==null){
 			try {
-				data.addData(settings, true, index);
+				data.addData(new LightSourceSettings(), true, index);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-
+		LightSourceSettings settings=data.getSettings(index);
 		
 		try{
 			settings.setWavelength(parseToLength(waveLengthSett.getTagValue(),waveLengthSett.getTagUnit()));

@@ -49,13 +49,15 @@ public class SampleModel
 
 	private void replaceData(Sample s)
 	{
+		System.out.println("# SampleModel::replaceData()");
 		if(s!=null){
-			element=s;
+			element=new Sample(s);
 		}
 	}
 
 	private void completeData(Sample s) throws Exception
 	{
+		System.out.println("# SampleModel::completeData()");
 		//copy input fields
 		Sample copyIn=null;
 		if(element!=null){
@@ -89,6 +91,7 @@ public class SampleModel
 				ost=os.getObjectType();
 				osNr=os.getObjectNumber();
 			}
+			System.out.println("\t...grid(x,y)= "+osgx+", "+osgy);
 
 			if(pdesc!=null && !pdesc.equals("")) element.setPrepDescription(pdesc);
 			if(pdate!=null) element.setPrepDate(pdate);
@@ -100,6 +103,9 @@ public class SampleModel
 			if(osgy!=null && !osgy.equals("")) element.getObservedSample(0).setGridNumberY(osgy);
 			if(ost!=null && !ost.equals("")) element.getObservedSample(0).setObjectType(ost);
 			if(osNr!=null && !osNr.equals("")) element.getObservedSample(0).setObjectNumber(osNr);
+			
+			System.out.println("\t...grid(x,y)= "+element.getObservedSample(0).getGridNumberX()
+					+", "+element.getObservedSample(0).getGridNumberY());
 		}
 	}
 	public Sample getSample()

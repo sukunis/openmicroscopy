@@ -65,20 +65,20 @@ public class LS_LEDViewer extends LightSourceSubViewer
 		if(data==null)
 			data=new LightSourceModel();
 		
-		LightEmittingDiode lightSrc=null;
-		try{
-			lightSrc=(LightEmittingDiode) data.getLightSource(index);
-		}catch(ClassCastException e){
-			System.out.println("\t...overwrite lightSrc with another type of lightSrc.");
-		}
-		if(lightSrc==null){
-			lightSrc=new LightEmittingDiode();
+		
+		if( data.getLightSource(index)==null){
 			try {
-				data.addData(lightSrc, true, index);
+				data.addData(new LightEmittingDiode(), true, index);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		LightEmittingDiode lightSrc=null;
+		try{
+			lightSrc=(LightEmittingDiode) data.getLightSource(index);
+		}catch(ClassCastException e){
+			System.out.println("ERROR...overwrite lightSrc with another type of lightSrc.");
 		}
 		
 		try{

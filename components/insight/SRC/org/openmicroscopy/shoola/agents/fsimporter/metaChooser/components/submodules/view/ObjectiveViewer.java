@@ -562,16 +562,17 @@ public class ObjectiveViewer extends ModuleViewer
 		if(data==null){
 			data=new ObjectiveModel();
 		}
-		Objective objective =data.getObjective();
-		if(objective==null){
-			objective = new Objective();
+		
+		if(data.getObjective()==null){
 			try {
-				data.addData(objective,true);
+				data.addData(new Objective(),true);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		Objective objective =data.getObjective();
+		
 		try{
 			objective.setModel(model.getTagValue());
 		}catch(Exception e){
@@ -618,6 +619,14 @@ public class ObjectiveViewer extends ModuleViewer
 		}
 		
 		// --- Settings --------------------
+		if(data.getSettings()==null){
+			try {
+				data.addData(new ObjectiveSettings(), true);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		ObjectiveSettings settings=data.getSettings();
 		
 		if(settings==null){

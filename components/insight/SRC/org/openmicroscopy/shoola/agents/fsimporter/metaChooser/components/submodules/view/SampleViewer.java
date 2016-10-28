@@ -416,10 +416,16 @@ private void setExpObjectType(String value, boolean prop)
 @Override
 public void saveData() 
 {
+	System.out.println("# SampleViewer::saveData()");
 	if(data==null)
 		data=new SampleModel();
 
+
+	if(data.getSample()==null)
+		data.addData(new Sample(), true);
+	
 	Sample sample=data.getSample();
+	
 	//TODO input checker
 	try{sample.setPrepDate(preparationDate.getTagValue().equals("")? 
 			null : Timestamp.valueOf(preparationDate.getTagValue()));
@@ -442,7 +448,10 @@ public void saveData()
 		e.printStackTrace();
 	}
 	
-	ObservedSample observedSample=new ObservedSample();
+	if(sample.getObservedSample(0)==null){
+		sample.addObservedSample(new ObservedSample());
+	}
+	ObservedSample observedSample=sample.getObservedSample(0);
 	observedSample.setSampleID(MetadataTools.createLSID("ObservedSample", 0));
 	try{
 		observedSample.setObjectNumber(expObjectNr!=null ? expObjectNr.getTagValue(): null);
@@ -460,11 +469,13 @@ public void saveData()
 		observedSample.setGridNumberX(expGrid!=null ? expGrid.getTagValue(0):null);
 		observedSample.setGridNumberY(expGrid!=null ?expGrid.getTagValue(1):null);
 		expGrid.dataSaved(true);
+		
+		System.out.println("\t...grid(x,y)= "+observedSample.getGridNumberX()+
+				", "+observedSample.getGridNumberY());
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE observed sample grid number x/y input");
 	}
 	
-	sample.setObservedSample(observedSample);
 	
 	try{
 		sample.setRawMaterialDesc(rawMaterialDesc!=null ? rawMaterialDesc.getTagValue():null); 

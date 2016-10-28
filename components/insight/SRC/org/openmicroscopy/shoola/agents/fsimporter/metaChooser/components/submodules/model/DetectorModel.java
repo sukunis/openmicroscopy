@@ -132,7 +132,7 @@ public class DetectorModel
 			expandList(settings.size(),index);
 		}
 		if(newElem!=null){
-			settings.set(index,newElem);
+			settings.set(index,new DetectorSettings(newElem));
 		}
 	}
 	

@@ -111,21 +111,22 @@ tagList=new ArrayList<TagData>();
 		if(data==null)
 			data=new LightSourceModel();
 		
-		Laser lightSrc=null;
-		try{
-			lightSrc=(Laser) data.getLightSource(index);
-		}catch(ClassCastException e){
-			System.out.println("\t...overwrite lightSrc with another type of lightSrc.");
-		}
-		if(lightSrc==null){
-			lightSrc=new Laser();
+		
+		if(data.getLightSource(index)==null){
 			try {
-				data.addData(lightSrc, true, index);
+				data.addData(new Laser(), true, index);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		Laser lightSrc=null;
+		try{
+			lightSrc=(Laser) data.getLightSource(index);
+		}catch(ClassCastException e){
+			System.out.println("ERROR...overwrite lightSrc with another type of lightSrc.");
+		}
+		
 		try{
 			((Laser)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
 					null : manufact.getTagValue());

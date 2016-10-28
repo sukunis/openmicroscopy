@@ -260,7 +260,7 @@ public class ExperimentModel {
 	private void replaceData(Experiment newElem)
 	{
 		if(newElem!=null){
-			experiment=newElem;
+			experiment=new Experiment(newElem);
 		}
 	}
 	
@@ -271,7 +271,7 @@ public class ExperimentModel {
 	private void replaceData(Experimenter newElem)
 	{
 		if(newElem!=null){
-			experimenter=newElem;
+			experimenter=new Experimenter(newElem);
 		}
 	}
 	

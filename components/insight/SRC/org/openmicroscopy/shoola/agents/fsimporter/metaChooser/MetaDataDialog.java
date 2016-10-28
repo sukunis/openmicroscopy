@@ -1035,7 +1035,7 @@ private boolean disableItemListener;
 					LOGGER.debug("Update "+child.getAbsolutePath());
 					try {
 						child.getModelObject().updateData(node.getModelObject());
-						node.getModelObject().clearListOfModifications();
+						child.getView().setParentDataLoaded(true);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -1046,7 +1046,7 @@ private boolean disableItemListener;
 				}//else load data at loadParentData
 			}
 		}
-//		node.getModelObject().isUpToDate(true);
+		node.getModelObject().clearListOfModifications();
 	}
 
 

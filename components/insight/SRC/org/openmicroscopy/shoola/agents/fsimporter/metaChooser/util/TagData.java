@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import java.util.Observable;
 
 import javafx.util.StringConverter;
 
+import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
@@ -553,6 +555,9 @@ public class TagData
 		case CHECKBOX:
 			val= ((JCheckBox)inputField).isSelected()? "true" : "false";
 			break;
+		case ARRAYFIELDS:
+			val=listToString(getTagValueArray());
+			break;
 		default:
 			break;
 		}
@@ -571,6 +576,28 @@ public class TagData
 		return null;
 	}
 
+	private List<String> getTagValueArray()
+	{
+		List<String> res=new ArrayList<String>();
+		for(int i=0; i<inputField.getComponentCount();i++){
+			if(inputField.getComponent(i) instanceof JTextField){
+				res.add(((JTextField) inputField.getComponent(i)).getText());
+			}
+		}
+		return res;
+	}
+	
+	private String listToString(List<String> list){
+		String res="";
+		
+		for(String s:list){
+			res+=s+",";
+		}
+		if(res.endsWith(","))
+			res=res.substring(0, res.length()-1);
+		
+		return res;
+	}
 	
 
 	public String getTagValue(int index) 
@@ -578,6 +605,8 @@ public class TagData
 		String val="";
 		switch (type) {
 		case ARRAYFIELDS:
+			if(!(inputField.getComponentCount()>index))
+				return null;
 			Component comp=inputField.getComponent(index);
 			if(comp instanceof JTextField){
 				val=((JTextField) comp).getText();

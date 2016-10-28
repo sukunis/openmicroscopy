@@ -394,16 +394,11 @@ public void saveData()
 	if(data==null)
 		data=new ChannelModel();
 	
+	if(data.getChannel(index)==null)
+		data.addData(new Channel(), true, index);
+	
 	Channel channel=data.getChannel(index);
-	if(channel==null){
-		channel=new Channel();
-		try {
-			data.addData(channel, true, index);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 		
 	//TODO format check
 	try{
@@ -461,6 +456,8 @@ public void saveData()
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read CHANNEL pinhole size input");
 	}
+	
+	
 
 }
 public static ContrastMethod parseContrastMethod(String c) throws EnumerationException

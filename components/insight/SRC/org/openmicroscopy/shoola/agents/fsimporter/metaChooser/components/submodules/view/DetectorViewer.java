@@ -137,6 +137,7 @@ public class DetectorViewer extends ModuleViewer{
 		addTagToGUI(confocalZoom,labelsSett,compSett);
 		addTagToGUI(binning,labelsSett,compSett);
 		addTagToGUI(subarray,labelsSett,compSett);
+		subarray.setEnable(false);
 
 		addLabelTextRows(labelsSett, compSett, gridbag, settingsPane);
 
@@ -546,16 +547,15 @@ public class DetectorViewer extends ModuleViewer{
 		if(data==null)
 			data=new DetectorModel();
 		
-		Detector detector =data.getDetector(index);
-		if(detector==null){
-			detector = new Detector();
+		if(data.getDetector(index)==null)
 			try {
-				data.addData(detector, true, index);
-			} catch (Exception e) {
+				data.addData(new Detector(), true, index);
+			} catch (Exception e1) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-		}
-		}
+				e1.printStackTrace();
+			}
+		
+		Detector detector =data.getDetector(index);
 
 		try{
 			detector.setModel(model.getTagValue().equals("")?
@@ -588,6 +588,14 @@ public class DetectorViewer extends ModuleViewer{
 			LOGGER.error("[DATA] can't read DETECTOR amplification gain input");
 		}
 		// --- Settings --------------------
+		if(data.getSettings(index)==null){
+			try {
+				data.addData(new DetectorSettings(), true, index);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		DetectorSettings settings=data.getSettings(index);
 		if(settings==null)
 			settings = new DetectorSettings();
@@ -619,7 +627,7 @@ public class DetectorViewer extends ModuleViewer{
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read DETECTOR SETT binning input");
 		}
-		
+
 		dataChanged=false;
 	}
 	public static DetectorType parseDetectorType(String c) 

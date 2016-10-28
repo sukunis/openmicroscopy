@@ -71,20 +71,21 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 		if(data==null)
 			data=new LightSourceModel();
 		
-		Filament lightSrc=null;
-		try{
-			lightSrc=	(Filament) data.getLightSource(index);
-		}catch(ClassCastException e){
-			System.out.println("\t...overwrite lightSrc with another type of lightSrc.");
-		}
-		if(lightSrc==null){
-			lightSrc=new Filament();
+		
+		if(data.getLightSource(index)==null){
 			try {
-				data.addData(lightSrc, true, index);
+				data.addData(new Filament(), true, index);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		
+		Filament lightSrc=null;
+		try{
+			lightSrc=(Filament) data.getLightSource(index);
+		}catch(ClassCastException e){
+			System.out.println("ERROR...overwrite lightSrc with another type of lightSrc.");
 		}
 
 		try{

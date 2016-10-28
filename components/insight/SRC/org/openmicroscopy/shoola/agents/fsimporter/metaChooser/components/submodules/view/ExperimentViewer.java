@@ -98,6 +98,7 @@ public class ExperimentViewer extends ModuleViewer{
 		addTagToGUI(projectPartner,labels,comp);
 		addVSpaceToGui(10,labels,comp);
 		addTagToGUI(expName,labels,comp);
+		expName.setEnable(false);
 		addTagToGUI(type,labels,comp);
 		addTagToGUI(description,labels,comp);
 

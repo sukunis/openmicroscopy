@@ -49,7 +49,7 @@ public class ImageEnvModel
 	private void replaceData(ImagingEnvironment i)
 	{
 		if(i!=null){
-			element=i;
+			element=new ImagingEnvironment(i);
 		}
 	}
 

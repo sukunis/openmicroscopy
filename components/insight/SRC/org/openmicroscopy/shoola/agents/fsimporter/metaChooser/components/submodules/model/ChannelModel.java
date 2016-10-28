@@ -106,7 +106,7 @@ public class ChannelModel
 	private void replaceData(Channel c,int i)
 	{
 		if(c!=null){
-			element.set(i, c);
+			element.set(i, new Channel(c));
 			
 		}
 	}

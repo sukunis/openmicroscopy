@@ -68,20 +68,20 @@ public class LS_ArcViewer extends LightSourceSubViewer
 		if(data==null)
 			data=new LightSourceModel();
 		
-		Arc lightSrc=null;
-		try{
-			lightSrc=(Arc) data.getLightSource(index);
-		}catch(ClassCastException e){
-			System.out.println("\t...overwrite lightSrc with another type of lightSrc.");
-		}
-		if(lightSrc==null){
-			lightSrc=new Arc();
+		
+		if(data.getLightSource(index)==null){
 			try {
-				data.addData(lightSrc, true, index);
+				data.addData(new Arc(), true, index);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		Arc lightSrc=null;
+		try{
+			lightSrc=(Arc) data.getLightSource(index);
+		}catch(ClassCastException e){
+			System.out.println("ERROR...overwrite lightSrc with another type of lightSrc.");
 		}
 
 		try{

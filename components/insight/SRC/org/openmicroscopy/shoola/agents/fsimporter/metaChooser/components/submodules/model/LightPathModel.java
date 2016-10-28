@@ -63,7 +63,7 @@ public class LightPathModel
 	private void replaceData(LightPath newElem,int i)
 	{
 		if(newElem!=null){
-			element.set(i,newElem);
+			element.set(i,new LightPath(newElem));
 		}
 	}
 

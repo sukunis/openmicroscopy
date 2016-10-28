@@ -297,7 +297,12 @@ public class ImageEnvViewer extends ModuleViewer{
 		if(data==null)
 			data=new ImageEnvModel();
 
+		if(data.getImgEnv()==null)
+			data.addData(new ImagingEnvironment(), true);
+		
 		ImagingEnvironment env=data.getImgEnv();
+		
+		
 		try{
 			env.setTemperature(temperature.getTagValue().equals("") ?
 					null : new Temperature(Double.valueOf(temperature.getTagValue()), temperature.getTagUnit()));
@@ -345,6 +350,8 @@ public class ImageEnvViewer extends ModuleViewer{
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV co2 percent input");
 		}
+		
+		data.addData(env, true);
 	}
 	public List<TagData> getChangedTags() {
 		List<TagData> list = new ArrayList<TagData>();
