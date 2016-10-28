@@ -308,18 +308,18 @@ private void setGUIData()
 		catch(NullPointerException e){}
 
 		try{
-			String[] n={sample.getObservedSample(0).getGridNumberX(),
-				sample.getObservedSample(0).getGridNumberY()};
+			String[] n={sample.getObservedSample().getGridNumberX(),
+				sample.getObservedSample().getGridNumberY()};
 		
 			setExpGridNumber(n, REQUIRED);
 		
 		}catch(NullPointerException e){}
 		
 
-		try{ setExpObjectType(sample.getObservedSample(0).getObjectType(), REQUIRED);}
+		try{ setExpObjectType(sample.getObservedSample().getObjectType(), REQUIRED);}
 		catch(NullPointerException e){}
 
-		try{ setExpObjectNr(sample.getObservedSample(0).getObjectNumber(), REQUIRED);}
+		try{ setExpObjectNr(sample.getObservedSample().getObjectNumber(), REQUIRED);}
 		catch(NullPointerException e){}
 	}
 	
@@ -448,10 +448,10 @@ public void saveData()
 		e.printStackTrace();
 	}
 	
-	if(sample.getObservedSample(0)==null){
+	if(sample.getObservedSample()==null){
 		sample.addObservedSample(new ObservedSample());
 	}
-	ObservedSample observedSample=sample.getObservedSample(0);
+	ObservedSample observedSample=sample.getObservedSample();
 	observedSample.setSampleID(MetadataTools.createLSID("ObservedSample", 0));
 	try{
 		observedSample.setObjectNumber(expObjectNr!=null ? expObjectNr.getTagValue(): null);

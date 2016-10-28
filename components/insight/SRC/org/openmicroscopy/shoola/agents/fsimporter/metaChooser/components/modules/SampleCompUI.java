@@ -150,18 +150,18 @@ public class SampleCompUI extends ElementsCompUI
 			catch(NullPointerException e){}
 
 			try{
-				String[] n={sample.getObservedSample(0).getGridNumberX(),
-					sample.getObservedSample(0).getGridNumberY()};
+				String[] n={sample.getObservedSample().getGridNumberX(),
+					sample.getObservedSample().getGridNumberY()};
 			
 				setExpGridNumber(n, REQUIRED);
 			
 			}catch(NullPointerException e){}
 			
 
-			try{ setExpObjectType(sample.getObservedSample(0).getObjectType(), REQUIRED);}
+			try{ setExpObjectType(sample.getObservedSample().getObjectType(), REQUIRED);}
 			catch(NullPointerException e){}
 
-			try{ setExpObjectNr(sample.getObservedSample(0).getObjectNumber(), REQUIRED);}
+			try{ setExpObjectNr(sample.getObservedSample().getObjectNumber(), REQUIRED);}
 			catch(NullPointerException e){}
 		}
 	}
@@ -322,7 +322,7 @@ public class SampleCompUI extends ElementsCompUI
 				gNr=g.getNr();
 				gT=g.getType();
 			}
-			ObservedSample os=copyIn.getObservedSample(0);
+			ObservedSample os=copyIn.getObservedSample();
 			String osgx=null;
 			String osgy=null;
 			String ost=null;
@@ -340,10 +340,10 @@ public class SampleCompUI extends ElementsCompUI
 			if(rdesc!=null && !rdesc.equals("")) sample.setRawMaterialDesc(rdesc);
 			if(gNr!=null) sample.getGridBox().setNr(gNr);
 			if(gT!=null && !gT.equals("")) sample.getGridBox().setType(gT);
-			if(osgx!=null && !osgx.equals("")) sample.getObservedSample(0).setGridNumberY(osgx);
-			if(osgy!=null && !osgy.equals("")) sample.getObservedSample(0).setGridNumberY(osgy);
-			if(ost!=null && !ost.equals("")) sample.getObservedSample(0).setObjectType(ost);
-			if(osNr!=null && !osNr.equals("")) sample.getObservedSample(0).setObjectNumber(osNr);
+			if(osgx!=null && !osgx.equals("")) sample.getObservedSample().setGridNumberY(osgx);
+			if(osgy!=null && !osgy.equals("")) sample.getObservedSample().setGridNumberY(osgy);
+			if(ost!=null && !ost.equals("")) sample.getObservedSample().setObjectType(ost);
+			if(osNr!=null && !osNr.equals("")) sample.getObservedSample().setObjectNumber(osNr);
 		}
 	}
 	

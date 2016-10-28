@@ -216,17 +216,15 @@ public class OMEStore
 		GridBox gb=s.getGridBox();
 		addMapPair(cAnnot.valueList,GridBox.GRID_NR_MAPLABEL,gb.getNr());
 		addMapPair(cAnnot.valueList,GridBox.GRID_TYPE_MAPLABEL,gb.getType());
-		List<ObservedSample> list =s.getObservedSampleList();
-		for(ObservedSample o: list){
-			String x=""; String y="";
-			if(o.getGridNumberX()!=null )
-				x=o.getGridNumberX();
-			if(o.getGridNumberY()!=null)
-				y=o.getGridNumberY();
-			addMapPair(cAnnot.valueList,ObservedSample.GRID_MAPLABEL,x+ObservedSample.GRID_SEPARATOR+y);
-			addMapPair(cAnnot.valueList,ObservedSample.OBJECT_TYPE_MAPLABEL,o.getObjectType());
-			addMapPair(cAnnot.valueList,ObservedSample.OBJECT_NUMBER_MAPLABEL,o.getObjectNumber());
-		}
+		ObservedSample o =s.getObservedSample();
+		String x=""; String y="";
+		if(o.getGridNumberX()!=null )
+			x=o.getGridNumberX();
+		if(o.getGridNumberY()!=null)
+			y=o.getGridNumberY();
+		addMapPair(cAnnot.valueList,ObservedSample.GRID_MAPLABEL,x+ObservedSample.GRID_SEPARATOR+y);
+		addMapPair(cAnnot.valueList,ObservedSample.OBJECT_TYPE_MAPLABEL,o.getObjectType());
+		addMapPair(cAnnot.valueList,ObservedSample.OBJECT_NUMBER_MAPLABEL,o.getObjectNumber());
 		
 		mapAnnot.setValue(new MapPairs(cAnnot.valueList));
 

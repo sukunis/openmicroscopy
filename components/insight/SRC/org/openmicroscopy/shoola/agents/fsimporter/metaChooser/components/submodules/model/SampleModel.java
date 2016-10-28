@@ -80,7 +80,7 @@ public class SampleModel
 				gNr=g.getNr();
 				gT=g.getType();
 			}
-			ObservedSample os=copyIn.getObservedSample(0);
+			ObservedSample os=copyIn.getObservedSample();
 			String osgx=null;
 			String osgy=null;
 			String ost=null;
@@ -99,13 +99,13 @@ public class SampleModel
 			if(rdesc!=null && !rdesc.equals("")) element.setRawMaterialDesc(rdesc);
 			if(gNr!=null) element.getGridBox().setNr(gNr);
 			if(gT!=null && !gT.equals("")) element.getGridBox().setType(gT);
-			if(osgx!=null && !osgx.equals("")) element.getObservedSample(0).setGridNumberY(osgx);
-			if(osgy!=null && !osgy.equals("")) element.getObservedSample(0).setGridNumberY(osgy);
-			if(ost!=null && !ost.equals("")) element.getObservedSample(0).setObjectType(ost);
-			if(osNr!=null && !osNr.equals("")) element.getObservedSample(0).setObjectNumber(osNr);
+			if(osgx!=null && !osgx.equals("")) element.getObservedSample().setGridNumberY(osgx);
+			if(osgy!=null && !osgy.equals("")) element.getObservedSample().setGridNumberY(osgy);
+			if(ost!=null && !ost.equals("")) element.getObservedSample().setObjectType(ost);
+			if(osNr!=null && !osNr.equals("")) element.getObservedSample().setObjectNumber(osNr);
 			
-			System.out.println("\t...grid(x,y)= "+element.getObservedSample(0).getGridNumberX()
-					+", "+element.getObservedSample(0).getGridNumberY());
+			System.out.println("\t...grid(x,y)= "+element.getObservedSample().getGridNumberX()
+					+", "+element.getObservedSample().getGridNumberY());
 		}
 	}
 	public Sample getSample()
@@ -146,7 +146,7 @@ public class SampleModel
 			element.setGridBoxType(val);
 			break;
 		case TagNames.EXPGRID:// no pre value possible
-			ObservedSample sample3=element.getObservedSample(0);
+			ObservedSample sample3=element.getObservedSample();
 			if(sample3==null)
 				sample3=new ObservedSample();
 			sample3.setGridNumberX(SampleViewer.parseExpGrid(val)[0]);
@@ -154,14 +154,14 @@ public class SampleModel
 			element.setObservedSample(sample3);
 			break;
 		case TagNames.EXPOBJNR:// no pre value possible
-			ObservedSample sample=element.getObservedSample(0);
+			ObservedSample sample=element.getObservedSample();
 			if(sample==null)
 				sample=new ObservedSample();
 			sample.setObjectNumber(val);
 			element.setObservedSample(sample);
 			break;
 		case TagNames.EXPOBJTYPE: // no pre value possible
-			ObservedSample sample2=element.getObservedSample(0);
+			ObservedSample sample2=element.getObservedSample();
 			if(sample2==null)
 				sample2=new ObservedSample();
 			sample2.setObjectType(val);

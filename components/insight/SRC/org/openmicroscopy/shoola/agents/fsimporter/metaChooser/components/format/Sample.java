@@ -58,7 +58,7 @@ public class Sample
 	private GridBox gridBox;
 	
 	/** observed sample data**/
-	private List<ObservedSample> obSampleList;
+	private ObservedSample obSample;
 
 	
 	//-- elements labels
@@ -83,7 +83,7 @@ public class Sample
 		rawMaterialDesc=null;
 		rawMaterialCode=null;
 		gridBox=null;
-		obSampleList=null;
+		obSample=null;
 	}
 	
 	//copy constructor
@@ -94,7 +94,7 @@ public class Sample
 		rawMaterialDesc=orig.rawMaterialDesc;
 		rawMaterialCode=orig.rawMaterialCode;
 		gridBox=orig.gridBox;
-		obSampleList=orig.obSampleList;
+		obSample=new ObservedSample(orig.obSample);
 	}
 	
 	//parse string of xmlannotation object to sample object
@@ -434,39 +434,24 @@ public class Sample
 
 	public void addObservedSample(ObservedSample sample)
 	{
-		if(obSampleList==null){
-			obSampleList=new ArrayList<ObservedSample>();
-		}
-		sample.setSampleID(MetadataTools.createLSID("ObservedSample", obSampleList.size()+1));
-		obSampleList.add(sample);
+		
+		sample.setSampleID(MetadataTools.createLSID("ObservedSample", 0));
+		obSample=sample;
 	}
 	
 	public void setObservedSample(ObservedSample sample)
 	{
-		obSampleList=new ArrayList<ObservedSample>();
-//		sample.setSampleID("0");
-		obSampleList.add(sample);
+		addObservedSample(sample);
 	}
 	
 	
 	
-	public int getObservedSampleCount()
+	public ObservedSample getObservedSample()
 	{
-		return (obSampleList!=null) ? obSampleList.size() : 0;
+		return obSample;
 	}
 	
-	public List<ObservedSample> getObservedSampleList()
-	{
-		return obSampleList;
-	}
 	
-	public ObservedSample getObservedSample(int i)
-	{
-		if(obSampleList!=null)
-			return obSampleList.get(i);
-		else
-			return null;
-	}
 	
 	//-- xml
 	
