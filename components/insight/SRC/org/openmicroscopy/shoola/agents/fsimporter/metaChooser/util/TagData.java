@@ -587,11 +587,16 @@ public class TagData
 		return res;
 	}
 	
-	private String listToString(List<String> list){
+	private String listToString(List<String> list)
+	{
 		String res="";
 		
+		if(list==null || list.isEmpty())
+			return res;
+		
 		for(String s:list){
-			res+=s+",";
+			if(!s.equals(""))
+				res+=s+",";
 		}
 		if(res.endsWith(","))
 			res=res.substring(0, res.length()-1);

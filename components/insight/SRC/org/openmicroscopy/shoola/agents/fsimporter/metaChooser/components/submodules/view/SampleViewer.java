@@ -243,7 +243,6 @@ protected void setPredefinedTag(TagConfiguration t)
 	case TagNames.EXPGRID:
 		if(expGrid!=null && !expGrid.getTagValue().equals(""))
 			return;
-		//TODO
 		setExpGridNumber(parseExpGrid(t.getValue()), prop);
 		break;
 	case TagNames.EXPOBJNR:

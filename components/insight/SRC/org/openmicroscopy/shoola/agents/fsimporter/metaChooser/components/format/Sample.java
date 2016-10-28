@@ -93,7 +93,7 @@ public class Sample
 		preparationDescription=orig.preparationDescription;
 		rawMaterialDesc=orig.rawMaterialDesc;
 		rawMaterialCode=orig.rawMaterialCode;
-		gridBox=orig.gridBox;
+		gridBox=new GridBox(orig.gridBox);
 		obSample=new ObservedSample(orig.obSample);
 	}
 	
@@ -622,7 +622,17 @@ public class Sample
 		}
 
 		
-		
+		/**
+		 * Copy constructor
+		 * @param gridBox
+		 */
+		public GridBox(GridBox orig) 
+		{
+			this.id=orig.id;
+			this.nr=orig.nr;
+			this.type=orig.type;
+		}
+
 		/**
 		 * @return the id
 		 */
