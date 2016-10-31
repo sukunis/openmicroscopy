@@ -112,9 +112,9 @@ public class ObjectiveViewer extends ModuleViewer
 		
 		addLabelTextRows(labels, comp, gridbag, globalPane);
 		
-		c.gridwidth = GridBagConstraints.REMAINDER; //last
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1.0;
+		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.weightx = 1.0;
 		
 		//Settings
 		GridBagConstraints cSett=new GridBagConstraints();
@@ -129,9 +129,9 @@ public class ObjectiveViewer extends ModuleViewer
 		
 		addLabelTextRows(labelsSett, compSett, gridbag, settingsPane);
 		
-		c.gridwidth = GridBagConstraints.REMAINDER; //last
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1.0;
+		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.weightx = 1.0;
 		
 		box.add(Box.createVerticalStrut(20));
 		box.add(settingsPane);
@@ -153,7 +153,7 @@ public class ObjectiveViewer extends ModuleViewer
 				BorderFactory.createEmptyBorder(5,10,5,10)));
 		
 		gridbag = new GridBagLayout();
-		c = new GridBagConstraints();
+		gridBagConstraints = new GridBagConstraints();
 		
 		globalPane=new JPanel();
 		globalPane.setLayout(gridbag);

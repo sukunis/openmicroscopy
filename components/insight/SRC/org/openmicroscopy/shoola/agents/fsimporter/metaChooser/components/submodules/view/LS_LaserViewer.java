@@ -196,24 +196,20 @@ tagList=new ArrayList<TagData>();
 			LOGGER.error("[DATA] can't read LIGHTSRC medium input");
 		}
 		try{
-			if(!tunable.getTagValue().equals("")){
-				((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(tunable.getTagValue()));
-				System.out.println("\t...save tunable = "+tunable.getTagValue()+" as "
-				+BooleanUtils.toBoolean(tunable.getTagValue()));
-			}
+				((Laser)lightSrc).setTuneable(parseToBoolean(tunable.getTagValue()));
+				System.out.println("\t... setGUIData(): set tunable = "+parseToBoolean(tunable.getTagValue())+" val: "+tunable.getTagValue());
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC tunable input");
 		}
 		try{
 
 			((Laser)lightSrc).setPulse(LightSourceSubViewer.parsePulse(pulse.getTagValue()));
-			System.out.println("\t...saved pulse: "+lightSrc.getPulse());
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC pulse input");
 		}
 		try{
 			if(!pockelCell.getTagValue().equals(""))
-			((Laser)lightSrc).setPockelCell(Boolean.valueOf(pockelCell.getTagValue()));
+			((Laser)lightSrc).setPockelCell(parseToBoolean(pockelCell.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC pockell cell input");
 		}
@@ -232,5 +228,7 @@ tagList=new ArrayList<TagData>();
 			LOGGER.error("[DATA] can't read LIGHTSRC wavelength input");
 		}
 	}
+
+	
 
 }

@@ -75,7 +75,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		
 		gridbag = new GridBagLayout();
 		
-		c = new GridBagConstraints();
+		gridBagConstraints = new GridBagConstraints();
 		globalPane=new JPanel();
 		
 		globalPane.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -99,9 +99,9 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		
 		addLabelTextRows(labels, comp, gridbag, globalPane);
 		
-		c.gridwidth = GridBagConstraints.REMAINDER; //last
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1.0;
+		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.weightx = 1.0;
 		initTagList();
 	}
 	
@@ -197,14 +197,6 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			tunable.setTagValue(val,prop);
 	}
 	
-	public void setTunable(String value, boolean prop)
-	{
-		String val=(value!=null) ? value: "";
-		if(tunable == null) 
-			tunable = new TagData(TagNames.TUNABLE,val,prop,TagData.COMBOBOX,TagNames.BOOLEAN_COMBO);
-		else 
-			tunable.setTagValue(val,prop);
-	}
 	
 	public void setPulse(Pulse value, boolean prop)
 	{
@@ -309,7 +301,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			freqMul.setVisible(true);
 			break;
 		case TagNames.TUNABLE:
-				setTunable((String)null, prop);
+				setTunable(null, prop);
 			tunable.setVisible(true);
 			break;
 		case TagNames.PULSE:
@@ -353,7 +345,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
 		
-		System.out.println("# LightSourceSubViewer::setPredefinedTag(): "+name+" - "+classification);
+//		System.out.println("# LightSourceSubViewer::setPredefinedTag(): "+name+" - "+classification);
 		
 		Boolean prop=t.getProperty();
 		switch(name){
@@ -424,7 +416,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			if(tunable!=null && !tunable.getTagValue().equals(""))
 				return;
 			try{
-				setTunable(BooleanUtils.toBoolean(t.getValue()), prop);
+				setTunable(parseToBoolean(t.getValue()), prop);
 			}catch(Exception e){
 				tunable.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -444,7 +436,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			if(pockelCell!=null && !pockelCell.getTagValue().equals(""))
 				return;
 			try{
-				setPocketCell(BooleanUtils.toBoolean(t.getValue()), prop);
+				setPocketCell(parseToBoolean(t.getValue()), prop);
 			}catch(Exception e){
 				pockelCell.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}

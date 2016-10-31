@@ -1,36 +1,24 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-
-import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.unit.Unit;
 import ome.xml.model.ImagingEnvironment;
-import ome.xml.model.Objective;
-import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.primitives.PercentFraction;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
@@ -92,9 +80,9 @@ public class ImageEnvViewer extends ModuleViewer{
 		addTagToGUI(co2Percent,labels,comp);
 		addLabelTextRows(labels, comp, gridbag, globalPane);
 
-		c.gridwidth = GridBagConstraints.REMAINDER; //last
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1.0;
+		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.weightx = 1.0;
 
 
 
@@ -110,7 +98,7 @@ public class ImageEnvViewer extends ModuleViewer{
 		setLayout(new BorderLayout(5,5));
 
 		gridbag = new GridBagLayout();
-		c = new GridBagConstraints();
+		gridBagConstraints = new GridBagConstraints();
 
 		globalPane=new JPanel();
 		globalPane.setLayout(gridbag);
@@ -198,7 +186,7 @@ public class ImageEnvViewer extends ModuleViewer{
 			if(humidity!=null && !humidity.getTagValue().equals(""))
 				return;
 			try{
-				setHumidity(parsePercentFraction(t.getValue()), prop);
+				setHumidity(parseToPercentFraction(t.getValue()), prop);
 			}catch(Exception e){
 				humidity.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -207,7 +195,7 @@ public class ImageEnvViewer extends ModuleViewer{
 			if(co2Percent!=null && !co2Percent.getTagValue().equals(""))
 				return;
 			try{
-				PercentFraction p= parsePercentFraction(t.getValue());
+				PercentFraction p= parseToPercentFraction(t.getValue());
 				setCo2Percent(p, prop);
 			}catch(Exception e){
 				co2Percent.setTagInfo(ERROR_PREVALUE+t.getValue());
@@ -271,21 +259,23 @@ public class ImageEnvViewer extends ModuleViewer{
 
 	private void setHumidity(PercentFraction value, boolean prop)
 	{
-		String val=(value!=null) ? String.valueOf(value.getValue()*100) :"";
+		String val=(value!=null) ? String.valueOf(value.getValue()) :"";
 		Unit unit=TagNames.PERCENT_UNIT;
-		if(humidity == null) 
-			humidity = new TagData(TagNames.HUMIDITY,val,unit,prop,TagData.TEXTFIELD); 
-		else 
+		if(humidity == null) {
+			humidity = new TagData(TagNames.HUMIDITY,val,unit,prop,TagData.TEXTFIELD);
+			humidity.addDocumentListener(createDocumentListenerPercentFraction(humidity,"Invalid input. Use float between 0.0 and 1.0!"));
+		}else 
 			humidity.setTagValue(val,unit,prop);
 	}
 
 	private void setCo2Percent(PercentFraction value, boolean prop)
 	{
-		String val=(value!=null) ? String.valueOf(value.getValue()*100) :"";
+		String val=(value!=null) ? String.valueOf(value.getValue()) :"";
 		Unit unit=TagNames.PERCENT_UNIT;
-		if(co2Percent == null) 
+		if(co2Percent == null) {
 			co2Percent = new TagData(TagNames.CO2,val,unit,prop,TagData.TEXTFIELD);
-		else 
+			co2Percent.addDocumentListener(createDocumentListenerPercentFraction(co2Percent,"Invalid input. Use float between 0.0 and 1.0!"));
+		}else 
 			co2Percent.setTagValue(val,unit,prop);
 	}
 
@@ -318,18 +308,18 @@ public class ImageEnvViewer extends ModuleViewer{
 			LOGGER.error("[DATA] can't read IMAGE ENV air pressure input");
 		}
 		try{
-			//TODO input format hint: percentvalue elem of [0,100] or [0,1]
+			//TODO input format hint: percentvalue elem of [0,1]
 			//test input
 			String val=humidity.getTagValue();
-			if(!humidity.getTagValue().equals("")){
-				if(Float.valueOf(val)>100){
-					WarningDialog ld=new WarningDialog("Humidity value not valid!", 
-							"Humidity value must be between 0 and 100!",this.getClass().getSimpleName());
-					ld.setVisible(true);
-					val="";
-				}
-			}
-			env.setHumidity(val.equals("")? null : new PercentFraction(Float.valueOf(val)/100));
+//			if(!humidity.getTagValue().equals("")){
+//				if(Float.valueOf(val)>100){
+//					WarningDialog ld=new WarningDialog("Humidity value not valid!", 
+//							"Humidity value must be between 0 and 100!",this.getClass().getSimpleName());
+//					ld.setVisible(true);
+//					val="";
+//				}
+//			}
+			env.setHumidity(parseToPercentFraction(val));
 			humidity.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV humidity input");
@@ -337,15 +327,15 @@ public class ImageEnvViewer extends ModuleViewer{
 		try{
 			//test input
 			String val=co2Percent.getTagValue();
-			if(!co2Percent.getTagValue().equals("")){
-				if(Float.valueOf(val)>100){
-					WarningDialog ld=new WarningDialog("CO2 Percent value not valid!", 
-							"CO2 Percent value must be between 0 and 100!",this.getClass().getSimpleName());
-					ld.setVisible(true);
-					val="";
-				}
-			}
-			env.setCO2Percent(val.equals("")?null : new PercentFraction(Float.valueOf(val)/100));
+//			if(!co2Percent.getTagValue().equals("")){
+//				if(Float.valueOf(val)>100){
+//					WarningDialog ld=new WarningDialog("CO2 Percent value not valid!", 
+//							"CO2 Percent value must be between 0 and 100!",this.getClass().getSimpleName());
+//					ld.setVisible(true);
+//					val="";
+//				}
+//			}
+			env.setCO2Percent(parseToPercentFraction(val));
 			co2Percent.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV co2 percent input");
@@ -383,14 +373,7 @@ public class ImageEnvViewer extends ModuleViewer{
 		return new Pressure(Double.valueOf(c), unit);
 	}
 	
-	public static PercentFraction parsePercentFraction(String c) throws Exception
-	{
-		if(c==null || c.equals(""))
-			return null;
-
-		
-		return new PercentFraction(Float.valueOf(c)/100);
-	}
+	
 	
 	
 }

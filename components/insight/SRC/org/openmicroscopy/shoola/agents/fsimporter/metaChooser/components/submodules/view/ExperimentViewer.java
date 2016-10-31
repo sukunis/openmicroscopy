@@ -104,9 +104,9 @@ public class ExperimentViewer extends ModuleViewer{
 
 		addLabelTextRows(labels, comp, gridbag, globalPane);
 
-		c.gridwidth = GridBagConstraints.REMAINDER; //last
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1.0;
+		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.weightx = 1.0;
 
 		if(group!=null)group.setEnable(false);
 		if(projectName!=null)projectName.setEnable(false);
@@ -122,7 +122,7 @@ public class ExperimentViewer extends ModuleViewer{
 		setLayout(new BorderLayout(5,5));
 
 		gridbag = new GridBagLayout();
-		c = new GridBagConstraints();
+		gridBagConstraints = new GridBagConstraints();
 
 		globalPane=new JPanel();
 		globalPane.setLayout(gridbag);

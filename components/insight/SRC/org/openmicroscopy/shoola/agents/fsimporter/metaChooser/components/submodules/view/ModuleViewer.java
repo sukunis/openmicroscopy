@@ -19,6 +19,7 @@ import javax.swing.event.DocumentListener;
 
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
+import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
@@ -31,7 +32,7 @@ public abstract class ModuleViewer extends JPanel
 	
 	protected boolean predefinitionValLoaded;
 	
-	protected GridBagConstraints c;
+	protected GridBagConstraints gridBagConstraints;
 	protected GridBagLayout gridbag;
 	
 	protected JPanel globalPane;
@@ -44,7 +45,12 @@ public abstract class ModuleViewer extends JPanel
 	protected abstract void initTag(TagConfiguration t); 
 	protected abstract void setPredefinedTag(TagConfiguration t);
 	
-	private static String pattern_double ="\\d*+\\.\\d{1,}";
+	private static String pattern_double = "\\s|[0-9]+.*[0-9]*";//"\\d*+\\.\\d{1,}";
+	
+//	private static String pattern_number="\d";
+	/* http://stackoverflow.com/questions/6400955/how-to-get-1-100-using-regex
+	 * match 0 oder 0.0-0.99 oder 1 oder 1.0*/
+	private static String pattern_percentFraction="[0]{1}.[0-9]{1,2}|1|1.0|0";
 	
 	protected final String ERROR_PREVALUE="Invalid predefined value: ";
 	
@@ -78,6 +84,32 @@ public abstract class ModuleViewer extends JPanel
 	public static String[] getNames(Class<? extends Enum<?>> e) {
 		 return Arrays.toString(e.getEnumConstants()).replaceAll("^.|.$", "").split(", ");
 //	    return Arrays.stream(e.getEnumConstants()).map(Enum::name).toArray(String[]::new);
+	}
+	
+	/**
+	 * Parse String to a simple type PercentFraction that restricts the value to a float between 0 and 1 (inclusive)
+	 * @param c
+	 * @return
+	 * @throws Exception
+	 */
+	public static PercentFraction parseToPercentFraction(String c) throws Exception
+	{
+		if(c==null || c.equals(""))
+			return null;
+
+		
+//		return new PercentFraction(Float.valueOf(c)/100);
+		return new PercentFraction(Float.valueOf(c));
+	}
+	
+	protected Boolean parseToBoolean(String val) 
+	{
+		if(val==null || val.equals("")){
+			System.out.println("# ModuleViewer::parseBoolean(): return null");
+			return null;
+		}
+		
+		return Boolean.valueOf(val);
 	}
 	
 	public static PositiveInteger parseToPositiveInt(String c) throws Exception
@@ -217,10 +249,10 @@ public abstract class ModuleViewer extends JPanel
 			return predefinitionValLoaded;
 		}
 		
-		protected void validateDoubleInput(TagData tag,String error) 
+		protected void validateInput(TagData tag,String error,String pattern) 
 		{
 			String text = tag.getTagValue();
-			Pattern r= Pattern.compile(pattern_double);
+			Pattern r= Pattern.compile(pattern);
 			Matcher m= r.matcher(text);
 			if(m.matches()){
 				tag.setTagInfo("");
@@ -228,6 +260,9 @@ public abstract class ModuleViewer extends JPanel
 				tag.setTagInfo(error);
 			}
 		}
+		
+		
+		
 		/**
 		 * @return
 		 */
@@ -246,18 +281,40 @@ public abstract class ModuleViewer extends JPanel
 				this.error=error;
 			}
 			@Override
-			public void removeUpdate(DocumentEvent e) {
-			
-			}
+			public void removeUpdate(DocumentEvent e) {}
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				validateDoubleInput(tag,error);
+				validateInput(tag,error,pattern_double);
 			}
 			@Override
-			public void changedUpdate(DocumentEvent e) {
-//					System.out.println("Zoom changeUpdate listener");
+			public void changedUpdate(DocumentEvent e) {}
+		}
+		
+		
+		/**
+		 * @return
+		 */
+		public DocumentListener createDocumentListenerPercentFraction(TagData tag, String error) {
+			return new DocumentListenerForPercentFraction(tag,error); 
 				
+		}
+		
+		class DocumentListenerForPercentFraction implements DocumentListener
+		{
+			private TagData tag;
+			private String error;
+			public DocumentListenerForPercentFraction(TagData tag,String error)
+			{
+				this.tag=tag;
+				this.error=error;
 			}
-			
+			@Override
+			public void removeUpdate(DocumentEvent e) {}
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				validateInput(tag,error,pattern_percentFraction);
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
 		}
 }

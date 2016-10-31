@@ -127,9 +127,9 @@ public class DetectorViewer extends ModuleViewer{
 
 		addLabelTextRows(labels, comp, gridbag, globalPane);
 
-		c.gridwidth = GridBagConstraints.REMAINDER; //last
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1.0;
+		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.weightx = 1.0;
 
 		//Settings
 		GridBagConstraints cSett=new GridBagConstraints();
@@ -148,9 +148,9 @@ public class DetectorViewer extends ModuleViewer{
 
 		addLabelTextRows(labelsSett, compSett, gridbag, settingsPane);
 
-		c.gridwidth = GridBagConstraints.REMAINDER; //last
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1.0;
+		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.weightx = 1.0;
 
 		box.add(Box.createVerticalStrut(20));
 		box.add(settingsPane);
@@ -170,7 +170,7 @@ public class DetectorViewer extends ModuleViewer{
 				BorderFactory.createEmptyBorder(5,10,5,10)));
 
 		gridbag = new GridBagLayout();
-		c = new GridBagConstraints();
+		gridBagConstraints = new GridBagConstraints();
 
 		globalPane=new JPanel();
 		globalPane.setLayout(gridbag);
@@ -283,7 +283,7 @@ public class DetectorViewer extends ModuleViewer{
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
 		
-		System.out.println("# DetectorViewer::setPredefinedTag(): "+name);
+//		System.out.println("# DetectorViewer::setPredefinedTag(): "+name);
 		
 		Boolean prop=t.getProperty();
 		switch (name) {

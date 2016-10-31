@@ -122,9 +122,9 @@ private void buildGUI()
 	
 	addLabelTextRows(labels, comp, gridbag, globalPane);
 	
-	c.gridwidth = GridBagConstraints.REMAINDER; //last
-	c.anchor = GridBagConstraints.WEST;
-	c.weightx = 1.0;
+	gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
+	gridBagConstraints.anchor = GridBagConstraints.WEST;
+	gridBagConstraints.weightx = 1.0;
 	
 	// set data
 	setGUIData();
@@ -138,7 +138,7 @@ private void initComponents(ModuleConfiguration conf)
 	setLayout(new BorderLayout(5,5));
 
 	gridbag = new GridBagLayout();
-	c = new GridBagConstraints();
+	gridBagConstraints = new GridBagConstraints();
 
 	globalPane=new JPanel();
 	globalPane.setLayout(gridbag);

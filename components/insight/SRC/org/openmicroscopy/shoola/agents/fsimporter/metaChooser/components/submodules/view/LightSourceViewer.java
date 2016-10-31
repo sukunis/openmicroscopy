@@ -77,7 +77,7 @@ public class LightSourceViewer extends ModuleViewer{
 	{
 		System.out.println("# LightSrcViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		
-//		model.printValues();
+		model.printValues();
 		
 		this.index=index;
 		this.data=model;
@@ -110,9 +110,9 @@ public class LightSourceViewer extends ModuleViewer{
 			((LightSourceSubViewer) comp).buildGUI();
 		}
 
-		c.gridwidth = GridBagConstraints.REMAINDER; //last
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1.0;
+		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.weightx = 1.0;
 
 		//Settings
 		GridBagConstraints cSett=new GridBagConstraints();
@@ -127,9 +127,9 @@ public class LightSourceViewer extends ModuleViewer{
 
 		addLabelTextRows(labelsSett, compSett, gridbag, settingsPane);
 
-		c.gridwidth = GridBagConstraints.REMAINDER; //last
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1.0;
+		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.weightx = 1.0;
 
 		box.add(sourceType);
 		box.add(Box.createVerticalStrut(5));
@@ -152,7 +152,7 @@ public class LightSourceViewer extends ModuleViewer{
 				BorderFactory.createEmptyBorder(5,10,5,10)));
 
 		gridbag = new GridBagLayout();
-		c = new GridBagConstraints();
+		gridBagConstraints = new GridBagConstraints();
 
 		lightSrcCard=new CardLayout();
 		globalPane=new JPanel(lightSrcCard);
@@ -348,7 +348,7 @@ public class LightSourceViewer extends ModuleViewer{
 		String val= (value != null) ? String.valueOf(value.getNumberValue()):"";
 		if(attenuation == null) {
 			attenuation = new TagData(TagNames.ATTENUATION,val,prop,TagData.TEXTFIELD);
-			attenuation.addDocumentListener(createDocumentListenerDouble(attenuation,"Invalid input. Use float!"));
+			attenuation.addDocumentListener(createDocumentListenerPercentFraction(attenuation,"Invalid input. Use float between 0.0 and 1.0!"));
 		}else 
 			attenuation.setTagValue(val,prop);
 	}
@@ -356,13 +356,13 @@ public class LightSourceViewer extends ModuleViewer{
 	@Override
 	public void saveData() 
 	{		
-		System.out.println("\t... lightSrc dataChanged = "+dataChanged);
-		if(tagList!=null){
-			for(int i=0; i<tagList.size();i++){
-				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
-				System.out.println("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
-			}
-		}
+//		System.out.println("\t... lightSrc dataChanged = "+dataChanged);
+//		if(tagList!=null){
+//			for(int i=0; i<tagList.size();i++){
+//				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
+//				System.out.println("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
+//			}
+//		}
 		
 		System.out.println("\t...save data for "+((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getClassification());
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).saveData();
@@ -385,12 +385,12 @@ public class LightSourceViewer extends ModuleViewer{
 		}
 		try{
 			//TODO input format hint: percentvalue elem of [0,100] or [0,1]
-			settings.setAttenuation(parseAttenuation(attenuation.getTagValue()));
+			settings.setAttenuation(parseToPercentFraction(attenuation.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC SETT attenuation input");
 		}
 		
-//		data.printValues();
+		data.printValues();
 		
 		dataChanged=false;
 	}

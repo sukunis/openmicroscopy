@@ -123,7 +123,6 @@ public class LightSourceModel
 				element.set(i,new Arc((Arc) newElem));
 			}else if(newElem instanceof Laser){
 				element.set(i,new Laser((Laser) newElem));
-				System.out.println("\t...replace pulse: "+((Laser) element.get(i)).getPulse());
 			}else if(newElem instanceof GenericExcitationSource){
 				element.set(i,new GenericExcitationSource((GenericExcitationSource) newElem));
 			}else if(newElem instanceof Filament){
@@ -432,6 +431,7 @@ public class LightSourceModel
 				System.out.println("\t...lightSrc model model = "+(d.getModel()!=null ? d.getModel(): ""));
 //				System.out.println("\t...lightSrc model pulse = "+(((Laser) d).getPulse()!=null ? ((Laser) d).getPulse().getValue(): ""));
 				System.out.println("\t...lightSrc model power = "+(d.getPower()!=null ? d.getPower(): ""));
+				System.out.println("\t...lightSrc model tunable = "+(((Laser) d).getTuneable()!=null ? ((Laser) d).getTuneable(): ""));
 			}
 		}
 	}
