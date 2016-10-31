@@ -67,6 +67,7 @@ public class LightSourceViewer extends ModuleViewer{
 	//??
 	//private TagData intensity;
 
+	private boolean setDataFromCode;
 	
 	/**
 	 * Creates a new instance.
@@ -75,11 +76,21 @@ public class LightSourceViewer extends ModuleViewer{
 	public LightSourceViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
 		System.out.println("# LightSrcViewer::newInstance("+(model!=null?"model":"null")+") "+index);
+		
+//		model.printValues();
+		
 		this.index=index;
 		this.data=model;
 		initComponents(conf,showPreValues);
+		
 		buildGUI();
+		
+		// set data from model
+		setGUIData();
+		setSettingsGUIData();
+		
 		initTagList();
+		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).showPredefinitions(conf.getTagList(),showPreValues);
 		showPredefinitions(conf.getSettingList(), showPreValues);
 	}
 
@@ -126,9 +137,7 @@ public class LightSourceViewer extends ModuleViewer{
 		box.add(Box.createVerticalStrut(20));
 		box.add(settingsPane);
 
-		// set data
-		setGUIData();
-		setSettingsGUIData();
+		
 		dataChanged=false;
 	}
 
@@ -214,7 +223,10 @@ public class LightSourceViewer extends ModuleViewer{
 	protected void showSubCompForSelection(String sType) throws Exception 
 	{
 		lightSrcCard.show(globalPane,sType);
-		dataChanged=true;
+		
+		//notice only user mouse/keybord action
+		if(!setDataFromCode)
+			dataChanged=true;
 	}
 
 	/**
@@ -282,6 +294,7 @@ public class LightSourceViewer extends ModuleViewer{
 		if(data==null || data.getNumberOfLightSrc()==0 || data.getLightSource(index)==null)
 			return;
 		
+		setDataFromCode=true;
 		switch (data.getLightSource(index).getClass().getSimpleName()) {
 		case LightSourceModel.LASER: sourceType.setSelectedIndex(0);break;
 		case LightSourceModel.ARC: sourceType.setSelectedIndex(1);break;
@@ -291,6 +304,7 @@ public class LightSourceViewer extends ModuleViewer{
 		default: System.out.println("\t...unknown type");break;
 		}
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).setGUIData();
+		setDataFromCode=false;
 	}
 
 	private void setSettingsGUIData()
@@ -342,6 +356,15 @@ public class LightSourceViewer extends ModuleViewer{
 	@Override
 	public void saveData() 
 	{		
+		System.out.println("\t... lightSrc dataChanged = "+dataChanged);
+		if(tagList!=null){
+			for(int i=0; i<tagList.size();i++){
+				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
+				System.out.println("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
+			}
+		}
+		
+		System.out.println("\t...save data for "+((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getClassification());
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).saveData();
 
 		// --- Settings --------------------
@@ -366,6 +389,9 @@ public class LightSourceViewer extends ModuleViewer{
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC SETT attenuation input");
 		}
+		
+//		data.printValues();
+		
 		dataChanged=false;
 	}
 	private PercentFraction parseAttenuation(String c) throws Exception

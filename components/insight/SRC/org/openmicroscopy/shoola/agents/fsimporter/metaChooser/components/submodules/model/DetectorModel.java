@@ -351,25 +351,17 @@ public class DetectorModel
 		}
 	}
 	
-	
-//	public void showPredefinitions(List<TagConfiguration> list)
-//	{
-//		System.out.println("#DetectorModel::showPreVal()");
-//		for(int j=0; j<element.size();j++){
-//			Detector detector=element.get(j);
-//			DetectorSettings sett=getSettings(j);
-//			for(int i=0; i<list.size();i++){
-//				TagConfiguration t=list.get(i);
-//				if(t.getName()!=null){
-//					try {
-//						updateTag(detector, sett, t.getName(), t.getValue(), t.getUnit());
-//					} catch (Exception e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
-//			}
-//		}
-//	}
+	public void printValues()
+	{
+		for(int i=0; i<element.size();i++){
+			Detector d= element.get(i);
+			if(d!=null){
+				System.out.println("\tDetector : "+i);
+				System.out.println("\t...detector model model = "+(d.getModel()!=null ? d.getModel(): ""));
+				System.out.println("\t...detector model type = "+(d.getType()!=null ? d.getType().getValue(): ""));
+				System.out.println("\t...detector model zoom = "+(d.getZoom()!=null ? d.getZoom(): ""));
+			}
+		}
+	}
 
 }

@@ -25,13 +25,16 @@ public class LS_LaserViewer extends LightSourceSubViewer
 	 */
 	public LS_LaserViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
+		System.out.println("# LS_LaserViewer::new Instance("+(model!=null?"model":"null")+") "+index);
+		
 		classification=LightSourceModel.LASER;
 		this.data=model;
 		this.index=index;
 		initComponents(conf);
 		buildGUI();
 		initTagList();
-		showPredefinitions(conf.getTagList(), showPreValues);
+		
+//		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 	
 	@Override
@@ -58,6 +61,17 @@ tagList=new ArrayList<TagData>();
 	protected void setGUIData() {
 		if(data==null)
 			return;
+		
+		if(data.getLightSource(index)==null){
+			try {
+				data.addData(new Laser(), true, index);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		System.out.println("# LS_LaserViewer::setGUIData()");
+		
 		Laser lightSrc=(Laser) data.getLightSource(index);
 		
 		try{setManufact(((Laser)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
@@ -108,6 +122,16 @@ tagList=new ArrayList<TagData>();
 	public void saveData() 
 	{
 		System.out.println("# LS_LaserViewer::saveData()");
+		
+		System.out.println("\t... lightSrc dataChanged = "+dataChanged);
+		if(tagList!=null){
+			for(int i=0; i<tagList.size();i++){
+				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
+				System.out.println("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
+			}
+		}
+		
+		
 		if(data==null)
 			data=new LightSourceModel();
 		
@@ -124,7 +148,16 @@ tagList=new ArrayList<TagData>();
 		try{
 			lightSrc=(Laser) data.getLightSource(index);
 		}catch(ClassCastException e){
-			System.out.println("ERROR...overwrite lightSrc with another type of lightSrc.");
+			System.out.println("\tATTENTION...overwrite lightSrc with another type of lightSrc.");
+			String oldClass=data.getLightSource(index).getClass().getSimpleName();
+			try{
+				data.addData(new Laser(), true, index);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			lightSrc=(Laser) data.getLightSource(index);
+			System.out.println("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
 		}
 		
 		try{
@@ -163,14 +196,18 @@ tagList=new ArrayList<TagData>();
 			LOGGER.error("[DATA] can't read LIGHTSRC medium input");
 		}
 		try{
-			if(!tunable.getTagValue().equals(""))
-			((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(tunable.getTagValue()));
+			if(!tunable.getTagValue().equals("")){
+				((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(tunable.getTagValue()));
+				System.out.println("\t...save tunable = "+tunable.getTagValue()+" as "
+				+BooleanUtils.toBoolean(tunable.getTagValue()));
+			}
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC tunable input");
 		}
 		try{
 
 			((Laser)lightSrc).setPulse(LightSourceSubViewer.parsePulse(pulse.getTagValue()));
+			System.out.println("\t...saved pulse: "+lightSrc.getPulse());
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC pulse input");
 		}

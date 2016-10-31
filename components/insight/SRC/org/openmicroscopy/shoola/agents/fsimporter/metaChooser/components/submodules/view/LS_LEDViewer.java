@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 
 import ome.xml.model.Arc;
 import ome.xml.model.Filament;
+import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.LightEmittingDiode;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
@@ -25,7 +26,7 @@ public class LS_LEDViewer extends LightSourceSubViewer
 		initComponents(conf);
 		buildGUI();
 		initTagList();
-		showPredefinitions(conf.getTagList(), showPreValues);
+//		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 
 	@Override
@@ -78,7 +79,16 @@ public class LS_LEDViewer extends LightSourceSubViewer
 		try{
 			lightSrc=(LightEmittingDiode) data.getLightSource(index);
 		}catch(ClassCastException e){
-			System.out.println("ERROR...overwrite lightSrc with another type of lightSrc.");
+			System.out.println("\tATTENTION...overwrite lightSrc with another type of lightSrc.");
+			String oldClass=data.getLightSource(index).getClass().getSimpleName();
+			try{
+				data.addData(new LightEmittingDiode(), true, index);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			lightSrc=(LightEmittingDiode) data.getLightSource(index);
+			System.out.println("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
 		}
 		
 		try{

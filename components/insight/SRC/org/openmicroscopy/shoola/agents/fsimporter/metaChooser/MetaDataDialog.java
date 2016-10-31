@@ -1548,7 +1548,7 @@ private boolean disableItemListener;
     private void selectNodeAction(FNode selectedNode) 
    {
 	   if(selectedNode!=null ){
-		   System.out.println("# MetaDataDialog::selectNodeAction("+selectedNode.getAbsolutePath()+")");
+		   System.out.println("\n# MetaDataDialog::selectNodeAction("+selectedNode.getAbsolutePath()+")");
 		   LOGGER.debug("Select node action for "+selectedNode.getAbsolutePath());
            
 		   enableSaveButtons(selectedNode.isLeaf());

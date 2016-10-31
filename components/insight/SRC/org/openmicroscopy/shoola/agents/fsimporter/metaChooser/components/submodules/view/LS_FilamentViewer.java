@@ -26,7 +26,7 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 		initComponents(conf);
 		buildGUI();
 		initTagList();
-		showPredefinitions(conf.getTagList(), showPreValues);
+//		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 
 	@Override
@@ -85,7 +85,16 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 		try{
 			lightSrc=(Filament) data.getLightSource(index);
 		}catch(ClassCastException e){
-			System.out.println("ERROR...overwrite lightSrc with another type of lightSrc.");
+			System.out.println("\tATTENTION...overwrite lightSrc with another type of lightSrc.");
+			String oldClass=data.getLightSource(index).getClass().getSimpleName();
+			try{
+				data.addData(new Filament(), true, index);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			lightSrc=(Filament) data.getLightSource(index);
+			System.out.println("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
 		}
 
 		try{

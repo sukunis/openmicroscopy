@@ -27,7 +27,7 @@ public class LS_GESViewer extends LightSourceSubViewer
 		initComponents(conf);
 		buildGUI();
 		initTagList();
-		showPredefinitions(conf.getTagList(), showPreValues);
+//		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 
 	@Override
@@ -82,7 +82,16 @@ public class LS_GESViewer extends LightSourceSubViewer
 		try{
 			lightSrc=(GenericExcitationSource) data.getLightSource(index);
 		}catch(ClassCastException e){
-			System.out.println("ERROR...overwrite lightSrc with another type of lightSrc.");
+			System.out.println("\tATTENTION...overwrite lightSrc with another type of lightSrc.");
+			String oldClass=data.getLightSource(index).getClass().getSimpleName();
+			try{
+				data.addData(new GenericExcitationSource(), true, index);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			lightSrc=(GenericExcitationSource) data.getLightSource(index);
+			System.out.println("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
 		}
 		
 		try{

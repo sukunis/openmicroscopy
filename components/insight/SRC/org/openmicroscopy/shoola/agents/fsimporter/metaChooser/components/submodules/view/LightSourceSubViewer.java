@@ -352,6 +352,9 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
+		
+		System.out.println("# LightSourceSubViewer::setPredefinedTag(): "+name+" - "+classification);
+		
 		Boolean prop=t.getProperty();
 		switch(name){
 		case TagNames.MODEL:
@@ -427,11 +430,14 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			}
 			break;
 		case TagNames.PULSE:
-			if(pulse!=null && !pulse.getTagValue().equals(""))
+			if(pulse!=null && !pulse.getTagValue().equals("")){
+			System.out.println("\t...pulse still set");
 				return;
+			}
 			Pulse p=parsePulse(t.getValue());
-			if(p==null)
+			if(p==null){
 				pulse.setTagInfo(ERROR_PREVALUE+t.getValue());
+			}
 			setPulse(p,prop);
 			break;
 		case TagNames.POCKELCELL:
@@ -596,5 +602,8 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 //			a=ArcType.OTHER;
 		}
 		return a;
+	}
+	public String getClassification() {
+		return classification;
 	}
 }

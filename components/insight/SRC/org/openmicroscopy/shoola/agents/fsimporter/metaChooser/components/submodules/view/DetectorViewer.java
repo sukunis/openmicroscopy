@@ -78,11 +78,18 @@ public class DetectorViewer extends ModuleViewer{
 	public DetectorViewer(DetectorModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
 		System.out.println("# DetectorViewer::newInstance("+(model!=null?"model":"null")+") "+index);
+		
+//		model.printValues();
+		
 		this.data=model;
 		this.index=index;
 		initComponents(conf);
 		initTagList();
 		buildGUI();
+		// set data from model
+		setGUIData();
+		setSettingsGUIData();
+		
 		showPredefinitions(conf.getTagList(), showPreValues);
 		showPredefinitions(conf.getSettingList(), showPreValues);
 	}
@@ -148,9 +155,7 @@ public class DetectorViewer extends ModuleViewer{
 		box.add(Box.createVerticalStrut(20));
 		box.add(settingsPane);
 
-		// set data
-		setGUIData();
-		setSettingsGUIData();
+		
 		dataChanged=false;
 	}
 
@@ -277,6 +282,9 @@ public class DetectorViewer extends ModuleViewer{
 		
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
+		
+		System.out.println("# DetectorViewer::setPredefinedTag(): "+name);
+		
 		Boolean prop=t.getProperty();
 		switch (name) {
 		case TagNames.MODEL: 
@@ -290,8 +298,10 @@ public class DetectorViewer extends ModuleViewer{
 			setManufact(t.getValue(), OPTIONAL);
 			break;
 		case TagNames.TYPE:
-			if(type!=null && !type.getTagValue().equals(""))
+			if(type!=null && !type.getTagValue().equals("")){
 				return;
+			}
+				
 			DetectorType d=parseDetectorType(t.getValue());
 			if(d==null)
 				type.setTagInfo(ERROR_PREVALUE+t.getValue());
@@ -380,6 +390,7 @@ public class DetectorViewer extends ModuleViewer{
 			return;
 		Detector detector=data.getDetector(index);
 		if(detector!=null){
+			System.out.println("# DetectorViewer::setGUIData()");
 			try{setModel(detector.getModel(), ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 			try{setManufact(detector.getManufacturer(),  ElementsCompUI.REQUIRED);
@@ -628,6 +639,7 @@ public class DetectorViewer extends ModuleViewer{
 			LOGGER.error("[DATA] can't read DETECTOR SETT binning input");
 		}
 
+//		data.printValues();
 		dataChanged=false;
 	}
 	public static DetectorType parseDetectorType(String c) 

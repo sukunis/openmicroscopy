@@ -26,7 +26,7 @@ public class LS_ArcViewer extends LightSourceSubViewer
 		initComponents(conf);
 		buildGUI();
 		initTagList();
-		showPredefinitions(conf.getTagList(), showPreValues);
+//		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 	@Override
 	protected void initTagList() {
@@ -78,10 +78,20 @@ public class LS_ArcViewer extends LightSourceSubViewer
 			}
 		}
 		Arc lightSrc=null;
+		
 		try{
 			lightSrc=(Arc) data.getLightSource(index);
 		}catch(ClassCastException e){
-			System.out.println("ERROR...overwrite lightSrc with another type of lightSrc.");
+			System.out.println("\tATTENTION...overwrite lightSrc with another type of lightSrc.");
+			String oldClass=data.getLightSource(index).getClass().getSimpleName();
+			try{
+				data.addData(new Arc(), true, index);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			lightSrc=(Arc) data.getLightSource(index);
+			System.out.println("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
 		}
 
 		try{

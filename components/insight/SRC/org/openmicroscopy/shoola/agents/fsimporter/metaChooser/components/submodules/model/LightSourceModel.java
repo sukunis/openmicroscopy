@@ -68,7 +68,7 @@ public class LightSourceModel
 	 */
 	public void addData(LightSource newElem,boolean overwrite,int i) throws Exception
 	{
-		System.out.println("# LightSrcModel::addData() listSize: "+element.size());
+		System.out.println("# LightSrcModel::addData()");
 		if(element.size()<=i){
 			switch(newElem.getClass().getSimpleName()){
 			case LASER: expandList(element.size(),i,new Laser());break;
@@ -118,10 +118,12 @@ public class LightSourceModel
 	private void replaceData(LightSource newElem,int i)
 	{
 		if(newElem!=null){
+			System.out.println("# LightSrcModel::replaceData()");
 			if(newElem instanceof Arc){
 				element.set(i,new Arc((Arc) newElem));
 			}else if(newElem instanceof Laser){
 				element.set(i,new Laser((Laser) newElem));
+				System.out.println("\t...replace pulse: "+((Laser) element.get(i)).getPulse());
 			}else if(newElem instanceof GenericExcitationSource){
 				element.set(i,new GenericExcitationSource((GenericExcitationSource) newElem));
 			}else if(newElem instanceof Filament){
@@ -419,6 +421,19 @@ public class LightSourceModel
 //		
 //		switch (tagName) 
 //		{
+	}
+	
+	public void printValues()
+	{
+		for(int i=0; i<element.size();i++){
+			LightSource d= element.get(i);
+			if(d!=null){
+				System.out.println("\t"+d.getClass().getSimpleName()+" : "+i);
+				System.out.println("\t...lightSrc model model = "+(d.getModel()!=null ? d.getModel(): ""));
+//				System.out.println("\t...lightSrc model pulse = "+(((Laser) d).getPulse()!=null ? ((Laser) d).getPulse().getValue(): ""));
+				System.out.println("\t...lightSrc model power = "+(d.getPower()!=null ? d.getPower(): ""));
+			}
+		}
 	}
 
 }
