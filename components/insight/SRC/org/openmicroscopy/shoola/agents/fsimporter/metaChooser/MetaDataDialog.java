@@ -342,6 +342,8 @@ private boolean disableItemListener;
         DefaultTreeModel treeModel=(DefaultTreeModel)fileTree.getModel();
         FNode root =(FNode)treeModel.getRoot();
         
+        root.setModelObject(null);
+        
         if(!holdData){
             root.removeAllChildren();
 
@@ -502,16 +504,8 @@ private boolean disableItemListener;
         metaPanel=new JPanel(new BorderLayout());
         metaPanel.add(view,BorderLayout.CENTER);
         
-        FNode rootNode=new FNode("ImportQueue");
-        //Create a tree that allows one selection at a time
-        fileTree = new JTree(rootNode);
-        fileTree.setRootVisible(true);
-        fileTree.setShowsRootHandles(true);
-        fileTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
-        //Listen for when the selection changes.
-        fileTree.addTreeSelectionListener(this);
-        fileTree.addTreeExpansionListener(this);
+      
+        initFileTree();
         
         seriesList = new JList();
         seriesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -520,6 +514,24 @@ private boolean disableItemListener;
         seriesList.setVisibleRowCount(5);
         
         lastSelectionType=DIR;
+    }
+
+
+    /**
+     * Create a tree that allows one selection at a time
+     */
+    public void initFileTree() 
+    {
+    	FNode rootNode=new FNode("ImportQueue");
+
+    	fileTree = new JTree(rootNode);
+    	fileTree.setRootVisible(true);
+    	fileTree.setShowsRootHandles(true);
+    	fileTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+
+    	//Listen for when the selection changes.
+    	fileTree.addTreeSelectionListener(this);
+    	fileTree.addTreeExpansionListener(this);
     }
     
     /**
@@ -1285,6 +1297,7 @@ private boolean disableItemListener;
     
     public void refreshFileView(List<ImportableFile> files, FileFilter fileFilter)
     {
+    	System.out.println("# MetaDataDialog::refreshFileView()");
         this.fileFilter=fileFilter;
         metaPanel.removeAll();
         createNodes(files);
