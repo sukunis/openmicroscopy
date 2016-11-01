@@ -5,15 +5,29 @@ import java.util.List;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.unit.Unit;
+import ome.xml.model.Annotation;
+import ome.xml.model.Dataset;
 import ome.xml.model.Detector;
+import ome.xml.model.Experiment;
+import ome.xml.model.Experimenter;
+import ome.xml.model.ExperimenterGroup;
 import ome.xml.model.Image;
+import ome.xml.model.ImagingEnvironment;
+import ome.xml.model.Instrument;
+import ome.xml.model.Laser;
+import ome.xml.model.LightSource;
+import ome.xml.model.MicrobeamManipulation;
+import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
+import ome.xml.model.ROI;
 import ome.xml.model.StageLabel;
+import ome.xml.model.WellSample;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
@@ -56,17 +70,18 @@ public class ImageModel
 	private void replaceData(Image i)
 	{
 		if(i!=null){
-			element=new Image(i);
-
+			System.out.println("# ImageModel::replaceData()");
+			element=copyImage(i);
 		}
 	}
 
 	private void completeData(Image i) throws Exception
 	{
+		System.out.println("# ImageModel::completeData()");
 		//copy input fields
 		Image copyIn=null;
 		if(element!=null){
-			copyIn=new Image(element);
+			copyIn=copyImage(element);
 		}
 
 		replaceData(i);
@@ -146,23 +161,44 @@ public class ImageModel
 			element.setAcquisitionDate(Timestamp.valueOf(value));
 			break;
 		case TagNames.DIMXY:
-//			TODO:
-//			setDimXY(new String[2], prop);
+			String[] dimXY=parseArrayString(value,2);
+			if(dimXY==null || dimXY.length<2){
+				System.out.println("WARNING: ImageModel::updateTag(): can't parse dimXY");
+				return;
+			}
+			element.getPixels().setSizeX(PositiveInteger.valueOf(dimXY[0]));
+			element.getPixels().setSizeY(PositiveInteger.valueOf(dimXY[1]));
 			break;
 		case TagNames.PIXELTYPE:
 			element.getPixels().setType(PixelType.fromString(value));
 			break;
 		case TagNames.PIXELSIZE:
-//			TODO:
-//			setPixelSizeXY(null, null, prop);
+			String[] sizeXY=parseArrayString(value,2);
+			if(sizeXY==null || sizeXY.length<2){
+				System.out.println("WARNING: ImageModel::updateTag(): can't parse sizeXY");
+				return;
+			}
+			element.getPixels().setPhysicalSizeX(ModuleViewer.parseToLength(sizeXY[0], tagUnit));
+			element.getPixels().setPhysicalSizeY(ModuleViewer.parseToLength(sizeXY[1], tagUnit));
 			break;
 		case TagNames.DIMZTC:
-//			TODO:
-//			setDimZTC(new String[3], prop);
+			String[] dimZTC=parseArrayString(value,3);
+			if(dimZTC==null || dimZTC.length<3){
+				System.out.println("WARNING: ImageModel::updateTag(): can't parse dimZTC");
+				return;
+			}
+			element.getPixels().setSizeZ(PositiveInteger.valueOf(dimZTC[0]));
+			element.getPixels().setSizeT(PositiveInteger.valueOf(dimZTC[1]));
+			element.getPixels().setSizeC(PositiveInteger.valueOf(dimZTC[2]));
 			break;
 		case TagNames.STAGEPOS:
-			//TODO:
-//			setStagePos(null,null, prop);
+			String[] stagePos=parseArrayString(value,2);
+			if(stagePos==null || stagePos.length<2){
+				System.out.println("WARNING: ImageModel::updateTag(): can't parse stage pos");
+				return;
+			}
+			element.getStageLabel().setX(ModuleViewer.parseToLength(stagePos[0],tagUnit));
+			element.getStageLabel().setY(ModuleViewer.parseToLength(stagePos[1],tagUnit));
 			break;
 		case TagNames.STEPSIZE:
 			//TODO:
@@ -181,8 +217,83 @@ public class ImageModel
 		
 	}
 
+	public static String[] parseArrayString(String value, int i) 
+	{
+		String delims="[,]";
+		String[] splitting =value.split(delims);	
 
+//		String[] result=new String[i];
+//		
+//		int size=i;
+//		if(splitting.length<i)
+//			size=splitting.length;
+//		
+//		for(int j=0; j<size;j++){
+//			result[j]=splitting[j];
+//		}
+		
+		return splitting;
+	}
 
+	public void printValues()
+	{
+
+		if(element!=null){
+			System.out.println("\t...image model pixel depth = "+(element.getPixels()!=null ? element.getPixels().getType(): ""));
+			System.out.println("\t...image model stageX = "+(element.getStageLabel()!=null ? element.getStageLabel().getX(): ""));
+			System.out.println("\t...image model stageY = "+(element.getStageLabel()!=null ? element.getStageLabel().getY(): ""));
+		}
+	}
+
+	/**
+	 * The copy constructor of image doesn't make a deep copy , so i implement my own deep copy function
+	 * @param orig
+	 * @return
+	 */
+	private Image copyImage(Image orig)
+	{
+		Image result=new Image();
+		
+		result.setID(orig.getID());
+		result.setName(orig.getName());
+		result.setAcquisitionDate(orig.getAcquisitionDate());
+		result.setDescription(orig.getDescription());
+		
+		if(orig.getLinkedExperimenter()!=null)
+			result.linkExperimenter(new Experimenter(orig.getLinkedExperimenter()));
+		if(orig.getLinkedExperiment()!=null)
+			result.linkExperiment(new Experiment(orig.getLinkedExperiment()));
+		if(orig.getLinkedExperimenterGroup()!=null)
+			result.linkExperimenterGroup(new ExperimenterGroup(orig.getLinkedExperimenterGroup()));
+		if(orig.getPixels()!=null)
+			result.setPixels(new Pixels(orig.getPixels()));
+		if(orig.getLinkedInstrument()!=null)
+			result.linkInstrument(new Instrument(orig.getLinkedInstrument()));
+		if(orig.getObjectiveSettings()!=null)
+			result.setObjectiveSettings(new ObjectiveSettings(orig.getObjectiveSettings()));
+		if(orig.getImagingEnvironment()!=null)
+			result.setImagingEnvironment(new ImagingEnvironment(orig.getImagingEnvironment()));
+		if(orig.getStageLabel()!=null)
+			result.setStageLabel(new StageLabel(orig.getStageLabel()));
+
+		for(ROI roi:orig.copyLinkedROIList()){
+			result.linkROI(new ROI(roi));
+		}
+		
+		for(MicrobeamManipulation mb:orig.copyLinkedMicrobeamManipulationList())
+			result.linkMicrobeamManipulation(new MicrobeamManipulation(mb));
+		
+		for(Annotation annot:orig.copyLinkedAnnotationList())
+			result.linkAnnotation(annot);
+		
+		for(Dataset data:orig.copyLinkedDatasetList())
+			result.linkDataset(new Dataset(data));
+		
+		for(WellSample well:orig.copyLinkedWellSampleList())
+			result.linkWellSample(new WellSample(well));
+		
+		return result;
+	}
 	
 
 }

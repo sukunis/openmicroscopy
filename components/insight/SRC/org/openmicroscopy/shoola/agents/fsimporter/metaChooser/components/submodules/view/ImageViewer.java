@@ -27,6 +27,7 @@ import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
 import ome.xml.model.StageLabel;
+import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -70,6 +71,9 @@ public class ImageViewer extends ModuleViewer{
 	{
 		System.out.println("# ImageViewer::newInstance("+(model!=null?"model":"null")+")");
 		this.data=model;
+		
+		model.printValues();
+		
 		initComponents(conf);
 		initTagList();
 		buildGUI();
@@ -243,17 +247,21 @@ public class ImageViewer extends ModuleViewer{
 				setStagePos(stage.getX(),stage.getY(), ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 
-			try{setTimeIncrement(image.getPixels().getTimeIncrement(), ElementsCompUI.REQUIRED);
+			try{
+				setTimeIncrement(image.getPixels().getTimeIncrement(), ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 			//TODO wellsample
 
-			try{setWellNr(null, ElementsCompUI.REQUIRED);
+			try{
+				setWellNr(null, ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 
-			try{ setAcqTime(image.getAcquisitionDate(),ElementsCompUI.REQUIRED);
+			try{ 
+				setAcqTime(image.getAcquisitionDate(),ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 
-			try{ setPixelSizeXY(image.getPixels().getPhysicalSizeX(),image.getPixels().getPhysicalSizeY(),
+			try{ 
+				setPixelSizeXY(image.getPixels().getPhysicalSizeX(),image.getPixels().getPhysicalSizeY(),
 					ElementsCompUI.REQUIRED);
 			} catch (NullPointerException e) { }
 		}
@@ -389,7 +397,6 @@ For example in a video stream.
 			data=new ImageModel();
 		}
 		
-		
 		if(data.getImage()==null){
 			try {
 				data.addData(new Image(),true);
@@ -400,6 +407,8 @@ For example in a video stream.
 		}
 		
 		Image image=data.getImage();
+		if(image.getPixels()==null)
+			image.setPixels(new Pixels());
 
 		try{
 			image.setName(name.getTagValue());
@@ -425,8 +434,7 @@ For example in a video stream.
 			LOGGER.error("[DATA] can't read IMAGE dimension x,y input");
 		}
 		try{
-			image.getPixels().setType(pixelType.getTagValue().equals("") ?
-					null : PixelType.fromString(pixelType.getTagValue()));
+			image.getPixels().setType(parseToPixelType(pixelType.getTagValue()));
 			pixelType.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE pixel type input");
@@ -459,6 +467,10 @@ For example in a video stream.
 		}
 
 		//TODO: wellNr,stepSize
+		
+		if(image.getStageLabel()==null)
+			image.setStageLabel(new StageLabel());
+		
 		try {
 			image.getStageLabel().setX(parseToLength(stagePos.getTagValue(0),stagePos.getTagUnit()));
 			image.getStageLabel().setY(parseToLength(stagePos.getTagValue(1),stagePos.getTagUnit()));
@@ -467,7 +479,7 @@ For example in a video stream.
 			LOGGER.error("[DATA] can't read IMAGE stage position input");
 		}
 
-
+		data.printValues();
 	}
 
 	public List<TagData> getChangedTags()
@@ -487,7 +499,13 @@ For example in a video stream.
 		return list;
 	}
 
+	private PixelType parseToPixelType(String val) throws EnumerationException{
 
+		if(val==null || val.equals(""))
+			return null;
+
+		return PixelType.fromString(pixelType.getTagValue());
+	}
 	
 }
 
