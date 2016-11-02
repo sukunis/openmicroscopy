@@ -1372,6 +1372,7 @@ private boolean disableItemListener;
 //            break;
         case CMD_SAVE:
             LOGGER.info("[GUI-ACTION] -- save");
+            System.out.println("\n+++ EVENT: SAVE ++++\n");
             TreePath path=fileTree.getSelectionPath();
             String fileName=getSelectedFilePath((FNode)fileTree.getLastSelectedPathComponent());
             if(fileName!=null){
@@ -1388,6 +1389,7 @@ private boolean disableItemListener;
             break;
         case CMD_SAVEALL:
             LOGGER.info("[GUI-ACTION] -- save all");
+            System.out.println("\n+++ EVENT: SAVE ALL ++++\n");
             //only for directory
             FNode parentNode = (FNode)fileTree.getLastSelectedPathComponent();
             unreadableFileList=new ArrayList<String>();
@@ -1407,7 +1409,7 @@ private boolean disableItemListener;
             break;
         case CMD_RESET:
         	LOGGER.info("[GUI-ACTION] -- reset");
-        	System.out.println("+++++ EVENT RESET ++++++++++++");
+        	System.out.println("\n +++ EVENT RESET +++\n");
         	FNode selection=(FNode)fileTree.getLastSelectedPathComponent();
         	//TODO: profile default data eliminate
         	//file
@@ -1549,7 +1551,7 @@ private boolean disableItemListener;
             lastSelectedNode = (FNode)paths[i].getLastPathComponent();
           }
         }
-        System.out.println("+++++ EVENT TREE ++++++");
+        System.out.println("\n+++ EVENT TREE +++\n");
         deselectNodeAction(lastSelectedNode);
         selectNodeAction(selectedNode);
     }

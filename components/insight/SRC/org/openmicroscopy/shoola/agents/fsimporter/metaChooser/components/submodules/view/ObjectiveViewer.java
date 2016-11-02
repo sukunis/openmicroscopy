@@ -629,15 +629,7 @@ public class ObjectiveViewer extends ModuleViewer
 		}
 		ObjectiveSettings settings=data.getSettings();
 		
-		if(settings==null){
-			settings = new ObjectiveSettings();
-			try {
-				data.addData(settings, true);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		
 		//TODO input checker
 		try{
 			settings.setRefractiveIndex(parseToDouble(refractIndex.getTagValue()));
