@@ -145,9 +145,9 @@ public class SaveMetadata
 
 			saveImage(i,m);
 
-						saveFilter(i,m); 
+			saveFilter(i,m); 
 			//			
-						saveDichroic(i,m); 
+			saveDichroic(i,m); 
 		}
 		
 	}
