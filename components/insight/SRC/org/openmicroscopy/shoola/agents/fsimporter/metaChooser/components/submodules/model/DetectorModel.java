@@ -225,11 +225,15 @@ public class DetectorModel
 		return element.get(index);
 	}
 	
-	public DetectorSettings getSettings(int index)
+	public DetectorSettings getSettings(int i)
 	{
-		if(index>=settings.size())
+		if(i>=settings.size())
 			return null;
-		return settings.get(index);
+		
+		if(settings.get(i)!=null && settings.get(i).getDetector()==null)
+			settings.get(i).setDetector(element.get(i));
+		
+		return settings.get(i);
 	}
 	
 	/**

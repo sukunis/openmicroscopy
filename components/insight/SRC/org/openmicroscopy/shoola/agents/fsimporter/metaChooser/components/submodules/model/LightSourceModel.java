@@ -334,6 +334,10 @@ public class LightSourceModel
 	{
 		if(i>=settings.size())
 			return null;
+		
+		if(settings.get(i)!=null && settings.get(i).getLightSource()==null)
+			settings.get(i).setLightSource(element.get(i));
+		
 		return settings.get(i);
 	}
 	

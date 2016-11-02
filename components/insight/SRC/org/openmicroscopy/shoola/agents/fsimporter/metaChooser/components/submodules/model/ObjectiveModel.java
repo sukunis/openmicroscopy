@@ -176,6 +176,9 @@ public class ObjectiveModel
 	
 	public ObjectiveSettings getSettings()
 	{
+		if(settings!=null && settings.getObjective()==null)
+			settings.setObjective(element);
+		
 		return settings;
 	}
 	
