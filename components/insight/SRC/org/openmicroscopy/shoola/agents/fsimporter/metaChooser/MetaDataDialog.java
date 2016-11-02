@@ -507,14 +507,22 @@ private boolean disableItemListener;
       
         initFileTree();
         
-        seriesList = new JList();
+        initSeriesList();
+        
+        lastSelectionType=DIR;
+    }
+
+
+	/**
+	 * 
+	 */
+	public void initSeriesList() {
+		seriesList = new JList();
         seriesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         seriesList.setSelectedIndex(0);
         seriesList.addListSelectionListener(this);
         seriesList.setVisibleRowCount(5);
-        
-        lastSelectionType=DIR;
-    }
+	}
 
 
     /**
@@ -745,6 +753,8 @@ private boolean disableItemListener;
     private void loadAndShowFilteredDataForSelection(FNode node,
     		boolean parentVisible,boolean fileVisible,boolean predefinedVisible)
     {
+    	System.out.println("#MetaDataDialog::loadAndShowFilteredDataForSelection(): "
+    			+ "parent="+parentVisible+", file="+fileVisible+", predefined="+predefinedVisible);
     	String file=null;
     	if(node==null || (file=getSelectedFilePath(node))==null)
     		return;
@@ -964,6 +974,7 @@ private boolean disableItemListener;
 			node.setView(getMetaDataView(metaPanel));
         	saveInputToModel(node);
         	lastNode=node;
+        	seriesList.setModel(new DefaultListModel());
         }
 	}
     
@@ -1665,6 +1676,6 @@ private boolean disableItemListener;
 		return customSettings;
 	}
     
-    
+
 
 }
