@@ -2,6 +2,7 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import loci.formats.MetadataTools;
 import ome.xml.model.Channel;
 import ome.xml.model.Detector;
@@ -17,6 +18,7 @@ import ome.xml.model.LightSourceSettings;
 import ome.xml.model.OME;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
+import ome.xml.model.Pixels;
 import ome.xml.model.enums.FilterType;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
@@ -195,7 +197,7 @@ public class MetaDataModel
 		//merge GUI and ome data
 		try {
 			Image in=getImageData();
-			ImageCompUI.mergeData(in,imageOME); 
+			mergeData(in,imageOME); 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -203,6 +205,45 @@ public class MetaDataModel
 	
 		return imageOME;
 	}
+	
+	private void mergeData(Image in, Image imageOME) 
+	{
+		if(imageOME==null ){
+			if(in==null){
+				LOGGER.error("failed to merge IMAGE data");
+			}else{
+				imageOME=in;
+			}
+			return;
+		}else if(in==null){
+			return;
+		}
+		
+		if(in.getName()!=null && !in.getName().equals(""))
+			imageOME.setName(in.getName());
+		
+		imageOME.setAcquisitionDate(in.getAcquisitionDate());
+		
+		Pixels pOME=imageOME.getPixels();
+		Pixels pIN=in.getPixels();
+		
+		pOME.setSizeX(pIN.getSizeX());
+		pOME.setSizeY(pIN.getSizeY());
+		pOME.setType(pIN.getType());
+		pOME.setPhysicalSizeX(pIN.getPhysicalSizeX());
+		pOME.setPhysicalSizeY(pIN.getPhysicalSizeY());
+		pOME.setSizeZ(pIN.getSizeZ());
+		pOME.setSizeT(pIN.getSizeT());
+		pOME.setSizeC(pIN.getSizeC());
+		pOME.setTimeIncrement(pIN.getTimeIncrement());
+		
+		imageOME.setStageLabel(in.getStageLabel());
+		
+		//TODO: step size, well#
+		
+	}
+	
+	
 	
 	public int getPixelsDimZ()
 	{
