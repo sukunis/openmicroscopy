@@ -474,6 +474,8 @@ For example in a video stream.
 		try {
 			image.getStageLabel().setX(parseToLength(stagePos.getTagValue(0),stagePos.getTagUnit()));
 			image.getStageLabel().setY(parseToLength(stagePos.getTagValue(1),stagePos.getTagUnit()));
+			//set name neccessary to parse to ome
+			image.getStageLabel().setName("of "+stagePos.getTagValue(0)+","+stagePos.getTagValue(1));
 			stagePos.dataSaved(true);
 		} catch (Exception e) {
 			LOGGER.error("[DATA] can't read IMAGE stage position input");

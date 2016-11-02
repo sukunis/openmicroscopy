@@ -470,8 +470,9 @@ public class MetaDataUI extends JPanel
 	{
 		if(o !=null)
 		{		
+			System.out.println("# MetaDataUI::readFileData()...");
 				ome=o;
-
+				
 				//TODO eigentlich imageList!!!!
 				model.setOME(ome);
 				model.setImageIndex(imageIndex);
@@ -499,6 +500,7 @@ public class MetaDataUI extends JPanel
 					if(instrument==null){
 //						LOGGER.warning("[DATA] NO INSTRUMENTS available, create new");
 						LOGGER.warn("[DATA] NO INSTRUMENTS available, create new");
+						System.out.println("[DATA] NO INSTRUMENTS available, create new");
 						model.createAndLinkNewInstrument(ome); 
 					}else{
 						objectives=instrument.copyObjectiveList();
@@ -517,6 +519,7 @@ public class MetaDataUI extends JPanel
 					Pixels pixels=image.getPixels();
 					if(pixels==null){
 						LOGGER.warn("[DATA] NO PIXEL object available");
+						System.out.println("[DATA] NO PIXEL object available");
 					}else{
 						channels=pixels.copyChannelList();
 						planes=pixels.copyPlaneList();
@@ -532,8 +535,9 @@ public class MetaDataUI extends JPanel
 					}
 				}else{
 					LOGGER.warn("[DATA] NO IMAGE object available");
-					
+					System.out.println("[DATA] NO IMAGE object available");
 				}
+				System.out.println("... end loadFileData()");
 			
 		}else{
 			LOGGER.warn("[DATA] NOT available METADATA ");

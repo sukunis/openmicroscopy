@@ -283,7 +283,7 @@ public class MetaDataView extends JPanel
 	 */
 	private void loadParentData(MetaDataModel parentData,MetaDataUI pane) 
 	{
-		System.out.println("# MetaDataView::loadParentData()");
+		System.out.println("# MetaDataView::loadParentData()...");
 	
 		if(parentData!=null){
 			try {
@@ -292,11 +292,14 @@ public class MetaDataView extends JPanel
 			} catch (Exception e) {
 				parentDataLoaded=false;
 				LOGGER.warn("[DATA] -- Can't add metadata from parent model");
+				System.out.println("... end loadParentData()");
 				e.printStackTrace();
+				return;
 			}
 		}else{
 			LOGGER.info("[DATA]--- No parent data available ");
 		}
+		System.out.println("... end loadParentData()");
 	}
 	
 
@@ -322,6 +325,8 @@ public class MetaDataView extends JPanel
 //		IMetadata omeMetaData= MetadataTools.createOMEXMLMetadata();
 		IMetadata metadata =  service.createOMEXMLMetadata();
 		reader.setMetadataStore((MetadataStore) metadata);
+		
+		
 		
 		try{
 			reader.setId(file);
