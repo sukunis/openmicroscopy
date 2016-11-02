@@ -789,7 +789,7 @@ public class MetaDataModel
 	private boolean objectiveIsLinkedToImage(ObjectiveSettings sett,String id) 
 	{
 		boolean res=false;
-		if(sett!=null && sett.getObjective()!=null && sett.getObjective().getID().equals(id))
+		if(sett!=null && sett.getObjective()!=null &&  sett.getObjective().getID()!=null && sett.getObjective().getID().equals(id))
 			res=true;
 		
 		return res;
