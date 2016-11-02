@@ -191,7 +191,7 @@ public class ImageModel
 			element.getPixels().setSizeT(PositiveInteger.valueOf(dimZTC[1]));
 			element.getPixels().setSizeC(PositiveInteger.valueOf(dimZTC[2]));
 			break;
-		case TagNames.STAGEPOS:
+		case TagNames.STAGELABEL:
 			String[] stagePos=parseArrayString(value,2);
 			if(stagePos==null || stagePos.length<2){
 				System.out.println("WARNING: ImageModel::updateTag(): can't parse stage pos");

@@ -337,7 +337,7 @@ public void loadImageConf(boolean active) {
 	imageConf.setTag(TagNames.PIXELTYPE,null,null,true);
 	imageConf.setTag(TagNames.PIXELSIZE,null,null,true);
 	imageConf.setTag(TagNames.DIMZTC,null,null,true);
-	imageConf.setTag(TagNames.STAGEPOS,null,null,true);
+	imageConf.setTag(TagNames.STAGELABEL,null,null,true);
 	imageConf.setTag(TagNames.STEPSIZE,null,null,true);
 	imageConf.setTag(TagNames.TIMEINC,null,null,true);
 	imageConf.setTag(TagNames.WELLNR,null,null,true);

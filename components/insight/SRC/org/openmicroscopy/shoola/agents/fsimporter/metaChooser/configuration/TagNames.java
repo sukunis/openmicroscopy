@@ -123,7 +123,8 @@ public class TagNames
 	public static final String PIXELTYPE="Pixel Depth";
 	public static final String PIXELSIZE="Pixel Size (XY)";
 	public static final String DIMZTC="Dim Z x T x C";
-	public static final String STAGEPOS="Stage Position (XY)";
+	public static final String STAGELABEL="Stage Label (XY)";//new label since 02.11.2016
+	public static final String STAGEPOS="Stage Position (XY)"; //former label
 	public static final String STEPSIZE="Step Size";
 	public static final String TIMEINC="Time Increment";
 	public static final String WELLNR="Well #";
@@ -133,7 +134,7 @@ public class TagNames
 	public static final Unit<Time> TIMEINC_UNIT=UNITS.S;
 	
 	private static PreTagData[] imageTags={new PreTagData(IMG_NAME,null, ""),new PreTagData(ACQTIME,null, ""),new PreTagData(DIMXY,null, ""),
-		new PreTagData(PIXELTYPE,null, ""),new PreTagData(PIXELSIZE,PIXELSIZE_UNIT, ""),new PreTagData(DIMZTC,null, ""),new PreTagData(STAGEPOS,STAGEPOS_UNIT, ""),
+		new PreTagData(PIXELTYPE,null, ""),new PreTagData(PIXELSIZE,PIXELSIZE_UNIT, ""),new PreTagData(DIMZTC,null, ""),new PreTagData(STAGELABEL,STAGEPOS_UNIT, ""),
 		new PreTagData(STEPSIZE,null, ""),new PreTagData(TIMEINC,TIMEINC_UNIT, ""),new PreTagData(WELLNR,null, "")};
 	
 	//--------------------------

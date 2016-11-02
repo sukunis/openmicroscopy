@@ -184,6 +184,7 @@ public class ImageViewer extends ModuleViewer{
 			setDimZTC(new String[3], prop);
 			dimZTC.setVisible(true);
 			break;
+		case TagNames.STAGELABEL:
 		case TagNames.STAGEPOS:
 			setStagePos(null,null, prop);
 			stagePos.setVisible(true);
@@ -342,7 +343,7 @@ public class ImageViewer extends ModuleViewer{
 		String symbol = unit==UNITS.REFERENCEFRAME ? "rf" : unit.getSymbol();
 		String[] val= {valX,valY};
 		if(stagePos == null){ 
-			stagePos = new TagData(TagNames.STAGEPOS+"["+symbol+"]",val,prop,TagData.ARRAYFIELDS);
+			stagePos = new TagData(TagNames.STAGELABEL+"["+symbol+"]",val,prop,TagData.ARRAYFIELDS);
 		}else {
 			stagePos.setTagValue(valX,0,prop);
 			stagePos.setTagValue(valY,1,prop);
