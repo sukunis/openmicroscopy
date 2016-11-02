@@ -36,12 +36,10 @@ public class LightPathViewer extends ModuleViewer{
 	private boolean useEditor;
 
 	private int index;
-	// available element tags
 
-
-
-	//available element setting tags
-
+	static final String EXITATION="Excitation Filter";
+	static final String EMISSION="Emission Filter";
+	static final String DICHROIC="Dichroic";
 
 	/**
 	 * Creates a new instance.
@@ -136,14 +134,14 @@ public class LightPathViewer extends ModuleViewer{
 
 			if(exList!=null){
 				for(Filter f:exList){
-					lightPathTable.appendElem(f,LightPathElem.EXITATION);
+					lightPathTable.appendElem(f,EXITATION);
 				}
 			}else{
 				LOGGER.info("can't load EX Filter element");
 			}
 
 			if(d!=null){
-				lightPathTable.appendElem(d,LightPathElem.DICHROIC);
+				lightPathTable.appendElem(d,DICHROIC);
 			}else{
 				LOGGER.info("::ATTENTION:: can't load Dichroic element");
 			}
@@ -157,9 +155,9 @@ public class LightPathViewer extends ModuleViewer{
 						type=f.getType().getValue();
 					} catch (Exception e) {
 					}
-					String elemType=LightPathElem.EMISSION;
+					String elemType=EMISSION;
 					if(type.equals(FilterType.DICHROIC.toString()))					{
-						elemType=LightPathElem.DICHROIC;
+						elemType=DICHROIC;
 					}
 					lightPathTable.appendElem(f,elemType);
 				}

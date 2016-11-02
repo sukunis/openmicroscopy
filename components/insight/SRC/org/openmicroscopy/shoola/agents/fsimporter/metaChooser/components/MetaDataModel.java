@@ -859,6 +859,9 @@ public class MetaDataModel
 	 **/
 	public LightPath updateLightPathElems(LightPath lP,int channelIdx)
 	{
+		if(filterList==null)
+			filterList=new ArrayList<Filter>();
+			
 		if(imageIndex!=-1){
 			int id1=imageIndex;
 			int id2=channelIdx;

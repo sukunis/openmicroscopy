@@ -99,14 +99,14 @@ public class LightPathTableSmall extends JTable
 	class CustomModel extends DefaultTableModel
 	{
 		Class[] columnTypes = new Class[] {
-				String.class,String.class, String.class
+				String.class,String.class, String.class,String.class
 		};
 
 
 		public CustomModel()
 		{
 			super(new Object[][] {},
-					new String[] {"Model", "Manufactur", "Type"});
+					new String[] {"Model", "Manufactur", "Type","FilterWheel"});
 
 		}
 
@@ -121,7 +121,7 @@ public class LightPathTableSmall extends JTable
 
 		private Object[] parseFromFilterLong(Object e,String cat)
 		{
-			Object[] o=new Object[3];
+			Object[] o=new Object[4];
 			if(e!=null){
 				if(e instanceof Filter){
 					Filter f=(Filter) e;
@@ -129,11 +129,13 @@ public class LightPathTableSmall extends JTable
 					o[0]=f.getModel()!=null ? f.getModel() : "";
 					o[1]=f.getManufacturer()!=null ? f.getManufacturer() : "";
 					o[2]=f.getType()!=null ? f.getType().toString() : "";
+					o[3]=f.getFilterWheel()!=null ? f.getFilterWheel() :"";
 				}else if (e instanceof Dichroic){
 					Dichroic f=(Dichroic) e;
 					o[0]=f.getModel()!=null ? f.getModel() : "";
 					o[1]=f.getManufacturer()!=null ? f.getManufacturer() : "";
 					o[2]="Dichroic";
+					o[3]="";
 				}
 			}
 			return o;
