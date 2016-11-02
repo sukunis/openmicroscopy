@@ -390,11 +390,13 @@ public class OMEStore
 
 	public void storeObjectiveSettings(ObjectiveSettings o,Image i)
 	{
-		if(o.getObjective()==null)
+		if(o.getObjective()==null){
 			return;
 		}
 		
+
 		LOGGER.info("[SAVE] -- save OBJECTIVE SETTINGS");
+		
 		if(o.getID()==null || o.getID().equals("")){
 			o.setID(MetadataTools.createLSID("ObjectiveSettings", 0));
 		}
@@ -768,6 +770,7 @@ public class OMEStore
 	public void storeImage(Image image, int imageIndex) 
 	{
 		LOGGER.info("[SAVE] -- save IMAGE data");
+		System.out.println("# OMEStore::storeImage(): stagePos: "+(image.getStageLabel()==null?"null":"not null"));
 		ome.setImage(imageIndex, image);
 	}
 
