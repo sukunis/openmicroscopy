@@ -511,7 +511,7 @@ public class MetaDataModel
 	private boolean detectorIsLinkedToChannel(DetectorSettings sett,String id) 
 	{
 		boolean res=false;
-		if(sett!=null && sett.getDetector()!=null && sett.getDetector().getID().equals(id))
+		if(sett!=null && sett.getDetector()!=null && sett.getDetector().getID()!=null && sett.getDetector().getID().equals(id))
 			res=true;
 		
 		return res;
@@ -670,7 +670,7 @@ public class MetaDataModel
 	private boolean lightSrcIsLinkedToChannel(LightSourceSettings sett,String id) 
 	{
 		boolean res=false;
-		if(sett!=null && sett.getLightSource()!=null && sett.getLightSource().getID().equals(id))
+		if(sett!=null && sett.getLightSource()!=null && sett.getLightSource().getID()!=null && sett.getLightSource().getID().equals(id))
 			res=true;
 		
 		return res;
