@@ -836,7 +836,7 @@ private boolean disableItemListener;
     	}else{
     		try{
     			//if model still exists, it was still updated by parent data at deselectedNodeAction()
-    			if(node.hasModelObject())
+    			if(node.hasModelObject()){
     				view = node.getView();
     			}else{
     				view = loadAndShowDataForFile(file, importData, parentModel, view, true, true && enabledPredefinedData);
