@@ -1848,6 +1848,34 @@ public class MetaDataUI extends JPanel
 		return result;
 	}
 	
+	public void savePreValues()
+	{
+		if(imageUI!=null && imageUI.predefinitionValAreLoaded()){
+			imageUI.saveData();
+		}
+		if(imgEnvViewer!=null && imgEnvViewer.predefinitionValAreLoaded()){
+			imgEnvViewer.saveData();
+		}
+		if(objectiveUI!=null && objectiveUI.predefinitionValAreLoaded()){
+			objectiveUI.saveData();
+		}
+		if(detectorViewer!=null && detectorViewer.predefinitionValAreLoaded()){
+			detectorViewer.saveData();
+		}
+		if(lightSrcViewer!=null && lightSrcViewer.predefinitionValAreLoaded()){
+			lightSrcViewer.saveData();
+		}
+		if(lightPathViewer!=null && lightPathViewer.predefinitionValAreLoaded()){
+			lightPathViewer.saveData();
+		}
+		if(sampleUI!=null && sampleUI.predefinitionValAreLoaded()){
+			sampleUI.saveData();
+		}
+		if(experimentUI!=null && experimentUI.predefinitionValAreLoaded()){
+			experimentUI.saveData();
+		}
+	}
+	
 
 	
 }

@@ -403,6 +403,7 @@ public class MetaDataView extends JPanel
 	public void saveToFile() throws Exception
 	{
 		if(ome!=null){
+			savePreValues();
 //			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
 			//file
 			if(seriesData){
@@ -418,6 +419,7 @@ public class MetaDataView extends JPanel
 			}else{
 				if(singleView!=null){
 					LOGGER.info("[SAVE] -- save single data to "+srcFile.getAbsolutePath());
+					
 					SaveMetadata saver=new SaveMetadata(ome, singleView.getSavedModel(), null, srcFile);
 					saver.save();
 				}
@@ -430,6 +432,17 @@ public class MetaDataView extends JPanel
 				singleView.getSavedModel();
 			}
 		}
+	}
+	
+	private void savePreValues()
+	{
+			if(seriesData){
+				for(Component comp : cardPane.getComponents()){
+						((MetaDataUI) comp).savePreValues();
+				}
+			}else{
+				singleView.savePreValues();
+			}
 	}
 	
 	/**
