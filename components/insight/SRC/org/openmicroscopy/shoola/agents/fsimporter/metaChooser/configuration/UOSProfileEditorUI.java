@@ -8,11 +8,15 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -20,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util.ProfileConfPanel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
@@ -31,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * @author Kunis
  *
  */
-public class UOSProfileEditorUI extends JDialog implements ActionListener
+public class UOSProfileEditorUI extends JDialog implements ActionListener, ItemListener
 {
 	private static final org.slf4j.Logger LOGGER =
 			LoggerFactory.getLogger(UOSProfileReader.class);
@@ -48,6 +53,8 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 	private JButton saveFileBtn;
 	private JButton okBtn;
 	private JButton cancelBtn;
+	
+	private JCheckBox loadPredefinedValues;
 
 	/** textfield: name of source file of displayed values*/
 	private JTextField fileName;
@@ -63,13 +70,17 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 	private final int xDim=1300;
 	private final int yDim=900;
 
+	private boolean loadPreVal;
+
 	/**
 	 * 
 	 * @param cView view properties read from file
+	 * @param loadPreVal TODO
 	 */
-	public UOSProfileEditorUI(CustomViewProperties cView)
+	public UOSProfileEditorUI(CustomViewProperties cView, boolean loadPreVal)
 	{
 		prop=cView;
+		this.loadPreVal=loadPreVal;
 		setTitle("Customize View");
 		setModal(true);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -172,8 +183,13 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 		saveFileBtn=new JButton("Save To File...");
 		saveFileBtn.setToolTipText("Save configuration to selected file");
 		saveFileBtn.addActionListener(this);
+		
+		loadPredefinedValues=new JCheckBox("Load Predefined Values To GUI");
+		loadPredefinedValues.addItemListener(this);
+		loadPredefinedValues.setSelected(loadPreVal);
 
-
+		bar.add(loadPredefinedValues);
+		bar.add(Box.createHorizontalGlue());
 		bar.add(saveFileBtn);
 		bar.add(Box.createHorizontalStrut(10));
 		bar.add(okBtn);
@@ -429,6 +445,25 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener
 
 		revalidate();
 		repaint();
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) 
+	{
+//		Object source=e.getItemSelectable();
+//		if(source==loadPredefinedValues )
+//		{
+//			if(e.getStateChange() == ItemEvent.SELECTED){
+//				loadPredefinedValues=true;
+//			}else{
+//				loadPredefinedValues=false;
+//			}
+//		}
+	}
+	
+	public boolean shouldPredefinedValLoaded()
+	{
+		return loadPredefinedValues.isSelected();
 	}
 
 

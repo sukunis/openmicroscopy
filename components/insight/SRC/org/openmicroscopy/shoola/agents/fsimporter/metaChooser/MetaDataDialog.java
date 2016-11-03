@@ -144,6 +144,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private JCheckBox showFileData;
     private JCheckBox showDirData;
     private JCheckBox showCustomData;
+    private boolean enabledPredefinedData;
 //    private JCheckBox showHardwareData;
     
     /** Test text area*/
@@ -554,6 +555,7 @@ private boolean disableItemListener;
          showDirData.addItemListener(this);
          showCustomData=new JCheckBox("Predefined Data");
          showCustomData.addItemListener(this);
+         enabledPredefinedData=true;
          
 	}
 
@@ -826,7 +828,7 @@ private boolean disableItemListener;
     	// is selection a file or directory
     	if(file.equals("")){
     			view = loadAndShowDataForDirectory(node, file, importData,
-    					parentModel, view, true, true);
+    					parentModel, view, true, true && enabledPredefinedData);
     		
     			boolean pLoad=loadParentDataAtUpdate || view.parentDataAreLoaded();
     			System.out.println("# MetaDataView::setParentDataLoaded(): "+pLoad+" - of node "+node.getAbsolutePath());
@@ -836,8 +838,9 @@ private boolean disableItemListener;
     			//if model still exists, it was still updated by parent data at deselectedNodeAction()
     			if(node.hasModelObject())
     				view = node.getView();
-    			else
-    				view = loadAndShowDataForFile(file, importData, parentModel, view, true, true);
+    			}else{
+    				view = loadAndShowDataForFile(file, importData, parentModel, view, true, true && enabledPredefinedData);
+    			}
     		}catch(Exception e){
     			LOGGER.error("[DATA] CAN'T read METADATA");
     			ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
@@ -910,6 +913,9 @@ private boolean disableItemListener;
 			MetaDataView view, boolean showFileData, boolean showPreValues) throws Exception
 	{
 		lastSelectionType=FILE;
+	
+		System.out.println("# MetaDataDialog::loadAndShowDataForFile() : showFileData = "+showFileData+
+				", showPreVal = "+showPreValues+", enablePreVal= "+enabledPredefinedData);
 		
 		String hasParentModel=parentModel==null ? "null" : "available";
 		LOGGER.debug("load and show data for file: parentModel="+hasParentModel);
@@ -936,6 +942,9 @@ private boolean disableItemListener;
 			MetaDataView view, boolean useCurrentModel, boolean showPreValues) 
 	{
 		lastSelectionType=DIR;
+		
+		System.out.println("# MetaDataDialog::loadAndShowDataForDir() : "+
+				", showPreVal = "+showPreValues+", enablePreVal= "+enabledPredefinedData);
 		
 		MetaDataModel currentDirModel=null;
 		if(useCurrentModel)
@@ -1430,11 +1439,11 @@ private boolean disableItemListener;
         	MetaDataView view=null;
         	try {
         		
-        		if(selection.isLeaf()){
+        		if(!selection.isLeaf()){
         			view = loadAndShowDataForDirectory(selection, file, null,
-        					null, view, true, true);
+        					null, view, true, true && enabledPredefinedData);
         		}else{
-        			view = loadAndShowDataForFile(file, null, null, view, true, true);
+        			view = loadAndShowDataForFile(file, null, null, view, true, true && enabledPredefinedData);
         		}
 //        		((MetaDataView)metaPanel.getComponent(0)).reset();
         	} catch (Exception e) {
@@ -1451,9 +1460,10 @@ private boolean disableItemListener;
         	//TODO: reload all available views
             LOGGER.info("[GUI-ACTION] -- load profile file");
             
-            UOSProfileEditorUI profileWriter=new UOSProfileEditorUI(customSettings);
+            UOSProfileEditorUI profileWriter=new UOSProfileEditorUI(customSettings, enabledPredefinedData);
             profileWriter.setVisible(true);
             customSettings=profileWriter.getProperties();
+			enabledPredefinedData =profileWriter.shouldPredefinedValLoaded();
             //TODO reload current view if changes
             loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
 //            firePropertyChange(CHANGE_CUSTOMSETT, null, customSettings); MetaDataControl
@@ -1642,21 +1652,18 @@ private boolean disableItemListener;
 	public void itemStateChanged(ItemEvent e) 
 	{
 //		Object source=e.getItemSelectable();
-//		if(source==showDirData )
+//		if(source==showCustomData )
 //		{
-//			if(e.getStateChange() == ItemEvent.SELECTED) 
-//			{
-//				System.out.println("\t...SELECT Show dir data! "
-//						+ "(showCustomData= "+showCustomData.isSelected()
-//						+", showFileData= "+showFileData.isSelected());
+//			if(e.getStateChange() == ItemEvent.SELECTED){
+//				enabledPredefinedData=true;
 //			}else{
-//				System.out.println("\t...DESELECT Show dir data! "
-//						+ "(showCustomData= "+showCustomData.isSelected()
-//						+", showFileData= "+showFileData.isSelected());
+//				enabledPredefinedData=false;
 //			}
 //		}
+		System.out.println("\n+++EVENT : FILTERVIEW +++\n");
 		if(!disableItemListener)
-			showFilteredData(showDirData.isSelected(),showFileData.isSelected(),showCustomData.isSelected());
+			showFilteredData(showDirData.isSelected(),showFileData.isSelected(),
+					showCustomData.isSelected());
 		
 
 	}
@@ -1665,7 +1672,7 @@ private boolean disableItemListener;
 	private void showFilteredData(boolean dirData, boolean fileData,
 			boolean customData) 
 	{
-		System.out.println("# MetaDataDialog::showFilteredData(): "+dirData+", "+fileData+", "+customData);
+		System.out.println("# MetaDataDialog::showFilteredData(): "+dirData+", "+fileData+", "+customData+", enablePreVal= "+enabledPredefinedData);
 		
 		loadAndShowFilteredDataForSelection((FNode)fileTree.getLastSelectedPathComponent(),
 				dirData,fileData,customData);
