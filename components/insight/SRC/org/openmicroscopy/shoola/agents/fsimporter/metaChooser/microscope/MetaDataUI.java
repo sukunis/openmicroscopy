@@ -374,15 +374,15 @@ public class MetaDataUI extends JPanel
 				
 			}else{
 				//inheritance for file
-				for(int i=0; i<model.getNumberOfChannels();i++){
+				for(int i=0; i<parentModel.getNumberOfChannels();i++){
 					addChannelData(i,parentModel.getChannelData(i),true);
 					addLightPathData(i,parentModel.getLightPath(i),true);
 				}
-				for(int i=0; i<model.getNumberOfDetectors();i++){
+				for(int i=0; i<parentModel.getNumberOfDetectors();i++){
 					addDetectorData(i, parentModel.getDetector(i),parentModel.getDetectorSettings(i), true);
 				}
 
-				for(int i=0; i<model.getNumberOfLightSrc(); i++){
+				for(int i=0; i<parentModel.getNumberOfLightSrc(); i++){
 					addLightSrcData(i,parentModel.getLightSourceData(i),parentModel.getLightSourceSettings(i),true); 
 				}
 			}
