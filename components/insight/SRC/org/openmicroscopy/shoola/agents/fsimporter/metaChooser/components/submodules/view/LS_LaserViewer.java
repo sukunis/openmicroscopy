@@ -223,7 +223,7 @@ tagList=new ArrayList<TagData>();
 		//		((Laser)lightSrc).linkPump(pump.getTagValue().equals("") ? 
 		//				null : pump.getTagValue());
 		try{
-			((Laser)lightSrc).setWavelength(parseToLength(waveLength.getTagValue(),waveLength.getTagUnit()));
+			((Laser)lightSrc).setWavelength(parseToLength(waveLength.getTagValue(),waveLength.getTagUnit(), true));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC wavelength input");
 		}

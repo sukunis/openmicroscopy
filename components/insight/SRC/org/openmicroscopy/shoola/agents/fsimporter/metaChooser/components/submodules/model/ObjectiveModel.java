@@ -239,7 +239,7 @@ public class ObjectiveModel
 			element.setCorrection(ObjectiveViewer.parseCorrection(tagValue));
 			break;
 		case TagNames.WORKDIST:
-			element.setWorkingDistance(ModuleViewer.parseToLength(tagValue, tagUnit));
+			element.setWorkingDistance(ModuleViewer.parseToLength(tagValue, tagUnit, false));
 			break;
 		case TagNames.CORCOLLAR: 
 			settings.setCorrectionCollar(ModuleViewer.parseToDouble(tagValue));

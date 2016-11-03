@@ -219,10 +219,10 @@ public class ChannelModel
 //TODO			channel.setE
 			break;
 		case TagNames.EXCITWAVELENGTH:
-			channel.setExcitationWavelength(ModuleViewer.parseToLength(tagValue,tagUnit));
+			channel.setExcitationWavelength(ModuleViewer.parseToLength(tagValue,tagUnit, true));
 			break;
 		case TagNames.EMISSIONWAVELENGTH:
-			channel.setEmissionWavelength(ModuleViewer.parseToLength(tagValue,tagUnit));
+			channel.setEmissionWavelength(ModuleViewer.parseToLength(tagValue,tagUnit, true));
 			break;
 		case TagNames.IMAGINGMODE:
 			//TODO
@@ -237,7 +237,7 @@ public class ChannelModel
 			channel.setNDFilter(ModuleViewer.parseToDouble(tagValue));
 			break;
 		case TagNames.PINHOLESIZE:
-			channel.setPinholeSize(ModuleViewer.parseToLength(tagValue,tagUnit));
+			channel.setPinholeSize(ModuleViewer.parseToLength(tagValue,tagUnit, false));
 			break;
 		default:
 			LOGGER.warn("[CONF] unknown tag: "+tagName );break;

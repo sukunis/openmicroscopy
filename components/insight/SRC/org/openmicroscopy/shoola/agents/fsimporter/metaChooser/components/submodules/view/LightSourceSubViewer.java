@@ -459,7 +459,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			if(waveLength!=null && !waveLength.getTagValue().equals(""))
 				return;
 			try {
-				setWavelength(parseToLength(t.getValue(),t.getUnit()), prop);
+				setWavelength(parseToLength(t.getValue(),t.getUnit(), true), prop);
 			} catch (Exception e) {
 				waveLength.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnit()+"]");
 			}

@@ -314,10 +314,10 @@ public class ImageViewer extends ModuleViewer{
 		String valY = (valueY != null) ? String.valueOf(valueY.value()) : "";
 		Unit unit=(valueX!=null) ? valueX.unit() : TagNames.PIXELSIZE_UNIT;
 		String[] val= {valX,valY};
-		if(pixelSize == null) 
+		if(pixelSize == null) {
 			pixelSize = new TagData(TagNames.PIXELSIZE,val,unit,prop,TagData.ARRAYFIELDS);
-		//		pixelSize = new TagData(TagNames.PIXELSIZE+"["+unit.getSymbol()+"]: ",val,prop,TagData.ARRAYFIELDS);
-		else {
+			pixelSize.addDocumentListener(createDocumentListenerPosFloat(pixelSize,"Invalid input. Use float >0!"));
+		}else {
 			pixelSize.setTagValue(valX,0,prop);
 			pixelSize.setTagValue(valY,1,prop);
 		}
@@ -441,8 +441,8 @@ For example in a video stream.
 			LOGGER.error("[DATA] can't read IMAGE pixel type input");
 		}
 		try{
-			image.getPixels().setPhysicalSizeX(parseToLength(pixelSize.getTagValue(0),pixelSize.getTagUnit()));
-			image.getPixels().setPhysicalSizeY(parseToLength(pixelSize.getTagValue(1),pixelSize.getTagUnit()));
+			image.getPixels().setPhysicalSizeX(parseToLength(pixelSize.getTagValue(0),pixelSize.getTagUnit(), true));
+			image.getPixels().setPhysicalSizeY(parseToLength(pixelSize.getTagValue(1),pixelSize.getTagUnit(), true));
 			pixelSize.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE pixel size input");
@@ -473,8 +473,8 @@ For example in a video stream.
 			image.setStageLabel(new StageLabel());
 		
 		try {
-			image.getStageLabel().setX(parseToLength(stagePos.getTagValue(0),stagePos.getTagUnit()));
-			image.getStageLabel().setY(parseToLength(stagePos.getTagValue(1),stagePos.getTagUnit()));
+			image.getStageLabel().setX(parseToLength(stagePos.getTagValue(0),stagePos.getTagUnit(), false));
+			image.getStageLabel().setY(parseToLength(stagePos.getTagValue(1),stagePos.getTagUnit(), false));
 			//set name neccessary to parse to ome
 			image.getStageLabel().setName("of "+stagePos.getTagValue(0)+","+stagePos.getTagValue(1));
 			stagePos.dataSaved(true);

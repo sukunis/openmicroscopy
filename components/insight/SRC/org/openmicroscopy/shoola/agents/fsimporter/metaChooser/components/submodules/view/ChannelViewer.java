@@ -319,18 +319,20 @@ private void setExcitWavelength(Length value, boolean prop)
 {
 	String val=(value!=null) ? String.valueOf(value.value()) :"";
 	Unit unit=(value!=null)? value.unit(): TagNames.EXCITATIONWL_UNIT;
-	if(excitWavelength == null) 
+	if(excitWavelength == null) {
 		excitWavelength = new TagData(TagNames.EXCITWAVELENGTH,val,unit,prop,TagData.TEXTFIELD);
-	else 
+		excitWavelength.addDocumentListener(createDocumentListenerPosFloat(excitWavelength,"Invalid input. Use float >0!"));
+	}else 
 		excitWavelength.setTagValue(val,unit,prop);
 }
 private void setEmissionWavelength(Length value, boolean prop)
 {
 	String val=(value!=null) ? String.valueOf(value.value()) :"";
 	Unit unit=(value!=null)? value.unit(): TagNames.EMISSIONWL_UNIT;
-	if(emissionWavelength == null) 
+	if(emissionWavelength == null) {
 		emissionWavelength = new TagData(TagNames.EMISSIONWAVELENGTH,val,unit,prop,TagData.TEXTFIELD);
-	else 
+		emissionWavelength.addDocumentListener(createDocumentListenerPosFloat(emissionWavelength,"Invalid input. Use float >0!"));
+	}else 
 		emissionWavelength.setTagValue(val,unit,prop);
 }
 
@@ -423,12 +425,12 @@ public void saveData()
 	}
 	//		TODO channel.setExpTime;
 	try{
-		channel.setExcitationWavelength(parseToLength(excitWavelength.getTagValue(), excitWavelength.getTagUnit()));
+		channel.setExcitationWavelength(parseToLength(excitWavelength.getTagValue(), excitWavelength.getTagUnit(), true));
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read CHANNEL excitation wavelength input");
 	}
 	try{
-		channel.setEmissionWavelength(parseToLength(emissionWavelength.getTagValue(),emissionWavelength.getTagUnit()));
+		channel.setEmissionWavelength(parseToLength(emissionWavelength.getTagValue(),emissionWavelength.getTagUnit(), true));
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read CHANNEL emission wavelength input");
 	}
@@ -452,7 +454,7 @@ public void saveData()
 	}
 	
 	try{
-		channel.setPinholeSize(parseToLength(pinholeSize.getTagValue(),pinholeSize.getTagUnit()));
+		channel.setPinholeSize(parseToLength(pinholeSize.getTagValue(),pinholeSize.getTagUnit(), false));
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read CHANNEL pinhole size input");
 	}

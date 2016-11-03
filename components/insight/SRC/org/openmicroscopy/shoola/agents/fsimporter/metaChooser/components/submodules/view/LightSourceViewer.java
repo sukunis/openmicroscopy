@@ -77,7 +77,7 @@ public class LightSourceViewer extends ModuleViewer{
 	{
 		System.out.println("# LightSrcViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		
-		model.printValues();
+//		model.printValues();
 		
 		this.index=index;
 		this.data=model;
@@ -266,7 +266,7 @@ public class LightSourceViewer extends ModuleViewer{
 			if(waveLengthSett!=null && !waveLengthSett.getTagValue().equals(""))
 				return;
 			try {
-				setWavelength(parseToLength(t.getValue(),t.getUnit()), prop);
+				setWavelength(parseToLength(t.getValue(),t.getUnit(), true), prop);
 			} catch (Exception e) {
 				waveLengthSett.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnitSymbol()+"]");
 			}
@@ -338,7 +338,7 @@ public class LightSourceViewer extends ModuleViewer{
 		Unit unit=(value!=null) ? value.unit():TagNames.WAVELENGTH_UNIT;
 		if(waveLengthSett == null){ 
 			waveLengthSett = new TagData(TagNames.SET_WAVELENGTH,val,unit,prop,TagData.TEXTFIELD);
-			waveLengthSett.addDocumentListener(createDocumentListenerDouble(waveLengthSett,"Invalid input. Use float!"));
+			waveLengthSett.addDocumentListener(createDocumentListenerPosFloat(waveLengthSett,"Invalid input. Use float>0!"));
 		}else 
 			waveLengthSett.setTagValue(val,unit,prop);
 
@@ -379,7 +379,7 @@ public class LightSourceViewer extends ModuleViewer{
 		LightSourceSettings settings=data.getSettings(index);
 		
 		try{
-			settings.setWavelength(parseToLength(waveLengthSett.getTagValue(),waveLengthSett.getTagUnit()));
+			settings.setWavelength(parseToLength(waveLengthSett.getTagValue(),waveLengthSett.getTagUnit(), true));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC SETT wavelength input");
 		}
@@ -390,7 +390,7 @@ public class LightSourceViewer extends ModuleViewer{
 			LOGGER.error("[DATA] can't read LIGHTSRC SETT attenuation input");
 		}
 		
-		data.printValues();
+//		data.printValues();
 		
 		dataChanged=false;
 	}

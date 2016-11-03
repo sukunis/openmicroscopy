@@ -178,8 +178,8 @@ public class ImageModel
 				System.out.println("WARNING: ImageModel::updateTag(): can't parse sizeXY");
 				return;
 			}
-			element.getPixels().setPhysicalSizeX(ModuleViewer.parseToLength(sizeXY[0], tagUnit));
-			element.getPixels().setPhysicalSizeY(ModuleViewer.parseToLength(sizeXY[1], tagUnit));
+			element.getPixels().setPhysicalSizeX(ModuleViewer.parseToLength(sizeXY[0], tagUnit, true));
+			element.getPixels().setPhysicalSizeY(ModuleViewer.parseToLength(sizeXY[1], tagUnit, true));
 			break;
 		case TagNames.DIMZTC:
 			String[] dimZTC=parseArrayString(value,3);
@@ -197,8 +197,8 @@ public class ImageModel
 				System.out.println("WARNING: ImageModel::updateTag(): can't parse stage pos");
 				return;
 			}
-			element.getStageLabel().setX(ModuleViewer.parseToLength(stagePos[0],tagUnit));
-			element.getStageLabel().setY(ModuleViewer.parseToLength(stagePos[1],tagUnit));
+			element.getStageLabel().setX(ModuleViewer.parseToLength(stagePos[0],tagUnit, false));
+			element.getStageLabel().setY(ModuleViewer.parseToLength(stagePos[1],tagUnit, false));
 			break;
 		case TagNames.STEPSIZE:
 			//TODO:

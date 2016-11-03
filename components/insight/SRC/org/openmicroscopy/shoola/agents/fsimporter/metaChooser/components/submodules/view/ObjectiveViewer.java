@@ -344,7 +344,7 @@ public class ObjectiveViewer extends ModuleViewer
 			if(workDist!=null && !workDist.getTagValue().equals(""))
 				return;
 			try {
-				setWorkingDist(ModuleViewer.parseToLength(t.getValue(),t.getUnit()),prop);
+				setWorkingDist(ModuleViewer.parseToLength(t.getValue(),t.getUnit(), false),prop);
 			} catch (Exception e) {
 				workDist.setTagInfo(ERROR_PREVALUE+t.getValue()+"["+t.getUnitSymbol()+"]");
 			}
@@ -612,8 +612,7 @@ public class ObjectiveViewer extends ModuleViewer
 			LOGGER.error("[DATA] can't read OBJECTIVE correction input");
 		}
 		try{
-			objective.setWorkingDistance(workDist.getTagValue().equals("")?
-					null : new Length(new Double(workDist.getTagValue()), workDist.getTagUnit()));
+			objective.setWorkingDistance(ModuleViewer.parseToLength(workDist.getTagValue(),workDist.getTagUnit(), false));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read OBJECTIVE working distance input");
 		}

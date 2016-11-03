@@ -20,6 +20,7 @@ import javax.swing.event.DocumentListener;
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
 import ome.xml.model.primitives.PercentFraction;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
@@ -46,6 +47,7 @@ public abstract class ModuleViewer extends JPanel
 	protected abstract void setPredefinedTag(TagConfiguration t);
 	
 	private static String pattern_double = "\\s|[0-9]+.*[0-9]*";//"\\d*+\\.\\d{1,}";
+	private static String pattern_posDouble="\\s|[1-9]+.*[0-9]*";
 	
 //	private static String pattern_number="\d";
 	/* http://stackoverflow.com/questions/6400955/how-to-get-1-100-using-regex
@@ -98,7 +100,6 @@ public abstract class ModuleViewer extends JPanel
 			return null;
 
 		
-//		return new PercentFraction(Float.valueOf(c)/100);
 		return new PercentFraction(Float.valueOf(c));
 	}
 	
@@ -127,12 +128,30 @@ public abstract class ModuleViewer extends JPanel
 		return result;
 	}
 	
-	public static Length parseToLength(String c, Unit<Length> unit) throws Exception
+	/**
+	 * If positiveVal==true, c has to be a positive float >0. Test by parse PositiveFloat
+	 * @param c
+	 * @param unit
+	 * @param positiveVal
+	 * @return
+	 * @throws Exception
+	 */
+	public static Length parseToLength(String c, Unit<Length> unit, boolean positiveVal) throws Exception
 	{
 		if(c==null || c.equals(""))
 			return null;
 		
-		return new Length(Double.valueOf(c), unit);
+		Double value=Double.valueOf(c);
+		Length result=null;
+		if(positiveVal){
+			// if value isn't a positive number-> throws error
+			PositiveFloat pF=new PositiveFloat(value);
+			result=new Length(value,unit);
+		}else{
+			result=new Length(value,unit);
+		}
+		
+		return result;
 	}
 	
 	public static Double parseToDouble(String c) throws NumberFormatException
@@ -267,24 +286,34 @@ public abstract class ModuleViewer extends JPanel
 		 * @return
 		 */
 		public DocumentListener createDocumentListenerDouble(TagData tag, String error) {
-			return new DocumentListenerForDouble(tag,error); 
+			return new DocumentListenerForDouble(tag,error, false); 
 				
+		}
+		
+		public DocumentListener createDocumentListenerPosFloat(TagData tag,String error){
+			return new DocumentListenerForDouble(tag,error, true); 
 		}
 		
 		class DocumentListenerForDouble implements DocumentListener
 		{
 			private TagData tag;
 			private String error;
-			public DocumentListenerForDouble(TagData tag,String error)
+			private boolean posVal;
+			
+			public DocumentListenerForDouble(TagData tag,String error, boolean positiveVal)
 			{
 				this.tag=tag;
 				this.error=error;
+				this.posVal=positiveVal;
 			}
 			@Override
 			public void removeUpdate(DocumentEvent e) {}
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				validateInput(tag,error,pattern_double);
+				if(!posVal)
+					validateInput(tag,error,pattern_double);
+				else
+					validateInput(tag,error,pattern_posDouble);
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {}
