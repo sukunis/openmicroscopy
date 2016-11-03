@@ -332,8 +332,9 @@ public class MetaDataView extends JPanel
 			reader.setId(file);
 		}catch(FormatException | IOException e){
 //			WarningDialog ld=new WarningDialog("Not supported file format for MetaData Editor!", 
-//					"Can't read metadata of "+file+"! Format is not supported.");
+//					"Can't read metadata of "+file+"! Format is not supported.","MetaDataView");
 //			ld.setVisible(true);
+			e.printStackTrace();
 			return null;
 		}
 		
