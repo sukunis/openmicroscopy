@@ -240,7 +240,7 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener, ItemL
 		
 		if(prop.getExpConf()==null)
 			prop.loadExperimentConf(false);
-		pane.add(new ProfileConfPanel(prop.getExpConf(),"Experiment Modul",TagNames.getExperimentTags(),false,7,selectedPos));
+		pane.add(new ProfileConfPanel(prop.getExpConf(),"Experiment Modul",TagNames.getExperimentTags(),true,7,selectedPos));
 
 		return pane;
 
@@ -355,7 +355,7 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener, ItemL
 	{
 		// Press OK Button
 		if(e.getSource() == okBtn){
-			System.out.println("######OK BTN");
+			System.out.println("\n+++ EVENT: CUSTOMIZE OK BTN+++\n");
 			//TODO: sind ueberhaupt aenderungen da?
 			prop=applyConfigurations(prop);
 			if(prop!=null){
@@ -398,6 +398,7 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener, ItemL
 				fileName.setText(file.getAbsolutePath());
 			}
 		}else if(e.getSource()==saveFileBtn){
+			System.out.println("\n+++ EVENT: CUSTOMIZE SAVE BTN+++\n");
 			prop=applyConfigurations(prop);
 
 			fc.setSelectedFile(new File(fileName.getText()));
