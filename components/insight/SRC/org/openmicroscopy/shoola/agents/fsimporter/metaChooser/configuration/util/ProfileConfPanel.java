@@ -410,24 +410,25 @@ public class ProfileConfPanel extends JPanel
 		 */
 		public void setEditorData(List<String[]> data)
 		{
+			System.out.println("# ProfileConfPanel::setEditorData(): "+(data!=null?"data":"no data"));
 			comboBoxData=data;
 		}
 		
-//		/**
-//		 * Set unit field as combobox if units available for this tag
-//		 */
-//		public TableCellEditor getCellEditor(int row, int column)
-//		{
-//			int modelColumn = convertColumnIndexToModel( column );
-//
-//            if (modelColumn == 3 && comboBoxData.get(row)!=null)
-//            {
-//                JComboBox<String> comboBox1 = new JComboBox<String>( comboBoxData.get(row));
-//                return new DefaultCellEditor( comboBox1 );
-//            }
-//            else
-//                return super.getCellEditor(row, column);
-//		}
+		/**
+		 * Set unit field as combobox if units available for this tag
+		 */
+		public TableCellEditor getCellEditor(int row, int column)
+		{
+			int modelColumn = convertColumnIndexToModel( column );
+
+            if (modelColumn == 3 && comboBoxData.get(row)!=null)
+            {
+                JComboBox<String> comboBox1 = new JComboBox<String>( comboBoxData.get(row));
+                return new DefaultCellEditor( comboBox1 );
+            }
+            else
+                return super.getCellEditor(row, column);
+		}
 		
 		/**
 		 * Highlight non editable field value and field unit cells
