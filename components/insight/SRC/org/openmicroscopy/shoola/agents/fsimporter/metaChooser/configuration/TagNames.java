@@ -1,6 +1,9 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util.PreTagData;
+
+import com.google.common.collect.ObjectArrays;
 
 import ome.units.UNITS;
 import ome.units.quantity.Angle;
@@ -12,6 +15,28 @@ import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.unit.Unit;
+import ome.xml.model.enums.ArcType;
+import ome.xml.model.enums.Binning;
+import ome.xml.model.enums.Correction;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.FilamentType;
+import ome.xml.model.enums.Immersion;
+import ome.xml.model.enums.LaserMedium;
+import ome.xml.model.enums.LaserType;
+import ome.xml.model.enums.Medium;
+import ome.xml.model.enums.Pulse;
+import ome.xml.model.enums.UnitsElectricPotential;
+import ome.xml.model.enums.UnitsFrequency;
+import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.UnitsPower;
+import ome.xml.model.enums.UnitsPressure;
+import ome.xml.model.enums.UnitsTemperature;
+import ome.xml.model.enums.handlers.UnitsElectricPotentialEnumHandler;
+import ome.xml.model.enums.handlers.UnitsFrequencyEnumHandler;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
+import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
+import ome.xml.model.enums.handlers.UnitsPressureEnumHandler;
+import ome.xml.model.enums.handlers.UnitsTemperatureEnumHandler;
 import ome.xml.model.primitives.PercentFraction;
 
 public class TagNames 
@@ -161,7 +186,7 @@ public class TagNames
 	public static final String F_TYPE="F_Type"; //only for profile/hardware xml
 	
 	public static final String POWER="Power";
-	public static final String MEDIUM="Medium";
+	public static final String MEDIUM="Laser Medium";
 	public static final String FREQMUL="Frequency Multiplication";
 	public static final String TUNABLE="Tunable";
 	public static final String PULSE="Pulse";
@@ -267,6 +292,207 @@ public class TagNames
 
 	public static PreTagData[] getChannelTags() {
 		return channelTags;
+	}
+
+	public static String[] getUnits(String name) 
+		{
+			String[] units=null;
+			switch (name) {
+			case AIRPRESS:
+				units=ModuleViewer.getNames(UnitsPressure.class);
+				break;
+			case TEMP:
+				units=ModuleViewer.getNames(UnitsTemperature.class);
+				break;
+			case REPRATE:
+				units=ModuleViewer.getNames(UnitsFrequency.class);
+				break;
+			case POWER:
+				units=ModuleViewer.getNames(UnitsPower.class);
+				break;
+			case WAVELENGTH:
+				units =ModuleViewer.getNames(UnitsLength.class);
+				break;
+			case SET_WAVELENGTH:
+				units =ModuleViewer.getNames(UnitsLength.class);
+				break;
+			case WORKDIST:
+				units =ModuleViewer.getNames( UnitsLength.class);
+				break;
+			case VOLTAGE:
+				units=ModuleViewer.getNames(UnitsElectricPotential.class);
+			default:
+	//			LOGGER.warn("[HARDWARE] no unit available for tag "+name);
+				break;
+			}
+			return units;
+		}
+
+	public static Unit parseUnit(String unitSymbol, String name) 
+	{
+		Unit unit=null;
+		
+		if(unitSymbol!=null && !unitSymbol.equals("") ){
+			switch (name) {
+			case AIRPRESS:
+				UnitsPressure uAP;
+				try{
+					uAP=UnitsPressure.fromString(unitSymbol);
+					unit=UnitsPressureEnumHandler.getBaseUnit(uAP);
+				}catch(EnumerationException e){
+					System.out.println("ERROR: Can't parse Air Pressure Unit "+unitSymbol);
+				}
+				break;
+			case TEMP:
+				UnitsTemperature uT;
+				try{
+					uT=UnitsTemperature.fromString(unitSymbol);
+					unit=UnitsTemperatureEnumHandler.getBaseUnit(uT);
+				}catch (EnumerationException e) {
+					System.out.println("ERROR: Can't parse Temperature Unit "+unitSymbol);
+				}
+				break;
+			case REPRATE:
+				UnitsFrequency u;
+				try {
+					u = UnitsFrequency.fromString(unitSymbol);
+					unit=UnitsFrequencyEnumHandler.getBaseUnit(u);
+				} catch (EnumerationException e) {
+					System.out.println("ERROR: Can't parse Repititation Rate Unit "+unitSymbol);
+					//					e.printStackTrace();
+				}
+			
+				break;
+			case POWER:
+				UnitsPower uP;
+				try {
+					uP = UnitsPower.fromString(unitSymbol);
+					unit=UnitsPowerEnumHandler.getBaseUnit(uP);
+				} catch (EnumerationException e) {
+					System.out.println("ERROR: Can't parse Power Unit "+unitSymbol);
+				}
+				
+				break;
+			case SET_WAVELENGTH:
+			case WAVELENGTH:
+				UnitsLength uL;
+				try {
+					uL = UnitsLength.fromString(unitSymbol);
+					unit = UnitsLengthEnumHandler.getBaseUnit(uL);
+				} catch (EnumerationException e) {
+					System.out.println("ERROR: Can't parse Wavelength Unit "+unitSymbol);
+				}
+				
+				break;
+			case WORKDIST:
+				UnitsLength uL2;
+				try {
+					uL2 = UnitsLength.fromString(unitSymbol);
+					unit = UnitsLengthEnumHandler.getBaseUnit(uL2);
+				} catch (EnumerationException e) {
+					System.out.println("ERROR: Can't parse Working Distanz Unit "+unitSymbol);
+				}
+				
+				break;
+			case VOLTAGE:
+				UnitsElectricPotential uV;
+				try {
+					uV = UnitsElectricPotential.fromString(unitSymbol);
+					unit=UnitsElectricPotentialEnumHandler.getBaseUnit(uV);
+				} catch (EnumerationException e) {
+					System.out.println("ERROR: Can't parse Voltage Unit "+unitSymbol);
+				}
+				
+			default:
+				break;
+			}
+				
+			
+		}
+		return unit;
+	}
+
+	public static Object[] getUnitList(String name) 
+	{
+		Object[] units=null;
+		switch (name) {
+		case AIRPRESS:
+			units=UnitsPressure.values();
+			break;
+		case TEMP:
+			units=UnitsTemperature.values();
+			break;
+		case REPRATE:
+			units=UnitsFrequency.values();
+			break;
+		case POWER:
+			units=UnitsPower.values();
+			break;
+		case WAVELENGTH:
+			units = UnitsLength.values();
+			break;
+		case SET_WAVELENGTH:
+			units = UnitsLength.values();
+			break;
+		case WORKDIST:
+			units = UnitsLength.values();
+			break;
+		case VOLTAGE:
+			units=UnitsElectricPotential.values();
+		default:
+			break;
+		}
+		return units;
+	}
+
+	public static String[] getEnumerationVal(String name) 
+	{
+		String[] values=null;
+		switch (name) {
+		case IMMERSION:
+			values= ModuleViewer.getNames(Immersion.class);
+			break;
+		case CORRECTION:
+			values=ModuleViewer.getNames(Correction.class);
+			break;
+		case OBJ_MEDIUM:
+			values=ModuleViewer.getNames(Medium.class);
+			break;
+		case TYPE://TODO DetectorType vs Experiment Type
+			break;
+		case BINNING:
+			values=ModuleViewer.getNames(Binning.class);
+			break;
+		case L_TYPE:
+			values=ModuleViewer.getNames(LaserType.class);
+			break;
+		case A_TYPE:
+			values=ModuleViewer.getNames(ArcType.class);
+			break;
+		case F_TYPE:
+			values=ModuleViewer.getNames(FilamentType.class);
+			break;
+		case MEDIUM:
+			values=ModuleViewer.getNames(LaserMedium.class);
+			break;
+		case TUNABLE:
+			values=BOOLEAN_COMBO;
+			break;
+		case PULSE:
+			values=ModuleViewer.getNames(Pulse.class);
+			break;
+		case POCKELCELL:
+			values=BOOLEAN_COMBO;
+			break;
+		
+		default:
+			break;
+		}
+		
+		if(values!=null)
+			values=ObjectArrays.concat(new String[]{""}, values, String.class);
+		
+		return values;
 	}
 
 	

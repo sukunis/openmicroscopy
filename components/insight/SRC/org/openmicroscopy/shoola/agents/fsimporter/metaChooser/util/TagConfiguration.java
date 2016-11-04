@@ -1,5 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
+
 import ome.units.unit.Unit;
 
 public class TagConfiguration 
@@ -10,8 +12,10 @@ public class TagConfiguration
 	private Boolean property;
 	private boolean visible;
 	private String[] possibleUnits;
+	private String[] possibleValues;
 	
-	public TagConfiguration(String name, String value, Unit unit,Boolean property, boolean visible,String[] possUnits)
+	public TagConfiguration(String name, String value, Unit unit,Boolean property, 
+			boolean visible,String[] possUnits,String[] possValues)
 	{
 		this.name=name;
 		this.value=value;
@@ -19,6 +23,7 @@ public class TagConfiguration
 		this.property=property;
 		this.visible=visible;
 		this.possibleUnits=possUnits;
+		this.possibleValues=possValues;
 	}
 	
 	public String getName() {
@@ -71,6 +76,11 @@ public class TagConfiguration
 	public void printf()
 	{
 		System.out.println("TAG "+name+" = "+value+" "+getUnitSymbol());
+	}
+
+	public String[] getPossibleValues() {
+		
+		return possibleValues;
 	}
 	
 }

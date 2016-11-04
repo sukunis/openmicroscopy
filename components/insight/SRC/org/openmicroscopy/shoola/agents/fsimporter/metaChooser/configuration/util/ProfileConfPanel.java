@@ -36,7 +36,7 @@ import ome.units.unit.Unit;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.DisabledPanel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
@@ -71,6 +71,8 @@ public class ProfileConfPanel extends JPanel
 	private String[] positions=ElementsCompUI.getNames(GUIPlaceholder.class);
 	/** data for unit comboboxfield for a tag. If the tag hasn't a n unit, value at tag position is null*/
 	private List<String[]> unitCBData;
+	
+	private List<String[]> enumerateCBData;
 	/** data for fixed field value*/
 	private List<String[]> fieldCBData;
 	/** */
@@ -95,7 +97,7 @@ public class ProfileConfPanel extends JPanel
 		this.selectedPos=positions;
 		
 		unitCBData=new ArrayList<String[]>();
-		
+		enumerateCBData=new ArrayList<String[]>();
 		
 		buildGUI();
 		setConfigurationData(conf, editableTags);
@@ -168,7 +170,8 @@ public class ProfileConfPanel extends JPanel
 		// table of tags and their data
 		myTable=new JTableX(availableTags);
 		myTable.setFillsViewportHeight(true);
-		((JTableX) myTable).setEditorData(unitCBData);
+		((JTableX) myTable).setEditorUnitData(unitCBData);
+		((JTableX) myTable).setEditorEnumerateData(enumerateCBData);
 		
 		add(titlePane);
 		add(Box.createVerticalStrut(2));
@@ -223,6 +226,7 @@ public class ProfileConfPanel extends JPanel
 	public void addEditableTag(TagConfiguration t,String clazz,boolean editable) 
 	{
 		unitCBData.add(t.getPossibleUnits());
+		enumerateCBData.add(t.getPossibleValues());
 		((TagTableModel) myTable.getModel()).add(t,clazz,editable);
 	}
 	
@@ -331,8 +335,10 @@ public class ProfileConfPanel extends JPanel
 	 */
 	public class JTableX extends JTable
 	{
-		/** posiible unit data */
+		/** possible unit data */
 		private List<String[]> comboBoxData=null;
+		/** possible enumeration data */
+		private List<String[]> enumerateComboBoxData=null;
 		/** popupmenu for insert a missing supported tag */
 		private JPopupMenu popupMenu;
 		/** all supported tags for current module*/
@@ -397,7 +403,8 @@ public class ProfileConfPanel extends JPanel
 		private void insertTagAtTable(int index) 
 		{
 			TagConfiguration t=new TagConfiguration(availableTags[index].name, "", 
-					availableTags[index].defaultUnit, false, false, availableTags[index].unitsList);
+					availableTags[index].defaultUnit, false, false, 
+					availableTags[index].unitsList,TagNames.getEnumerationVal(availableTags[index].name));
 			TagTableModel model=(TagTableModel) getModel();
 			int row=getSelectedRow();
 			model.insertRow(row, t, availableTags[index].settings);
@@ -408,10 +415,19 @@ public class ProfileConfPanel extends JPanel
 		 * @param data list of unit combobox default data for all tags in the table. 
 		 * If no units specified for a tag, element=null
 		 */
-		public void setEditorData(List<String[]> data)
+		public void setEditorUnitData(List<String[]> data)
 		{
-			System.out.println("# ProfileConfPanel::setEditorData(): "+(data!=null?"data":"no data"));
 			comboBoxData=data;
+		}
+		
+		/**
+		 * 
+		 * @param data list of enumerate data for all enumerate tags in the table. 
+		 * 
+		 */
+		public void setEditorEnumerateData(List<String[]> data)
+		{
+			enumerateComboBoxData=data;
 		}
 		
 		/**
@@ -425,9 +441,12 @@ public class ProfileConfPanel extends JPanel
             {
                 JComboBox<String> comboBox1 = new JComboBox<String>( comboBoxData.get(row));
                 return new DefaultCellEditor( comboBox1 );
-            }
-            else
+            }else if(modelColumn == 2 && enumerateComboBoxData.get(row)!=null ){
+            	 JComboBox<String> comboBox1 = new JComboBox<String>( enumerateComboBoxData.get(row));
+                 return new DefaultCellEditor( comboBox1 );
+            }else{
                 return super.getCellEditor(row, column);
+            }
 		}
 		
 		/**
@@ -491,7 +510,7 @@ public class ProfileConfPanel extends JPanel
 			
 			//unit available for this tag?
 			boolean hideUnit=false;
-			if(UOSHardwareReader.getUnitList(t.getName())==null){
+			if(TagNames.getUnitList(t.getName())==null){
 				hideUnit=true;
 			}
 			
@@ -583,7 +602,7 @@ public class ProfileConfPanel extends JPanel
 		{
 			List<Object> list=new ArrayList<Object>(columns.length);
 			boolean hideUnit=false;
-			if(UOSHardwareReader.getUnitList(t.getName())==null){
+			if(TagNames.getUnitList(t.getName())==null){
 				hideUnit=true;
 			}
 			//visible
@@ -646,16 +665,19 @@ public class ProfileConfPanel extends JPanel
 			value=(value==null ||value.equals(NOEDITABLE))? "":value;
 			Unit unit=null;
 			String[] pU=null;
+			String[] eVal=null;
 			if(!((String) getValueAt(rowIndex,COL_UNIT)).equals(NOEDITABLE)){
 				try {
-					unit=UOSHardwareReader.parseUnit((String) getValueAt(rowIndex,COL_UNIT),name);
+					unit=TagNames.parseUnit((String) getValueAt(rowIndex,COL_UNIT),name);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 	}
-				pU= UOSHardwareReader.getUnits(name);
+				pU= TagNames.getUnits(name);
+				eVal=TagNames.getEnumerationVal(name);
+				
 			}
-			tag=new TagConfiguration(name, value, unit, (Boolean)getValueAt(rowIndex,COL_PROP),(Boolean) getValueAt(rowIndex,0), pU);
+			tag=new TagConfiguration(name, value, unit, (Boolean)getValueAt(rowIndex,COL_PROP),(Boolean) getValueAt(rowIndex,0), pU,eVal);
 			return tag;
 		}
 	}

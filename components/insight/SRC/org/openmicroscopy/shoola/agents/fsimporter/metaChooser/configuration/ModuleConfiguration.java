@@ -90,10 +90,12 @@ public class ModuleConfiguration
 	{
 		Unit u=null;
 		String[] pU=null;
+		String[] eVal=null;
 		try {
-			u = UOSHardwareReader.parseUnit(unit,name);
-			pU= UOSHardwareReader.getUnits(name);
-			thisList.add(new TagConfiguration(name, val,u, prop, visible,pU));
+			u = TagNames.parseUnit(unit,name);
+			pU= TagNames.getUnits(name);
+			eVal=TagNames.getEnumerationVal(name);
+			thisList.add(new TagConfiguration(name, val,u, prop, visible,pU,eVal));
 		} catch (Exception e) {
 			LOGGER.warn("[HARDWARE] can't parse unit of tag "+name+" ("+unit+")");
 			e.printStackTrace();

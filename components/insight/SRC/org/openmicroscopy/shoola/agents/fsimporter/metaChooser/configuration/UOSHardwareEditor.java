@@ -406,7 +406,7 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 					//unit
 					if(dataModel.saveable(i,2)){
 						try {
-							tag.setTagUnit(UOSHardwareReader.parseUnit(
+							tag.setTagUnit(TagNames.parseUnit(
 									(String)dataModel.getValueAt(i, 2),(String)dataModel.getValueAt(i, 0)));
 						} catch (Exception e) {
 							tag.setTagUnit(null);
@@ -438,7 +438,7 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 				componentList.add(tagList);
 				for(TagData tagData:tagList){
 					table.appendElem(tagData);
-					comboBoxData.add(UOSHardwareReader.getUnits(tagData.getTagName()));
+					comboBoxData.add(TagNames.getUnits(tagData.getTagName()));
 				}
 				table.setEditorData(comboBoxData);
 				
@@ -463,7 +463,7 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 				componentList.add(tagList);
 				for(TagData tagData:tagList){
 					table.appendElem(tagData);
-					comboBoxData.add(UOSHardwareReader.getUnits(tagData.getTagName()));
+					comboBoxData.add(TagNames.getUnits(tagData.getTagName()));
 				}
 				table.setEditorData(comboBoxData);
 				
@@ -488,7 +488,7 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 				componentList.add(tagList);
 				for(TagData tagData:tagList){
 					table.appendElem(tagData);
-					comboBoxData.add(UOSHardwareReader.getUnits(tagData.getTagName()));
+					comboBoxData.add(TagNames.getUnits(tagData.getTagName()));
 				}
 				table.setEditorData(comboBoxData);
 				
@@ -514,7 +514,7 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 				componentList.add(tagList);
 				for(TagData tagData:tagList){
 					table.appendElem(tagData);
-					comboBoxData.add(UOSHardwareReader.getUnits(tagData.getTagName()));
+					comboBoxData.add(TagNames.getUnits(tagData.getTagName()));
 				}
 				table.setEditorData(comboBoxData);
 				

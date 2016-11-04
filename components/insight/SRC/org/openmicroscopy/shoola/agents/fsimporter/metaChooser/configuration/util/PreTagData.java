@@ -1,6 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import ome.units.unit.Unit;
 
@@ -16,8 +16,9 @@ public class PreTagData {
 			this.name=name;
 			this.defaultUnit=defaultUnit;
 			this.settings=isSett;
+			this.unitsList=null;
 			if(defaultUnit!=null){
-				unitsList=UOSHardwareReader.getUnits(name);
+				unitsList=TagNames.getUnits(name);
 			}
 		}
 	}

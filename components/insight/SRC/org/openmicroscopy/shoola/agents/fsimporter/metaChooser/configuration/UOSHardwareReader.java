@@ -30,32 +30,18 @@ import ome.xml.model.enums.ArcType;
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.Enumeration;
-import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.FilamentType;
 import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.enums.Pulse;
-import ome.xml.model.enums.UnitsElectricPotential;
-import ome.xml.model.enums.UnitsFrequency;
-import ome.xml.model.enums.UnitsLength;
-import ome.xml.model.enums.UnitsPower;
-import ome.xml.model.enums.UnitsPressure;
-import ome.xml.model.enums.UnitsTemperature;
-import ome.xml.model.enums.handlers.UnitsElectricPotentialEnumHandler;
-import ome.xml.model.enums.handlers.UnitsFrequencyEnumHandler;
-import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
-import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
-import ome.xml.model.enums.handlers.UnitsPressureEnumHandler;
-import ome.xml.model.enums.handlers.UnitsTemperatureEnumHandler;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
@@ -361,7 +347,7 @@ public class UOSHardwareReader
 					}
 					if(attr.getNamedItem(ModuleConfiguration.TAG_UNIT)!=null){
 						try {
-							unit=parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue(),name);
+							unit=TagNames.parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue(),name);
 						} catch (Exception e) {
 							LOGGER.warn("[HARDWARE] wrong format of parameters of tag "+name);
 							LOGGER.warn("[HARDWARE] "+e.getMessage());
@@ -403,7 +389,7 @@ public class UOSHardwareReader
 				}
 				if(attr.getNamedItem(ModuleConfiguration.TAG_UNIT)!=null){
 					try {
-						unit=parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue(),name);
+						unit=TagNames.parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue(),name);
 					} catch (Exception e) {
 						LOGGER.warn("[HARDWARE] wrong format of parameters of tag "+name);
 						LOGGER.warn("[HARDWARE] "+e.getMessage());
@@ -520,7 +506,7 @@ public class UOSHardwareReader
 					}
 					if(attr.getNamedItem(ModuleConfiguration.TAG_UNIT)!=null){
 						try {
-							unit=parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue(),name);
+							unit=TagNames.parseUnit(attr.getNamedItem(ModuleConfiguration.TAG_UNIT).getNodeValue(),name);
 						} catch (Exception e) {
 							LOGGER.warn("[HARDWARE] wrong format of parameters of tag "+name);
 							e.getMessage();
@@ -776,162 +762,6 @@ public class UOSHardwareReader
 			LOGGER.info("[HARDWARE] hardware definition of lightPath : null");
 		
 		return lightPathFilterList;
-	}
-	
-	
-	
-	
-	public static Unit parseUnit(String unitSymbol, String name) 
-	{
-		Unit unit=null;
-		
-		if(unitSymbol!=null && !unitSymbol.equals("") ){
-			switch (name) {
-			case TagNames.AIRPRESS:
-				UnitsPressure uAP;
-				try{
-					uAP=UnitsPressure.fromString(unitSymbol);
-					unit=UnitsPressureEnumHandler.getBaseUnit(uAP);
-				}catch(EnumerationException e){
-					System.out.println("ERROR: Can't parse Air Pressure Unit "+unitSymbol);
-				}
-				break;
-			case TagNames.TEMP:
-				UnitsTemperature uT;
-				try{
-					uT=UnitsTemperature.fromString(unitSymbol);
-					unit=UnitsTemperatureEnumHandler.getBaseUnit(uT);
-				}catch (EnumerationException e) {
-					System.out.println("ERROR: Can't parse Temperature Unit "+unitSymbol);
-				}
-				break;
-			case TagNames.REPRATE:
-				UnitsFrequency u;
-				try {
-					u = UnitsFrequency.fromString(unitSymbol);
-					unit=UnitsFrequencyEnumHandler.getBaseUnit(u);
-				} catch (EnumerationException e) {
-					System.out.println("ERROR: Can't parse Repititation Rate Unit "+unitSymbol);
-					//					e.printStackTrace();
-				}
-			
-				break;
-			case TagNames.POWER:
-				UnitsPower uP;
-				try {
-					uP = UnitsPower.fromString(unitSymbol);
-					unit=UnitsPowerEnumHandler.getBaseUnit(uP);
-				} catch (EnumerationException e) {
-					System.out.println("ERROR: Can't parse Power Unit "+unitSymbol);
-				}
-				
-				break;
-			case TagNames.SET_WAVELENGTH:
-			case TagNames.WAVELENGTH:
-				UnitsLength uL;
-				try {
-					uL = UnitsLength.fromString(unitSymbol);
-					unit = UnitsLengthEnumHandler.getBaseUnit(uL);
-				} catch (EnumerationException e) {
-					System.out.println("ERROR: Can't parse Wavelength Unit "+unitSymbol);
-				}
-				
-				break;
-			case TagNames.WORKDIST:
-				UnitsLength uL2;
-				try {
-					uL2 = UnitsLength.fromString(unitSymbol);
-					unit = UnitsLengthEnumHandler.getBaseUnit(uL2);
-				} catch (EnumerationException e) {
-					System.out.println("ERROR: Can't parse Working Distanz Unit "+unitSymbol);
-				}
-				
-				break;
-			case TagNames.VOLTAGE:
-				UnitsElectricPotential uV;
-				try {
-					uV = UnitsElectricPotential.fromString(unitSymbol);
-					unit=UnitsElectricPotentialEnumHandler.getBaseUnit(uV);
-				} catch (EnumerationException e) {
-					System.out.println("ERROR: Can't parse Voltage Unit "+unitSymbol);
-				}
-				
-			default:
-//				LOGGER.info("[HARDWARE] no unit available for tag "+name);
-				break;
-			}
-				
-			
-		}
-		return unit;
-	}
-	
-	public static Object[] getUnitList(String name) 
-	{
-		Object[] units=null;
-		switch (name) {
-		case TagNames.AIRPRESS:
-			units=UnitsPressure.values();
-			break;
-		case TagNames.TEMP:
-			units=UnitsTemperature.values();
-			break;
-		case TagNames.REPRATE:
-			units=UnitsFrequency.values();
-			break;
-		case TagNames.POWER:
-			units=UnitsPower.values();
-			break;
-		case TagNames.WAVELENGTH:
-			units = UnitsLength.values();
-			break;
-		case TagNames.SET_WAVELENGTH:
-			units = UnitsLength.values();
-			break;
-		case TagNames.WORKDIST:
-			units = UnitsLength.values();
-			break;
-		case TagNames.VOLTAGE:
-			units=UnitsElectricPotential.values();
-		default:
-			LOGGER.warn("[HARDWARE] no unit available for tag "+name);
-			break;
-		}
-		return units;
-	}
-
-	public static String[] getUnits(String name) 
-	{
-		String[] units=null;
-		switch (name) {
-		case TagNames.AIRPRESS:
-			units=ModuleViewer.getNames(UnitsPressure.class);
-			break;
-		case TagNames.TEMP:
-			units=ModuleViewer.getNames(UnitsTemperature.class);
-			break;
-		case TagNames.REPRATE:
-			units=ModuleViewer.getNames(UnitsFrequency.class);
-			break;
-		case TagNames.POWER:
-			units=ModuleViewer.getNames(UnitsPower.class);
-			break;
-		case TagNames.WAVELENGTH:
-			units =ModuleViewer.getNames(UnitsLength.class);
-			break;
-		case TagNames.SET_WAVELENGTH:
-			units =ModuleViewer.getNames(UnitsLength.class);
-			break;
-		case TagNames.WORKDIST:
-			units =ModuleViewer.getNames( UnitsLength.class);
-			break;
-		case TagNames.VOLTAGE:
-			units=ModuleViewer.getNames(UnitsElectricPotential.class);
-		default:
-			LOGGER.warn("[HARDWARE] no unit available for tag "+name);
-			break;
-		}
-		return units;
 	}
 
 	
