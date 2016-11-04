@@ -379,5 +379,15 @@ public class ExperimentModel {
 		}
 		return ex;
 	}
-	
+
+	public void printValues()
+	{
+		System.out.println("\nExperiment Modul Values::");
+		if(projectPartner!=null)
+			System.out.println("\t...Project Partner = "+projectPartner.getFirstName()+" "+projectPartner.getLastName());
+		if(experiment!=null){
+			System.out.println("\t...Type = "+experiment.getType());
+			System.out.println("\t...Desc = "+experiment.getDescription());
+		}
+	}
 }

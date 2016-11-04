@@ -68,6 +68,9 @@ public class ExperimentViewer extends ModuleViewer{
 	{
 		System.out.println("# ExperimentModel::new Instance("+(model!=null?"model":"null")+")");
 		this.data=model;
+		
+//		model.printValues();
+		
 		initComponents(conf);
 		initTagList();
 		buildGUI();
@@ -209,9 +212,9 @@ public class ExperimentViewer extends ModuleViewer{
 //			setGroupName(t.getValue(), prop);
 			break;
 		case TagNames.EXPNAME:
-			if(expName!=null && !expName.getTagValue().equals(""))
-				return;
-			setName(t.getValue(), prop);
+//			if(expName!=null && !expName.getTagValue().equals(""))
+//				return;
+//			setName(t.getValue(), prop);
 			break;
 			//set by system
 		case TagNames.PROJECTNAME:
@@ -416,6 +419,8 @@ public class ExperimentViewer extends ModuleViewer{
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read EXPERIMENT experimenter input");
 		}
+		
+//		data.printValues();
 	}
 
 	private Experimenter parseExperimenter(String str)
