@@ -201,7 +201,7 @@ protected void initTag(TagConfiguration t)
 
 protected void setPredefinedTag(TagConfiguration t) 
 {
-	if(t.getValue()==null)
+	if(t.getValue()==null || t.getValue().equals(""))
 		return;
 	
 	predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
