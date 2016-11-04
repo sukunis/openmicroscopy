@@ -42,6 +42,7 @@ import ome.units.unit.Unit;
 import ome.xml.model.Experimenter;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
 import org.slf4j.LoggerFactory;
 
 public class TagData 
@@ -888,13 +889,16 @@ public class TagData
 			Date d=null;
 			try {
 				d=df.parse(s);
-			} catch (ParseException e1) {
+			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				LOGGER.error("Parse error date for format "+dateformat);
-				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
-						"Wrong timestamp format at input at "+label.getText(),e1,
-						this.getClass().getSimpleName());
-				ld.setVisible(true);
+				setTagInfo(ModuleViewer.ERROR_PREVALUE+val+". Invalid Date Format!");
+				((JTextField) inputField).setText("");
+//				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
+//						"Wrong timestamp format at input at "+label.getText(),e1,
+//						this.getClass().getSimpleName());
+//				ld.setVisible(true);
+				e1.printStackTrace();
 			}
 			
 			try {
@@ -903,10 +907,13 @@ public class TagData
 				((JTextField) inputField).setText( f.format(d));
 			} catch (Exception e) {
 				LOGGER.error("Parse error for timestamp");
-				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
-						"Wrong timestamp format at input at "+label.getText(),e,
-						this.getClass().getSimpleName());
-				ld.setVisible(true);
+				((JTextField) inputField).setText("");
+				setTagInfo(ModuleViewer.ERROR_PREVALUE+val+". Invalid Date Format!");
+//				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
+//						"Wrong timestamp format at input at "+label.getText(),e,
+//						this.getClass().getSimpleName());
+//				ld.setVisible(true);
+				e.printStackTrace();
 			}
 			
 		}

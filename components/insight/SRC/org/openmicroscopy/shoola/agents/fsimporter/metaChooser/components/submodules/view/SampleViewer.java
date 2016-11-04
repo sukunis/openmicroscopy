@@ -159,7 +159,7 @@ protected void initTag(TagConfiguration t)
 	Boolean prop=t.getProperty();
 	switch (name) {
 	case TagNames.PREPDATE:// no pre value possible
-		setPreparationDate(null, prop);
+		setPreparationDate((String)null, prop);
 		preparationDate.setVisible(true);
 		break;
 	case TagNames.PREPDESC:// no pre value possible
@@ -211,8 +211,7 @@ protected void setPredefinedTag(TagConfiguration t)
 	case TagNames.PREPDATE:
 		if(preparationDate!=null && !preparationDate.getTagValue().equals(""))
 			return;
-		setPreparationDate(t.getValue().equals("")? 
-				null : Timestamp.valueOf(t.getValue()), prop);
+		setPreparationDate(t.getValue(), prop);
 		break;
 	case TagNames.PREPDESC:
 		if(preparationDescription!=null && !preparationDescription.getTagValue().equals(""))
@@ -351,6 +350,16 @@ private void setPreparationDate(Timestamp value, boolean prop)
 {
 	
 	String val= (value != null) ? value.getValue():"";
+	if(preparationDate == null) 
+		preparationDate = new TagData(TagNames.PREPDATE,val,prop,TagData.TIMESTAMP);
+	else 
+		preparationDate.setTagValue(val,prop);
+}
+
+private void setPreparationDate(String value, boolean prop)
+{
+	
+	String val= (value != null) ? value:"";
 	if(preparationDate == null) 
 		preparationDate = new TagData(TagNames.PREPDATE,val,prop,TagData.TIMESTAMP);
 	else 

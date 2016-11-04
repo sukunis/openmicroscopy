@@ -54,7 +54,7 @@ public abstract class ModuleViewer extends JPanel
 	 * match 0 oder 0.0-0.99 oder 1 oder 1.0*/
 	private static String pattern_percentFraction="[0]{1}.[0-9]{1,2}|1|1.0|0";
 	
-	protected final String ERROR_PREVALUE="Invalid predefined value: ";
+	public final static String ERROR_PREVALUE="Invalid predefined value: ";
 	
 	
 	
