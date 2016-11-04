@@ -307,6 +307,10 @@ public class ProfileConfPanel extends JPanel
 		List<TagConfiguration> settList=new ArrayList<TagConfiguration>();
 		List<TagConfiguration> tagList=new ArrayList<TagConfiguration>();
 		
+		
+		// deselct selection in table for data upgrade
+		if (myTable.isEditing()) myTable.getCellEditor().stopCellEditing();
+		
 		for(int i=0; i<dataModel.getRowCount(); i++){
 			if(dataModel.getValueAt(i, 5).equals("S")){
 				settList.add(dataModel.getRow(i));
