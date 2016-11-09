@@ -18,8 +18,11 @@ import ome.units.unit.Unit;
 import ome.xml.model.enums.ArcType;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.Correction;
+import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.ExperimentType;
 import ome.xml.model.enums.FilamentType;
+import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
@@ -45,7 +48,7 @@ public class TagNames
 	
 	public static final String MODEL="Model";
 	public static final String MANUFAC="Manufacturer";
-	public static final String TYPE="Type";
+//	public static final String TYPE="Type";
 	public static final String DESC="Description";
 	
 	//--------------------------
@@ -105,7 +108,7 @@ public class TagNames
 	//--------------------------
 	//	MODEL="Model";
 	//	MANUFAC="Manufacturer";
-	//	TYPE="Type";
+	public static final String D_TYPE="DetectorType";
 	public static final String ZOOM="Zoom";
 	public static final String AMPLGAIN="AmplificationGain";
 	
@@ -119,7 +122,7 @@ public class TagNames
 	
 	public static final Unit<ElectricPotential> VOLTAGE_UNIT=UNITS.V;
 	
-	private static PreTagData[] detectorTags={new PreTagData(MODEL,null, ""),new PreTagData(MANUFAC,null, ""),new PreTagData(TYPE,null, ""),
+	private static PreTagData[] detectorTags={new PreTagData(MODEL,null, ""),new PreTagData(MANUFAC,null, ""),new PreTagData(D_TYPE,null, ""),
 		new PreTagData(ZOOM,null, ""),new PreTagData(AMPLGAIN,null, ""),new PreTagData(GAIN,null, "S"),new PreTagData(VOLTAGE,VOLTAGE_UNIT, "S"),
 		new PreTagData(OFFSET,null, "S"),new PreTagData(CONFZOOM,null, "S"),new PreTagData(BINNING,null, "S"),
 		new PreTagData(SUBARRAY,null, "S")};
@@ -127,15 +130,15 @@ public class TagNames
 	//--------------------------
 	//	Experiment
 	//--------------------------
-	//	TYPE="Type";
 	//	DESC="Description";
+	public static final String E_TYPE="ExperimentType";
 	public static final String EXPNAME="Experimenter Name";
 	
 	public static final String PROJECTNAME="Project Name";
 	public static final String GROUP="Group";
 	public static final String PROJECTPARTNER="Project Partner";
 	
-	private static PreTagData[] experimentTags={new PreTagData(TYPE,null, ""),new PreTagData(DESC,null, ""),new PreTagData(EXPNAME,null, ""),
+	private static PreTagData[] experimentTags={new PreTagData(E_TYPE,null, ""),new PreTagData(DESC,null, ""),new PreTagData(EXPNAME,null, ""),
 		new PreTagData(PROJECTNAME,null, ""),new PreTagData(GROUP,null, ""),new PreTagData(PROJECTPARTNER,null, "")};
 	
 	
@@ -209,7 +212,7 @@ public class TagNames
 	public static final String ATTENUATION="Attenuation";
 	
 	private static PreTagData[] lightSrcTags={new PreTagData(MODEL,null, ""),new PreTagData(MANUFAC,null, ""),new PreTagData(POWER,POWER_UNIT, ""),
-			new PreTagData(TYPE,null, ""),new PreTagData(MEDIUM,null, ""),
+			new PreTagData(L_TYPE,null, ""),new PreTagData(A_TYPE,null, ""),new PreTagData(F_TYPE,null, ""),new PreTagData(MEDIUM,null, ""),
 			new PreTagData(FREQMUL,null, ""),new PreTagData(TUNABLE,null, ""),new PreTagData(PULSE,null, ""),new PreTagData(POCKELCELL,null, ""),
 			new PreTagData(REPRATE,REPRATE_UNIT_HZ, ""),new PreTagData(PUMP,null, ""),new PreTagData(WAVELENGTH,WAVELENGTH_UNIT, ""),new PreTagData(MAP,null, ""),
 			new PreTagData(SET_WAVELENGTH,WAVELENGTH_UNIT, "S"),new PreTagData(ATTENUATION,null, "S")};
@@ -242,7 +245,7 @@ public class TagNames
 	
 //	public static final String MODEL="Model";
 //	public static final String MANUFAC="Manufacturer";
-//	public static final String TYPE="Type";
+	public static final String LP_TYPE="FilterType";
 	public static final String FILTERWHEEL="Filterwheel";
 	
 	//--------------------------
@@ -458,7 +461,14 @@ public class TagNames
 		case OBJ_MEDIUM:
 			values=ModuleViewer.getNames(Medium.class);
 			break;
-		case TYPE://TODO DetectorType vs Experiment Type
+		case E_TYPE:
+			values=ModuleViewer.getNames(ExperimentType.class);
+			break;
+		case D_TYPE:
+			values=ModuleViewer.getNames(DetectorType.class);
+			break;
+		case LP_TYPE:
+			values=ModuleViewer.getNames(FilterType.class);
 			break;
 		case BINNING:
 			values=ModuleViewer.getNames(Binning.class);

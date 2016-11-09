@@ -86,7 +86,7 @@ public class LightPathViewer extends ModuleViewer{
 			Filter f= new Filter();
 			f.setModel(t.getProperty(TagNames.MODEL));
 			f.setManufacturer(t.getProperty(TagNames.MANUFAC));
-			f.setType(parseFilterType(t.getProperty(TagNames.TYPE)));
+			f.setType(parseFilterType(t.getProperty(TagNames.LP_TYPE)));
 			f.setFilterWheel(t.getProperty(TagNames.FILTERWHEEL));
 			return f;
 		}

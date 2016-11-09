@@ -585,7 +585,7 @@ public class ImageCompUI extends ElementsCompUI
 		String symbol = unit==UNITS.REFERENCEFRAME ? "rf" : unit.getSymbol();
 		String[] val= {valX,valY};
 		if(stagePos == null){ 
-			stagePos = new TagData(TagNames.STAGEPOS+"["+symbol+"]",val,prop,TagData.ARRAYFIELDS);
+			stagePos = new TagData(TagNames.STAGELABEL+"["+symbol+"]",val,prop,TagData.ARRAYFIELDS);
 		}else {
 			stagePos.setTagValue(valX,0,prop);
 			stagePos.setTagValue(valY,1,prop);
@@ -699,7 +699,7 @@ For example in a video stream.
 			setDimZTC(new String[3], prop);
 			dimZTC.setVisible(true);
 			break;
-		case TagNames.STAGEPOS:
+		case TagNames.STAGELABEL:
 			setStagePos(null,null, prop);
 			stagePos.setVisible(true);
 			break;

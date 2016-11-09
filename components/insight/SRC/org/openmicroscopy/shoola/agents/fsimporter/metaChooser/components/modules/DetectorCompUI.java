@@ -484,7 +484,7 @@ public class DetectorCompUI extends ElementsCompUI
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(type == null) 
-			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(DetectorType.class));
+			type = new TagData(TagNames.D_TYPE,val,prop,TagData.COMBOBOX,getNames(DetectorType.class));
 		else 
 			type.setTagValue(val,prop);
 	}
@@ -563,7 +563,7 @@ public class DetectorCompUI extends ElementsCompUI
 			manufact.setVisible(true);
 			
 			break;
-		case TagNames.TYPE:
+		case TagNames.D_TYPE:
 			try{
 				DetectorType value= DetectorType.fromString(val);
 				setType(value, prop);

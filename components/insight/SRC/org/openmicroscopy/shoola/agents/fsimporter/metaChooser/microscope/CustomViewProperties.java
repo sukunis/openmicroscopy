@@ -208,7 +208,7 @@ public void loadLightPathConf(boolean b)
 	int index=lightPathConf.addNewElement("Filter",null);
 	lightPathConf.setTag(TagNames.MODEL, null, null, true, index);
 	lightPathConf.setTag(TagNames.MANUFAC, null, null, true, index);
-	lightPathConf.setTag(TagNames.TYPE, null, null, true, index);
+	lightPathConf.setTag(TagNames.LP_TYPE, null, null, true, index);
 	lightPathConf.setTag(TagNames.FILTERWHEEL, null, null, true, index);
 	
 }
@@ -238,7 +238,7 @@ public void loadLightSrcConf(boolean active) {
 	lightSrcConf.setTag(TagNames.MODEL,null,null,true);
 	lightSrcConf.setTag(TagNames.MANUFAC,null,null,true);
 	lightSrcConf.setTag(TagNames.POWER,null,TagNames.POWER_UNIT.getSymbol(),true);
-	lightSrcConf.setTag(TagNames.TYPE,null,null,true);
+	lightSrcConf.setTag(TagNames.L_TYPE,null,null,true);
 	lightSrcConf.setTag(TagNames.MEDIUM,null,null,true);
 	lightSrcConf.setTag(TagNames.FREQMUL,null,null,true);
 	lightSrcConf.setTag(TagNames.TUNABLE,null,null,true);
@@ -267,7 +267,7 @@ public void loadImageEnvConf(boolean active) {
  */
 public void loadExperimentConf(boolean active) {
 	expConf=new ModuleConfiguration(active,GUIPlaceholder.Pos_H,"1");
-	expConf.setTag(TagNames.TYPE,null,null,true);
+	expConf.setTag(TagNames.E_TYPE,null,null,true);
 	expConf.setTag(TagNames.DESC,null,null,true);
 	expConf.setTag(TagNames.EXPNAME,null,null,true);
 	expConf.setTag(TagNames.PROJECTNAME,null,null,true);
@@ -282,7 +282,7 @@ public void loadDetectorConf(boolean active) {
 	detectorConf=new ModuleConfiguration(active,GUIPlaceholder.Pos_C,"1");
 	detectorConf.setTag(TagNames.MODEL,null,null,true);
 	detectorConf.setTag(TagNames.MANUFAC,null,null,true);
-	detectorConf.setTag(TagNames.TYPE,null,null,true);
+	detectorConf.setTag(TagNames.D_TYPE,null,null,true);
 	detectorConf.setTag(TagNames.ZOOM,null,null,true);
 	detectorConf.setTag(TagNames.AMPLGAIN,null,null,true);
 	detectorConf.setSettingTag(TagNames.GAIN,null,null,true);

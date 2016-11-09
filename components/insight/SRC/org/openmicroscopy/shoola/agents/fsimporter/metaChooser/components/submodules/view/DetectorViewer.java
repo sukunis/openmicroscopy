@@ -233,7 +233,7 @@ public class DetectorViewer extends ModuleViewer{
 			setManufact(null, OPTIONAL);
 			manufact.setVisible(true);
 			break;
-		case TagNames.TYPE:
+		case TagNames.D_TYPE:
 			setType(null,OPTIONAL);
 			type.setVisible(true);
 			break;
@@ -300,7 +300,7 @@ public class DetectorViewer extends ModuleViewer{
 				return;
 			setManufact(t.getValue(), OPTIONAL);
 			break;
-		case TagNames.TYPE:
+		case TagNames.D_TYPE:
 			if(type!=null && !type.getTagValue().equals("")){
 				return;
 			}
@@ -458,7 +458,7 @@ public class DetectorViewer extends ModuleViewer{
 	{
 		String val= (value != null)? value.getValue() : "";
 		if(type == null) 
-			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(DetectorType.class));
+			type = new TagData(TagNames.D_TYPE,val,prop,TagData.COMBOBOX,getNames(DetectorType.class));
 		else 
 			type.setTagValue(val,prop);
 	}

@@ -533,7 +533,7 @@ public class UOSHardwareReader
 				case TagNames.MANUFAC:
 					filter.setManufacturer(val);
 					break;
-				case TagNames.TYPE:
+				case TagNames.LP_TYPE:
 					filter.setType(val.equals("")? null : FilterType.fromString(val));
 					break;
 				case TagNames.FILTERWHEEL:
@@ -566,7 +566,6 @@ public class UOSHardwareReader
 				case TagNames.L_TYPE://former tag names 
 				case TagNames.A_TYPE:
 				case TagNames.F_TYPE:
-				case TagNames.TYPE:
 					switch(lightSrc.getClass().getSimpleName()){
 					case "Laser":
 						LaserType l=LightSourceCompUI.parseLaserType(val);
@@ -653,7 +652,7 @@ public class UOSHardwareReader
 				case TagNames.MANUFAC: 
 					detector.setManufacturer(val);
 					break;
-				case TagNames.TYPE:
+				case TagNames.D_TYPE:
 					DetectorType value= DetectorType.fromString(val);
 					detector.setType(value);
 					break;

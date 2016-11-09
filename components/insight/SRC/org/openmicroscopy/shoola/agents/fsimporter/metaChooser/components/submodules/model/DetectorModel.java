@@ -316,7 +316,7 @@ public class DetectorModel
 		case TagNames.MANUFAC: 
 			detector.setManufacturer(tagValue);			
 			break;
-		case TagNames.TYPE:
+		case TagNames.D_TYPE:
 			detector.setType(DetectorViewer.parseDetectorType(tagValue));
 			break;
 		case TagNames.ZOOM:

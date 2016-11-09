@@ -278,28 +278,28 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 		case "Laser":
 			val= (value != null)? ((LaserType) value).getValue() : "";
 			if(type == null) 
-				type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(LaserType.class));
+				type = new TagData(TagNames.L_TYPE,val,prop,TagData.COMBOBOX,getNames(LaserType.class));
 			else 
 				type.setTagValue(val,prop);
 			break;
 		case "Arc":
 			val= (value != null)? ((ArcType) value).getValue() : "";
 			if(type == null) 
-				type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(ArcType.class));
+				type = new TagData(TagNames.A_TYPE,val,prop,TagData.COMBOBOX,getNames(ArcType.class));
 			else 
 				type.setTagValue(val,prop);
 			break;
 		case "Filament":
 			val= (value != null)? ((FilamentType) value).getValue() : "";
 			if(type == null) 
-				type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(FilamentType.class));
+				type = new TagData(TagNames.F_TYPE,val,prop,TagData.COMBOBOX,getNames(FilamentType.class));
 			else 
 				type.setTagValue(val,prop);
 			break;
 			default:
 				val= (value != null)? ((LaserType) value).getValue() : "";
 				if(type == null) 
-					type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(LaserType.class));
+					type = new TagData(TagNames.L_TYPE,val,prop,TagData.COMBOBOX,getNames(LaserType.class));
 				else 
 					type.setTagValue(val,prop);
 				break;
@@ -466,7 +466,6 @@ public abstract class LightSrcSubCompUI extends ElementsCompUI
 //			lightSrc.setManufacturer(val);
 			manufact.setVisible(true);
 			break;
-		case TagNames.TYPE:
 		case TagNames.A_TYPE:
 		case TagNames.L_TYPE:
 		case TagNames.F_TYPE:

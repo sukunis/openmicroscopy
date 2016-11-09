@@ -319,7 +319,7 @@ public class ExperimentModel {
 	{
 		System.out.println("\t...update "+name+" : "+val);
 		switch (name) {
-		case TagNames.TYPE:
+		case TagNames.E_TYPE:
 			if(experiment==null)
 				experiment=new Experiment();
 			experiment.setType(getExperimentType(val));

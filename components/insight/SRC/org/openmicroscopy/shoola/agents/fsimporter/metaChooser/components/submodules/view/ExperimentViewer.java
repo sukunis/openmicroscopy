@@ -151,7 +151,7 @@ public class ExperimentViewer extends ModuleViewer{
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
-		case TagNames.TYPE:
+		case TagNames.E_TYPE:
 
 			setType(null, prop);
 			type.setVisible(true);
@@ -192,7 +192,7 @@ public class ExperimentViewer extends ModuleViewer{
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		switch (name) {
-		case TagNames.TYPE:
+		case TagNames.E_TYPE: 
 			if(type!=null && !type.getTagValue().equals(""))
 				return;
 			ExperimentType et=parseExperimentType(t.getValue());
@@ -269,7 +269,7 @@ public class ExperimentViewer extends ModuleViewer{
 	{
 		String val= (value != null) ? value.getValue():"";
 		if(type == null) 
-			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(ExperimentType.class));
+			type = new TagData(TagNames.E_TYPE,val,prop,TagData.COMBOBOX,getNames(ExperimentType.class));
 		else 
 			type.setTagValue(val,prop);	
 	}

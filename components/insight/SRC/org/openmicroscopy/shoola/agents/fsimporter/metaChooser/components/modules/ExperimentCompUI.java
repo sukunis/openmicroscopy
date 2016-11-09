@@ -424,7 +424,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	{
 		String val= (value != null) ? value.getValue():"";
 		if(type == null) 
-			type = new TagData(TagNames.TYPE,val,prop,TagData.COMBOBOX,getNames(ExperimentType.class));
+			type = new TagData(TagNames.E_TYPE,val,prop,TagData.COMBOBOX,getNames(ExperimentType.class));
 		else 
 			type.setTagValue(val,prop);	
 	}
@@ -661,7 +661,7 @@ public class ExperimentCompUI extends ElementsCompUI
 	private void setTag(String name,String val,boolean prop,Unit unit)
 	{
 		switch (name) {
-		case TagNames.TYPE:
+		case TagNames.E_TYPE:
 			try{
 				if(val!=null){
 					ExperimentType value= getExperimentType(val);

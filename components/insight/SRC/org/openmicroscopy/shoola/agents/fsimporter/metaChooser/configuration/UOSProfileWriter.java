@@ -121,7 +121,7 @@ public class UOSProfileWriter
 		if(view.getChannelConf()!=null)
 			sub.appendChild(view.getChannelConf().toXML(doc, UOSProfileReader.MODULE_CHANNEL));
 		if(view.getLightPathConf()!=null)
-			sub.appendChild(view.getLightPathConf().toXML(doc, UOSProfileReader.MODULE_LIGHTPATH));
+			sub.appendChild(view.getLightPathConf().toXML_LP(doc, UOSProfileReader.MODULE_LIGHTPATH));
 		if(view.getSampleConf()!=null)
 			sub.appendChild(view.getSampleConf().toXML(doc, UOSProfileReader.MODULE_SAMPLE));
 		if(view.getExpConf()!=null)

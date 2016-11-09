@@ -72,7 +72,7 @@ public class ImageViewer extends ModuleViewer{
 		System.out.println("# ImageViewer::newInstance("+(model!=null?"model":"null")+")");
 		this.data=model;
 		
-		model.printValues();
+//		model.printValues();
 		
 		initComponents(conf);
 		initTagList();
@@ -482,7 +482,7 @@ For example in a video stream.
 			LOGGER.error("[DATA] can't read IMAGE stage position input");
 		}
 
-		data.printValues();
+//		data.printValues();
 	}
 
 	public List<TagData> getChangedTags()
