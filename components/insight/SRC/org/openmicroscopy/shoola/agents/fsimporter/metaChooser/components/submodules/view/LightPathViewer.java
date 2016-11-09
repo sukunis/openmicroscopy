@@ -69,8 +69,10 @@ public class LightPathViewer extends ModuleViewer{
 		if(list==null)
 			return;
 		
-		for(LightPathElement t:list){
-			lightPathTable.appendElem(parseObject(t), t.getClazz());
+		if(lightPathTable.getRowCount()==0){
+			for(LightPathElement t:list){
+				lightPathTable.appendElem(parseObject(t), t.getClazz());
+			}
 		}
 		
 	}
