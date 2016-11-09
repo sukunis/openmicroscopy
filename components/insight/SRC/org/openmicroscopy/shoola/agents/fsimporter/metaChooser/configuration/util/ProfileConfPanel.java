@@ -437,11 +437,13 @@ public class ProfileConfPanel extends JPanel
 		{
 			int modelColumn = convertColumnIndexToModel( column );
 
-            if (modelColumn == 3 && comboBoxData.get(row)!=null)
+            if (modelColumn == TagTableModel.COL_UNIT &&
+            		comboBoxData!=null && comboBoxData.size()>row &&comboBoxData.get(row)!=null)
             {
                 JComboBox<String> comboBox1 = new JComboBox<String>( comboBoxData.get(row));
                 return new DefaultCellEditor( comboBox1 );
-            }else if(modelColumn == 2 && enumerateComboBoxData.get(row)!=null ){
+            }else if(modelColumn == TagTableModel.COL_VALUE &&
+            		enumerateComboBoxData!=null && enumerateComboBoxData.size()>row &&enumerateComboBoxData.get(row)!=null ){
             	 JComboBox<String> comboBox1 = new JComboBox<String>( enumerateComboBoxData.get(row));
                  return new DefaultCellEditor( comboBox1 );
             }else{
@@ -455,7 +457,8 @@ public class ProfileConfPanel extends JPanel
 		@Override
 	    public Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
 	        Component comp = super.prepareRenderer(renderer, row, col);
-	        if(!getModel().isCellEditable(row, col) && (col==2 || col==3)){
+	        if(!getModel().isCellEditable(row, col) && 
+	        		(col==TagTableModel.COL_VALUE || col==TagTableModel.COL_UNIT)){
 	        	comp.setBackground(UIManager.getColor("TextField.inactiveBackground"));
 	        	comp.setFont(getFont());
 	        } 
