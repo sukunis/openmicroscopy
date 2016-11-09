@@ -194,8 +194,12 @@ public class SaveMetadata
 
 	private void saveImage(Image image,MetaDataModel m) throws Exception {
 		//--- Image
-		if(image!=null)
+		if(image!=null){
+			String desc=image.getDescription();
+			desc=desc+" "+"Source Image: "+linkFile;
+			image.setDescription(desc);
 			omeStore.storeImage(image,m.getImageIndex());
+		}
 	}
 
 	private void saveChannel(Image i,MetaDataModel m) throws Exception 
