@@ -1,5 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -17,6 +18,7 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -120,7 +122,23 @@ public class ProfileConfPanel_LP extends JPanel
 		label.setFont(boldFont);
 
 		
-		JScrollPane tablePane=new JScrollPane();
+		JScrollPane tableScrollPane=new JScrollPane();
+		
+		JButton newObjBtn=new JButton("New LightPath Element");
+		newObjBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				List<TagConfiguration> list=new ArrayList<TagConfiguration>();
+				list.add(new TagConfiguration(TagNames.MODEL, "new Element", null, true, true, null, null));
+				LightPathElement lp=new LightPathElement("", list);
+				((LP_TagTableModel)myTable.getModel()).add(lp);
+			}
+		});
+		JPanel tablePane = new JPanel(new BorderLayout());
+		tablePane.add(tableScrollPane,BorderLayout.CENTER);
+		tablePane.add(newObjBtn,BorderLayout.SOUTH);
+		
+		
 		tableGlassPane=new DisabledPanel(tablePane);
 		
 		visibleCB=new JCheckBox();
@@ -181,7 +199,9 @@ public class ProfileConfPanel_LP extends JPanel
 		add(titlePane);
 		add(Box.createVerticalStrut(2));
 		add(tableGlassPane);
-		tablePane.setViewportView(myTable);
+		
+		// scrollpane viewport
+		tableScrollPane.setViewportView(myTable);
 	}
 
 
@@ -333,7 +353,7 @@ public class ProfileConfPanel_LP extends JPanel
 			list.add(t.getProperty(TagNames.MANUFAC));
 			
 			//col: type
-			list.add(t.getProperty(TagNames.TYPE));
+			list.add(t.getProperty(TagNames.LP_TYPE));
 			
 			//col: filterwheel
 			list.add(t.getProperty(TagNames.FILTERWHEEL));
@@ -393,7 +413,7 @@ public class ProfileConfPanel_LP extends JPanel
 			list.add(t.getProperty(TagNames.MANUFAC));
 			
 			//col: type
-			list.add(t.getProperty(TagNames.TYPE));
+			list.add(t.getProperty(TagNames.LP_TYPE));
 			
 			//col: filterwheel
 			list.add(t.getProperty(TagNames.FILTERWHEEL));
@@ -440,7 +460,7 @@ public class ProfileConfPanel_LP extends JPanel
 			LightPathElement elem=new LightPathElement((String)getValueAt(rowIndex,COL_CLASS), null);
 			elem.setTag(TagNames.MODEL, (String) getValueAt(rowIndex,COL_MODEL));
 			elem.setTag(TagNames.MANUFAC, (String) getValueAt(rowIndex,COL_MANU));
-			elem.setTag(TagNames.TYPE, (String) getValueAt(rowIndex,COL_TYPE));
+			elem.setTag(TagNames.LP_TYPE, (String) getValueAt(rowIndex,COL_TYPE));
 			elem.setTag(TagNames.FILTERWHEEL, (String) getValueAt(rowIndex,COL_FW));
 			
 			return elem;
@@ -487,10 +507,13 @@ public class ProfileConfPanel_LP extends JPanel
 		{
 			int modelColumn = convertColumnIndexToModel( column );
 
-            if(modelColumn == LP_TagTableModel.COL_TYPE && 
-            		enumerateComboBoxData!=null && enumerateComboBoxData.size()>row && enumerateComboBoxData.get(row)!=null ){
-            	 JComboBox<String> comboBox1 = new JComboBox<String>( enumerateComboBoxData.get(row));
+            if(modelColumn == LP_TagTableModel.COL_TYPE ){
+            	 JComboBox<String> comboBox1 = new JComboBox<String>( TagNames.getEnumerationVal(TagNames.LP_TYPE));
                  return new DefaultCellEditor( comboBox1 );
+            }else if(modelColumn == LP_TagTableModel.COL_CLASS){
+            	String[] clazzEnum={"Filter","Dichroic"};
+            	 JComboBox<String> comboBox1 = new JComboBox<String>(clazzEnum);
+            	 return new DefaultCellEditor( comboBox1 );
             }else{
                 return super.getCellEditor(row, column);
             }
