@@ -61,14 +61,18 @@ public class ObjectiveViewer extends ModuleViewer
 	private TagData medium;
 	private TagData refractIndex;
 	
+	private List<Objective> availableElems;
+	
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public ObjectiveViewer(ObjectiveModel objModel,ModuleConfiguration conf,boolean showPreValues)
+	public ObjectiveViewer(ObjectiveModel objModel,ModuleConfiguration conf,boolean showPreValues,
+			List<Objective> availableElems)
 	{
 		System.out.println("# ObjectiveViewer::newInstance("+(objModel!=null?"model":"null")+")");
 		this.data=objModel;
+		this.availableElems=availableElems;
 		initComponents(conf);
 		initTagList();
 		buildGUI();
@@ -168,13 +172,15 @@ public class ObjectiveViewer extends ModuleViewer
 			public void actionPerformed(ActionEvent e) 
 			{
 				ObjectiveEditor creator = new ObjectiveEditor(new JFrame(),"Select Objective",
-						data.getList());
+						availableElems);
 				Objective selectedObj=creator.getObjective();  
 				if(selectedObj!=null ){
+					System.out.println("ObjectiveViewer::Choose - addData()");
 					try {
 						data.addData(selectedObj, true);
 					} catch (Exception e1) {
 						LOGGER.warn("Can't set data of selected objective! "+e1);
+						System.out.println("Can't set data of selected objective! "+e1);
 					}
 					setGUIData();
 					dataChanged=true;

@@ -273,15 +273,18 @@ public class MetaDataUI extends JPanel
 		if(!componentsInit){
 			if(customSett.getObjConf()!=null && customSett.getObjConf().isVisible()){
 				LOGGER.info("[GUI] -- init OBJECTIVE modul");
+				model.addToObjList(customSett.getMicObjList(),false);
 				initObjectiveUI=true;
 			}
 			if(customSett.getDetectorConf()!=null && customSett.getDetectorConf().isVisible()){
 				LOGGER.info("[GUI] -- init DETECTOR modul");
+				model.addToDetectorList(customSett.getMicDetectorList(), false);
 				initDetectorUI=true;
 				detectorInput=false;
 			}
 			if(customSett.getLightSrcConf()!=null && customSett.getLightSrcConf().isVisible()){
 				LOGGER.info("[GUI] -- init LIGHTSRC modul");
+				model.addToLightSrcList(customSett.getMicLightSrcList(), false);
 				initLightSrcUI=true;
 			}
 			if(customSett.getChannelConf()!=null && customSett.getChannelConf().isVisible()){
@@ -290,6 +293,7 @@ public class MetaDataUI extends JPanel
 			}
 			if(customSett.getLightPathConf()!=null && customSett.getLightPathConf().isVisible()){
 				LOGGER.info("[GUI] -- init LIGHTPATH modul");
+				model.addToLightPathList_Filter(customSett.getMicLightPathFilterList(), false);
 				initLightPathUI=true;
 			}
 			if(customSett.getImgEnvConf()!=null && customSett.getImgEnvConf().isVisible()){
@@ -532,6 +536,12 @@ public class MetaDataUI extends JPanel
 						readPlaneData(planes);
 						readImageEnvData(image);
 						readExperimentData(image);
+						
+						model.addToLightSrcList(lightSources,true);
+						model.addToDetectorList(detectors,true);
+						model.addToObjList(objectives,true);
+						model.addToLightPathList_Filter(filters,true);
+						model.addToLightPathList_Dichroic(dichroics,true);
 					}
 				}else{
 					LOGGER.warn("[DATA] NO IMAGE object available");
@@ -692,9 +702,9 @@ public class MetaDataUI extends JPanel
 					model.addData(lp,false,i);
 				}
 
-				model.addFilterToList(customSett.getMicLightPathFilterList(),false);
-				model.addFilterToList(filters,true);
-				model.addDichroicToList(dichroics,true);
+//				model.addFilterToList(customSett.getMicLightPathFilterList(),false);
+//				model.addFilterToList(filters,true);
+//				model.addDichroicToList(dichroics,true);
 
 			}else{
 				LOGGER.info("[DATA] -- LIGHTPATH  data not available");
@@ -744,9 +754,8 @@ public class MetaDataUI extends JPanel
 
 				
 				// fill selection list
-				
-				model.addToLightSrcList(customSett.getMicLightSrcList(),false);
-				model.addToLightSrcList(lightSources,true);
+//				model.addToLightSrcList(customSett.getMicLightSrcList(),false);
+//				model.addToLightSrcList(lightSources,true);
 
 			}
 			else{
@@ -795,8 +804,8 @@ public class MetaDataUI extends JPanel
 				}
 
 			
-				model.addToDetectorList(customSett.getMicDetectorList(),false);
-				model.addToDetectorList(detectors,true);
+//				model.addToDetectorList(customSett.getMicDetectorList(),false);
+//				model.addToDetectorList(detectors,true);
 			}else{
 				LOGGER.info("[DATA] -- DETECTOR data not available");
 			}
@@ -919,8 +928,8 @@ public class MetaDataUI extends JPanel
 				model.addData(os,false); 
 			}
 					
-			model.addToObjList(customSett.getMicObjList(),false);
-			model.addToObjList(objList,true);
+//			model.addToObjList(customSett.getMicObjList(),false);
+//			model.addToObjList(objList,true);
 			
 		}
 		
@@ -1013,7 +1022,8 @@ public class MetaDataUI extends JPanel
 		if(initObjectiveUI){
 			objectivePane=new JPanel(new CardLayout());
 			ModuleConfiguration objModul=customSett.getObjConf();
-			objectiveUI=new ObjectiveViewer(model.getObjectiveModel(), objModul,showPreValues);
+			objectiveUI=new ObjectiveViewer(model.getObjectiveModel(), objModul,showPreValues,model.getObjList());
+			
 			JPanel pane= control.createPropPane(objectiveUI, "Objective", "for image "+name);
 			objectivePane.add(pane,name);
 			addToPlaceholder(objectivePane, objModul.getPosition(), objModul.getWidth());
@@ -1128,7 +1138,8 @@ public class MetaDataUI extends JPanel
 			showLightPathData(name,index);
 		}else{
 			lightPathPane.removeAll();
-			lightPathViewer=new LightPathViewer(model.getLightPathModel(),customSett.getLightPathConf(),index);
+			lightPathViewer=new LightPathViewer(model.getLightPathModel(),customSett.getLightPathConf(),
+					index,model.getHardwareList_LightPath());
 			lightPathPane.add(control.createPropPane(lightPathViewer, "LightPath", "for "+name));
 //			lightPathPane.revalidate();
 //			lightPathPane.repaint();
@@ -1143,7 +1154,8 @@ public class MetaDataUI extends JPanel
 		}else{
 			System.out.println("\t...Set visible Detector for Channel "+name);
 			detectorPane2.removeAll();
-			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),index,showPreValues);
+			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),
+					index,showPreValues,model.getDetectorHardwareList());
 			detectorPane2.add(control.createPropPane(detectorViewer, "Detector", "for "+ name));
 		}
 	}
@@ -1155,7 +1167,8 @@ public class MetaDataUI extends JPanel
 		}else{
 			lightSrcPane2.removeAll();
 			ModuleConfiguration lightSModul=customSett.getLightSrcConf();
-			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), lightSModul, index,showPreValues);
+			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), lightSModul, 
+					index,showPreValues,model.getLightSrcHardwareList());
 			lightSrcPane2.add(control.createPropPane(lightSrcViewer, "LightSource", "for "+name));
 		}
 	}
@@ -1165,7 +1178,8 @@ public class MetaDataUI extends JPanel
 		if(initLightPathUI){
 			lightPathPane=new JPanel(new CardLayout());
 			ModuleConfiguration lightPModul=customSett.getLightPathConf();
-			lightPathViewer=new LightPathViewer(model.getLightPathModel(), customSett.getLightPathConf(), index);
+			lightPathViewer=new LightPathViewer(model.getLightPathModel(), customSett.getLightPathConf(),
+					index,model.getHardwareList_LightPath());
 			lightPathPane.add(control.createPropPane(lightPathViewer, "LightPath", "for "+name));
 			addToPlaceholder(lightPathPane, lightPModul.getPosition(), lightPModul.getWidth());
 		}
@@ -1175,7 +1189,8 @@ public class MetaDataUI extends JPanel
 		if(initLightSrcUI){
 			lightSrcPane2=new JPanel(new CardLayout());
 			ModuleConfiguration lightSModul=customSett.getLightSrcConf();
-			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), customSett.getLightSrcConf(), index,showPreValues);
+			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), customSett.getLightSrcConf(),
+					index,showPreValues,model.getLightSrcHardwareList());
 			lightSrcPane2.add(control.createPropPane(lightSrcViewer, "LightSource", "for "+name));
 			addToPlaceholder(lightSrcPane2, lightSModul.getPosition(), lightSModul.getWidth());
 		}
@@ -1186,7 +1201,8 @@ public class MetaDataUI extends JPanel
 		if(initDetectorUI){
 			detectorPane2=new JPanel(new CardLayout());
 			ModuleConfiguration detModul=customSett.getDetectorConf();
-			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),index,showPreValues);
+			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),
+					index,showPreValues,model.getDetectorHardwareList());
 			detectorPane2.add(control.createPropPane(detectorViewer, "Detector", "for "+ name));
 			addToPlaceholder(detectorPane2, detModul.getPosition(), detModul.getWidth());
 		}

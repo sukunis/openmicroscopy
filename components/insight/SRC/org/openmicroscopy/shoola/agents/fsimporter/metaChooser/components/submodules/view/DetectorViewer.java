@@ -69,13 +69,14 @@ public class DetectorViewer extends ModuleViewer{
 	private TagData binning;
 	private TagData subarray;
 
-	
+	private List<Detector> availableElems;
 
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public DetectorViewer(DetectorModel model,ModuleConfiguration conf,int index,boolean showPreValues)
+	public DetectorViewer(DetectorModel model,ModuleConfiguration conf,int index,
+			boolean showPreValues,List<Detector> availableElems)
 	{
 		System.out.println("# DetectorViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		
@@ -83,6 +84,8 @@ public class DetectorViewer extends ModuleViewer{
 		
 		this.data=model;
 		this.index=index;
+		this.availableElems=availableElems;
+		
 		initComponents(conf);
 		initTagList();
 		buildGUI();
@@ -185,7 +188,7 @@ public class DetectorViewer extends ModuleViewer{
 			public void actionPerformed(ActionEvent e) 
 			{
 				DetectorEditor creator = new DetectorEditor(new JFrame(),"Choose Detector",
-						data.getList());
+						availableElems);
 				Detector selected=creator.getDetector();  
 				if(selected!=null ){
 					try {

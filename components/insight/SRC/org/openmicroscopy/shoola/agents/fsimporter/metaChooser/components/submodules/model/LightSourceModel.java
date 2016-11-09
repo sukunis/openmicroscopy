@@ -44,7 +44,7 @@ public class LightSourceModel
 	private List<LightSourceSettings> settings;
 
 	// list of available lightSrc (set by hardware definition)
-	private List<LightSource> availableElem;
+//	private List<LightSource> availableElem;
 
 	public LightSourceModel()
 	{
@@ -57,7 +57,7 @@ public class LightSourceModel
 	{
 		element=orig.element;
 		settings=orig.settings;
-		availableElem=orig.availableElem;
+//		availableElem=orig.availableElem;
 	}
 
 	/**
@@ -318,10 +318,7 @@ public class LightSourceModel
 		}
 	}
 
-	public List<LightSource> getList()
-	{
-		return availableElem;
-	}
+	
 
 	public LightSource getLightSource(int i) 
 	{
@@ -354,28 +351,35 @@ public class LightSourceModel
 		}
 	}
 	
-	/**
-	 * Copy elements from given list to local list
-	 * @param list
-	 */
-	public void addToList(List<LightSource> list)
-	{
-		if(list==null || list.size()==0)
-			return;
-		
-		if(availableElem==null){
-
-			availableElem=new ArrayList<LightSource>();
-		}
-		for(int i=0; i<list.size(); i++){
-			availableElem.add(list.get(i));
-		}
-
-	}
-
-	public void clearList() {
-		availableElem=null;
-	}
+//	/**
+//	 * Copy elements from given list to local list
+//	 * @param list
+//	 */
+//	public void addToList(List<LightSource> list)
+//	{
+//		if(list==null || list.size()==0)
+//			return;
+//		
+//		if(availableElem==null){
+//
+//			availableElem=new ArrayList<LightSource>();
+//		}
+//		for(int i=0; i<list.size(); i++){
+//			availableElem.add(list.get(i));
+//		}
+//
+//	}
+//
+//	public void clearList() {
+//		availableElem=null;
+//	}
+//	
+//	public List<LightSource> getList()
+//	{
+//		return availableElem;
+//	}
+	
+	
 	public int getNumberOfLightSrc()
 	{
 		if(element==null)

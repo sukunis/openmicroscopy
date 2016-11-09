@@ -26,6 +26,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util.ProfileConfPanel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util.ProfileConfPanel_LP;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
@@ -230,9 +231,9 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener, ItemL
 			prop.loadChannelConf(false);
 		pane.add(new ProfileConfPanel(prop.getChannelConf(),"Channel Modul",TagNames.getChannelTags(),false,4,selectedPos));
 		
-//		if(prop.getLightPathConf()==null)
-//			prop.loadLightPathConf(false);
-		pane.add(new ProfileConfPanel(prop.getLightPathConf(),"LightPath Modul",null,false,5,selectedPos));
+		if(prop.getLightPathConf()==null)
+			prop.loadLightPathConf(false);
+		pane.add(new ProfileConfPanel_LP(prop.getLightPathConf(),"LightPath Modul",null,false,5,selectedPos));
 		
 		if(prop.getSampleConf()==null)
 			prop.loadSampleConf(false);
@@ -262,7 +263,7 @@ public class UOSProfileEditorUI extends JDialog implements ActionListener, ItemL
 		ModuleConfiguration detectorConf=((ProfileConfPanel)comp[2]).getConfiguration();
 		ModuleConfiguration lightSrcConf=((ProfileConfPanel)comp[3]).getConfiguration();
 		ModuleConfiguration channelConf=((ProfileConfPanel)comp[4]).getConfiguration();
-		ModuleConfiguration lightPathConf=((ProfileConfPanel)comp[5]).getConfiguration();
+		ModuleConfiguration lightPathConf=((ProfileConfPanel_LP)comp[5]).getConfiguration();
 		ModuleConfiguration sampleConf=((ProfileConfPanel)comp[6]).getConfiguration();
 		ModuleConfiguration experimenterConf=((ProfileConfPanel)comp[7]).getConfiguration();
 		

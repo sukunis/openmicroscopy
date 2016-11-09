@@ -69,11 +69,14 @@ public class LightSourceViewer extends ModuleViewer{
 
 	private boolean setDataFromCode;
 	
+	private List<LightSource> availableElems;
+	
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public LightSourceViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
+	public LightSourceViewer(LightSourceModel model,ModuleConfiguration conf,
+			int index,boolean showPreValues,List<LightSource> availableElems)
 	{
 		System.out.println("# LightSrcViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		
@@ -81,6 +84,8 @@ public class LightSourceViewer extends ModuleViewer{
 		
 		this.index=index;
 		this.data=model;
+		this.availableElems=availableElems;
+		
 		initComponents(conf,showPreValues);
 		
 		buildGUI();
@@ -181,10 +186,11 @@ public class LightSourceViewer extends ModuleViewer{
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		editBtn.setEnabled(true);
 		editBtn.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) 
 			{
 				LightSourceEditor editor = new LightSourceEditor(new JFrame(),
-						"Select From Available LightSource", data.getList()); 
+						"Select From Available LightSource", availableElems); 
 				LightSource l=editor.getSelectedLightSource();
 				if(l!=null ){
 					dataChanged=true;

@@ -28,7 +28,7 @@ public class ObjectiveModel
 	private ObjectiveSettings settings;
 	
 	// list of available objective (set by hardware definition)
-	private List<Objective> availableElem;
+//	private List<Objective> availableElem;
 	
 	public ObjectiveModel()
 	{
@@ -40,7 +40,7 @@ public class ObjectiveModel
 	{
 		element=orig.element;
 		settings=orig.settings;
-		availableElem=orig.availableElem;
+//		availableElem=orig.availableElem;
 	}
 	
 	/**
@@ -165,10 +165,7 @@ public class ObjectiveModel
 		}
 	}
 	
-	public List<Objective> getList()
-	{
-		return availableElem;
-	}
+	
 
 	public Objective getObjective() {
 		return element;
@@ -182,22 +179,27 @@ public class ObjectiveModel
 		return settings;
 	}
 	
-	public void addToList(List<Objective> list)
-	{
-		if(list==null || list.size()==0)
-			return;
-
-		if(availableElem==null){
-			availableElem=new ArrayList<Objective>();
-		}
-		for(int i=0; i<list.size(); i++){
-			availableElem.add(list.get(i));
-		}
-	}
-	public void clearList() 
-	{
-		availableElem=null;
-	}
+//	public List<Objective> getList()
+//	{
+//		return availableElem;
+//	}
+//	public void addToList(List<Objective> list)
+//	{
+//		if(list==null || list.size()==0)
+//			return;
+//
+//		if(availableElem==null){
+//			availableElem=new ArrayList<Objective>();
+//		}
+//		for(int i=0; i<list.size(); i++){
+//			availableElem.add(list.get(i));
+//		}
+//		System.out.println("# ObjectiveModel::addToList() - "+availableElem.size());
+//	}
+//	public void clearList() 
+//	{
+//		availableElem=null;
+//	}
 
 	public void update(List<TagData> changesObjective) throws Exception 
 	{

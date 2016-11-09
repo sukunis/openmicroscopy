@@ -5,17 +5,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
-import ome.units.UNITS;
 import ome.units.unit.Unit;
-import ome.xml.model.enums.EnumerationException;
-import ome.xml.model.enums.UnitsFrequency;
-import ome.xml.model.enums.handlers.UnitsFrequencyEnumHandler;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util.LightPathElement;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.slf4j.LoggerFactory;
@@ -24,8 +18,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.drew.metadata.Tag;
 
 /**
  * Holds a list of visible tags and their configuration
@@ -50,6 +42,8 @@ public class ModuleConfiguration
 	private boolean visible;
 	private GUIPlaceholder position;
 	private String width;
+
+	private List<LightPathElement> elementList;
 	
 	public ModuleConfiguration(boolean visible,GUIPlaceholder pos,String width) 
 	{
@@ -104,6 +98,11 @@ public class ModuleConfiguration
 		
 	}
 	
+	public void setTag(String name, String val,String unit, Boolean prop,int elemIndex) 
+	{
+		setTag(name, val, unit,prop, elementList.get(elemIndex).getTagList(), true) ;
+	}
+	
 	public void setTag(String name, String val,String unit, Boolean prop) 
 	{
 		setTag(name, val, unit,prop, tagConfList, true) ;
@@ -131,6 +130,32 @@ public class ModuleConfiguration
 				sett.appendChild(tagToXML(doc, tag));
 			}
 			module.appendChild(sett);
+		}
+		
+		return module;
+	}
+	
+	/**
+	 * Special for lightPath
+	 * @param doc
+	 * @param moduleName
+	 * @return
+	 */
+	public Element toXML_LP(Document doc,String moduleName )
+	{
+		Element module = doc.createElement(moduleName);
+		module.setAttribute(UOSProfileReader.M_POSITION, getPosition().name());
+		module.setAttribute(UOSProfileReader.M_WIDTH,"1");
+		module.setAttribute(UOSProfileReader.M_VIS, String.valueOf(isVisible()));
+		
+		for(LightPathElement lp:elementList){
+			Element elem = doc.createElement(lp.getClazz());
+			
+			for(TagConfiguration tag : lp.getTagList()){
+				elem.appendChild(tagToXML(doc, tag));
+			}
+		
+			module.appendChild(elem);
 		}
 		
 		return module;
@@ -165,10 +190,45 @@ public class ModuleConfiguration
 			}
 		}	
 	}
-
-
-
 	
+	/**
+	 * read lightPath elements from xml like
+	 * <clazz>
+	 * 	<tag name="" value="" />
+	 * </clazz>
+	 * @param node
+	 */
+	public void loadElements(Element node) 
+	{
+		NodeList clazzList=node.getChildNodes();
+		if(clazzList!=null && clazzList.getLength()>0){
+			System.out.println("LightPath has childs: "+clazzList.getLength());
+			for(int i=0;i<clazzList.getLength();i++){	
+				if(clazzList.item(i).getNodeType() == Node.ELEMENT_NODE){
+					List<TagConfiguration> list=new ArrayList<TagConfiguration>();
+					String clazz=clazzList.item(i).getNodeName();
+					System.out.println("\tLightPath has childs: "+clazz);
+					NodeList tagList=clazzList.item(i).getChildNodes();
+					if(tagList!=null && tagList.getLength()>0){
+						for(int j=0; j<tagList.getLength(); j++){
+							NamedNodeMap attr=tagList.item(j).getAttributes();
+							parseTagFromXML(attr, list, "");
+						}
+					}
+					addNewElement(clazz, list);
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 * Parse tag: <Tag Name="" Optional="" Unit="" Value=""	Visible="" /> from given nodemap and add to list.
+	 * @param attr
+	 * @param list
+	 * @param sett
+	 */
 	private void parseTagFromXML(NamedNodeMap attr,List<TagConfiguration> list,String sett) 
 	{
 		
@@ -193,9 +253,6 @@ public class ModuleConfiguration
 				visible=BooleanUtils.toBoolean(attr.getNamedItem(TAG_VISIBLE).getNodeValue());
 			}
 		}
-		
-		
-
 //		if(visible)
 			setTag(name,value,unitStr,prop,list, visible);
 	}
@@ -247,5 +304,32 @@ public class ModuleConfiguration
 			System.out.println(settingsTagConfList.get(i).getName()+" = "+settingsTagConfList.get(i).getValue()+" "+settingsTagConfList.get(i).getUnitSymbol());
 		}
 	}
+
+	public List<LightPathElement> getElementList() 
+	{
+		System.out.println("# ModulConfiguration::getElementList(): "+(elementList==null? "null":elementList.size()));
+		return elementList;
+	}
+
+	public void setElementList(List<LightPathElement> list) 
+	{
+		elementList=list;
+	}
+
+	public int addNewElement(String clazz, List<TagConfiguration> list) 
+	{
+		
+		
+		if(elementList==null)
+			elementList=new ArrayList<LightPathElement>();
+		
+		System.out.println("# ModulConfiguration::addNewElement(): "+elementList.size());
+		
+		LightPathElement newElem=new LightPathElement(clazz, list);
+		elementList.add(newElem);
+		return elementList.size()-1;
+	}
+
+	
 	
 }

@@ -15,6 +15,8 @@ import javax.swing.JScrollPane;
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
 import ome.xml.model.LightPath;
+import ome.xml.model.enums.DetectorType;
+import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.FilterType;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
@@ -22,6 +24,8 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.module
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathTableSmall;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightPathModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util.LightPathElement;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
@@ -40,20 +44,67 @@ public class LightPathViewer extends ModuleViewer{
 	static final String EXITATION="Excitation Filter";
 	static final String EMISSION="Emission Filter";
 	static final String DICHROIC="Dichroic";
+	
+	private List<Object> availableElems;
 
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
-	public LightPathViewer(LightPathModel model,ModuleConfiguration conf,int index)
+	public LightPathViewer(LightPathModel model,ModuleConfiguration conf,int index,
+			List<Object> availableElems)
 	{
 		System.out.println("# LightPathViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		this.data=model;
 		this.index=index;
+		this.availableElems=availableElems;
 		initComponents(conf);
 		buildGUI();
+		showPreDefinitions(conf);
+	}
+	
+	public void showPreDefinitions(ModuleConfiguration conf) 
+	{
+		List<LightPathElement> list=conf.getElementList();
+		if(list==null)
+			return;
+		
+		for(LightPathElement t:list){
+			lightPathTable.appendElem(parseObject(t), t.getClazz());
+		}
+		
 	}
 
+	private Object parseObject(LightPathElement t) 
+	{
+		if(t.getClazz().equals(DICHROIC)){
+			Dichroic d=new Dichroic();
+			d.setModel(t.getProperty(TagNames.MODEL));
+			d.setManufacturer(t.getProperty(TagNames.MANUFAC));
+			return d;
+		}else{
+			Filter f= new Filter();
+			f.setModel(t.getProperty(TagNames.MODEL));
+			f.setManufacturer(t.getProperty(TagNames.MANUFAC));
+			f.setType(parseFilterType(t.getProperty(TagNames.TYPE)));
+			f.setFilterWheel(t.getProperty(TagNames.FILTERWHEEL));
+			return f;
+		}
+	}
+	
+	private FilterType parseFilterType(String c)
+	{
+		if(c==null || c.equals(""))
+			return null;
+
+		FilterType m=null;
+		try{
+			m=FilterType.fromString(c);
+		}catch(EnumerationException e){
+			LOGGER.warn("FilterType: "+c+" is not supported");
+		}
+		return m;
+	}
 
 
 	/**
@@ -83,8 +134,9 @@ public class LightPathViewer extends ModuleViewer{
 				if(data==null)
 					data=new LightPathModel();
 				
+				saveData();
 				LightPathEditor creator = new LightPathEditor(new JFrame(),"Edit LightPath",
-						data.getList(),data.getLightPath(index));
+						availableElems,data.getLightPath(index));
 				useEditor=true;
 				List<Object> newList=creator.getLightPathList(); 
 				if(newList!=null && !newList.isEmpty()){

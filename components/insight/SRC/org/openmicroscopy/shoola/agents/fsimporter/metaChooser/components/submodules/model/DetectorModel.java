@@ -34,7 +34,7 @@ public class DetectorModel
 	private List<DetectorSettings> settings;
 	
 	// list of available detector (set by hardware definition)
-	private List<Detector> availableElem;
+//	private List<Detector> availableElem;
 	
 	public DetectorModel()
 	{
@@ -47,7 +47,7 @@ public class DetectorModel
 	{
 		element=orig.element;
 		settings=orig.settings;
-		availableElem=orig.availableElem;
+//		availableElem=orig.availableElem;
 	}
 	
 	/**
@@ -210,10 +210,7 @@ public class DetectorModel
 		}
 	}
 	
-	public List<Detector> getList()
-	{
-		return availableElem;
-	}
+	
 
 	/**
 	 * 
@@ -236,28 +233,33 @@ public class DetectorModel
 		return settings.get(i);
 	}
 	
-	/**
-	 * Copy elements from given list to local list
-	 * @param list
-	 */
-	public void addToList(List<Detector> list)
-	{
-		if(list==null || list.size()==0)
-			return;
-		
-		if(availableElem==null){
-			availableElem=new ArrayList<Detector>();
-		}
-		for(int i=0; i<list.size(); i++){
-			availableElem.add(list.get(i));
-		}
-
-	}
-	
-	public void clearList() 
-	{
-		availableElem=null;
-	}
+//	/**
+//	 * Copy elements from given list to local list
+//	 * @param list
+//	 */
+//	public void addToList(List<Detector> list)
+//	{
+//		if(list==null || list.size()==0)
+//			return;
+//		
+//		if(availableElem==null){
+//			availableElem=new ArrayList<Detector>();
+//		}
+//		for(int i=0; i<list.size(); i++){
+//			availableElem.add(list.get(i));
+//		}
+//
+//	}
+//	
+//	public void clearList() 
+//	{
+//		availableElem=null;
+//	}
+//	
+//	public List<Detector> getList()
+//	{
+//		return availableElem;
+//	}
 
 	public int getNumberOfElements() {
 		return element.size();

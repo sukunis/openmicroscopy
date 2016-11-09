@@ -118,10 +118,7 @@ public class LightPathModel
 		if(dichroic!=null) element.get(i).linkDichroic(dichroic);
 	}
 
-	public List<Object> getList()
-	{
-		return availableElem;
-	}
+	
 
 	public LightPath getLightPath(int i) 
 	{
@@ -130,33 +127,43 @@ public class LightPathModel
 		return element.get(i);
 	}
 
-	public void addFilterToList(List<Filter> list)
-	{
-		if(list==null || list.size()==0)
-			return;
-
-		if(availableElem==null){
-
-			availableElem=new ArrayList<Object>();
-		}
-		for(int i=0; i<list.size(); i++){
-			availableElem.add(list.get(i));
-		}
-	}
-
-	public void addDichroicToList(List<Dichroic> list)
-	{
-		if(list==null || list.size()==0)
-			return;
-
-		if(availableElem==null){
-
-			availableElem=new ArrayList<Object>();
-		}
-		for(int i=0; i<list.size(); i++){
-			availableElem.add(list.get(i));
-		}
-	}
+	
+//	public List<Object> getList()
+//	{
+//		return availableElem;
+//	}
+//	public void addFilterToList(List<Filter> list)
+//	{
+//		if(list==null || list.size()==0)
+//			return;
+//
+//		if(availableElem==null){
+//
+//			availableElem=new ArrayList<Object>();
+//		}
+//		for(int i=0; i<list.size(); i++){
+//			availableElem.add(list.get(i));
+//		}
+//	}
+//
+//	public void addDichroicToList(List<Dichroic> list)
+//	{
+//		if(list==null || list.size()==0)
+//			return;
+//
+//		if(availableElem==null){
+//
+//			availableElem=new ArrayList<Object>();
+//		}
+//		for(int i=0; i<list.size(); i++){
+//			availableElem.add(list.get(i));
+//		}
+//	}
+//	public void clearList()
+//	{
+//		availableElem=null;
+//	}
+	
 	/**
 	 * If index exits size, expand elements and settings list
 	 * @param size
@@ -171,10 +178,7 @@ public class LightPathModel
 	
 
 	
-	public void clearList()
-	{
-		availableElem=null;
-	}
+	
 
 	public int getNumberOfLightPaths() 
 	{

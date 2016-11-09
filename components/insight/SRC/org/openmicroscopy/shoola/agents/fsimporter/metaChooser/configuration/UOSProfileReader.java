@@ -224,7 +224,7 @@ public class UOSProfileReader
 			view.setDetectorConf(conf);
 			break;
 		case MODULE_LIGHTPATH:
-			conf.loadTags(node);
+			conf.loadElements(node);
 			view.setLightPathConf(conf);
 			break;
 		case MODULE_LS_ARC:
