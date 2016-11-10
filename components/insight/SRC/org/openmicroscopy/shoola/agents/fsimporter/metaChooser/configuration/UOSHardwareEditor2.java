@@ -17,12 +17,9 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -47,17 +44,10 @@ import ome.xml.model.Filter;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.FilterCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.SwingUtils;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.slf4j.LoggerFactory;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class UOSHardwareEditor2 extends JDialog implements ActionListener
 {
@@ -205,10 +195,10 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 		Component[] comp=dataPane.getComponents();
 		System.out.println("Number comp: "+comp.length);
 		
-		List<List<TagData>> listObj=(List<List<TagData>>) ((SpecificationPanel)comp[OBJECTIVE]).getConfigurations();
-		List<List<TagData>> listDet=(List<List<TagData>>) ((SpecificationPanel)comp[DETECTOR]).getConfigurations();
-		List<List<TagData>> listLS= (List<List<TagData>>) ((SpecificationPanel)comp[LIGHTSRC]).getConfigurations();
-		List<List<TagData>> listLP=(List<List<TagData>>) ((SpecificationPanel)comp[LIGHTPATH]).getConfigurations();
+		List<List<TagConfiguration>> listObj=(List<List<TagConfiguration>>) ((SpecificationPanel)comp[OBJECTIVE]).getConfigurations();
+		List<List<TagConfiguration>> listDet=(List<List<TagConfiguration>>) ((SpecificationPanel)comp[DETECTOR]).getConfigurations();
+		List<List<TagConfiguration>> listLS= (List<List<TagConfiguration>>) ((SpecificationPanel)comp[LIGHTSRC]).getConfigurations();
+		List<List<TagConfiguration>> listLP=(List<List<TagConfiguration>>) ((SpecificationPanel)comp[LIGHTPATH]).getConfigurations();
 		
 		System.out.println("Objectives: "+listObj.size());
 		System.out.println("Detectors: "+listDet.size());
@@ -216,7 +206,7 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 //		System.out.println("LightPath: "+listLP.size());
 		
 		writer.setObjectives(listObj);
-		writer.setDetectors(listDet);
+		writer.setDetectors(listDet); 
 		writer.setLightSource(listLS);
 		writer.setLightPath(listLP);
 	}
@@ -285,11 +275,15 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 		private Object spec;
 		private JTabbedPane tablePane;
 		private int type;
+		private CustomViewProperties prop;
 		
-		private List<List<TagData>> componentList;
+		private List<List<TagConfiguration>> componentList;
 		
 		public SpecificationPanel(int type,Object list,String name)
 		{
+			prop=new CustomViewProperties();
+			prop.init();
+			
 			this.type=type;
 			setLayout(new BorderLayout());
 			setPreferredSize(new Dimension(300,300));
@@ -311,7 +305,7 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 			});
 			newBtn.setEnabled(false);
 			
-			componentList = new ArrayList<List<TagData>>();
+			componentList = new ArrayList<List<TagConfiguration>>();
 			
 			tablePane=new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
 			tablePane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -386,7 +380,7 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 			}
 		}
 
-		public List<List<TagData>> getConfigurations() {
+		public List<List<TagConfiguration>> getConfigurations() {
 			
 			if(componentList==null || componentList.size()==0)
 				return null;
@@ -397,19 +391,19 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 
 			int indexObj=0;
 			for(SpecificationTable table : components){
-				List<TagData> tagList = componentList.get(indexObj);
+				List<TagConfiguration> tagList = componentList.get(indexObj);
 				SpecificationTableModel dataModel = (SpecificationTableModel) table.getModel();
 				for(int i=0; i<dataModel.getRowCount();i++){
-					TagData tag=tagList.get(i);
+					TagConfiguration tag=tagList.get(i);
 					//value
-					tag.setTagValue((String)dataModel.getValueAt(i,1));
+					tag.setValue((String)dataModel.getValueAt(i,1));
 					//unit
 					if(dataModel.saveable(i,2)){
 						try {
-							tag.setTagUnit(TagNames.parseUnit(
+							tag.setUnit(TagNames.parseUnit(
 									(String)dataModel.getValueAt(i, 2),(String)dataModel.getValueAt(i, 0)));
 						} catch (Exception e) {
-							tag.setTagUnit(null);
+							tag.setUnit(null);
 						}
 					}
 				}
@@ -430,15 +424,11 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 				SpecificationTable table=new SpecificationTable();
 				table.setFillsViewportHeight(true);
 				
-				ObjectiveCompUI ui=new ObjectiveCompUI(null);
-				ui.addData(f,true);
-				ui.buildComponents();
-				
-				List<TagData> tagList=ui.getActiveTags();
+				List<TagConfiguration> tagList=prop.getObjConf().getTagList();
 				componentList.add(tagList);
-				for(TagData tagData:tagList){
+				for(TagConfiguration  tagData:tagList){
 					table.appendElem(tagData);
-					comboBoxData.add(TagNames.getUnits(tagData.getTagName()));
+					comboBoxData.add(TagNames.getUnits(tagData.getName()));
 				}
 				table.setEditorData(comboBoxData);
 				
@@ -455,15 +445,11 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 				SpecificationTable table=new SpecificationTable();
 				table.setFillsViewportHeight(true);
 				
-				FilterCompUI ui=new FilterCompUI(null);
-//				ui.addData(f,true);
-				ui.buildComponents();
-				
-				List<TagData> tagList=ui.getActiveTags();
+				List<TagConfiguration> tagList=prop.getLightPathConf().getTagList();
 				componentList.add(tagList);
-				for(TagData tagData:tagList){
+				for(TagConfiguration tagData:tagList){
 					table.appendElem(tagData);
-					comboBoxData.add(TagNames.getUnits(tagData.getTagName()));
+					comboBoxData.add(TagNames.getUnits(tagData.getName()));
 				}
 				table.setEditorData(comboBoxData);
 				
@@ -480,15 +466,11 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 				SpecificationTable table=new SpecificationTable();
 				table.setFillsViewportHeight(true);
 				
-				LightSourceCompUI ui=new LightSourceCompUI(null);
-				ui.addData(f,true);
-				ui.buildComponents();
-				
-				List<TagData> tagList=ui.getActiveTags();
+				List<TagConfiguration> tagList=prop.getLightSrcConf().getTagList();
 				componentList.add(tagList);
-				for(TagData tagData:tagList){
+				for(TagConfiguration tagData:tagList){
 					table.appendElem(tagData);
-					comboBoxData.add(TagNames.getUnits(tagData.getTagName()));
+					comboBoxData.add(TagNames.getUnits(tagData.getName()));
 				}
 				table.setEditorData(comboBoxData);
 				
@@ -506,15 +488,11 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 				SpecificationTable table=new SpecificationTable();
 				table.setFillsViewportHeight(true);
 				
-				DetectorCompUI detectorUI=new DetectorCompUI(null);
-				detectorUI.addData(f,true);
-				detectorUI.buildComponents();
-				
-				List<TagData> tagList=detectorUI.getActiveTags();
+				List<TagConfiguration> tagList=prop.getDetectorConf().getTagList();
 				componentList.add(tagList);
-				for(TagData tagData:tagList){
+				for(TagConfiguration tagData:tagList){
 					table.appendElem(tagData);
-					comboBoxData.add(TagNames.getUnits(tagData.getTagName()));
+					comboBoxData.add(TagNames.getUnits(tagData.getName()));
 				}
 				table.setEditorData(comboBoxData);
 				
@@ -561,7 +539,7 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 	        return editable;  
 	      }
 		
-		public void appendElem(TagData o)
+		public void appendElem(TagConfiguration o)
 		{
 			((SpecificationTableModel) getModel()).addRow(o);
 		}
@@ -657,12 +635,12 @@ public class UOSHardwareEditor2 extends JDialog implements ActionListener
 //			
 //		}
 
-		public void addRow(TagData t) {
+		public void addRow(TagConfiguration t) {
 //			List list=Arrays.asList(t.isVisible(),t.getTagLabel().getText(),t.getTagValue(),t.getTagUnit().getSymbol());
 			List<Object> list=new ArrayList<Object>(columnCount);
-			list.add(t.getTagName());
-			list.add(t.getTagValue());
-			list.add(t.getTagUnit()!=null ? t.getTagUnit().getSymbol():NOEDITABLE);
+			list.add(t.getName());
+			list.add(t.getValue());
+			list.add(t.getUnitSymbol());
 			data.add(list);
 			fireTableRowsInserted(data.size()-1, data.size()-1);
 		}

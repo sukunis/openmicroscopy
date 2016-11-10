@@ -53,15 +53,11 @@ import ome.xml.model.Pixels;
 import ome.xml.model.Plane;
 import ome.xml.model.StructuredAnnotations;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataControl;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneSliderCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ChannelViewer;
@@ -75,6 +71,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.SampleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 //import org.slf4j.LoggerFactory;
 import org.slf4j.LoggerFactory;
@@ -302,8 +299,8 @@ public class MetaDataUI extends JPanel
 			}
 			if(customSett.getPlaneConf()!=null && customSett.getPlaneConf().isVisible()){
 				LOGGER.info("[GUI] -- init PLANE modul");
-				PlaneCompUI pUI=new PlaneCompUI(null);
-				model.addPlaneModul(pUI);
+//				PlaneCompUI pUI=new PlaneCompUI(null);
+//				model.addPlaneModul(pUI);
 				initPlanesUI=true;
 			}
 			if(customSett.getExpConf()!=null && customSett.getExpConf().isVisible()){
@@ -550,22 +547,22 @@ public class MetaDataUI extends JPanel
 
 	private void readPlaneData(List<Plane> planes) throws Exception
 	{
-		if(initPlanesUI && planes!=null && !planes.isEmpty())
-		{
-				for(int i=0; i<planes.size(); i++){
-					PlaneCompUI pUI;
-					if(i<model.getNumberOfPlanes()){
-						pUI=model.getPlaneModul(i);
-						pUI.addData(planes.get(i));
-					}else{
-						pUI = new PlaneCompUI(planes.get(i));
-						model.addPlaneModul(pUI);
-					}
-					
-				}
-				LOGGER.info("[DATA] -- load PLANE ("+planes.size()+")");
-			
-		}
+//		if(initPlanesUI && planes!=null && !planes.isEmpty())
+//		{
+//				for(int i=0; i<planes.size(); i++){
+//					PlaneCompUI pUI;
+//					if(i<model.getNumberOfPlanes()){
+//						pUI=model.getPlaneModul(i);
+//						pUI.addData(planes.get(i));
+//					}else{
+//						pUI = new PlaneCompUI(planes.get(i));
+//						model.addPlaneModul(pUI);
+//					}
+//					
+//				}
+//				LOGGER.info("[DATA] -- load PLANE ("+planes.size()+")");
+//			
+//		}
 	}
 
 	private void readImageEnvData(Image image) 
@@ -677,7 +674,6 @@ public class MetaDataUI extends JPanel
 				
 				// get linked lightpath for current channel
 				LightPath lp=channel.getLightPath();
-				LightPathCompUI lpUI=null;
 
 				if(lp!=null &&(
 						lp.sizeOfLinkedEmissionFilterList()!=0 || 
@@ -1402,22 +1398,22 @@ public class MetaDataUI extends JPanel
 	protected JButton initPlaneBtn() 
 	{
 		JButton btnPlanePos=new JButton("Plane/Stage Positions");
-		btnPlanePos.setEnabled(false);
-		btnPlanePos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				PlaneSliderCompUI plane=null;
-				if(planeDialog==null){
-					if(model.getNumberOfPlanes()>0){
-						plane=new PlaneSliderCompUI(model.getPlaneModulList(), 
-								model.getPixelsDimT(),model.getPixelsDimZ(),model.getPixelsDimC());
-						//Tab of planes
-						planeDialog=createPlaneDialog(plane,"Plane/Stage Positions",400,800);
-						
-					}
-				}
-				planeDialog.setVisible(true);
-			}
-		});
+//		btnPlanePos.setEnabled(false);
+//		btnPlanePos.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				PlaneSliderCompUI plane=null;
+//				if(planeDialog==null){
+//					if(model.getNumberOfPlanes()>0){
+//						plane=new PlaneSliderCompUI(model.getPlaneModulList(), 
+//								model.getPixelsDimT(),model.getPixelsDimZ(),model.getPixelsDimC());
+//						//Tab of planes
+//						planeDialog=createPlaneDialog(plane,"Plane/Stage Positions",400,800);
+//						
+//					}
+//				}
+//				planeDialog.setVisible(true);
+//			}
+//		});
 		return btnPlanePos;
 	}
 

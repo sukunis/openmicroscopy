@@ -9,8 +9,6 @@ import javax.swing.JLabel;
 import ome.xml.model.Filament;
 import ome.xml.model.enums.FilamentType;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
@@ -48,13 +46,13 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 		if(data==null)
 			return;
 		Filament lightSrc=(Filament) data.getLightSource(index);
-		try{ setManufact(((Filament)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
+		try{ setManufact(((Filament)lightSrc).getManufacturer(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setModel(((Filament)lightSrc).getModel(), ElementsCompUI.REQUIRED);
+		try{ setModel(((Filament)lightSrc).getModel(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setPower(((Filament)lightSrc).getPower(), ElementsCompUI.REQUIRED);
+		try{ setPower(((Filament)lightSrc).getPower(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setType(((Filament)lightSrc).getType(), ElementsCompUI.REQUIRED);
+		try{ setType(((Filament)lightSrc).getType(), REQUIRED);
 		} catch (NullPointerException e) { }
 
 	}
@@ -114,7 +112,7 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 			LOGGER.error("[DATA] can't read LIGHTSRC fila model input");
 		}
 		try{
-			((Filament)lightSrc).setPower(LightSourceCompUI.parsePower(power.getTagValue(),power.getTagUnit()));
+			((Filament)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC fila power input");
 		}

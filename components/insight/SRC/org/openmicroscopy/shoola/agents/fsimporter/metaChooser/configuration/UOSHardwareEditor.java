@@ -29,11 +29,8 @@ import ome.xml.model.Filter;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.FilterCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.slf4j.LoggerFactory;
 
 public class UOSHardwareEditor extends JDialog implements ActionListener
@@ -231,9 +228,13 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 	{
 		private Object spec;
 		private JTabbedPane tablePane;
+		private CustomViewProperties prop;
 		
 		public SpecificationPanel(int type,Object list,String name)
 		{
+			prop=new CustomViewProperties();
+			prop.init();
+			
 			setLayout(new BorderLayout());
 			JLabel label=new JLabel(name);
 			Font font = label.getFont();
@@ -271,12 +272,8 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 				SpecificationTable table=new SpecificationTable();
 				table.setFillsViewportHeight(true);
 				
-				ObjectiveCompUI ui=new ObjectiveCompUI(null);
-				ui.addData(f,true);
-				ui.buildComponents();
-				
-				List<TagData> tagList=ui.getActiveTags();
-				for(TagData tagData:tagList){
+				List<TagConfiguration> tagList=prop.getObjConf().getTagList();
+				for(TagConfiguration tagData:tagList){
 					table.appendElem(tagData);
 				}
 				
@@ -292,12 +289,8 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 				SpecificationTable table=new SpecificationTable();
 				table.setFillsViewportHeight(true);
 				
-				FilterCompUI ui=new FilterCompUI(null);
-//				ui.addData(f,true);
-				ui.buildComponents();
-				
-				List<TagData> tagList=ui.getActiveTags();
-				for(TagData tagData:tagList){
+				List<TagConfiguration> tagList=prop.getLightPathConf().getTagList();
+				for(TagConfiguration tagData:tagList){
 					table.appendElem(tagData);
 				}
 				
@@ -313,12 +306,8 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 				SpecificationTable table=new SpecificationTable();
 				table.setFillsViewportHeight(true);
 				
-				LightSourceCompUI ui=new LightSourceCompUI(null);
-				ui.addData(f,true);
-				ui.buildComponents();
-				
-				List<TagData> tagList=ui.getActiveTags();
-				for(TagData tagData:tagList){
+				List<TagConfiguration> tagList=prop.getLightSrcConf().getTagList();
+				for(TagConfiguration tagData:tagList){
 					table.appendElem(tagData);
 				}
 				
@@ -335,12 +324,8 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 				SpecificationTable table=new SpecificationTable();
 				table.setFillsViewportHeight(true);
 				
-				DetectorCompUI detectorUI=new DetectorCompUI(null);
-				detectorUI.addData(f,true);
-				detectorUI.buildComponents();
-				
-				List<TagData> tagList=detectorUI.getActiveTags();
-				for(TagData tagData:tagList){
+				List<TagConfiguration> tagList=prop.getDetectorConf().getTagList();
+				for(TagConfiguration tagData:tagList){
 					table.appendElem(tagData);
 				}
 				
@@ -366,7 +351,7 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 	        return false;  
 	      }
 		
-		public void appendElem(TagData o)
+		public void appendElem(TagConfiguration o)
 		{
 			((SpecificationTableModel) getModel()).addRow(o);
 		}
@@ -419,12 +404,12 @@ public class UOSHardwareEditor extends JDialog implements ActionListener
 //			
 //		}
 
-		public void addRow(TagData t) {
+		public void addRow(TagConfiguration t) {
 //			List list=Arrays.asList(t.isVisible(),t.getTagLabel().getText(),t.getTagValue(),t.getTagUnit().getSymbol());
 			List<Object> list=new ArrayList<Object>(columnCount);
-			list.add(t.getTagLabel().getText());
-			list.add(t.getTagValue());
-			list.add(t.getTagUnit()!=null ? t.getTagUnit().getSymbol():"");
+			list.add(t.getName());
+			list.add(t.getValue());
+			list.add(t.getUnitSymbol());
 			data.add(list);
 			fireTableRowsInserted(data.size()-1, data.size()-1);
 		}

@@ -8,7 +8,6 @@ import javax.swing.JLabel;
 
 import ome.xml.model.LightEmittingDiode;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
@@ -45,11 +44,11 @@ public class LS_LEDViewer extends LightSourceSubViewer
 		if(data==null)
 			return;
 		LightEmittingDiode lightSrc=(LightEmittingDiode) data.getLightSource(index);
-		try{ setManufact(((LightEmittingDiode)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
+		try{ setManufact(((LightEmittingDiode)lightSrc).getManufacturer(),REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setModel(((LightEmittingDiode)lightSrc).getModel(), ElementsCompUI.REQUIRED);
+		try{ setModel(((LightEmittingDiode)lightSrc).getModel(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setDescription(null, ElementsCompUI.REQUIRED);
+		try{ setDescription(null,REQUIRED);
 		} catch (NullPointerException e) { }		
 	}
 

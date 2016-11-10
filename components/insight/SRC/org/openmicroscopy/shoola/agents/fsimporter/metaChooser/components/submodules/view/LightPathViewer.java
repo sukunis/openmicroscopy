@@ -19,8 +19,6 @@ import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.FilterType;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathEditor;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathTableSmall;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightPathModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -278,7 +276,7 @@ public class LightPathViewer extends ModuleViewer{
 					if(primDNotExists){
 						newElement.linkDichroic((Dichroic) f);
 					}else{
-						LOGGER.warn("primary Dichroic still exists! [LightPathCompUI::createLightPath]");
+						LOGGER.warn("primary Dichroic still exists! [LightPathViewer::createLightPath]");
 						newElement.linkEmissionFilter(MetaDataModel.convertDichroicToFilter((Dichroic)f));
 					}
 

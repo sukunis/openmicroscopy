@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

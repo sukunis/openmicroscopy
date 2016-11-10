@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -26,9 +26,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.Box;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.FilterCompUI;
 import org.slf4j.LoggerFactory;
 
 import ome.xml.model.Dichroic;

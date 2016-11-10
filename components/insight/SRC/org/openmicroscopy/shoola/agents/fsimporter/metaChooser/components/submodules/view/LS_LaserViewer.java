@@ -8,7 +8,6 @@ import javax.swing.JLabel;
 
 import ome.xml.model.Laser;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
@@ -75,29 +74,29 @@ tagList=new ArrayList<TagData>();
 		
 		Laser lightSrc=(Laser) data.getLightSource(index);
 		
-		try{setManufact(((Laser)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
+		try{setManufact(((Laser)lightSrc).getManufacturer(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{setModel(((Laser)lightSrc).getModel(), ElementsCompUI.REQUIRED);
+		try{setModel(((Laser)lightSrc).getModel(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setPower(((Laser)lightSrc).getPower(), ElementsCompUI.REQUIRED);
+		try{ setPower(((Laser)lightSrc).getPower(),REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setType(((Laser)lightSrc).getType(), ElementsCompUI.REQUIRED);
+		try{ setType(((Laser)lightSrc).getType(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setMedium(((Laser)lightSrc).getLaserMedium(), ElementsCompUI.REQUIRED);
+		try{ setMedium(((Laser)lightSrc).getLaserMedium(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setFreqMultiplication(((Laser)lightSrc).getFrequencyMultiplication(), ElementsCompUI.REQUIRED);
+		try{ setFreqMultiplication(((Laser)lightSrc).getFrequencyMultiplication(),REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setTunable(((Laser)lightSrc).getTuneable(), ElementsCompUI.REQUIRED);
+		try{ setTunable(((Laser)lightSrc).getTuneable(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setPulse(((Laser)lightSrc).getPulse(), ElementsCompUI.REQUIRED);
+		try{ setPulse(((Laser)lightSrc).getPulse(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setPocketCell(((Laser)lightSrc).getPockelCell(), ElementsCompUI.REQUIRED);
+		try{ setPocketCell(((Laser)lightSrc).getPockelCell(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{setRepititationRate(((Laser)lightSrc).getRepetitionRate(), ElementsCompUI.REQUIRED);
+		try{setRepititationRate(((Laser)lightSrc).getRepetitionRate(),REQUIRED);
 		} catch (NullPointerException e) { }
-		try{setPump(((Laser)lightSrc).getLinkedPump().getID(), ElementsCompUI.REQUIRED);
+		try{setPump(((Laser)lightSrc).getLinkedPump().getID(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setWavelength(((Laser)lightSrc).getWavelength(), ElementsCompUI.REQUIRED);
+		try{ setWavelength(((Laser)lightSrc).getWavelength(), REQUIRED);
 		} catch (NullPointerException e) { }		
 	}
 

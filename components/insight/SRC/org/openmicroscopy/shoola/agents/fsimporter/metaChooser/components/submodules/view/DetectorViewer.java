@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+
 import ome.units.quantity.ElectricPotential;
 import ome.units.unit.Unit;
 import ome.xml.model.Detector;
@@ -25,8 +26,6 @@ import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.EnumerationException;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorEditor;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -395,17 +394,17 @@ public class DetectorViewer extends ModuleViewer{
 		Detector detector=data.getDetector(index);
 		if(detector!=null){
 			System.out.println("# DetectorViewer::setGUIData()");
-			try{setModel(detector.getModel(), ElementsCompUI.REQUIRED);
+			try{setModel(detector.getModel(), REQUIRED);
 			} catch (NullPointerException e) { }
-			try{setManufact(detector.getManufacturer(),  ElementsCompUI.REQUIRED);
+			try{setManufact(detector.getManufacturer(),  REQUIRED);
 			} catch (NullPointerException e) { }
 			try{
-				setType(detector.getType(),  ElementsCompUI.REQUIRED);
+				setType(detector.getType(),  REQUIRED);
 			} catch (NullPointerException e) { }
 
-			try{setZoom(detector.getZoom(), ElementsCompUI.REQUIRED);
+			try{setZoom(detector.getZoom(), REQUIRED);
 			} catch (NullPointerException e) { }
-			try{setAmplGain(detector.getAmplificationGain(),  ElementsCompUI.REQUIRED);
+			try{setAmplGain(detector.getAmplificationGain(),  REQUIRED);
 			} catch (NullPointerException e) { }
 		}
 	}
@@ -416,18 +415,18 @@ public class DetectorViewer extends ModuleViewer{
 			return;
 		DetectorSettings settings = data.getSettings(index);
 		if(settings!=null){
-			try{setGain(settings.getGain(), ElementsCompUI.REQUIRED);
+			try{setGain(settings.getGain(), REQUIRED);
 			} catch (NullPointerException e) { }
-			try{setVoltage(settings.getVoltage(), ElementsCompUI.REQUIRED);
+			try{setVoltage(settings.getVoltage(), REQUIRED);
 			} catch (NullPointerException e) { }
-			try{ setOffset(settings.getOffset(), ElementsCompUI.REQUIRED);
+			try{ setOffset(settings.getOffset(), REQUIRED);
 			} catch (NullPointerException e) { }
-			try{ setConfocalZoom(settings.getZoom(), ElementsCompUI.REQUIRED);
+			try{ setConfocalZoom(settings.getZoom(), REQUIRED);
 			} catch (NullPointerException e) { }
-			try{ setBinning(settings.getBinning(), ElementsCompUI.REQUIRED);
+			try{ setBinning(settings.getBinning(), REQUIRED);
 			} catch (NullPointerException e) { }
 			//TODO
-			try{ setSubarray(null, ElementsCompUI.REQUIRED);
+			try{ setSubarray(null, REQUIRED);
 			} catch (NullPointerException e) { }
 		}
 

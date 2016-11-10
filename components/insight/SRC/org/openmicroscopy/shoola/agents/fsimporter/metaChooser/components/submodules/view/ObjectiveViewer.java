@@ -27,8 +27,6 @@ import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.Medium;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -396,11 +394,11 @@ public class ObjectiveViewer extends ModuleViewer
 		if(data==null)
 			return;
 		ObjectiveSettings settings = data.getSettings();
-		try{setRefractIndex(settings.getRefractiveIndex(), ElementsCompUI.REQUIRED);
+		try{setRefractIndex(settings.getRefractiveIndex(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setMedium(settings.getMedium(), ElementsCompUI.REQUIRED);
+		try{ setMedium(settings.getMedium(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setCorCollar(settings.getCorrectionCollar(), ElementsCompUI.REQUIRED);
+		try{ setCorCollar(settings.getCorrectionCollar(), REQUIRED);
 		} catch (NullPointerException e) { }
 	
 	}

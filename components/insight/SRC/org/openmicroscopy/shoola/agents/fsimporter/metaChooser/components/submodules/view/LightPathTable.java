@@ -1,10 +1,11 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JMenu;
@@ -15,6 +16,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.FilterCompUI;
 import org.slf4j.LoggerFactory;
 
 import ome.xml.model.Dichroic;

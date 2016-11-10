@@ -71,6 +71,8 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOS
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.FNode;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
 import org.openmicroscopy.shoola.env.LookupNames;

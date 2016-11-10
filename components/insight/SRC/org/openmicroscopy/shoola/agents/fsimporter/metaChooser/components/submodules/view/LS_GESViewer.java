@@ -7,8 +7,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import ome.xml.model.GenericExcitationSource;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
@@ -46,13 +44,13 @@ public class LS_GESViewer extends LightSourceSubViewer
 		if(data==null)
 			return;
 		GenericExcitationSource lightSrc=(GenericExcitationSource) data.getLightSource(index);
-		try{ setManufact(((GenericExcitationSource)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
+		try{ setManufact(((GenericExcitationSource)lightSrc).getManufacturer(),REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setModel(((GenericExcitationSource)lightSrc).getModel(), ElementsCompUI.REQUIRED);
+		try{ setModel(((GenericExcitationSource)lightSrc).getModel(),REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setPower(((GenericExcitationSource)lightSrc).getPower(), ElementsCompUI.REQUIRED);
+		try{ setPower(((GenericExcitationSource)lightSrc).getPower(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setMap(((GenericExcitationSource)lightSrc).getMap().getPairs(), ElementsCompUI.REQUIRED);
+		try{ setMap(((GenericExcitationSource)lightSrc).getMap().getPairs(),REQUIRED);
 		} catch (NullPointerException e) { }		
 	}
 
@@ -108,7 +106,7 @@ public class LS_GESViewer extends LightSourceSubViewer
 			LOGGER.error("[DATA] can't read LIGHTSRC ges model input");
 		}
 		try{
-			((GenericExcitationSource)lightSrc).setPower(LightSourceCompUI.parsePower(power.getTagValue(),power.getTagUnit()));
+			((GenericExcitationSource)lightSrc).setPower(parsePower(power.getTagValue(),power.getTagUnit()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC ges power input");
 		}

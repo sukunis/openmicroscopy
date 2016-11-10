@@ -26,8 +26,6 @@ import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.primitives.PercentFraction;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -315,9 +313,9 @@ public class LightSourceViewer extends ModuleViewer{
 		LightSourceSettings settings = data.getSettings(index);
 
 		if(settings!=null){
-			try{setWavelength(settings.getWavelength(), ElementsCompUI.REQUIRED);
+			try{setWavelength(settings.getWavelength(), REQUIRED);
 			} catch (NullPointerException e) { }
-			try{setAttenuation(settings.getAttenuation(), ElementsCompUI.REQUIRED);
+			try{setAttenuation(settings.getAttenuation(), REQUIRED);
 			}catch (NullPointerException e){}
 		}
 	}

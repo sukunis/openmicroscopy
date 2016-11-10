@@ -23,7 +23,6 @@ import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -217,47 +216,47 @@ public class ImageViewer extends ModuleViewer{
 		Image image=data.getImage();
 		
 		if(image!=null){ 
-			try{setName(image.getName(),ElementsCompUI.REQUIRED);
+			try{setName(image.getName(),REQUIRED);
 			} catch (NullPointerException e) { }
 
 			try{
 				String[] dimXY={image.getPixels().getSizeX().toString(),
 						image.getPixels().getSizeY().toString()};
-				setDimXY(dimXY,ElementsCompUI.REQUIRED);
+				setDimXY(dimXY,REQUIRED);
 			} catch (NullPointerException e) { }
 
-			try{setPixelType(image.getPixels().getType(),ElementsCompUI.REQUIRED);
+			try{setPixelType(image.getPixels().getType(),REQUIRED);
 			} catch (NullPointerException e) { }
 
 			try{ 
 				String[] dimZTC={image.getPixels().getSizeZ().toString(),
 						image.getPixels().getSizeT().toString(),
 						image.getPixels().getSizeC().toString()};
-				setDimZTC(dimZTC,ElementsCompUI.REQUIRED);
+				setDimZTC(dimZTC,REQUIRED);
 			} catch (NullPointerException e) { }
 			//TODO
 
 			try{
 				StageLabel stage=image.getStageLabel();
-				setStagePos(stage.getX(),stage.getY(), ElementsCompUI.REQUIRED);
+				setStagePos(stage.getX(),stage.getY(), REQUIRED);
 			} catch (NullPointerException e) { }
 
 			try{
-				setTimeIncrement(image.getPixels().getTimeIncrement(), ElementsCompUI.REQUIRED);
+				setTimeIncrement(image.getPixels().getTimeIncrement(), REQUIRED);
 			} catch (NullPointerException e) { }
 			//TODO wellsample
 
 			try{
-				setWellNr(null, ElementsCompUI.REQUIRED);
+				setWellNr(null, REQUIRED);
 			} catch (NullPointerException e) { }
 
 			try{ 
-				setAcqTime(image.getAcquisitionDate(),ElementsCompUI.REQUIRED);
+				setAcqTime(image.getAcquisitionDate(),REQUIRED);
 			} catch (NullPointerException e) { }
 
 			try{ 
 				setPixelSizeXY(image.getPixels().getPhysicalSizeX(),image.getPixels().getPhysicalSizeY(),
-					ElementsCompUI.REQUIRED);
+					REQUIRED);
 			} catch (NullPointerException e) { }
 		}
 	}

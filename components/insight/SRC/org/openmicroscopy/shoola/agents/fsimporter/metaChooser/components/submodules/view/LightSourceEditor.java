@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -30,6 +31,8 @@ import javax.swing.table.DefaultTableModel;
 
 
 
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.slf4j.LoggerFactory;
 
 import ome.xml.model.Arc;
@@ -162,7 +165,29 @@ public class LightSourceEditor extends JDialog
 	
 	public LightSource getSelectedLightSource()
 	{
-		return LightSourceCompUI.copyLightSource(lightSrc);
+		LightSource result=null;
+		if(lightSrc!=null){
+			switch (lightSrc.getClass().getSimpleName()) {
+			case LightSourceModel.LASER:
+				result=new Laser((Laser) lightSrc);
+				break;
+			case LightSourceModel.ARC:
+				result=new Arc((Arc) lightSrc);
+				break;
+			case LightSourceModel.FILAMENT:
+				result=new Filament((Filament) lightSrc);
+				break;
+			case LightSourceModel.GENERIC_EXCITATION:
+				result=new GenericExcitationSource((GenericExcitationSource) lightSrc);
+				break;
+			case LightSourceModel.LIGHT_EMITTING_DIODE:
+				result=new LightEmittingDiode((LightEmittingDiode) lightSrc);
+				break;
+			default:
+				break;
+			}
+		}
+		return result;
 	}
 	
 	

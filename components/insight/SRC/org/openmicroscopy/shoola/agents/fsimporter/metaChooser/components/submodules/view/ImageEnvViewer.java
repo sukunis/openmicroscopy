@@ -17,7 +17,6 @@ import ome.units.unit.Unit;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.primitives.PercentFraction;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -219,13 +218,13 @@ public class ImageEnvViewer extends ModuleViewer{
 			return;
 		ImagingEnvironment env=data.getImgEnv();
 		if(env!=null){
-			try {if(temperature!=null) setTemperature(env.getTemperature(), ElementsCompUI.REQUIRED);	} 
+			try {if(temperature!=null) setTemperature(env.getTemperature(), REQUIRED);	} 
 			catch (NullPointerException e) {}
-			try {if(airPressure!=null) setAirPressure(env.getAirPressure(), ElementsCompUI.REQUIRED);	} 
+			try {if(airPressure!=null) setAirPressure(env.getAirPressure(), REQUIRED);	} 
 			catch (NullPointerException e) {}
-			try {if(humidity!=null) setHumidity(env.getHumidity(), ElementsCompUI.REQUIRED);	} 
+			try {if(humidity!=null) setHumidity(env.getHumidity(), REQUIRED);	} 
 			catch (NullPointerException e) {}
-			try {if(co2Percent!=null) setCo2Percent(env.getCO2Percent(), ElementsCompUI.REQUIRED);	} 
+			try {if(co2Percent!=null) setCo2Percent(env.getCO2Percent(), REQUIRED);	} 
 			catch (NullPointerException e) {}
 		}
 

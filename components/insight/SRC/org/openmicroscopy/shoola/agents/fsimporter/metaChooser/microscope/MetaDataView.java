@@ -8,9 +8,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
+
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -22,11 +24,11 @@ import loci.formats.services.OMEXMLService;
 import ome.xml.meta.IMetadata;
 import ome.xml.model.OME;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
 import org.slf4j.LoggerFactory;
 
 /**

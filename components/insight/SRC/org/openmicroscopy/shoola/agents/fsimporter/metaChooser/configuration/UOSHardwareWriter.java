@@ -13,16 +13,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import ome.xml.model.Detector;
-import ome.xml.model.Filter;
-import ome.xml.model.LightSource;
-import ome.xml.model.Objective;
 
 public class UOSHardwareWriter {
 
@@ -31,10 +26,10 @@ public class UOSHardwareWriter {
 	
 	public static final String NS_2016_06_07="uos.de/omero/metadata/cellnanos/2015-06-07";
 
-	private List<List<TagData>> objectiveList;
-	private List<List<TagData>> detectorList;
-	private List<List<TagData>> lightSrcList;
-	private List<List<TagData>> lightPathFilterList;
+	private List<List<TagConfiguration>> objectiveList;
+	private List<List<TagConfiguration>> detectorList;
+	private List<List<TagConfiguration>> lightSrcList;
+	private List<List<TagConfiguration>> lightPathFilterList;
 	private String micName;
 	
 	
@@ -111,26 +106,26 @@ public class UOSHardwareWriter {
 	 * @param doc
 	 * @param objs
 	 */
-	public void addComponents(Document doc, Element objs,List<List<TagData>> compList,String name) {
+	public void addComponents(Document doc, Element objs,List<List<TagConfiguration>> compList,String name) {
 		if(compList==null){
 			return;
 		}
-		for(List<TagData> list : compList){
+		for(List<TagConfiguration> list : compList){
 			Element obj=doc.createElement(name);
-			for(TagData tag : list){
+			for(TagConfiguration tag : list){
 				obj.appendChild(tagToXML(doc,tag));
 			}
 			objs.appendChild(obj);
 		}
 	}
 
-	private Node tagToXML(Document doc, TagData tag) 
+	private Node tagToXML(Document doc, TagConfiguration tag) 
 	{
 		Element modTag=doc.createElement("Tag");
-		modTag.setAttribute(ModuleConfiguration.TAG_NAME, tag.getTagName());
-		modTag.setAttribute(ModuleConfiguration.TAG_VALUE, tag.getTagValue());
-		if(tag.getTagUnit()!=null){
-			modTag.setAttribute(ModuleConfiguration.TAG_UNIT, tag.getTagUnit().getSymbol());
+		modTag.setAttribute(ModuleConfiguration.TAG_NAME, tag.getName());
+		modTag.setAttribute(ModuleConfiguration.TAG_VALUE, tag.getValue());
+		if(tag.getUnit()!=null){
+			modTag.setAttribute(ModuleConfiguration.TAG_UNIT, tag.getUnitSymbol());
 		}
 		return modTag;
 	}
@@ -139,19 +134,19 @@ public class UOSHardwareWriter {
 		micName=name;
 	}
 
-	public void setObjectives(List<List<TagData>> listObj) {
+	public void setObjectives(List<List<TagConfiguration>> listObj) {
 		objectiveList=listObj;		
 	}
 
-	public void setDetectors(List<List<TagData>> listDet) {
+	public void setDetectors(List<List<TagConfiguration>> listDet) {
 		detectorList=listDet;
 	}
 
-	public void setLightSource(List<List<TagData>> listLS) {
+	public void setLightSource(List<List<TagConfiguration>> listLS) {
 		lightSrcList=listLS;		
 	}
 
-	public void setLightPath(List<List<TagData>> listLP) {
+	public void setLightPath(List<List<TagConfiguration>> listLP) {
 		lightPathFilterList=listLP;		
 	}
 

@@ -9,7 +9,6 @@ import javax.swing.JLabel;
 import ome.xml.model.Arc;
 import ome.xml.model.enums.ArcType;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
@@ -47,13 +46,13 @@ public class LS_ArcViewer extends LightSourceSubViewer
 		if(data==null)
 			return;
 		Arc lightSrc=(Arc) data.getLightSource(index);
-		try{ setManufact(((Arc)lightSrc).getManufacturer(), ElementsCompUI.REQUIRED);
+		try{ setManufact(((Arc)lightSrc).getManufacturer(),REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setModel(((Arc)lightSrc).getModel(), ElementsCompUI.REQUIRED);
+		try{ setModel(((Arc)lightSrc).getModel(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setPower(((Arc)lightSrc).getPower(), ElementsCompUI.REQUIRED);
+		try{ setPower(((Arc)lightSrc).getPower(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setType(((Arc)lightSrc).getType(), ElementsCompUI.REQUIRED);
+		try{ setType(((Arc)lightSrc).getType(), REQUIRED);
 		} catch (NullPointerException e) { }		
 	}
 

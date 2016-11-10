@@ -3,8 +3,10 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Power;
@@ -30,8 +32,9 @@ import ome.xml.model.enums.Pulse;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.LightSourceSubViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -113,6 +116,7 @@ public class UOSHardwareReader
 	public UOSHardwareReader(File file)
 	{
 		hasRead=false;
+		
 		if(file==null || !file.exists()){
 			return;
 		}
@@ -555,17 +559,17 @@ public class UOSHardwareReader
 				case TagNames.F_TYPE:
 					switch(lightSrc.getClass().getSimpleName()){
 					case "Laser":
-						LaserType l=LightSourceCompUI.parseLaserType(val);
+						LaserType l=LightSourceSubViewer.parseLaserType(val);
 						if(l!=null)
 							((Laser)lightSrc).setType(l);
 						break;
 					case "Arc":
-						ArcType a=LightSourceCompUI.parseArcType(val);
+						ArcType a=LightSourceSubViewer.parseArcType(val);
 						if(a!=null)
 							((Arc)lightSrc).setType(a);
 						break;
 					case "Filament":
-						FilamentType value=LightSourceCompUI.parseFilamentType(val);
+						FilamentType value=LightSourceSubViewer.parseFilamentType(val);
 						if(value!=null)
 							((Filament)lightSrc).setType(value);
 						break;
@@ -575,22 +579,22 @@ public class UOSHardwareReader
 					}
 					break;
 				case TagNames.POWER:
-					Power p = LightSourceCompUI.parsePower(val, unit);
+					Power p = LightSourceSubViewer.parsePower(val, unit);
 					lightSrc.setPower(p);
 					break;
 				case TagNames.MEDIUM:
-					LaserMedium lm=LightSourceCompUI.parseMedium(val);
+					LaserMedium lm=LightSourceSubViewer.parseMedium(val);
 					((Laser)lightSrc).setLaserMedium(lm);
 					break;
 				case TagNames.FREQMUL:
-					PositiveInteger pi=LightSourceCompUI.parseToPositiveInt(val);
+					PositiveInteger pi=LightSourceSubViewer.parseToPositiveInt(val);
 					((Laser)lightSrc).setFrequencyMultiplication(pi);
 					break;
 				case TagNames.TUNABLE:
 					((Laser)lightSrc).setTuneable(BooleanUtils.toBoolean(val));
 					break;
 				case TagNames.PULSE:
-					Pulse pu=LightSourceCompUI.parsePulse(val);
+					Pulse pu=LightSourceSubViewer.parsePulse(val);
 					((Laser)lightSrc).setPulse(pu);
 					break;
 				case TagNames.POCKELCELL:
@@ -599,14 +603,14 @@ public class UOSHardwareReader
 				case TagNames.REPRATE:
 					Frequency f=null;
 					if(unit!=null )
-						f=LightSourceCompUI.parseFrequency(val, unit);
+						f=LightSourceSubViewer.parseFrequency(val, unit);
 					((Laser)lightSrc).setRepetitionRate(f);
 					break;
 				case TagNames.PUMP:
 					//						TODO: ((Laser)lightSrc).linkPump(o);
 					break;
 				case TagNames.WAVELENGTH:
-					Length le = ElementsCompUI.parseToLength(val, unit);
+					Length le = ModuleViewer.parseToLength(val, unit,true);
 					((Laser)lightSrc).setWavelength(le);
 					break;
 				case TagNames.MAP:

@@ -1,4 +1,4 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
 import java.io.File;
 

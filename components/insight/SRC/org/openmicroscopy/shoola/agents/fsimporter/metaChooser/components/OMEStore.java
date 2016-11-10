@@ -5,8 +5,6 @@ import java.util.List;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
@@ -184,9 +182,9 @@ public class OMEStore
 		LOGGER.info("[SAVE] -- save Experiment data to mapAnnotation");
 		CellNanOsAnnotation cAnnot=getCellNanOsAnnotation();
 		MapAnnotation mapAnnot=cAnnot.map;
-		addMapPair(cAnnot.valueList, ExperimentCompUI.EXPERIMENT_DESC_MAPLABEL,e.getDescription());
+		addMapPair(cAnnot.valueList, ExperimentModel.EXPERIMENT_DESC_MAPLABEL,e.getDescription());
 		if(e.getType()!=null)
-			addMapPair(cAnnot.valueList,ExperimentCompUI.EXPERIMENT_TYPE_MAPLABEL,e.getType().getValue());
+			addMapPair(cAnnot.valueList,ExperimentModel.EXPERIMENT_TYPE_MAPLABEL,e.getType().getValue());
 		mapAnnot.setValue(new MapPairs(cAnnot.valueList));
 
 		cAnnot.save(mapAnnot);
@@ -246,7 +244,7 @@ public class OMEStore
 		CellNanOsAnnotation cAnnot=getCellNanOsAnnotation();
 		MapAnnotation mapAnnot=cAnnot.map;
 
-		addMapPair(cAnnot.valueList, ExperimentCompUI.PROJPARTNER_MAPLABEL,p.getLastName());
+		addMapPair(cAnnot.valueList, ExperimentModel.PROJPARTNER_MAPLABEL,p.getLastName());
 		mapAnnot.setValue(new MapPairs(cAnnot.valueList));
 
 		cAnnot.save(mapAnnot);
@@ -750,7 +748,7 @@ public class OMEStore
 				pixels.addChannel(c);
 			}else{
 				Channel omeCH=pixels.getChannel(idx);
-				ChannelCompUI.mergeData(c, omeCH);
+				mergeData(c, omeCH);
 				pixels.setChannel(idx, omeCH);
 					LOGGER.info("[SAVE] -- save CHANNEL "+c.getID()+" at "+idx+" for image ");
 				
@@ -832,7 +830,34 @@ public class OMEStore
 	}
 
 	
-	
+	private void mergeData(Channel in, Channel channelOME)
+	{
+		if(channelOME==null ){
+			if(in==null){
+				LOGGER.error("failed to merge CHANNEL data");
+			}else{
+				channelOME=in;
+			}
+			return;
+		}else if(in==null){
+			LOGGER.info("nothing to merge CHANNEL data");
+			return;
+		}
+		
+		channelOME.setName(in.getName());
+		channelOME.setColor(in.getColor());
+		channelOME.setFluor(in.getFluor());
+		channelOME.setIlluminationType(in.getIlluminationType());
+		channelOME.setExcitationWavelength(in.getExcitationWavelength());
+		channelOME.setEmissionWavelength(in.getEmissionWavelength());
+		channelOME.setAcquisitionMode(in.getAcquisitionMode());
+		channelOME.setContrastMethod(in.getContrastMethod());
+		channelOME.setNDFilter(in.getNDFilter());
+		
+		channelOME.setDetectorSettings(in.getDetectorSettings());
+		channelOME.setLightSourceSettings(in.getLightSourceSettings());
+		channelOME.setLightPath(in.getLightPath());
+	}
 
 
 }

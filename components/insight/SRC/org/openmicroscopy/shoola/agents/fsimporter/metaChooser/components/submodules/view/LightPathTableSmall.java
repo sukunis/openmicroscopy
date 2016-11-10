@@ -1,11 +1,15 @@
-package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
+package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.FilterCompUI;
 import org.slf4j.LoggerFactory;
 
 public class LightPathTableSmall extends JTable

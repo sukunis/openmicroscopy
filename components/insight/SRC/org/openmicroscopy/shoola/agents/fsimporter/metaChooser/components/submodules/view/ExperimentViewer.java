@@ -15,7 +15,6 @@ import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.ExperimentType;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -228,17 +227,17 @@ public class ExperimentViewer extends ModuleViewer{
 	{
 		if(data!=null) {
 			try{ 
-				setDescription(data.getExperiment().getDescription(), ElementsCompUI.REQUIRED);}
+				setDescription(data.getExperiment().getDescription(), REQUIRED);}
 			catch(NullPointerException e){}
 			try{ 
-				setType(data.getExperiment().getType(), ElementsCompUI.REQUIRED);
+				setType(data.getExperiment().getType(), REQUIRED);
 			}catch(NullPointerException e){}
 			try{ 
-				setProjectPartner(data.getProjectPartnerName(), ElementsCompUI.REQUIRED);
+				setProjectPartner(data.getProjectPartnerName(), REQUIRED);
 			}catch(NullPointerException e){}
 			try{
-				//			setName(expContainer.getExperimenter(),ElementsCompUI.REQUIRED);
-				setName(data.getExperimenter(),ElementsCompUI.REQUIRED);
+				//			setName(expContainer.getExperimenter(),REQUIRED);
+				setName(data.getExperimenter(),REQUIRED);
 			}catch(NullPointerException e){}
 			try{
 				setGroupName(data.getGroupName(), OPTIONAL);

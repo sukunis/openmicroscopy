@@ -19,7 +19,6 @@ import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.Color;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ChannelModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -240,27 +239,27 @@ private void setGUIData()
 	
 	if(channel!=null){
 		//Channel data
-		try{ setName(channel.getName(),ElementsCompUI.REQUIRED);
+		try{ setName(channel.getName(),REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setColor(channel.getColor(), ElementsCompUI.REQUIRED);
+		try{ setColor(channel.getColor(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setFluorophore(channel.getFluor(), ElementsCompUI.REQUIRED);
+		try{ setFluorophore(channel.getFluor(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setIllumType(channel.getIlluminationType(), ElementsCompUI.REQUIRED);
+		try{ setIllumType(channel.getIlluminationType(), REQUIRED);
 		} catch (NullPointerException e) { }
 		//TODO exposure time
-		try{ setExposureTime(null, ElementsCompUI.REQUIRED);
+		try{ setExposureTime(null, REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setExcitWavelength(channel.getExcitationWavelength(), ElementsCompUI.REQUIRED);
+		try{ setExcitWavelength(channel.getExcitationWavelength(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setEmissionWavelength(channel.getEmissionWavelength(), ElementsCompUI.REQUIRED);
+		try{ setEmissionWavelength(channel.getEmissionWavelength(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setImagingMode(channel.getAcquisitionMode(), ElementsCompUI.REQUIRED);
-		setIlluminationMode(channel.getAcquisitionMode(), ElementsCompUI.REQUIRED);
+		try{ setImagingMode(channel.getAcquisitionMode(), REQUIRED);
+		setIlluminationMode(channel.getAcquisitionMode(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setContrastMethod(channel.getContrastMethod(), ElementsCompUI.REQUIRED);
+		try{ setContrastMethod(channel.getContrastMethod(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setNDFilter(channel.getNDFilter(), ElementsCompUI.REQUIRED);
+		try{ setNDFilter(channel.getNDFilter(), REQUIRED);
 		} catch (NullPointerException e) { }
 		try {setPinholeSize(channel.getPinholeSize(), REQUIRED);
 		} catch (NullPointerException e) {}
