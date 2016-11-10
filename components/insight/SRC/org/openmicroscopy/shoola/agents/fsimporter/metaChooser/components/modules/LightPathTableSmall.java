@@ -1,34 +1,18 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
-import ome.xml.model.enums.FilterType;
-
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathTable.LightPathTableModel;
+import org.slf4j.LoggerFactory;
 
 public class LightPathTableSmall extends JTable
 {
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(LightPathTableSmall.class);
     
 //	private JPopupMenu popupMenu;
     private List<Object> lightPathMembers;
@@ -55,7 +39,7 @@ public class LightPathTableSmall extends JTable
 					((FilterCompUI) o).clearDataValues();
 				}
 			} catch (Exception e) {
-				LOGGER.severe("Filter is not a valid element!!!");
+				LOGGER.error("Filter is not a valid element!!!");
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

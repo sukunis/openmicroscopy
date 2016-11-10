@@ -59,10 +59,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneSliderCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
@@ -74,16 +71,19 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ImageViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.LightPathViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.LightSourceViewer;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ObjectiveViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.SampleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
-import org.openmicroscopy.shoola.util.ui.ClosableTabbedPaneComponent;
 //import org.slf4j.LoggerFactory;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class MetaDataUI extends JPanel
 {
 	public static enum GUIPlaceholder
@@ -333,12 +333,6 @@ public class MetaDataUI extends JPanel
 	{
 		//read input data
 		save();
-//		System.out.println("\t...Model::Objective: "+(model.getObjectiveModel().getObjective()!=null?"1":"0"));
-//		System.out.println("\t...Model::Channels: "+model.getNumberOfChannels());
-//		System.out.println("\t...Model::Detector: "+model.getNumberOfDetectors());
-//		System.out.println("\t...Model::LightSrc: "+model.getNumberOfLightSrc());
-//		System.out.println("\t...Model::LightPath: "+model.getNumberOfLightPath());
-		
 		return model;
 	}
 	
@@ -353,7 +347,6 @@ public class MetaDataUI extends JPanel
 		
 		if(model!=null){
 			addExperimentData(parentModel.getExperimentModel(), true);
-//			addProjectPartner(m.getProjectPartner(),true);
 			
 			addImageData(parentModel.getImageData(),true);
 			addObjectiveData(parentModel.getObjectiveData(),parentModel.getObjectiveSettings(),true);
@@ -488,7 +481,6 @@ public class MetaDataUI extends JPanel
 				
 				if(image!=null){
 					//TODO: jedes image hat sein eigenes Model
-//					model.setImageProp(imageIndex, image.getPixels().sizeOfChannelList());
 					model.setImageOMEData(image);
 					
 					List<Objective> objectives=null;
@@ -502,7 +494,6 @@ public class MetaDataUI extends JPanel
 					//TODO: no referenced instrument? -> createDummy
 					Instrument instrument=image.getLinkedInstrument();
 					if(instrument==null){
-//						LOGGER.warning("[DATA] NO INSTRUMENTS available, create new");
 						LOGGER.warn("[DATA] NO INSTRUMENTS available, create new");
 						System.out.println("[DATA] NO INSTRUMENTS available, create new");
 						model.createAndLinkNewInstrument(ome); 
@@ -701,11 +692,6 @@ public class MetaDataUI extends JPanel
 				}else{
 					model.addData(lp,false,i);
 				}
-
-//				model.addFilterToList(customSett.getMicLightPathFilterList(),false);
-//				model.addFilterToList(filters,true);
-//				model.addDichroicToList(dichroics,true);
-
 			}else{
 				LOGGER.info("[DATA] -- LIGHTPATH  data not available");
 			}
@@ -751,12 +737,6 @@ public class MetaDataUI extends JPanel
 						model.addData(l,false,i);
 						model.addData(ls,false,i);
 					}
-
-				
-				// fill selection list
-//				model.addToLightSrcList(customSett.getMicLightSrcList(),false);
-//				model.addToLightSrcList(lightSources,true);
-
 			}
 			else{
 				LOGGER.info("[DATA] -- LIGHTSOURCE  data not available");
@@ -802,10 +782,6 @@ public class MetaDataUI extends JPanel
 					model.addData(d,false,i);
 					model.addData(ds,false,i);
 				}
-
-			
-//				model.addToDetectorList(customSett.getMicDetectorList(),false);
-//				model.addToDetectorList(detectors,true);
 			}else{
 				LOGGER.info("[DATA] -- DETECTOR data not available");
 			}
@@ -836,25 +812,6 @@ public class MetaDataUI extends JPanel
 		}
 	}
 
-//	private Sample getSampleAnnotation(Image image,StructuredAnnotations annot) 
-//	{
-//		List<Annotation> list=image.copyLinkedAnnotationList();
-//		String sampleID=null;
-//		for(int i=0; i<list.size(); i++){
-//			if(image.getLinkedAnnotation(i).getID().contains(SampleAnnotationXML.SAMPLE_ANNOT_ID))
-//				sampleID= image.getLinkedAnnotation(i).getID();
-//		}
-//		if(sampleID!=null){
-//			for(int i=0; i<annot.sizeOfXMLAnnotationList();i++){
-//				if(sampleID.equals(annot.getXMLAnnotation(i).getID())){
-//					SampleAnnotationXML s=new SampleAnnotationXML();
-//					return s.getSample(annot.getXMLAnnotation(i).getValue());
-//				}
-//			}
-//		}
-//		return null;
-//	}
-	
 	/**
 	 * Read sample data from *.ome file. Sample data should be stored as MapAnnotation of id <MAP_ANNOT_ID>
 	 * and linked o current image.
@@ -927,10 +884,6 @@ public class MetaDataUI extends JPanel
 				model.addData(o, false); 
 				model.addData(os,false); 
 			}
-					
-//			model.addToObjList(customSett.getMicObjList(),false);
-//			model.addToObjList(objList,true);
-			
 		}
 		
 	}
@@ -965,17 +918,10 @@ public class MetaDataUI extends JPanel
 		showChannelData();
 		showSampleData();
 		
-//		revalidateTableLayout();
 		revalidate();
 		repaint();
 	}
 
-	// hide empty col or empty row
-//	private void revalidateTableLayout() 
-//	{
-//		TableLayout layout=(TableLayout) getLayout();
-//		layout.
-//	}
 
 	private void showExperimentData() {
 		if(initExperimentUI){
@@ -1141,8 +1087,6 @@ public class MetaDataUI extends JPanel
 			lightPathViewer=new LightPathViewer(model.getLightPathModel(),customSett.getLightPathConf(),
 					index,model.getHardwareList_LightPath());
 			lightPathPane.add(control.createPropPane(lightPathViewer, "LightPath", "for "+name));
-//			lightPathPane.revalidate();
-//			lightPathPane.repaint();
 		}
 	}
 

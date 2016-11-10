@@ -1,13 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format;
 
-import java.util.logging.Logger;
-
 import loci.formats.MetadataTools;
-import ome.xml.model.primitives.Timestamp;
-
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -28,7 +21,6 @@ public class ObservedSample
 {
 	
 	/** Logger for this class. */
-//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
 	private static final org.slf4j.Logger LOGGER =
     	    LoggerFactory.getLogger(ObservedSample.class);
 	//--Fields

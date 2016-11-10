@@ -3,28 +3,19 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Cursor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.JComponent;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
-import jdk.internal.org.xml.sax.SAXParseException;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
-import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -32,14 +23,10 @@ import ome.xml.meta.IMetadata;
 import ome.xml.model.OME;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.ImportUserData;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -47,6 +34,8 @@ import org.slf4j.LoggerFactory;
  * Series image file: holds one metadataui - tab for every series image of the selected file. 
  * If not a series file, than view is  an instance of jpanel.
  * 
+ * 
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01  
  * @author Kunis
  *
  */
@@ -258,16 +247,7 @@ public class MetaDataView extends JPanel
 			loadParentData(parentData,singleView);
 		}
 		
-		// set saved data for this directory
-//		if(dirData!=null){
-//			try {
-//				singleView.addData(dirData);
-//			} catch (Exception e) {
-//				LOGGER.warn("[DATA] -- Can't add metadata from dir model "+name);
-//				System.out.println("[DATA] -- Can't add metadata from dir model "+name);
-//				e.printStackTrace();
-//			}
-//		}
+
 
 		add(singleView,BorderLayout.CENTER);
 		revalidate();

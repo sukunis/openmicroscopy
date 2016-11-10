@@ -8,9 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -22,21 +19,14 @@ import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-
 import ome.xml.model.Detector;
-import ome.xml.model.Objective;
-
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor.ObjectiveTable;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor.ObjectiveTableModel;
-
-import sun.nio.ch.SelChImpl;
+import org.slf4j.LoggerFactory;
 
 public class DetectorEditor extends JDialog implements ActionListener 
 {
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(DetectorEditor.class);
     
     private List<Detector> availableDetectors;
     private DetectorTable detectorTable;
@@ -80,7 +70,7 @@ public class DetectorEditor extends JDialog implements ActionListener
 						if(row!=-1)
 							selectDetector=availableDetectors.get(row);
 					} catch (Exception e1) {
-						LOGGER.severe("can't read detector from table");
+						LOGGER.error("can't read detector from table");
 						e1.printStackTrace();
 					}
 				
@@ -232,31 +222,31 @@ public class DetectorEditor extends JDialog implements ActionListener
 			if(e!=null){
 				try{o[0]=e.getID()!=null ? e.getID() : "";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse Detector::id");
+					LOGGER.error("[EDITOR] Can't parse Detector::id");
 				}
 				try{o[1]=e.getModel()!=null ? e.getModel() : "";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse Detector::model");
+					LOGGER.error("[EDITOR] Can't parse Detector::model");
 				}
 				try{o[2]=e.getManufacturer()!=null ? e.getManufacturer() : "";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse Detector::manufac");
+					LOGGER.error("[EDITOR] Can't parse Detector::manufac");
 				}
 				try{o[3]=e.getType()!=null ? e.getType().toString() : "";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse Detector::type");
+					LOGGER.error("[EDITOR] Can't parse Detector::type");
 				}
 				try{o[4]=e.getZoom()!=null ? e.getZoom().toString() : "";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse Detector::zoom");
+					LOGGER.error("[EDITOR] Can't parse Detector::zoom");
 				}
 				try{o[5]=e.getAmplificationGain()!=null ? e.getAmplificationGain().toString():"";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse Detector::amplGain");
+					LOGGER.error("[EDITOR] Can't parse Detector::amplGain");
 				}
 				try{o[6]=e.getGain()!=null ? e.getGain().toString():"";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse Detector::gain");
+					LOGGER.error("[EDITOR] Can't parse Detector::gain");
 				}
 				try{
 					String val="";
@@ -265,7 +255,7 @@ public class DetectorEditor extends JDialog implements ActionListener
 					}
 					o[7]=val;
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse Detector::voltage");
+					LOGGER.error("[EDITOR] Can't parse Detector::voltage");
 					err.printStackTrace();
 				}
 				

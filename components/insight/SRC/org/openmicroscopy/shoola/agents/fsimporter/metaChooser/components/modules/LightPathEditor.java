@@ -26,29 +26,24 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
 import javax.swing.Box;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor.ObjectiveTableModel;
+import org.slf4j.LoggerFactory;
 
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
 import ome.xml.model.LightPath;
-import ome.xml.model.Objective;
 import ome.xml.model.enums.FilterType;
 
 import java.awt.Font;
-
-import loci.formats.MetadataTools;
 
 public class LightPathEditor extends JDialog implements ActionListener 
 {
 
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(LightPathEditor.class);
     
     /**output: selected filter for lightPath */
 	private List<Object> lightPathList;
@@ -98,7 +93,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 					try {
 						createLightPathListFromJTable();
 					} catch (Exception e1) {
-						LOGGER.severe("CAN'T READ LIGHTPATH FROM TABLE");
+						LOGGER.error("CAN'T READ LIGHTPATH FROM TABLE");
 						e1.printStackTrace();
 					}
 				

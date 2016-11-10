@@ -3,9 +3,6 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
-
 /**
  * Model for a image could be a single model or (for series data) a list of models
  * @author Kunis

@@ -1,17 +1,12 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
 import ome.xml.model.Detector;
 import ome.xml.model.Filter;
-import ome.xml.model.LightPath;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;

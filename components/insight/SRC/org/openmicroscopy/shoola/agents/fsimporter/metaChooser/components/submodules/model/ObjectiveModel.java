@@ -1,6 +1,5 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
@@ -17,6 +16,12 @@ import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.Medium;
 
+
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class ObjectiveModel 
 {
 	 private static final org.slf4j.Logger LOGGER =

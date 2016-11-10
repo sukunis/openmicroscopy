@@ -22,29 +22,24 @@ import javax.swing.border.TitledBorder;
 
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
-import ome.xml.model.Arc;
-import ome.xml.model.Filament;
-import ome.xml.model.GenericExcitationSource;
-import ome.xml.model.Laser;
-import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
-import ome.xml.model.Objective;
-import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.primitives.PercentFraction;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceEditor;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSrcSubCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class LightSourceViewer extends ModuleViewer{
 
 	private static final org.slf4j.Logger LOGGER =

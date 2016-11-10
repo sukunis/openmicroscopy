@@ -7,7 +7,6 @@ import loci.formats.FormatException;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterListModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +20,11 @@ import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.ExperimentType;
 import ome.xml.model.enums.handlers.ExperimentTypeEnumHandler;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class ExperimentModel {
 	
 	 private static final org.slf4j.Logger LOGGER =

@@ -6,9 +6,6 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import ome.xml.model.Arc;
-import ome.xml.model.Filament;
-import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.LightEmittingDiode;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
@@ -16,6 +13,11 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class LS_LEDViewer extends LightSourceSubViewer 
 {
 	public LS_LEDViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)

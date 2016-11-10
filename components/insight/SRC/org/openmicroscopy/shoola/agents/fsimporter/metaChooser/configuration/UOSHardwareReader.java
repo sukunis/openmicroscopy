@@ -1,35 +1,26 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import ome.units.UNITS;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Power;
 import ome.units.unit.Unit;
 import ome.xml.model.Arc;
 import ome.xml.model.Detector;
-import ome.xml.model.Dichroic;
 import ome.xml.model.Filament;
 import ome.xml.model.Filter;
 import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.Laser;
 import ome.xml.model.LightEmittingDiode;
-import ome.xml.model.LightPath;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
 import ome.xml.model.enums.ArcType;
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
-import ome.xml.model.enums.Enumeration;
 import ome.xml.model.enums.FilamentType;
 import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.Immersion;
@@ -39,19 +30,15 @@ import ome.xml.model.enums.Pulse;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * <Hardware>
@@ -109,8 +96,8 @@ public class UOSHardwareReader
 	
 	/** Logger for this class. */
 //    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-	 private static final org.slf4j.Logger LOGGER =
-	    	    LoggerFactory.getLogger(UOSHardwareReader.class);
+	private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(UOSHardwareReader.class);
     
     private List<Objective> objectiveList;
     private List<Detector> detectorList;

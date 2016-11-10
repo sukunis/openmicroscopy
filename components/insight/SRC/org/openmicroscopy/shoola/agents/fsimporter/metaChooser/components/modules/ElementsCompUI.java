@@ -7,8 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
-
 import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -16,11 +14,8 @@ import javax.swing.JPanel;
 
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
-import ome.xml.model.AbstractOMEModelObject;
 import ome.xml.model.primitives.PositiveInteger;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 

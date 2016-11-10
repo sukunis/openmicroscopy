@@ -17,12 +17,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import ome.units.quantity.ElectricPotential;
 import ome.units.unit.Unit;
-import ome.xml.model.Arc;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.enums.Binning;
@@ -38,6 +34,11 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfigura
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class DetectorViewer extends ModuleViewer{
 
 	private static final org.slf4j.Logger LOGGER =

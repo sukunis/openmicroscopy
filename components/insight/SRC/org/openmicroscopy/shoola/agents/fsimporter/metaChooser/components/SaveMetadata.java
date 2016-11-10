@@ -2,16 +2,10 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components;
 
 import java.io.File;
 import java.util.List;
-import java.util.logging.Logger;
-
 import org.apache.commons.io.FilenameUtils;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExperimenterListModel;
 import org.slf4j.LoggerFactory;
 
 import loci.formats.meta.IMetadata;
@@ -20,7 +14,6 @@ import ome.xml.model.Channel;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
-import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
 import ome.xml.model.FileAnnotation;
 import ome.xml.model.Filter;

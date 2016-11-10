@@ -7,22 +7,18 @@ import ome.units.quantity.Time;
 import ome.units.unit.Unit;
 import ome.xml.model.Annotation;
 import ome.xml.model.Dataset;
-import ome.xml.model.Detector;
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
 import ome.xml.model.ExperimenterGroup;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Instrument;
-import ome.xml.model.Laser;
-import ome.xml.model.LightSource;
 import ome.xml.model.MicrobeamManipulation;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
 import ome.xml.model.ROI;
 import ome.xml.model.StageLabel;
 import ome.xml.model.WellSample;
-import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -32,6 +28,11 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Tag
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class ImageModel 
 {
 	 private static final org.slf4j.Logger LOGGER =

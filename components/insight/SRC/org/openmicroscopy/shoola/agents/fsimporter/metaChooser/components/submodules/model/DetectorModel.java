@@ -4,25 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ome.units.quantity.ElectricPotential;
-import ome.units.quantity.Length;
 import ome.units.unit.Unit;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
-import ome.xml.model.LightSource;
 import ome.xml.model.enums.Binning;
-import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
-import ome.xml.model.enums.EnumerationException;
-import ome.xml.model.enums.Immersion;
-import ome.xml.model.enums.Medium;
-
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class DetectorModel 
 {
 	 private static final org.slf4j.Logger LOGGER =

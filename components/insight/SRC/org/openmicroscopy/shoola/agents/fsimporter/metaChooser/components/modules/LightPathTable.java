@@ -5,9 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.logging.Logger;
-
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JMenu;
@@ -18,7 +15,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+import org.slf4j.LoggerFactory;
 
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
@@ -28,7 +25,8 @@ public class LightPathTable extends JTable
 {
 	
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(LightPathTable.class);
     
 	private JPopupMenu popupMenu;
 	
@@ -107,7 +105,7 @@ public class LightPathTable extends JTable
 			//insert before first selection
 			model.insertRow(rows[0], o);
 		}catch(Exception e){
-			LOGGER.severe("Can't insert filter into LIGHTPATH");
+			LOGGER.error("Can't insert filter into LIGHTPATH");
 		}
 	}
 	
@@ -122,7 +120,7 @@ public class LightPathTable extends JTable
 					((FilterCompUI) o).clearDataValues();
 				}
 			} catch (Exception e) {
-				LOGGER.severe("Filter is not a valid element!!!");
+				LOGGER.error("Filter is not a valid element!!!");
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

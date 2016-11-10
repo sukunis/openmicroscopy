@@ -6,9 +6,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.logging.Logger;
-
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -32,7 +29,8 @@ import javax.swing.table.DefaultTableModel;
 
 
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
+
+import org.slf4j.LoggerFactory;
 
 import ome.xml.model.Arc;
 import ome.xml.model.Filament;
@@ -44,7 +42,8 @@ import ome.xml.model.LightSource;
 public class LightSourceEditor extends JDialog
 {
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(LightSourceEditor.class);
 	
 	private LightSource lightSrc;
 	
@@ -91,7 +90,7 @@ public class LightSourceEditor extends JDialog
 						}else
 							lightSrc=null;
 					} catch (Exception e1) {
-						LOGGER.severe("can't read LIGHTPATH from table");
+						LOGGER.error("can't read LIGHTPATH from table");
 						e1.printStackTrace();
 					}
 				

@@ -8,13 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,20 +21,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import ome.xml.model.Dichroic;
-import ome.xml.model.Filter;
 import ome.xml.model.Objective;
-import ome.xml.model.enums.Correction;
-import ome.xml.model.enums.FilterType;
-import ome.xml.model.enums.Immersion;
-
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathTable.LightPathTableModel;
+import org.slf4j.LoggerFactory;
 
 public class ObjectiveEditor extends JDialog implements ActionListener 
 {
 	/** Logger for this class. */
-    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	private static final org.slf4j.Logger LOGGER =
+    	    LoggerFactory.getLogger(ObjectiveEditor.class);
     
     private List<Objective> availableObjectives;
     private ObjectiveTable objectivTable;
@@ -90,7 +78,7 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 						if(row!=-1)
 							selectObjective=availableObjectives.get(row);
 					} catch (Exception e1) {
-						LOGGER.severe("can't read objective from table");
+						LOGGER.error("can't read objective from table");
 						e1.printStackTrace();
 					}
 				
@@ -243,35 +231,35 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 			if(e!=null){
 				try{o[0]=e.getID()!=null ? e.getID() : "";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse objective::id");
+					LOGGER.error("[EDITOR] Can't parse objective::id");
 				}
 				try{o[1]=e.getModel()!=null ? e.getModel() : "";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse objective::model");
+					LOGGER.error("[EDITOR] Can't parse objective::model");
 				}
 				try{o[2]=e.getManufacturer()!=null ? e.getManufacturer() : "";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse objective::manufac");
+					LOGGER.error("[EDITOR] Can't parse objective::manufac");
 				}
 				try{o[3]=e.getNominalMagnification()!=null ? e.getNominalMagnification().toString() : "";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse objective::nominalMagn");
+					LOGGER.error("[EDITOR] Can't parse objective::nominalMagn");
 				}
 				try{o[4]=e.getCalibratedMagnification()!=null ? e.getCalibratedMagnification().toString() : "";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse objective::calibrationMagn");
+					LOGGER.error("[EDITOR] Can't parse objective::calibrationMagn");
 				}
 				try{o[5]=e.getLensNA()!=null ? e.getLensNA().toString():"";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse objective::lensNA");
+					LOGGER.error("[EDITOR] Can't parse objective::lensNA");
 				}
 				try{o[6]= e.getImmersion()!=null ? e.getImmersion().getValue():"";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse objective::immersion");
+					LOGGER.error("[EDITOR] Can't parse objective::immersion");
 				}
 				try{o[7]=e.getCorrection()!=null ? e.getCorrection().getValue():"";
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse objective::correction");
+					LOGGER.error("[EDITOR] Can't parse objective::correction");
 				}
 				try{
 					String val="";
@@ -279,7 +267,7 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 						val=e.getWorkingDistance().value().toString()+e.getWorkingDistance().unit().getSymbol();
 					o[8]=val;
 				}catch(Exception err){
-					LOGGER.severe("[EDITOR] Can't parse objective::workingDist");
+					LOGGER.error("[EDITOR] Can't parse objective::workingDist");
 				}
 			}
 			return o;

@@ -2,21 +2,14 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.ObservedSample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.xml.SampleAnnotationXML;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
-
-import com.drew.metadata.Metadata;
 
 import ome.xml.model.Channel;
 import ome.xml.model.Detector;
@@ -39,9 +32,7 @@ import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
 import ome.xml.model.StructuredAnnotations;
-import ome.xml.model.XMLAnnotation;
 import loci.formats.MetadataTools;
-import loci.formats.meta.IMetadata;
 
 public class OMEStore 
 {
@@ -771,7 +762,6 @@ public class OMEStore
 	public void storeImage(Image image, int imageIndex) 
 	{
 		LOGGER.info("[SAVE] -- save IMAGE data");
-		System.out.println("# OMEStore::storeImage(): stagePos: "+(image.getStageLabel()==null?"null":"not null"));
 		ome.setImage(imageIndex, image);
 	}
 

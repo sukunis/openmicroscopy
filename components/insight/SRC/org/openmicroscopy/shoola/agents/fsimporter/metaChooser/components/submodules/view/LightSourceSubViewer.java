@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +16,6 @@ import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Power;
 import ome.units.unit.Unit;
-import ome.xml.model.LightSource;
 import ome.xml.model.MapPair;
 import ome.xml.model.enums.ArcType;
 import ome.xml.model.enums.Enumeration;
@@ -29,8 +26,6 @@ import ome.xml.model.enums.LaserType;
 import ome.xml.model.enums.Pulse;
 import ome.xml.model.primitives.PositiveInteger;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -38,6 +33,11 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfigura
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public abstract class LightSourceSubViewer extends ModuleViewer 
 {
 	protected static final org.slf4j.Logger LOGGER =

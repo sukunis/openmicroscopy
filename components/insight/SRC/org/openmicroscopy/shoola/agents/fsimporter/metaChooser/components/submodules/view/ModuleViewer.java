@@ -26,6 +26,11 @@ import ome.xml.model.primitives.PositiveInteger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public abstract class ModuleViewer extends JPanel 
 {
 	public static final boolean REQUIRED=true;

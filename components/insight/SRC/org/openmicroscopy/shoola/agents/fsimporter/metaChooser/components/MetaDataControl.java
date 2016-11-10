@@ -1,13 +1,10 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
-
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -17,21 +14,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.LayerUI;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ChannelCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.DetectorCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ExperimentCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ImageCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightPathCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.LightSourceCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ObjectiveCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.SampleCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 
 public class MetaDataControl implements PropertyChangeListener
 {
@@ -45,29 +29,7 @@ public class MetaDataControl implements PropertyChangeListener
 		this.view=view;
 	}
 
-//	public JPanel showData()
-//	{
-//		JPanel pane=new JPanel();
-//		
-//		try {
-////			if(model.initObjective())showObjectiveData();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		return pane;
-//	}
-	
-//	private void showObjectiveData() throws Exception
-//	{
-//		ObjectiveCompUI o=model.getObjectiveModul();
-//		if(o.getData()==null){
-//			o.showOptionPane();
-//		}else{
-//			o.buildComponents();
-//		}
-//	}
+
 
 	//TODO: see ImporterControl::propertyChange
 	@Override
@@ -118,22 +80,6 @@ public class MetaDataControl implements PropertyChangeListener
 	}
 
 
-
-//	public JPanel activateLightPathModul(int i, String name) 
-//	{
-//		LightPathCompUI d=null;
-//		if(i< model.getNumberOfLightPath()){
-//			d=model.getLightPathModul(i); 
-//			
-//		}else{
-//			d=new LightPathCompUI();
-//			model.addLightPath(d);
-////			d.showOptionPane();
-//		}
-//		d.buildComponents();
-//		name=name.equals("Channel") ? "":name;
-//		return createPropPane(d, "LightPath", "for Channel "+name);
-//	}
 	
 	
 	

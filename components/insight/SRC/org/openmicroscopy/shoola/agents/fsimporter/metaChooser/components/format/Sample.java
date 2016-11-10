@@ -1,16 +1,11 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
-
 import loci.formats.MetadataTools;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.UOSMetadataLogger;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -20,7 +15,6 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.MapAnnotation;
 import ome.xml.model.MapPair;
 import ome.xml.model.MapPairs;
-import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.primitives.Timestamp;
 import omero.gateway.model.MapAnnotationData;
 import omero.model.NamedValue;

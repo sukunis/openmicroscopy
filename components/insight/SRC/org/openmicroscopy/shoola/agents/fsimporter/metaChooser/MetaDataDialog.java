@@ -22,7 +22,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -37,7 +36,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
-import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
@@ -62,7 +60,6 @@ import omero.gateway.model.ProjectData;
 import omero.gateway.model.ScreenData;
 
 import org.apache.commons.io.FilenameUtils;
-import org.openmicroscopy.shoola.agents.events.treeviewer.ShowProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
@@ -70,7 +67,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileEditorUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSSpecificationEditor;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
@@ -85,6 +82,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
  * Dialog used to control and specify metadata for files to import
  * @author kunis
  * @version 1.0
@@ -1470,7 +1468,7 @@ private boolean disableItemListener;
             break;
         case CMD_SPECIFICATION:
             LOGGER.info("[GUI-ACTION] -- load specification file");
-            UOSSpecificationEditor specEditor=new UOSSpecificationEditor(hardwareDef);
+            UOSHardwareEditor specEditor=new UOSHardwareEditor(hardwareDef);
             specEditor.setVisible(true);
             
             break;

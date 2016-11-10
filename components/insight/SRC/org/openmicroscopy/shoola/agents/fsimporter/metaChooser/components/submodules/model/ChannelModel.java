@@ -6,12 +6,8 @@ import java.util.List;
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
 import ome.xml.model.Channel;
-import ome.xml.model.Detector;
-import ome.xml.model.DetectorSettings;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.ContrastMethod;
-import ome.xml.model.enums.EnumerationException;
-import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.Color;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ChannelViewer;
@@ -19,7 +15,11 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
-
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class ChannelModel 
 {
 	private static final org.slf4j.Logger LOGGER =

@@ -3,17 +3,17 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submo
 import java.util.ArrayList;
 import java.util.List;
 
-import ome.xml.model.Channel;
-import ome.xml.model.Detector;
 import ome.xml.model.Dichroic;
-import ome.xml.model.ExcitationFilterRef;
 import ome.xml.model.Filter;
 import ome.xml.model.LightPath;
-import ome.xml.model.enums.FilterType;
-
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class LightPathModel 
 {
 	private static final org.slf4j.Logger LOGGER =

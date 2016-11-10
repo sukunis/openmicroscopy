@@ -15,7 +15,6 @@ import javax.swing.JScrollPane;
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
 import ome.xml.model.LightPath;
-import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.FilterType;
 
@@ -27,9 +26,13 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Mod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util.LightPathElement;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class LightPathViewer extends ModuleViewer{
 
 	private static final org.slf4j.Logger LOGGER =
@@ -197,7 +200,7 @@ public class LightPathViewer extends ModuleViewer{
 			if(d!=null){
 				lightPathTable.appendElem(d,DICHROIC);
 			}else{
-				LOGGER.info("::ATTENTION:: can't load Dichroic element");
+				LOGGER.info("No dichroic element is given");
 			}
 
 			if(emList!=null)

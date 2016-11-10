@@ -27,7 +27,13 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfigura
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
-public class ChannelViewer extends ModuleViewer{
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
+public class ChannelViewer extends ModuleViewer
+{
 
 	private static final org.slf4j.Logger LOGGER =
     	    LoggerFactory.getLogger(ChannelViewer.class);

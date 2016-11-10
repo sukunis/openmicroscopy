@@ -12,6 +12,11 @@ import ome.units.unit.Unit;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.primitives.PercentFraction;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class ImageEnvModel 
 {
 	 private static final org.slf4j.Logger LOGGER =

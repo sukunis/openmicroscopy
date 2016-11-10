@@ -20,8 +20,6 @@ import javax.swing.border.TitledBorder;
 
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
-import ome.xml.model.Arc;
-import ome.xml.model.Filament;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.enums.Correction;
@@ -38,6 +36,11 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfigura
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Kunis
+ *
+ */
 public class ObjectiveViewer extends ModuleViewer 
 {
 	 private static final org.slf4j.Logger LOGGER =
