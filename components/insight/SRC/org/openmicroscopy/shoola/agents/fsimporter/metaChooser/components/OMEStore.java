@@ -201,16 +201,21 @@ public class OMEStore
 		LOGGER.info("[SAVE] -- save Sample data to mapAnnotation");
 		CellNanOsAnnotation cAnnot=getCellNanOsAnnotation();
 		
-		
-		addMapPair(cAnnot.valueList, Sample.PREP_DATE_MAPLABEL,s.getDateAsString());
-		addMapPair(cAnnot.valueList,Sample.PREP_DESCRIPTION_MAPLABEL,s.getPrepDescription());
-		addMapPair(cAnnot.valueList,Sample.RAW_CODE_MAPLABEL,s.getRawMaterialCode());
-		addMapPair(cAnnot.valueList,Sample.RAW_DESC_MAPLABEL,s.getRawMaterialDesc());
+		if(s.getDateAsString()!=null && !s.getDateAsString().equals(""))
+			addMapPair(cAnnot.valueList, Sample.PREP_DATE_MAPLABEL,s.getDateAsString());
+		if(s.getPrepDescription()!=null && !s.getPrepDescription().equals(""))
+			addMapPair(cAnnot.valueList,Sample.PREP_DESCRIPTION_MAPLABEL,s.getPrepDescription());
+		if(s.getRawMaterialCode()!=null && !s.getRawMaterialCode().equals(""))
+			addMapPair(cAnnot.valueList,Sample.RAW_CODE_MAPLABEL,s.getRawMaterialCode());
+		if(s.getRawMaterialDesc()!=null && !s.getRawMaterialDesc().equals(""))
+			addMapPair(cAnnot.valueList,Sample.RAW_DESC_MAPLABEL,s.getRawMaterialDesc());
 		
 		GridBox gb=s.getGridBox();
 		if(gb!=null){
-			addMapPair(cAnnot.valueList,GridBox.GRID_NR_MAPLABEL,gb.getNr());
-			addMapPair(cAnnot.valueList,GridBox.GRID_TYPE_MAPLABEL,gb.getType());
+			if(gb.getNr()!=null && !gb.getNr().equals(""))
+				addMapPair(cAnnot.valueList,GridBox.GRID_NR_MAPLABEL,gb.getNr());
+			if(gb.getType()!=null && !gb.getType().equals(""))
+				addMapPair(cAnnot.valueList,GridBox.GRID_TYPE_MAPLABEL,gb.getType());
 		}
 
 		ObservedSample o =s.getObservedSample();
@@ -220,9 +225,19 @@ public class OMEStore
 				x=o.getGridNumberX();
 			if(o.getGridNumberY()!=null)
 				y=o.getGridNumberY();
-			addMapPair(cAnnot.valueList,ObservedSample.GRID_MAPLABEL,x+ObservedSample.GRID_SEPARATOR+y);
-			addMapPair(cAnnot.valueList,ObservedSample.OBJECT_TYPE_MAPLABEL,o.getObjectType());
-			addMapPair(cAnnot.valueList,ObservedSample.OBJECT_NUMBER_MAPLABEL,o.getObjectNumber());
+			if(!x.equals("")){
+				if(!y.equals(""))
+					addMapPair(cAnnot.valueList,ObservedSample.GRID_MAPLABEL,x+ObservedSample.GRID_SEPARATOR+y);
+				else
+					addMapPair(cAnnot.valueList,ObservedSample.GRID_MAPLABEL,x+ObservedSample.GRID_SEPARATOR+"...");
+			}else{
+				if(!y.equals(""))
+					addMapPair(cAnnot.valueList,ObservedSample.GRID_MAPLABEL,"..."+ObservedSample.GRID_SEPARATOR+y);
+			}
+			if(o.getObjectType()!=null && !o.getObjectType().equals(""))
+				addMapPair(cAnnot.valueList,ObservedSample.OBJECT_TYPE_MAPLABEL,o.getObjectType());
+			if(o.getObjectNumber()!=null && !o.getObjectNumber().equals(""))
+				addMapPair(cAnnot.valueList,ObservedSample.OBJECT_NUMBER_MAPLABEL,o.getObjectNumber());
 		}
 		
 		MapAnnotation mapAnnot=cAnnot.map;
