@@ -90,7 +90,6 @@ import org.openmicroscopy.shoola.env.data.model.ScriptObject;
 import org.openmicroscopy.shoola.env.data.util.ModelMapper;
 
 import omero.gateway.util.PojoMapper;
-
 import org.openmicroscopy.shoola.env.data.util.Resolver;
 
 import omero.gateway.SecurityContext;
@@ -975,10 +974,10 @@ class OmeroImageServiceImpl
 			if (exp.getId() != loggedIn.getId())
 				userName = exp.getUserName();
 		}
-	      if (status.isMarkedAsCancel()) {
-	            if (close) gateway.closeImport(ctx, userName);
-	            return Boolean.valueOf(false);
-	        }
+		if (status.isMarkedAsCancel()) {
+			if (close) gateway.closeImport(ctx, userName);
+			return Boolean.valueOf(false);
+		}
 		Collection<TagAnnotationData> tags = object.getTags();
 		List<Annotation> customAnnotationList = new ArrayList<Annotation>();
 		List<IObject> l;
@@ -998,9 +997,9 @@ class OmeroImageServiceImpl
 			}
 			//save the tag.
 			try {
-			    if (l.size() > 0) {
-			        l = gateway.saveAndReturnObject(ctx, l, parameters, userName);
-			    }
+				if (l.size() > 0) {
+					l = gateway.saveAndReturnObject(ctx, l, parameters, userName);
+				}
 				Iterator<IObject> j = l.iterator();
 				Annotation a;
 				while (j.hasNext()) {
@@ -1010,10 +1009,10 @@ class OmeroImageServiceImpl
 				}
 				object.setTags(values);
 			} catch (Exception e) {
-			    LogMessage msg = new LogMessage();
-			    msg.print("Cannot create the tags.");
-			    msg.print(e);
-			    context.getLogger().error(this, msg);
+				LogMessage msg = new LogMessage();
+				msg.print("Cannot create the tags.");
+				msg.print(e);
+				context.getLogger().error(this, msg);
 			}
 		}
 		IObject link;
@@ -1024,7 +1023,7 @@ class OmeroImageServiceImpl
 		DatasetData dataset = importable.getDataset();
 		DataObject container = importable.getParent();
 		IObject ioContainer = null;
-		
+
 		DataObject createdData;
 		IObject project = null;
 		DataObject folder = null;
@@ -1035,34 +1034,34 @@ class OmeroImageServiceImpl
 		if (file.isFile()) {
 			ic = gateway.getImportCandidates(ctx, object, file, status);
 			if (CollectionUtils.isEmpty(ic.getContainers())) {
-			    Object o = status.getImportResult();
-                if (o instanceof ImportException) {
-                    return o;
-                }
-                ImportException e = new ImportException(
-                        ImportException.FILE_NOT_VALID_TEXT);
-                status.setCallback(e);
-                status.setText(ImportException.FILE_NOT_VALID_TEXT);
-                return e;
+				Object o = status.getImportResult();
+				if (o instanceof ImportException) {
+					return o;
+				}
+				ImportException e = new ImportException(
+						ImportException.FILE_NOT_VALID_TEXT);
+				status.setCallback(e);
+				status.setText(ImportException.FILE_NOT_VALID_TEXT);
+				return e;
 			}
 			hcsFile = isHCS(ic.getContainers());
 			//Create the container if required.
 			if (hcsFile) {
 				if (ic != null) {
-                    candidates = ic.getPaths();
-                    if (candidates.size() == 1) { 
-                        String value = candidates.get(0);
-                        if (!file.getAbsolutePath().equals(value) && 
-                            object.isFileinQueue(value)) {
-                            if (close) gateway.closeImport(ctx, userName);
-                            status.markedAsDuplicate();
-                            return Boolean.valueOf(true);
-                        }
-                    }
-                }
+					candidates = ic.getPaths();
+					if (candidates.size() == 1) { 
+						String value = candidates.get(0);
+						if (!file.getAbsolutePath().equals(value) && 
+								object.isFileinQueue(value)) {
+							if (close) gateway.closeImport(ctx, userName);
+							status.markedAsDuplicate();
+							return Boolean.valueOf(true);
+						}
+					}
+				}
 				dataset = null;
-                if (!(container instanceof ScreenData))
-                    container = null;
+				if (!(container instanceof ScreenData))
+					container = null;
 			}
 
 			//remove hcs check if we want to create screen from folder.
@@ -1343,6 +1342,52 @@ class OmeroImageServiceImpl
 		}
 		return Boolean.valueOf(true);
 	}
+
+	
+
+//	private List<Annotation> saveFileAnnotation(ImportableObject object, String srcName, SecurityContext ctx,
+//			String userName, List<Annotation> customAnnotationList) 
+//	{
+//		// other annotations
+//		Map<String,FileAnnotationData> annots = object.getAnnotations();
+//		// all annots that are not still save to db (0 or 1 elements)
+//		List<IObject> l2;
+//		//Tags
+//		Map<Object, Object> parameters2 = new HashMap<Object, Object>();
+//		if (annots!=null && !annots.isEmpty()) {
+//			l2 = new ArrayList<IObject>();
+//			Map<String,FileAnnotationData> values = new HashMap<String, FileAnnotationData>(annots);
+//			if(annots.containsKey(srcName)){
+//				FileAnnotationData metaFile=annots.get(srcName);
+//				if (metaFile.getId() > 0) {
+//					values.put(srcName,metaFile);
+//					customAnnotationList.add((Annotation) metaFile.asIObject());
+//				} else l2.add(metaFile.asIObject());
+//			}
+//		
+//			//save the annot.
+//			try {
+//				if (l2.size() > 0) {
+//					System.out.println("# OmeroImageServiceImpl::saveFileAnnotation() : save annotation for "+srcName);
+//					l2 = gateway.saveAndReturnObject(ctx, l2, parameters2, userName);
+//				}
+//				
+//				Iterator<IObject> j = l2.iterator();
+//				Annotation a;
+//				while (j.hasNext()) {
+//					a = (Annotation) j.next();
+//					object.setAnnotation(srcName,new FileAnnotationData((FileAnnotation) a));
+//					customAnnotationList.add(a); 
+//				}
+//			} catch (Exception e) {
+//				LogMessage msg = new LogMessage();
+//				msg.print("Cannot create the annotation.");
+//				msg.print(e);
+//				context.getLogger().error(this, msg);
+//			}
+//		}
+//		return customAnnotationList;
+//	}
 	
 	/** 
 	 * Implemented as specified by {@link OmeroImageService}. 
@@ -1407,6 +1452,14 @@ class OmeroImageServiceImpl
 		if (imageID <= 0)
 			throw new IllegalArgumentException("No image specified.");
 		return gateway.saveROI(ctx, imageID, userID, roiList);
+	}
+	
+	public ImageData saveImageLink(SecurityContext ctx,long metaID,long srcID)
+			throws DSOutOfServiceException, DSAccessException
+	{
+		if(metaID <=0)
+			throw new IllegalArgumentException("No link image specified.");
+		return gateway.saveImageLink(ctx, metaID, srcID);
 	}
 
 	/**

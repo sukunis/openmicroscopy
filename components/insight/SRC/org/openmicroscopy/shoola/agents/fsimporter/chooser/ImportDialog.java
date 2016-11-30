@@ -312,6 +312,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 	/** Map hosting the tags. */
 	private Map<JButton, TagAnnotationData> tagsMap;
+	
+	private Map<String,String> fileMap;
+	private Map<String,String> fileIDMap;
 
 	/** The action listener used to handle tag selection. */
 	private ActionListener tagSelectionListener;
@@ -664,6 +667,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		numberOfFolders.setColumns(3);
 		numberOfFolders.addPropertyChangeListener(this);
 		tagsMap = new LinkedHashMap<JButton, TagAnnotationData>();
+		
+		fileMap=new LinkedHashMap<String,String>();
+		fileIDMap=new LinkedHashMap<String,String>();
 
 		IconManager icons = IconManager.getInstance();
 		
@@ -1163,7 +1169,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 			}
 			object.setTags(l);
 		}
-			
+		
 		if (partialName.isSelected()) {
 			Integer number = (Integer) numberOfFolders.getValueAsNumber();
 			if (number != null && number >= 0)
@@ -1445,6 +1451,8 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		}
 		tagsPane.removeAll();
 		tagsMap.clear();
+		fileMap.clear();
+		fileIDMap.clear();
 	}
 
 	/**
@@ -1784,6 +1792,32 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	public FileFilter getFileFilter()
 	{
 		return chooser!=null ? chooser.getFileFilter() : null;
+	}
+	
+	public void addToMetaDataFileMap(String sourceFileName, String metaFileName)
+	{
+		fileMap.put(sourceFileName, metaFileName);
+		System.out.println("# ImportDialog::addToMetaDataFileMap(): "+sourceFileName+" -- "+metaFileName);
+	}
+
+	public void addIDToFileMap(String path, String id) 
+	{
+		if(fileMap.containsKey(path) || fileMap.containsValue(path)){
+			fileIDMap.put(path,id);
+		}else{
+			System.out.println("## No entry to set LINK for: "+path+" :: "+id);	
+		}
+		
+	}
+
+	public void setLinkInDescription(int state) 
+	{
+		//Test ausgabe
+		for(Map.Entry<String,String> entry: fileIDMap.entrySet()){
+			System.out.println(entry.getKey()+" : "+entry.getValue());
+		}
+		
+		model.setLinkIDMaps(fileIDMap,fileMap); 
 	}
 
 }

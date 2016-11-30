@@ -829,4 +829,22 @@ class ImporterUI extends TopWindow
 //		repaint();
 	}
 
+	public void addToMetaDataFileMap(File[] files) {
+		if(files==null || files.length<2){
+			return;
+		}
+		chooser.addToMetaDataFileMap(files[0].getAbsolutePath(), files[1].getAbsolutePath());
+	}
+
+	public void addIDToFileMap(String absolutePath, String id) 
+	{
+	chooser.addIDToFileMap(absolutePath, id);
+		
+	}
+
+	public void setLinkInDescription() {
+		chooser.setLinkInDescription(Importer.READY);
+		
+	}
+
 }

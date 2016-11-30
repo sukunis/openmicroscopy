@@ -69,8 +69,6 @@ import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.env.data.model.ImportableObject;
 import org.openmicroscopy.shoola.env.data.util.StatusLabel;
 
-import omero.log.Logger;
-
 import org.openmicroscopy.shoola.env.ui.UserNotifier;
 import org.openmicroscopy.shoola.util.file.ImportErrorObject;
 import org.openmicroscopy.shoola.util.ui.ClosableTabbedPane;
@@ -437,6 +435,7 @@ class ImporterControl
     			view.refreshMetaFileView((List<ImportableFile>) evt.getNewValue());
     		} else if(ImportDialog.ADD_AND_REFRESH_FILE_LIST.equals(name)){
     			view.addAndRefreshMetaFileView( (File[]) evt.getNewValue());
+    			view.addToMetaDataFileMap((File[])evt.getNewValue());
     		} 
         }
 

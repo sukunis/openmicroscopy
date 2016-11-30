@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -995,5 +996,12 @@ class ImporterComponent
                 chooser.importFiles();
             }
         }
+    }
+    
+    
+    
+    public void setLinkIDMaps(Map<String,String> fileIDMap,Map<String,String> fileMap)
+    {
+    	model.fireLinkMetaFiles(fileIDMap,fileMap);
     }
 }

@@ -82,6 +82,8 @@ import omero.gateway.model.DataObject;
 import omero.gateway.model.DatasetData;
 import omero.gateway.model.FileAnnotationData;
 import omero.gateway.model.FilesetData;
+import omero.gateway.model.ImageData;
+import omero.gateway.model.PixelsData;
 import omero.gateway.model.ProjectData;
 import omero.gateway.model.ScreenData;
 
@@ -830,6 +832,26 @@ class ImporterUIElement
 				setNumberOfImport();
 				setClosable(isDone());
 			}
+		}
+		addIDToFileMap(result,fc);
+		
+		// after import set links for source and metadata files in description on db
+		if(isDone()){
+			view.setLinkInDescription();
+		}
+	}
+	
+	private void addIDToFileMap(Object result,FileImportComponent component) 
+	{
+		Collection<PixelsData> pixels = (Collection<PixelsData>) result;
+		if (CollectionUtils.isEmpty(pixels)) return;
+		Iterator<PixelsData> i = pixels.iterator();
+		
+		PixelsData pxd;
+		List<ImageData> ids = new ArrayList<ImageData>();
+		while (i.hasNext()) {
+			pxd = i.next();
+			view.addIDToFileMap(component.getFile().getAbsolutePath(),String.valueOf(pxd.getImage().getId()));
 		}
 	}
 

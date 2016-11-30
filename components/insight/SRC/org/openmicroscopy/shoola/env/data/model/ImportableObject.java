@@ -205,7 +205,7 @@ public class ImportableObject
 
 	/** The collection of new object. */
 	private Map<Long, List<DatasetData>> projectDatasetMap;
-
+	
 	/**
 	 * Returns the object corresponding to the passed file.
 	 * 
@@ -310,7 +310,7 @@ public class ImportableObject
 	{
 		this.tags = tags;
 	}
-
+	
 	/**
 	 * Sets the depth used scanning a folder.
 	 * 
@@ -456,6 +456,18 @@ public class ImportableObject
 		}
 		return false;
 	}
+	
+//	public boolean hasNewAnnotations()
+//	{
+//		if (annot == null || annot.size() == 0) return false;
+//		Iterator<FileAnnotationData> i = annot.iterator();
+//		AnnotationData annotation;
+//		while (i.hasNext()) {
+//			annotation = i.next();
+//			if (annotation.getId() <= 0) return true;
+//		}
+//		return false;
+//	}
 	
 	/**
 	 * Returns the nodes of reference.
