@@ -104,13 +104,16 @@ public class ExperimentModel {
 
 	public void setProjectPartner(String name)
 	{
+		if(name.equals(""))
+			return;
+		
 		if(projectPartner==null)
 			projectPartner=new Experimenter();
 		projectPartner.setLastName(name);
 	}
-	public void setProjectPartner(Experimenter projectPartner) {
-		this.projectPartner = projectPartner;
-	}
+//	public void setProjectPartner(Experimenter projectPartner) {
+//		this.projectPartner = projectPartner;
+//	}
 
 	public Experimenter getExperimenter() {
 		return experimenter;
