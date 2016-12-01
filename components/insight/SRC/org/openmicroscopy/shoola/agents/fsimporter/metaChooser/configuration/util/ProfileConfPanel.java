@@ -179,7 +179,25 @@ public class ProfileConfPanel extends JPanel
 		tablePane.setViewportView(myTable);
 	}
 
-
+	public boolean tagExistsInConf(String tagName) 
+	{
+		// show tags, their value and unit
+		List<TagConfiguration> tagList=configuration.getTagList();
+		List<TagConfiguration> settList=configuration.getSettingList();
+		if(tagList!=null){
+			for(TagConfiguration t:tagList){
+				if(t.getName().equals(tagName))
+					return true;
+			}
+		}
+		if(settList!=null){
+			for(TagConfiguration t:settList){
+				if(t.getName().equals(tagName))
+					return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Set tags according to their predefinitions declared in the profile file.
@@ -373,15 +391,19 @@ public class ProfileConfPanel extends JPanel
 
 			if(availableTags!=null){
 				for(int i=0; i<availableTags.length; i++){
-					JMenuItem item = new JMenuItem(availableTags[i].name);
-					item.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							JMenuItem item= (JMenuItem) e.getSource();
-							JPopupMenu menu= (JPopupMenu) item.getParent();
-							insertTagAtTable(menu.getComponentZOrder(item));
-						}
-					});
-					insertMenu.add(item);
+					String tagName=availableTags[i].name;
+					// Test if tag is still in the table
+					if(!tagExistsInConf(tagName)){
+						JMenuItem item = new JMenuItem(tagName);
+						item.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								JMenuItem item= (JMenuItem) e.getSource();
+								JPopupMenu menu= (JPopupMenu) item.getParent();
+								insertTagAtTable(menu.getComponentZOrder(item));
+							}
+						});
+						insertMenu.add(item);
+					}
 				}
 			}	
 			popupMenu.add(insertMenu);
@@ -683,7 +705,10 @@ public class ProfileConfPanel extends JPanel
 			tag=new TagConfiguration(name, value, unit, (Boolean)getValueAt(rowIndex,COL_PROP),(Boolean) getValueAt(rowIndex,0), pU,eVal);
 			return tag;
 		}
-	}
+	}// TableModel
+
+
+	
 
 	//TODO: navigation by tab-key
 	//	public class MyTable extends JTable

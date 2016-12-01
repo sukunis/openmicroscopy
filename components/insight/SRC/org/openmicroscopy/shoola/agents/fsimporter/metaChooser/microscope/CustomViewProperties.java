@@ -333,6 +333,7 @@ public void loadChannelConf(boolean active) {
 public void loadImageConf(boolean active) {
 	imageConf=new ModuleConfiguration(active,GUIPlaceholder.Pos_A,"1");
 	imageConf.setTag(TagNames.IMG_NAME,null,null,true);
+	imageConf.setTag(TagNames.IMG_DESC,null,null,true);
 	imageConf.setTag(TagNames.ACQTIME,null,null,true);
 	imageConf.setTag(TagNames.DIMXY,null,null,true);
 	imageConf.setTag(TagNames.PIXELTYPE,null,null,true);

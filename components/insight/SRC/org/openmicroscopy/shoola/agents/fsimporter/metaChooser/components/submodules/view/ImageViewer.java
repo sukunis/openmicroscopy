@@ -55,6 +55,7 @@ public class ImageViewer extends ModuleViewer{
 	private TagData timeIncrement;
 	private TagData wellNr;
 
+	private TagData desc;
 
 	/**
 	 * Creates a new instance.
@@ -76,6 +77,7 @@ public class ImageViewer extends ModuleViewer{
 	{
 		tagList=new ArrayList<TagData>();
 		tagList.add(name);
+		tagList.add(desc);
 		tagList.add(acqTime);
 		tagList.add(dimXY);
 		tagList.add(pixelSize);
@@ -95,6 +97,7 @@ public class ImageViewer extends ModuleViewer{
 		List<JLabel> labels= new ArrayList<JLabel>();
 		List<JComponent> comp=new ArrayList<JComponent>();
 		addTagToGUI(name,labels,comp);
+		addTagToGUI(desc,labels,comp);
 		addTagToGUI(acqTime,labels,comp);
 		addTagToGUI(dimXY,labels,comp);
 		addTagToGUI(pixelType,labels,comp);
@@ -157,6 +160,9 @@ public class ImageViewer extends ModuleViewer{
 			setName(null,prop);
 			this.name.setVisible(true);
 			break;
+		case TagNames.IMG_DESC:
+			setDescription(null,prop);
+			this.desc.setVisible(true);
 		case TagNames.ACQTIME:
 			setAcqTime(null, prop);
 			acqTime.setVisible(true);
@@ -219,6 +225,9 @@ public class ImageViewer extends ModuleViewer{
 			try{setName(image.getName(),REQUIRED);
 			} catch (NullPointerException e) { }
 
+			try{setDescription(image.getDescription(),REQUIRED);
+			} catch (NullPointerException e) { }
+			
 			try{
 				String[] dimXY={image.getPixels().getSizeX().toString(),
 						image.getPixels().getSizeY().toString()};
@@ -274,6 +283,13 @@ public class ImageViewer extends ModuleViewer{
 			name = new TagData(TagNames.IMG_NAME,value,prop,TagData.TEXTFIELD);
 		else 
 			name.setTagValue(value,prop);
+	}
+	private void setDescription(String value, Boolean prop) {
+		if(desc == null) 
+			desc = new TagData(TagNames.IMG_DESC,value,prop,TagData.TEXTFIELD);
+		else 
+			desc.setTagValue(value,prop);
+		
 	}
 	//Datums- und Zeitfeld
 	private void setAcqTime(Timestamp value, boolean prop)
@@ -411,6 +427,13 @@ For example in a video stream.
 			LOGGER.error("[DATA] can't read IMAGE name input");
 		}
 		try{
+			System.out.println("# ImageViewer::saveData():: description = "+desc.getTagValue()); 
+			image.setDescription(desc.getTagValue());
+			desc.dataSaved(true);
+		}catch(Exception e){
+			LOGGER.error("[DATA] can't read IMAGE description input");
+		}
+		try{
 			image.setAcquisitionDate(acqTime.getTagValue().equals("") ? 
 					null : Timestamp.valueOf(acqTime.getTagValue()));
 			acqTime.dataSaved(true);
@@ -482,6 +505,7 @@ For example in a video stream.
 	{
 		List<TagData> list = new ArrayList<TagData>();
 		if(name.valueChanged()) list.add(name);
+		if(desc.valueChanged()) list.add(desc);
 		if(acqTime.valueChanged()) list.add(acqTime);
 		if(dimXY.valueChanged()) list.add(dimXY);
 		if(pixelType.valueChanged()) list.add(pixelType);

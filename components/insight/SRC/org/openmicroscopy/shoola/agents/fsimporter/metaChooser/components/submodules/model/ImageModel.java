@@ -90,6 +90,7 @@ public class ImageModel
 		// set input field values again
 		if(copyIn!=null){
 			String name=copyIn.getName();
+			String desc=copyIn.getDescription();
 			PositiveInteger dimX=copyIn.getPixels().getSizeX();
 			PositiveInteger dimY=copyIn.getPixels().getSizeY();
 			PositiveInteger dimZ=copyIn.getPixels().getSizeZ();
@@ -105,6 +106,7 @@ public class ImageModel
 			Pixels p=element.getPixels();
 
 			if(name!=null && !name.equals("")) element.setName(name);
+			if(desc!=null && !desc.equals("")) element.setDescription(desc);
 			if(dimX!=null && !dimX.toString().equals("")) p.setSizeX(dimX);
 			if(dimY!=null && !dimY.toString().equals("")) p.setSizeX(dimY);
 			if(dimZ!=null && !dimZ.toString().equals("")) p.setSizeX(dimZ);
@@ -157,6 +159,9 @@ public class ImageModel
 		switch (tagName) {
 		case TagNames.IMG_NAME:
 			element.setName(value);
+			break;
+		case TagNames.IMG_DESC:
+			element.setDescription(value);
 			break;
 		case TagNames.ACQTIME:
 			element.setAcquisitionDate(Timestamp.valueOf(value));
@@ -257,6 +262,7 @@ public class ImageModel
 		
 		result.setID(orig.getID());
 		result.setName(orig.getName());
+		result.setDescription(orig.getDescription());
 		result.setAcquisitionDate(orig.getAcquisitionDate());
 		result.setDescription(orig.getDescription());
 		

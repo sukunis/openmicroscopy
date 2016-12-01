@@ -146,6 +146,7 @@ public class TagNames
 	//	Image
 	//--------------------------
 	public static final String IMG_NAME="Name";
+	public static final String IMG_DESC="Description";
 	public static final String ACQTIME="Acquisition Time";
 	public static final String DIMXY="Dim X x Y";
 	public static final String PIXELTYPE="Pixel Depth";
@@ -161,7 +162,7 @@ public class TagNames
 	public static final Unit<Length> PIXELSIZE_UNIT=UNITS.MICROM;
 	public static final Unit<Time> TIMEINC_UNIT=UNITS.S;
 	
-	private static PreTagData[] imageTags={new PreTagData(IMG_NAME,null, ""),new PreTagData(ACQTIME,null, ""),new PreTagData(DIMXY,null, ""),
+	private static PreTagData[] imageTags={new PreTagData(IMG_NAME,null, ""),new PreTagData(IMG_DESC,null, ""),new PreTagData(ACQTIME,null, ""),new PreTagData(DIMXY,null, ""),
 		new PreTagData(PIXELTYPE,null, ""),new PreTagData(PIXELSIZE,PIXELSIZE_UNIT, ""),new PreTagData(DIMZTC,null, ""),new PreTagData(STAGELABEL,STAGEPOS_UNIT, ""),
 		new PreTagData(STEPSIZE,null, ""),new PreTagData(TIMEINC,TIMEINC_UNIT, ""),new PreTagData(WELLNR,null, "")};
 	
