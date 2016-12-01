@@ -50,10 +50,6 @@ public class SaveMetadata
 
 			omeStore=new OMEStore(ome);
 
-			FileAnnotation annotation = new FileAnnotation();
-			//		annotation.setName(srcImage.getName());
-			//		annotation.setFile(srcImage);
-
 			// save xml in *.ome under same name and path like srcImage
 			srcImageFName=FilenameUtils.removeExtension(srcImage.getAbsolutePath());
 			linkFile=srcImage.getName();
@@ -76,11 +72,7 @@ public class SaveMetadata
 			omexmlMeta=_store;
 
 			omeStore=new OMEStore(ome);
-
-			FileAnnotation annotation = new FileAnnotation();
-			//		annotation.setName(srcImage.getName());
-			//		annotation.setFile(srcImage);
-
+			
 			// save xml in *.ome under same name and path like srcImage
 			srcImageFName=FilenameUtils.removeExtension(srcImage.getAbsolutePath());
 			linkFile=srcImage.getName();

@@ -350,7 +350,8 @@ class ImporterComponent
         //Metadata biology
         if(metaDataChooser==null){
         	metaDataChooser = new MetaDataDialog(view,model.getSupportedFormats(),type, 
-        			controller.getAction(ImporterControl.CANCEL_BUTTON),this); 
+        			controller.getAction(ImporterControl.CANCEL_BUTTON),this,
+        			chooser.getImportButton(),chooser.getCancelImportButton()); 
         	metaDataChooser.addPropertyChangeListener(controller);
         	view.addMDComponent(metaDataChooser);
         }else{

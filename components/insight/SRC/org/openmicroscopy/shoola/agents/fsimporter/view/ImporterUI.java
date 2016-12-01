@@ -847,4 +847,9 @@ class ImporterUI extends TopWindow
 		
 	}
 
+	public void showMetaDataDialog() {
+		selectMetaDataChooser();
+		
+	}
+
 }

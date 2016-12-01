@@ -245,21 +245,23 @@ private boolean disableItemListener;
      *            The cancel-all-imports action.
      */
     public MetaDataDialog(JFrame owner, FileFilter[] filters, int type,
-            ImporterAction importerAction, Importer importer)
+            ImporterAction importerAction, Importer importer,JButton importBtn,JButton cancelImportBtn)
     {
         super(1, TITLE, TITLE);
         
         this.owner = owner;
         this.type = type;
         this.importer = importer;
+        addImportButtonLink(importBtn);
+        addCancelImportButtonLink(cancelImportBtn);
         setClosable(false);
         setCloseVisible(false);
         initComponents(filters, importerAction);
         buildGUI();
     }
     
-    
-    private void addNode(FNode parent, FileObject f,ImportableFile fileObj)
+   
+	private void addNode(FNode parent, FileObject f,ImportableFile fileObj)
     {
         
         FNode dir = null;
@@ -429,14 +431,14 @@ private boolean disableItemListener;
             ImporterAction importerAction)
     {
         holdData=false;
-        cancelImportButton = new JButton(importerAction);
+//        cancelImportButton = new JButton(importerAction);
 //		importerAction.setEnabled(false);
                 
-        importButton = new JButton("Import");
-        importButton.setToolTipText("Import the selected data");
-        importButton.setActionCommand("" + CMD_IMPORT);
-        importButton.addActionListener(this);
-        importButton.setEnabled(false);	
+//        importButton = new JButton("Import");
+//        importButton.setToolTipText("Import the selected data");
+//        importButton.setActionCommand("" + CMD_IMPORT);
+//        importButton.addActionListener(this);
+//        importButton.setEnabled(false);	
         
         refreshFilesButton= new JButton("Refresh");
         refreshFilesButton.setBackground(UIUtilities.BACKGROUND);
@@ -472,14 +474,16 @@ private boolean disableItemListener;
         saveDataButton.setToolTipText("Save selected image metadata to separate *.ome file with image name");
         saveDataButton.setActionCommand("" + CMD_SAVE);
         saveDataButton.addActionListener(this);
+        saveDataButton.setEnabled(false);
         
         saveAllDataButton=new JButton("Save All");
         saveAllDataButton.setBackground(UIUtilities.BACKGROUND);
         saveAllDataButton.setToolTipText("Save metadata of all images of selected directory.");
         saveAllDataButton.setActionCommand("" + CMD_SAVEALL);
         saveAllDataButton.addActionListener(this);
-        
+        saveAllDataButton.setEnabled(false);
      
+        
         
         initFilterViewBar();
        
@@ -551,9 +555,9 @@ private boolean disableItemListener;
     	
     	showFileData=new JCheckBox("File Data");
     	showFileData.addItemListener(this);
-    	 showDirData=new JCheckBox("Parent Data");
+    	 showDirData=new JCheckBox("Dir Data");
          showDirData.addItemListener(this);
-         showCustomData=new JCheckBox("Predefined Data");
+         showCustomData=new JCheckBox("Pre Data");
          showCustomData.addItemListener(this);
          enabledPredefinedData=true;
          
@@ -626,6 +630,7 @@ private boolean disableItemListener;
      */
     private JPanel buildToolBarRight() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bar.add(Box.createHorizontalGlue());
         bar.add(cancelImportButton);
         bar.add(Box.createHorizontalStrut(5));
         bar.add(importButton);
@@ -650,7 +655,7 @@ private boolean disableItemListener;
         //load profile
         barL.add(Box.createHorizontalStrut(10));
         barL.add(loadProfileButton);
-        barL.add(Box.createHorizontalStrut(5));
+        barL.add(Box.createHorizontalStrut(2));
         //load Hardware specification
         barL.add(loadHardwareSpecButton);
         loadHardwareSpecButton.setEnabled(false);
@@ -661,17 +666,21 @@ private boolean disableItemListener;
         JPanel barR = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         //reset
         barR.add(resetFileDataButton);
-        barR.add(Box.createHorizontalStrut(5));
+        barR.add(Box.createHorizontalStrut(2));
         //save
         barR.add(saveDataButton);
-        barR.add(Box.createHorizontalStrut(5));
+        barR.add(Box.createHorizontalStrut(2));
         //save all
         barR.add(saveAllDataButton);
-        barR.add(Box.createHorizontalStrut(10));
+        
+        
+        
+       JPanel barRR=buildToolBarRight();
         
         bar.add(barL);
         bar.add(barM);
         bar.add(barR);
+        bar.add(barRR);
         return bar;
     }
 
@@ -1681,6 +1690,18 @@ private boolean disableItemListener;
 	public CustomViewProperties getCustomViewProperties()
 	{
 		return customSettings;
+	}
+
+
+	public void addImportButtonLink(JButton importButton) 
+	{
+		this.importButton=importButton;
+		
+	}
+	 
+    private void addCancelImportButtonLink(JButton cancelImportBtn) {
+		this.cancelImportButton=cancelImportBtn;
+		
 	}
     
 

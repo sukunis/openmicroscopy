@@ -147,6 +147,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	/** Bound property indicating to add files to the queue by MetaDataDialog*/
 	public static final String ADD_AND_REFRESH_FILE_LIST="addAndRefreshMetaList";
 	
+	public static final String SHOW_METADATA_DIALOG="showMetaDataDialog";
 	
 	// Command Ids
 	/** Action id indicating to import the selected files. */
@@ -166,6 +167,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 	/** Action id indicating to refresh the file chooser. */
 	private static final int CMD_REFRESH_FILES = 6;
+	
+	/** Action id indicating to show metadata dialog. */
+	private static final int CMD_NEXT = 7;
 
 	// String constants
 
@@ -181,6 +185,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 	/** Text for the Import button */
 	private static final String TEXT_IMPORT = "Import";
+	
+	/** Text for the next button */
+	private static final String TEXT_NEXT= " Next >>";
 
 	/** Tooltip text for the Import button */
 	private static final String TOOLTIP_IMPORT =
@@ -282,6 +289,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 	/** Button to import the files. */
 	private JButton importButton;
+	
+	/** Button to show metadata dialog*/
+	private JButton nextButton;
 
 	/** Button to refresh the file chooser. */
 	private JButton refreshFilesButton;
@@ -395,6 +405,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		table.addFiles(fileList, importSettings);
 		//firePropertyChange(REFRESH_FILE_LIST,null,table.getFilesToImport());
 		importButton.setEnabled(table.hasFilesToImport());
+		nextButton.setEnabled(table.hasFilesToImport());
 	}
 
 	/** Displays the location of the import.*/
@@ -783,6 +794,11 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		importButton.setActionCommand("" + CMD_IMPORT);
 		importButton.addActionListener(this);
 		importButton.setEnabled(false);
+		
+		nextButton = new JButton(TEXT_NEXT);
+		nextButton.setActionCommand("" + CMD_NEXT);
+		nextButton.addActionListener(this);
+		nextButton.setEnabled(false);
 
 		pixelsSize = new ArrayList<NumericalTextField>();
 		NumericalTextField field;
@@ -840,9 +856,10 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	 */
 	private JPanel buildToolBarRight() {
 		JPanel bar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		bar.add(cancelImportButton);
-		bar.add(Box.createHorizontalStrut(5));
-		bar.add(importButton);
+		bar.add(nextButton);
+//		bar.add(cancelImportButton);
+//		bar.add(Box.createHorizontalStrut(5));
+//		bar.add(importButton);
 		bar.add(Box.createHorizontalStrut(10));
 		return bar;
 	}
@@ -1641,6 +1658,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
         }
         table.addFiles(list, settings);
         importButton.setEnabled(table.hasFilesToImport());
+        nextButton.setEnabled(table.hasFilesToImport());
    }
 
     /**
@@ -1672,6 +1690,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 			int n = handleFilesSelection(chooser.getSelectedFiles());
 			table.allowAddition(n > 0);
 			importButton.setEnabled(table.hasFilesToImport());
+			nextButton.setEnabled(table.hasFilesToImport());
 			firePropertyChange(REFRESH_FILE_LIST,null,table.getFilesToImport());
 		} else if (JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(name)) {
 			int n = handleFilesSelection(chooser.getSelectedFiles());
@@ -1745,6 +1764,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 				ImportLocationDetails details = new ImportLocationDetails(getType());
 				firePropertyChange(REFRESH_LOCATION_PROPERTY, null, details);
 				break;
+			case CMD_NEXT:
+				firePropertyChange(SHOW_METADATA_DIALOG,false,true);
+				break;
 		}
 	}
 
@@ -1796,6 +1818,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	
 	public void addToMetaDataFileMap(String sourceFileName, String metaFileName)
 	{
+		// never link to oneself
+		if(sourceFileName.equals(metaFileName))
+			return;
 		fileMap.put(sourceFileName, metaFileName);
 		System.out.println("# ImportDialog::addToMetaDataFileMap(): "+sourceFileName+" -- "+metaFileName);
 	}
@@ -1818,6 +1843,16 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		}
 		
 		model.setLinkIDMaps(fileIDMap,fileMap); 
+	}
+
+	public JButton getImportButton() {
+		// TODO Auto-generated method stub
+		return importButton;
+	}
+
+	public JButton getCancelImportButton() {
+		// TODO Auto-generated method stub
+		return cancelImportButton;
 	}
 
 }
