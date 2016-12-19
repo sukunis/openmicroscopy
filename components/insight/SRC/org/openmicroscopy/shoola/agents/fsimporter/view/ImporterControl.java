@@ -429,6 +429,7 @@ class ImporterControl
                 checkDisableCancelAllButtons();
             } else if (StatusLabel.IMPORT_DONE_PROPERTY.equals(name)) {
                     model.onImportComplete((FileImportComponent) evt.getNewValue());
+                    model.setMetaDataText(false);
             } else if (StatusLabel.UPLOAD_DONE_PROPERTY.equals(name)) {
                     model.onUploadComplete((FileImportComponent) evt.getNewValue());
             } else if(ImportDialog.REFRESH_FILE_LIST.equals(name)){
@@ -436,6 +437,7 @@ class ImporterControl
     		} else if(ImportDialog.ADD_AND_REFRESH_FILE_LIST.equals(name)){
     			view.addAndRefreshMetaFileView( (File[]) evt.getNewValue());
     			view.addToMetaDataFileMap((File[])evt.getNewValue());
+    			model.setMetaDataText(((File[])evt.getNewValue())!=null );
     		} else if(ImportDialog.SHOW_METADATA_DIALOG.equals(name)){
     			view.showMetaDataDialog();
     		}

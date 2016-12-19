@@ -397,4 +397,6 @@ public interface Importer
 
 
 	public void setLinkIDMaps(Map<String, String> fileIDMap, Map<String, String> fileMap);
+
+	public void setMetaDataText(boolean b);
 }

@@ -100,7 +100,9 @@ public class ModuleConfiguration
 	
 	public void setTag(String name, String val,String unit, Boolean prop,int elemIndex) 
 	{
-		setTag(name, val, unit,prop, elementList.get(elemIndex).getTagList(), true) ;
+		List<TagConfiguration> list=elementList.get(elemIndex).getTagList();
+		if(list!=null)
+			setTag(name, val, unit,prop,list , true) ;
 	}
 	
 	public void setTag(String name, String val,String unit, Boolean prop) 

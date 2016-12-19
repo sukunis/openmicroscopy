@@ -127,6 +127,8 @@ class ImporterComponent
 	
 	/** holds import information like group, project, importer, dataset**/
 	private ImportUserData importUserData;
+
+	private boolean metaDataCreated;
 	
 	/**
 	 * Posts event if required indicating the status of the import process.
@@ -214,6 +216,7 @@ class ImporterComponent
 		controller = new ImporterControl(this);
 		view = new ImporterUI();
 		markToclose = false;
+		metaDataCreated=false;
 	}
 
 	/** Links up the MVC triad. */
@@ -420,6 +423,7 @@ class ImporterComponent
 		view.showRefreshMessage(chooser.isRefreshLocation());
 		if (data.hasNewTags()) model.setTags(null);
 		ImporterUIElement element = view.addImporterElement(data);
+		element.setMetaDataMessage(metaDataCreated);
 		//if (model.getState() == IMPORTING) return;
 		//Can I start the upload
 		Collection<ImporterUIElement> list = view.getImportElements();
@@ -926,6 +930,7 @@ class ImporterComponent
 		if (element == null) return;
 		Object result = component.getImportResult();
 		Object formattedResult = element.uploadComplete(component, result);
+		
 		if (!controller.isMaster()) {
 			EventBus bus = ImporterAgent.getRegistry().getEventBus();
 			ImportStatusEvent e = new ImportStatusEvent(hasOnGoingImport(),
@@ -999,7 +1004,11 @@ class ImporterComponent
         }
     }
     
-    
+    public void setMetaDataText(boolean b)
+    {
+    	System.out.println("# ImporterComponent::setMetaDataText(): "+b);
+    	metaDataCreated=b;
+    }
     
     public void setLinkIDMaps(Map<String,String> fileIDMap,Map<String,String> fileMap)
     {
