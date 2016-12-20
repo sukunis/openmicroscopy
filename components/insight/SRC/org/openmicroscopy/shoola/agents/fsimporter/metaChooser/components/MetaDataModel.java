@@ -23,7 +23,6 @@ import ome.xml.model.enums.FilterType;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ImageCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneSliderCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ChannelModel;
@@ -114,6 +113,15 @@ public class MetaDataModel
 	private List<List<TagData>> changesChannel;
 
 	private List<LightPath> changesLightPath;
+
+
+	private List<Detector> availableDetectors;
+
+	private List<LightSource> availableLightSources;
+
+	private List<Objective> availableObjectives;
+
+	private List<Object> availableLightPathElems;
 
 	
 	
@@ -436,10 +444,17 @@ public class MetaDataModel
 
 	public void addToDetectorList(List<Detector> micDetectorList, boolean append) 
 	{
-		if(!append)
-			detectorModel.clearList();
+		if(micDetectorList==null || micDetectorList.size()==0)
+			return;
 		
-		detectorModel.addToList(micDetectorList);
+		if(availableDetectors==null){
+			availableDetectors=new ArrayList<Detector>();
+		}else if(!append)
+			availableDetectors.clear();
+		
+		for(int i=0; i<micDetectorList.size(); i++){
+			availableDetectors.add(micDetectorList.get(i));
+		}
 			
 	}
 	
@@ -539,18 +554,6 @@ public class MetaDataModel
 		lightPathModel.addData(lp, overwrite, i);
 	}
 
-	public void addFilterToList(List<Filter> list, boolean append) 
-	{
-		if(!append)
-			lightPathModel.addFilterToList(list);
-	}
-
-	public void addDichroicToList(List<Dichroic> list, boolean append) {
-		if(!append)
-			lightPathModel.addDichroicToList(list);
-	}
-	
-	
 
 	public LightPath getLightPath(int index) throws Exception
 	{
@@ -599,10 +602,17 @@ public class MetaDataModel
 
 	public void addToLightSrcList(List<LightSource> micLightSrcList, boolean append) 
 	{
-		if(!append)
-			lightSrcModel.clearList();
+		if(micLightSrcList==null || micLightSrcList.size()==0)
+			return;
 		
-		lightSrcModel.addToList(micLightSrcList);		
+		if(availableLightSources==null){
+			availableLightSources=new ArrayList<LightSource>();
+		}else if(!append)
+			availableLightSources.clear();
+		
+		for(int i=0; i<micLightSrcList.size(); i++){
+			availableLightSources.add(micLightSrcList.get(i));
+		}	
 	}
 	
 	public LightSourceModel getLightSourceModel()
@@ -771,9 +781,17 @@ public class MetaDataModel
 	
 	public void addToObjList(List<Objective> list, boolean append) 
 	{
-		if(!append)
-			objModel.clearList();
-		objModel.addToList(list);
+		if(list==null || list.size()==0)
+			return;
+		
+		if(availableObjectives==null){
+			availableObjectives=new ArrayList<Objective>();
+		}else if(!append)
+			availableObjectives.clear();
+		
+		for(int i=0; i<list.size(); i++){
+			availableObjectives.add(list.get(i));
+		}	
 	}
 	/**
 	 * Get objective modul data
@@ -1390,57 +1408,63 @@ public class MetaDataModel
 	{
 		return changesExperiment;
 	}
-	
-
-	
 
 
 
-	
+	public List<Detector> getDetectorHardwareList() {
+		return availableDetectors;
+	}
 
 
 
-	
+	public List<LightSource> getLightSrcHardwareList() {
+		return availableLightSources;
+	}
 
 
 
+	public List<Object> getHardwareList_LightPath() {
+		return availableLightPathElems;
+	}
 
 
 
-	
+	public List<Objective> getObjList() {
+		return availableObjectives;
+	}
 
 
 
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-
-
-	
-
-
-	
-
-	
-
-	
+	public void addToLightPathList_Filter(List<Filter> filters, boolean append) {
+		if(filters==null || filters.size()==0)
+			return;
+		
+		if(availableLightPathElems==null){
+			availableLightPathElems=new ArrayList<Object>();
+		}else if(!append)
+			availableLightPathElems.clear();
+		
+		for(int i=0; i<filters.size(); i++){
+			availableLightPathElems.add(filters.get(i));
+		}	
+		
+	}
 
 
 
-
-
-
-	
-	
+	public void addToLightPathList_Dichroic(List<Dichroic> dichroics, boolean append) {
+		if(dichroics==null || dichroics.size()==0)
+			return;
+		
+		if(availableLightPathElems==null){
+			availableLightPathElems=new ArrayList<Object>();
+		}else if(!append)
+			availableLightPathElems.clear();
+		
+		for(int i=0; i<dichroics.size(); i++){
+			availableLightPathElems.add(dichroics.get(i));
+		}	
+		
+	}
 	
 }
