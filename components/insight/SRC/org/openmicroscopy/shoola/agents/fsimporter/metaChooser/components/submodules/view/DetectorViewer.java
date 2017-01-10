@@ -51,19 +51,20 @@ public class DetectorViewer extends ModuleViewer{
 	private TagData model;
 	private TagData manufact;
 	private TagData type;
-	/** fixed zoom */
+	/** fixed zoom. [used:PMT] */
 	private TagData zoom;
+	/** gain for this detector. [used:CCD,EMCCD,PMT]*/
 	private TagData amplGain;//==emGain
 
 	//available element setting tags
 	/** variable value, that also can change during the acq.
-	 * See also DetectorSettings*/
+	 * See also DetectorSettings. [used:CCD,EMCCD,PMT]*/
 	private TagData gain;
-	/** voltage of detector*/
+	/** voltage of detector.  [used:PMT]*/
 	private TagData voltage;
-	/** offset of detector*/
+	/** offset of detector. [used:CCD,EMCCD]*/
 	private TagData offset;
-	/** confocal or scanning zoom*/
+	/** confocal or scanning zoom. [used:PMT]*/
 	private TagData confocalZoom;
 	/**represents the number of pixels that are combined to form larger pixels*/
 	private TagData binning;
@@ -400,14 +401,23 @@ public class DetectorViewer extends ModuleViewer{
 			} catch (NullPointerException e) { }
 			try{
 				setType(detector.getType(),  REQUIRED);
+				if(detector.getType()!=null)
+					activateAttributesForType(detector.getType());
 			} catch (NullPointerException e) { }
 
 			try{setZoom(detector.getZoom(), REQUIRED);
 			} catch (NullPointerException e) { }
 			try{setAmplGain(detector.getAmplificationGain(),  REQUIRED);
 			} catch (NullPointerException e) { }
+			
+			try{setVoltage(detector.getVoltage(), REQUIRED);
+			} catch (NullPointerException e) { }
+			try{ setOffset(detector.getOffset(), REQUIRED);
+			} catch (NullPointerException e) { }
 		}
 	}
+
+	
 
 	private void setSettingsGUIData()
 	{
@@ -417,9 +427,13 @@ public class DetectorViewer extends ModuleViewer{
 		if(settings!=null){
 			try{setGain(settings.getGain(), REQUIRED);
 			} catch (NullPointerException e) { }
-			try{setVoltage(settings.getVoltage(), REQUIRED);
+			try{
+				if(settings.getVoltage()!=null)
+					setVoltage(settings.getVoltage(), REQUIRED);
 			} catch (NullPointerException e) { }
-			try{ setOffset(settings.getOffset(), REQUIRED);
+			try{
+				if(settings.getOffset()!=null)
+					setOffset(settings.getOffset(), REQUIRED);
 			} catch (NullPointerException e) { }
 			try{ setConfocalZoom(settings.getZoom(), REQUIRED);
 			} catch (NullPointerException e) { }
@@ -429,9 +443,34 @@ public class DetectorViewer extends ModuleViewer{
 			try{ setSubarray(null, REQUIRED);
 			} catch (NullPointerException e) { }
 		}
+		
 
 	}
 
+	/**certain tags are only used by certain detector type
+	 * */
+	private void activateAttributesForType(DetectorType type) 
+	{
+		if(type == DetectorType.PMT){
+			offset.setEnable(false);
+			binning.setEnable(false);
+			voltage.setEnable(true);
+			zoom.setEnable(true);
+			gain.setEnable(true);
+		}else if(type ==DetectorType.CCD || type==DetectorType.EMCCD){
+			voltage.setEnable(false);
+			zoom.setEnable(false);
+			offset.setEnable(true);
+			gain.setEnable(true);
+			binning.setEnable(true);
+		}else{
+			voltage.setEnable(false);
+			zoom.setEnable(false);
+			offset.setEnable(false);
+			gain.setEnable(false);
+			binning.setEnable(false);
+		}
+	}
 
 
 	/*------------------------------------------------------
@@ -457,9 +496,15 @@ public class DetectorViewer extends ModuleViewer{
 	public void setType(DetectorType value, boolean prop)
 	{
 		String val= (value != null)? value.getValue() : "";
-		if(type == null) 
+		if(type == null){ 
 			type = new TagData(TagNames.D_TYPE,val,prop,TagData.COMBOBOX,getNames(DetectorType.class));
-		else 
+			type.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					activateAttributesForType(parseDetectorType(type.getTagValue()));
+				}
+			});
+		}else 
 			type.setTagValue(val,prop);
 	}
 
