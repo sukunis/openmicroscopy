@@ -638,6 +638,8 @@ public class TagData
 	public void setTagUnit(Unit u)
 	{
 		unit=u;
+		if(unit!=null)
+			label.setText(this.name+" ["+unit.getSymbol()+"]:");
 	}
 	
 	public void setTagValue(Experimenter val)
