@@ -327,10 +327,12 @@ public class ImageViewer extends ModuleViewer{
 			pixelSize = new TagData(TagNames.PIXELSIZE,val,unit,prop,TagData.ARRAYFIELDS);
 			pixelSize.addDocumentListener(createDocumentListenerPosFloat(pixelSize,"Invalid input. Use float >0!"));
 		}else {
+			
 			pixelSize.setTagValue(valX,0,prop);
 			pixelSize.setTagValue(valY,1,prop);
+			pixelSize.setTagUnit(unit);
 		}
-		pixelSize.setTagUnit(unit);
+		
 	}
 	private void setDimZTC(String[] value, boolean prop)
 	{
