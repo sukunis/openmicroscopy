@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -513,6 +514,33 @@ public List<TagData> getChangedTags()
 	if(inputAt(pinholeSize)) list.add(pinholeSize);
 	
 	return list;
+}
+
+public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map)
+{
+	if(map==null)
+		map=new HashMap<String, String>();
+	
+	String id="Channel "+data.getChannel(index).getName()+":";
+	
+	if(inputAt(name)) map.put(id+TagNames.CH_NAME,name.getTagValue());
+	if(inputAt(color)) map.put(id+TagNames.COLOR,color.getTagValue());
+	if(inputAt(fluorophore)) map.put(id+TagNames.FLUOROPHORE,fluorophore.getTagValue());
+	if(inputAt(illumType))map.put(id+TagNames.ILLUMTYPE,illumType.getTagValue());
+	if(inputAt(exposureTime))map.put(id+TagNames.EXPOSURETIME,exposureTime.getTagValue()+" "+
+			exposureTime.getTagUnit().getSymbol());
+	if(inputAt(excitWavelength))map.put(id+TagNames.EXCITWAVELENGTH,excitWavelength.getTagValue()+" "+
+			excitWavelength.getTagUnit().getSymbol());
+	if(inputAt(emissionWavelength))map.put(id+TagNames.EMISSIONWAVELENGTH,emissionWavelength.getTagValue()+" "+
+			emissionWavelength.getTagUnit().getSymbol());
+	if(inputAt(imagingMode))map.put(id+TagNames.IMAGINGMODE,imagingMode.getTagValue());
+	if(inputAt(illuminationMode))map.put(id+TagNames.ILLUMINATIONMODE,illuminationMode.getTagValue());
+	if(inputAt(contrastMethod))map.put(id+TagNames.CONTRASTMETHOD,contrastMethod.getTagValue());
+	if(inputAt(ndFilter))map.put(id+TagNames.NDFILTER,ndFilter.getTagValue());
+	if(inputAt(pinholeSize))map.put(id+TagNames.PINHOLESIZE,pinholeSize.getTagValue()+" "+
+			pinholeSize.getTagUnit().getSymbol());
+	
+	return map;
 }
 
 public int getIndex() {

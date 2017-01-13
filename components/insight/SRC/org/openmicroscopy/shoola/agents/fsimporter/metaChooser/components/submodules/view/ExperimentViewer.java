@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -11,6 +12,8 @@ import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import ome.xml.model.Detector;
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
 import ome.xml.model.enums.EnumerationException;
@@ -442,6 +445,21 @@ public class ExperimentViewer extends ModuleViewer{
 		return list;
 	}
 
+	public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map)
+	{
+		if(map==null)
+			map=new HashMap<String, String>();
+		
+		String id="Experiment";
+		
+		if(inputAt(projectPartner)) map.put(id+":Project Partner",projectPartner.getTagValue());
+		if(inputAt(type)) map.put(id+":Type",type.getTagValue());
+		if(inputAt(description)) map.put(id+":Desc",description.getTagValue());
+		if(inputAt(expName))map.put(id+":Experimenter Name",expName.getTagValue());
+	
+		
+		return map;
+	}
 
 }
 

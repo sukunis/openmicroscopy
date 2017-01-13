@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -47,6 +48,7 @@ public class LightPathViewer extends ModuleViewer{
 	static final String DICHROIC="Dichroic";
 	
 	private List<Object> availableElems;
+	private boolean lightPathDataChanged;
 
 	/**
 	 * Creates a new instance.
@@ -62,6 +64,7 @@ public class LightPathViewer extends ModuleViewer{
 		initComponents(conf);
 		buildGUI();
 		showPreDefinitions(conf);
+		lightPathDataChanged=false;
 	}
 	
 	public void showPreDefinitions(ModuleConfiguration conf) 
@@ -132,6 +135,8 @@ public class LightPathViewer extends ModuleViewer{
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
 		editBtn.addActionListener(new ActionListener() {
+			
+
 			public void actionPerformed(ActionEvent e) 
 			{
 				if(data==null)
@@ -142,6 +147,7 @@ public class LightPathViewer extends ModuleViewer{
 						availableElems,data.getLightPath(index));
 				useEditor=true;
 				List<Object> newList=creator.getLightPathList(); 
+				lightPathDataChanged= creator.hasDataChanged();
 				if(newList!=null && !newList.isEmpty()){
 					try {
 						createLightPath(newList);
@@ -306,6 +312,21 @@ public class LightPathViewer extends ModuleViewer{
 
 	public int getIndex() {
 		return index;
+	}
+	
+	@Override
+	public boolean hasDataToSave() 
+	{
+		
+		return lightPathDataChanged;
+	}
+
+	public HashMap<String,String> getMapValuesOfChanges(HashMap<String, String> mapAnnotationLightPath, String chName) 
+	{
+		LightPath lp=data.getLightPath(index);
+		List<Filter> excLits=lp.copyLinkedExcitationFilterList();
+		List<Filter> emisList=lp.copyLinkedEmissionFilterList();
+		return null;
 	}
 
 

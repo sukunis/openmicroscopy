@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -25,13 +26,18 @@ import ome.xml.model.DetectorSettings;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.EnumerationException;
+import omero.model.MapAnnotation;
+import omero.model.MapAnnotationI;
+import omero.model.NamedValue;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
@@ -738,6 +744,32 @@ public class DetectorViewer extends ModuleViewer{
 		if(inputAt(binning))list.add(binning);
 		if(inputAt(subarray))list.add(subarray);
 		return list;
+	}
+	
+	public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map,String chName)
+	{
+		if(map==null)
+			map=new HashMap<String, String>();
+		
+		Detector d=data.getDetector(index);
+		String id=chName+":"+d.getID()+":";
+		
+		if(inputAt(model)) map.put(id+TagNames.MODEL,model.getTagValue());
+		if(inputAt(manufact)) map.put(id+TagNames.MANUFAC,manufact.getTagValue());
+		if(inputAt(type)) map.put(id+TagNames.D_TYPE,type.getTagValue());
+		if(inputAt(zoom)) map.put(id+TagNames.ZOOM,zoom.getTagValue());
+		if(inputAt(amplGain)) map.put(id+TagNames.AMPLGAIN,amplGain.getTagValue());
+		
+		// settings
+		id=id+"Settings:";
+		if(inputAt(gain))map.put(id+TagNames.GAIN,gain.getTagValue());
+		if(inputAt(voltage))map.put(id+TagNames.VOLTAGE,voltage.getTagValue()+" "+voltage.getTagUnit().getSymbol());
+		if(inputAt(offset))map.put(id+TagNames.OFFSET,offset.getTagValue());
+		if(inputAt(confocalZoom))map.put(id+TagNames.CONFZOOM,confocalZoom.getTagValue());
+		if(inputAt(binning))map.put(id+TagNames.BINNING,binning.getTagValue());
+		if(inputAt(subarray))map.put(id+TagNames.SUBARRAY,subarray.getTagValue());
+		
+		return map;
 	}
 
 	public int getIndex()

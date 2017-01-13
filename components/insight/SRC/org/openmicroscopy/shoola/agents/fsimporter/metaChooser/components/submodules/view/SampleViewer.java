@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -508,6 +509,25 @@ public List<TagData> getChangedTags() {
 	return list;
 }
 
+public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map)
+{
+	if(map==null)
+		map=new HashMap<String, String>();
+	
+	String id="Sample";
+	
+	if(inputAt(preparationDate)) map.put(id+":Preparation Date",preparationDate.getTagValue());
+	if(inputAt(preparationDescription)) map.put(id+":Preparation Desc",preparationDescription.getTagValue());
+	if(inputAt(rawMaterialCode)) map.put(id+":Raw Material Code",rawMaterialCode.getTagValue());
+	if(inputAt(rawMaterialDesc))map.put(id+":Raw Material Desc",rawMaterialDesc.getTagValue());
+	if(inputAt(expGrid))map.put(id+":Grid Number",expGrid.getTagValue());
+	if(inputAt(expObjectNr))map.put(id+":Object Number",expObjectNr.getTagValue());
+	if(inputAt(expObjectType))map.put(id+":Object Type",expObjectType.getTagValue());
+	if(inputAt(gridBoxNumber))map.put(id+":Grid",gridBoxNumber.getTagValue());
+	if(inputAt(gridBoxType))map.put(id+":Grid Type",gridBoxType.getTagValue());
+	
+	return map;
+}
 
 }
 

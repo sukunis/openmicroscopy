@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -718,6 +719,32 @@ public class ObjectiveViewer extends ModuleViewer
 		if(inputAt(medium))list.add(medium);
 		if(inputAt(refractIndex))list.add(refractIndex);
 		return list;
+	}
+	
+	public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map)
+	{
+		if(map==null)
+			map=new HashMap<String, String>();
+		
+		String id="Objective:";
+		
+		if(inputAt(model)) map.put(id+TagNames.MODEL,model.getTagValue());
+		if(inputAt(manufact)) map.put(id+TagNames.MANUFAC,manufact.getTagValue());
+		if(inputAt(nomMagn)) map.put(id+TagNames.NOMMAGN,nomMagn.getTagValue());
+		if(inputAt(calMagn))map.put(id+TagNames.CALMAGN,calMagn.getTagValue());
+		if(inputAt(lensNA))map.put(id+TagNames.LENSNA,lensNA.getTagValue());
+		if(inputAt(immersion))map.put(id+TagNames.IMMERSION,immersion.getTagValue());
+		if(inputAt(correction))map.put(id+TagNames.CORRECTION,correction.getTagValue());
+		if(inputAt(workDist))map.put(id+TagNames.WORKDIST,workDist.getTagValue()+" "+workDist.getTagUnit().getSymbol());
+		
+		id="Objective:Settings:";
+		//settings
+		if(inputAt(iris))map.put(id+"Iris",iris.getTagValue());
+		if(inputAt(corCollar))map.put(id+TagNames.CORCOLLAR,corCollar.getTagValue());
+		if(inputAt(medium))map.put(id+TagNames.OBJ_MEDIUM,medium.getTagValue());
+		if(inputAt(refractIndex))map.put(id+TagNames.REFINDEX,refractIndex.getTagValue());
+		
+		return map;
 	}
 	
 }

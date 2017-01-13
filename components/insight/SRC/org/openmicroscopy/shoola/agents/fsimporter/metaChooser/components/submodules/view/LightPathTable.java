@@ -31,6 +31,7 @@ public class LightPathTable extends JTable
     	    LoggerFactory.getLogger(LightPathTable.class);
     
 	private JPopupMenu popupMenu;
+	private boolean dataChanged; 
 	
 	public LightPathTable()
 	{
@@ -41,12 +42,16 @@ public class LightPathTable extends JTable
 		removeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				removeSelectionFromTable();
+				System.out.println("# LightPathTable:: \n dataChanged=true");
+				dataChanged=true;
 			}
 		});
 		JMenuItem mvUpItem=new JMenuItem("Move up");
 		mvUpItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				moveRowUp();
+				System.out.println("# LightPathTable:: \n dataChanged=true");
+				dataChanged=true;
 			}
 		});
 		
@@ -54,6 +59,8 @@ public class LightPathTable extends JTable
 		mvDownItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				moveRowDown();
+				System.out.println("# LightPathTable:: \n dataChanged=true");
+				dataChanged=true;
 			}
 		});
 		 
@@ -191,6 +198,11 @@ public class LightPathTable extends JTable
 		for(int i=0; i<model.getRowCount(); i++){
 			model.removeRow(i);
 		}
+	}
+	
+	public boolean hasDataChanged()
+	{
+		return dataChanged;
 	}
 
 

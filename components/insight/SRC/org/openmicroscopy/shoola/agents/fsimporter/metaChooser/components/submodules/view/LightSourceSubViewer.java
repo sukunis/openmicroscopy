@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -16,6 +17,7 @@ import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Power;
 import ome.units.unit.Unit;
+import ome.xml.model.LightSource;
 import ome.xml.model.MapPair;
 import ome.xml.model.enums.ArcType;
 import ome.xml.model.enums.Enumeration;
@@ -499,6 +501,30 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		
 	}
 	
+	public HashMap<String,String> getMapValuesOfChanges(HashMap<String, String> mapAnnot, String refName) 
+	{
+		if(mapAnnot==null)
+			mapAnnot=new HashMap<String, String>();
+		
+		
+		if(inputAt(model)) mapAnnot.put(refName+TagNames.MODEL,model.getTagValue());
+		if(inputAt(manufact)) mapAnnot.put(refName+TagNames.MANUFAC,manufact.getTagValue());
+		if(inputAt(type)) mapAnnot.put(refName+"Type",type.getTagValue());
+		if(inputAt(power)) mapAnnot.put(refName+TagNames.POWER,power.getTagValue()+" "+power.getTagUnit().getSymbol());
+		if(inputAt(description)) mapAnnot.put(refName+TagNames.DESC,description.getTagValue());
+		if(inputAt(map)) mapAnnot.put(refName+TagNames.MAP,map.getTagValue());
+		if(inputAt(medium)) mapAnnot.put(refName+TagNames.MEDIUM,medium.getTagValue());
+		if(inputAt(freqMul)) mapAnnot.put(refName+TagNames.FREQMUL,freqMul.getTagValue());
+		if(inputAt(tunable)) mapAnnot.put(refName+TagNames.TUNABLE,tunable.getTagValue());
+		if(inputAt(pulse)) mapAnnot.put(refName+TagNames.PULSE,pulse.getTagValue());
+		if(inputAt(pockelCell)) mapAnnot.put(refName+TagNames.POCKELCELL,pockelCell.getTagValue());
+		if(inputAt(repRate)) mapAnnot.put(refName+TagNames.REPRATE,repRate.getTagValue()+" "+repRate.getTagUnit().getSymbol());
+		if(inputAt(pump)) mapAnnot.put(refName+TagNames.PUMP,pump.getTagValue());
+		if(inputAt(waveLength)) mapAnnot.put(refName+TagNames.WAVELENGTH,waveLength.getTagValue()+" "+waveLength.getTagUnit().getSymbol());
+		
+		return mapAnnot;	
+	}
+	
 	public static Power parsePower(String c,Unit<Power> unit) throws Exception
 	{
 		if(c==null || c.equals(""))
@@ -597,4 +623,5 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 	public String getClassification() {
 		return classification;
 	}
+	
 }
