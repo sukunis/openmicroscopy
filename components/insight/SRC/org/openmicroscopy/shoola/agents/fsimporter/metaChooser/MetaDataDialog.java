@@ -56,8 +56,12 @@ import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Experimenter;
 import ome.xml.model.Project;
 import omero.gateway.model.ExperimenterData;
+import omero.gateway.model.MapAnnotationData;
 import omero.gateway.model.ProjectData;
 import omero.gateway.model.ScreenData;
+import omero.model.MapAnnotation;
+import omero.model.MapAnnotationI;
+import omero.model.NamedValue;
 
 import org.apache.commons.io.FilenameUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
@@ -73,6 +77,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.FNode;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
 import org.openmicroscopy.shoola.env.LookupNames;
@@ -1539,29 +1544,55 @@ private boolean disableItemListener;
             fileName=FilenameUtils.removeExtension(srcFile)+".ome";
         
         File[] fileList={new File(srcFile),new File(fileName)};
+        
+//        MapAnnotationData map=getMapAnnotation(srcFile,((FNode)fileTree.getLastSelectedPathComponent()).getView());
         firePropertyChange(ImportDialog.ADD_AND_REFRESH_FILE_LIST,null, fileList);
+//        firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,new MapAnnotationObject(srcFile,map));
         fileTree.setSelectionPath(path);//TODO: 
         holdData=false;
     }
     
     
-    private void saveCurrentNode(TreePath path, String srcFile) throws Exception
+    private MapAnnotationData getMapAnnotation(String name) 
+    {
+    	MapAnnotation ma = new MapAnnotationI();
+		List<NamedValue> values = new ArrayList<NamedValue>();
+		
+		values.add(new NamedValue("Detector01::Model", name));
+		values.add(new NamedValue("Image01::physicalPixelSize","value"));
+		
+		ma.setMapValue(values);
+		
+		return new MapAnnotationData(ma);
+	}
+
+
+	private void saveCurrentNode(TreePath path, String srcFile) throws Exception
     {
         LOGGER.info("[DEBUG] -- save node "+srcFile);
         
         ((MetaDataView)metaPanel.getComponent(0)).saveToFile();
+        MapAnnotationData map=getMapAnnotation(srcFile,((MetaDataView)metaPanel.getComponent(0)));
+        firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,new MapAnnotationObject(srcFile,map));
     }
     
     private void saveMetadataForNode(String srcFile,MetaDataView view)
     {
         LOGGER.debug("[SAVE] -- save node "+srcFile);
         try {
+        	 MapAnnotationData map=getMapAnnotation(srcFile,view);
+             firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,new MapAnnotationObject(srcFile,map));
 			view.saveToFile();
 		} catch (Exception e) {
 			LOGGER.error("Can't save metadata for "+srcFile);
 			LOGGER.debug(e.getStackTrace().toString());
 		}
     }
+    
+    private MapAnnotationData getMapAnnotation(String srcFile,MetaDataView view)
+    {
+		return view.getMapAnnotation();
+	}
     
     
 

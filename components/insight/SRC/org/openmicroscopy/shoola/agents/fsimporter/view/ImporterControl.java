@@ -60,6 +60,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.actions.PersonalManagementAct
 import org.openmicroscopy.shoola.agents.fsimporter.actions.RetryImportAction;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.SubmitFilesAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.util.FileImportComponent;
 import org.openmicroscopy.shoola.agents.fsimporter.util.ObjectToCreate;
 import org.openmicroscopy.shoola.agents.util.ViewerSorter;
@@ -440,6 +441,8 @@ class ImporterControl
     			model.setMetaDataText(((File[])evt.getNewValue())!=null );
     		} else if(ImportDialog.SHOW_METADATA_DIALOG.equals(name)){
     			view.showMetaDataDialog();
+    		}else if(ImportDialog.ADD_MAP_ANNOTATION.equals(name)){
+    			view.setMapAnnotation((MapAnnotationObject) evt.getNewValue());
     		}
         }
 

@@ -1,7 +1,10 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import loci.formats.MetadataTools;
 import ome.xml.model.Channel;
@@ -20,6 +23,10 @@ import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
 import ome.xml.model.enums.FilterType;
+import omero.gateway.model.MapAnnotationData;
+import omero.model.MapAnnotation;
+import omero.model.MapAnnotationI;
+import omero.model.NamedValue;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
@@ -123,6 +130,15 @@ public class MetaDataModel
 
 	private List<Object> availableLightPathElems;
 
+	/** Objects for MapAnnotation creation*/
+	private HashMap<String, String> detectorAnnotation;
+	private HashMap<String, String> lightPathAnnotation;
+	private HashMap<String, String> imageAnnotation;
+	private HashMap<String, String> objectiveAnnotation;
+	private HashMap<String, String> lightSrcAnnotation;
+	private HashMap<String, String> channelAnnotation;
+	private HashMap<String, String> sampleAnnotation;
+	private HashMap<String, String> experimentAnnotation;
 	
 	
 	
@@ -1467,4 +1483,132 @@ public class MetaDataModel
 		
 	}
 	
+	
+	public HashMap<String,String> getMapAnnotationDetector()
+	{
+		return detectorAnnotation;
+	}
+
+
+
+	public void setMapAnnotationDetector(HashMap<String, String> mapValuesOfChanges) 
+	{
+		detectorAnnotation=mapValuesOfChanges;
+	}
+	
+
+	public HashMap<String,String> getMapAnnotationLightPath() {
+		return lightPathAnnotation;
+	}
+
+
+
+	public void setMapAnnotationLightPath(HashMap<String, String> mapValuesOfChanges) 
+	{
+		lightPathAnnotation=mapValuesOfChanges;
+	}
+	
+	
+	
+
+
+	public void setMapAnnotationLightSrc(HashMap<String, String> mapValuesOfChanges) 
+	{
+		lightSrcAnnotation=mapValuesOfChanges;
+	}
+
+
+
+	public HashMap<String, String> getMapAnnotationLightSrc() {
+		return lightSrcAnnotation;
+	}
+
+
+
+	public HashMap<String, String> getMapAnnotationChannel() {
+		return channelAnnotation;
+	}
+
+
+
+	public void setMapAnnotationChannel(HashMap<String, String> mapValuesOfChanges) {
+		channelAnnotation=mapValuesOfChanges;
+	}
+
+
+
+	public HashMap<String, String> getMapAnnotationObjective() {
+		return objectiveAnnotation;
+	}
+
+
+
+	public void setMapAnnotationObjective(HashMap<String, String> mapValuesOfChanges) {
+		objectiveAnnotation=mapValuesOfChanges;
+	}
+
+
+
+	public HashMap<String, String> getMapAnnotationSample() {
+		return sampleAnnotation;
+	}
+
+
+
+	public void setMapAnnotationSample(HashMap<String, String> mapValuesOfChanges) {
+		sampleAnnotation=mapValuesOfChanges;
+	}
+
+
+
+	public HashMap<String, String> getMapAnnotationExperiment() {
+		return experimentAnnotation;
+	}
+
+
+
+	public void setMapAnnotationExperiment(HashMap<String, String> mapValuesOfChanges) {
+		experimentAnnotation=mapValuesOfChanges;
+	}
+
+
+
+	public HashMap<String, String> getMapAnnotationImage() {
+		return imageAnnotation;
+	}
+
+
+
+	public void setMapAnnotationImage(HashMap<String, String> mapValuesOfChanges) {
+		imageAnnotation=mapValuesOfChanges;
+	}
+	
+	public MapAnnotationData getAnnotation()
+	{
+		MapAnnotation ma = new MapAnnotationI();
+		List<NamedValue> values = new ArrayList<NamedValue>();
+		
+		ma.setMapValue(values);
+		values=hashMapToValueList(detectorAnnotation, values);
+		values=hashMapToValueList(objectiveAnnotation, values);
+		values=hashMapToValueList(lightPathAnnotation, values);
+		values=hashMapToValueList(lightSrcAnnotation, values);
+		values=hashMapToValueList(channelAnnotation, values);
+		values=hashMapToValueList(sampleAnnotation, values);
+		values=hashMapToValueList(experimentAnnotation, values);
+		values=hashMapToValueList(imageAnnotation, values);
+		return new MapAnnotationData(ma);
+	}
+	
+	private List<NamedValue> hashMapToValueList(HashMap<String,String> map,List<NamedValue> list)
+	{
+		if(map!=null){
+			for (Iterator i = map.entrySet().iterator(); i.hasNext(); ) {
+				Map.Entry next = (Map.Entry)i.next();
+				list.add(new NamedValue(next.getKey().toString(),next.getValue().toString()));
+			}
+		}
+		return list;
+	}
+
 }

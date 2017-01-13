@@ -79,6 +79,7 @@ import org.jdesktop.swingx.JXTaskPane;
 import org.openmicroscopy.shoola.agents.fsimporter.IconManager;
 import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.view.ImportLocationDetails;
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
 import org.openmicroscopy.shoola.agents.util.SelectionWizard;
@@ -100,6 +101,7 @@ import omero.gateway.model.DataObject;
 import omero.gateway.model.DatasetData;
 import omero.gateway.model.ExperimenterData;
 import omero.gateway.model.GroupData;
+import omero.gateway.model.MapAnnotationData;
 import omero.gateway.model.ProjectData;
 import omero.gateway.model.ScreenData;
 import omero.gateway.model.TagAnnotationData;
@@ -146,6 +148,8 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	
 	/** Bound property indicating to add files to the queue by MetaDataDialog*/
 	public static final String ADD_AND_REFRESH_FILE_LIST="addAndRefreshMetaList";
+	
+	public static final String ADD_MAP_ANNOTATION = "addMapAnnotation";
 	
 	public static final String SHOW_METADATA_DIALOG="showMetaDataDialog";
 	
@@ -271,6 +275,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 	/** The length of a column. */
 	private static final int COLUMN_WIDTH = 200;
+
 	
 	/** The approval option the user chose. */
 	private int option;
@@ -322,6 +327,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 	/** Map hosting the tags. */
 	private Map<JButton, TagAnnotationData> tagsMap;
+	
+	/** Map hosting mapAnnotations for files*/
+	private Map<String,MapAnnotationData> mapAnnotation;
 	
 	private Map<String,String> fileMap;
 	private Map<String,String> fileIDMap;
@@ -681,6 +689,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		
 		fileMap=new LinkedHashMap<String,String>();
 		fileIDMap=new LinkedHashMap<String,String>();
+		mapAnnotation=new LinkedHashMap<String,MapAnnotationData>();
 
 		IconManager icons = IconManager.getInstance();
 		
@@ -1138,6 +1147,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 	/** Imports the selected files. */
 	public void importFiles() {
+		
+		System.out.println("# ImportDialog::importFiles()");
+		
 		option = CMD_IMPORT;
 		importButton.setEnabled(false);
 		// Set the current directory as the defaults
@@ -1162,6 +1174,17 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 					reload = true;
 					break;
 				}
+			}
+		}
+		
+		//maps
+		Iterator<ImportableFile> it = files.iterator();
+		while (it.hasNext()) {
+			file = it.next();
+			//mapAnnot
+			MapAnnotationData map=mapAnnotation.get(file.getFile().getFileToImport().getAbsolutePath());
+			if(map!=null){
+				object.setMapAnnotation(file.getFile().getFileToImport().getAbsolutePath(),map);
 			}
 		}
 
@@ -1470,6 +1493,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		tagsMap.clear();
 		fileMap.clear();
 		fileIDMap.clear();
+		mapAnnotation.clear();
 	}
 
 	/**
@@ -1814,6 +1838,11 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	public FileFilter getFileFilter()
 	{
 		return chooser!=null ? chooser.getFileFilter() : null;
+	}
+	
+	public void setMapAnnotation(String fileName, MapAnnotationData map)
+	{
+		mapAnnotation.put(fileName, map);
 	}
 	
 	public void addToMetaDataFileMap(String sourceFileName, String metaFileName)

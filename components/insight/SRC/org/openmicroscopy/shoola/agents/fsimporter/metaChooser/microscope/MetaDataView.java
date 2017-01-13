@@ -23,6 +23,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import ome.xml.meta.IMetadata;
 import ome.xml.model.OME;
+import omero.gateway.model.MapAnnotationData;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
@@ -569,5 +570,21 @@ public class MetaDataView extends JPanel
 
 	public void setParentDataLoaded(boolean b) {
 		parentDataLoaded=b;		
+	}
+
+	public MapAnnotationData getMapAnnotation() 
+	{
+		MapAnnotationData result=null;
+		if(seriesData){
+			for(Component comp:cardPane.getComponents()){
+				//TODO
+			}
+			return result;
+		}else{
+			if(singleView!=null){
+				return singleView.getMapAnnotation();
+			}
+		}
+		return null;
 	}
 }
