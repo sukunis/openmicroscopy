@@ -1,6 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ome.xml.model.Dichroic;
@@ -23,15 +24,36 @@ public class LightPathModel
 
 	private List<Object> availableElem;
 
+	private List<HashMap<String,String>> maps;
+
 	public LightPathModel()
 	{
 		element=new ArrayList<LightPath>();
+		maps=new ArrayList<HashMap<String,String>>();
 	}
 
 	public LightPathModel(LightPathModel orig)
 	{
 		element=orig.element;
 		availableElem=orig.availableElem;
+		maps=orig.maps;
+	}
+	
+	
+	public HashMap<String,String> getMap(int i)
+	{
+		if(i>=maps.size())
+			return null;
+		return maps.get(i);
+	}
+	
+	public void setMap(HashMap<String,String> map,int i)
+	{
+		
+		if(i>=maps.size())
+			expandList(maps.size(),i);
+
+		maps.set(i, map);
 	}
 
 	/**
@@ -173,6 +195,7 @@ public class LightPathModel
 	{
 		for(int i=size;i<index+1;i++){
 			element.add(new LightPath());
+			maps.add(new HashMap<String,String>());
 		}
 	}
 	

@@ -1,6 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ome.units.quantity.ElectricPotential;
@@ -30,6 +31,8 @@ public class DetectorModel
 	// settings
 	private List<DetectorSettings> settings;
 	
+	private List<HashMap<String,String>> maps;
+	
 	// list of available detector (set by hardware definition)
 //	private List<Detector> availableElem;
 	
@@ -37,6 +40,7 @@ public class DetectorModel
 	{
 		element=new ArrayList<Detector>();
 		settings=new ArrayList<DetectorSettings>();
+		maps=new ArrayList<HashMap<String,String>>();
 	}
 	
 	//copy constructor
@@ -44,6 +48,7 @@ public class DetectorModel
 	{
 		element=orig.element;
 		settings=orig.settings;
+		maps=orig.maps;
 //		availableElem=orig.availableElem;
 	}
 	
@@ -116,6 +121,7 @@ public class DetectorModel
 		for(int i=size;i<index+1;i++){
 			element.add(new Detector());
 			settings.add(new DetectorSettings());
+			maps.add(new HashMap<String,String>());
 		}
 	}
 
@@ -228,6 +234,22 @@ public class DetectorModel
 			settings.get(i).setDetector(element.get(i));
 		
 		return settings.get(i);
+	}
+	
+	public HashMap<String,String> getMap(int i)
+	{
+		
+		if(i>=maps.size())
+			return null;
+		return maps.get(i);
+	}
+	
+	public void setMap(HashMap<String,String> map,int i)
+	{
+		if(i>=maps.size())
+			expandList(maps.size(),i);
+		
+		maps.set(i, map);
 	}
 	
 //	/**

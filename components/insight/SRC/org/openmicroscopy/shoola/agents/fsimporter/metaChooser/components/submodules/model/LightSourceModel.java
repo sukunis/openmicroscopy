@@ -1,7 +1,9 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
@@ -22,6 +24,7 @@ import ome.xml.model.enums.Pulse;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MetaDataMapAnnotation;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +49,8 @@ public class LightSourceModel
 
 	// settings
 	private List<LightSourceSettings> settings;
+	
+	private List<HashMap<String,String>> maps;
 
 	// list of available lightSrc (set by hardware definition)
 //	private List<LightSource> availableElem;
@@ -54,6 +59,7 @@ public class LightSourceModel
 	{
 		element=new ArrayList<LightSource>();
 		settings=new ArrayList<LightSourceSettings>();
+		maps=new ArrayList<HashMap<String,String>>();
 	}
 
 	//copy constructor
@@ -61,9 +67,41 @@ public class LightSourceModel
 	{
 		element=orig.element;
 		settings=orig.settings;
+		maps=orig.maps;
 //		availableElem=orig.availableElem;
 	}
 
+	
+	public HashMap<String,String> getMap(int i)
+	{
+		if(i>=maps.size())
+			return null;
+		return maps.get(i);
+	}
+	
+	public void setMap(HashMap<String,String> map,int i)
+	{
+		
+		if(i>=maps.size()){
+			 Map.Entry<String,String> entry=map.entrySet().iterator().next();
+			 String key=entry.getKey();
+			String type=MetaDataMapAnnotation.getLastSubstring(key.substring(0,key.length()-1),":");
+			switch(type){
+			case LightSourceModel.LASER:
+				expandList(maps.size(),i,new Laser());	break;
+			case LightSourceModel.ARC:
+				expandList(maps.size(),i,new Arc());break;
+			case LightSourceModel.FILAMENT:
+				expandList(maps.size(),i,new Filament());break;
+			case LightSourceModel.GENERIC_EXCITATION:
+				expandList(maps.size(),i,new GenericExcitationSource());break;
+			case LightSourceModel.LIGHT_EMITTING_DIODE:
+				expandList(maps.size(),i,new LightEmittingDiode());	break;
+				default:System.out.println(" #LightSrcModel::setMap():\n\t...unknown type");break;
+			}
+		}
+			maps.set(i, map);
+	}
 	/**
 	 * Overwrite or complete data. Caller class has to handle notification about the changes.
 	 * @param newElem
@@ -351,6 +389,7 @@ public class LightSourceModel
 	{
 		for(int i=size;i<index+1;i++){
 			element.add((LightSource) newElem);
+			maps.add(new HashMap<String,String>());
 //			settings.add(new LightSourceSettings());
 		}
 	}

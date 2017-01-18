@@ -471,8 +471,6 @@ public void saveData()
 		observedSample.setGridNumberY(expGrid!=null ?expGrid.getTagValue(1):null);
 		expGrid.dataSaved(true);
 		
-		System.out.println("\t...grid(x,y)= "+observedSample.getGridNumberX()+
-				", "+observedSample.getGridNumberY());
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE observed sample grid number x/y input");
 	}
@@ -514,17 +512,18 @@ public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map)
 	if(map==null)
 		map=new HashMap<String, String>();
 	
-	String id="Sample";
-	
-	if(inputAt(preparationDate)) map.put(id+":Preparation Date",preparationDate.getTagValue());
-	if(inputAt(preparationDescription)) map.put(id+":Preparation Desc",preparationDescription.getTagValue());
-	if(inputAt(rawMaterialCode)) map.put(id+":Raw Material Code",rawMaterialCode.getTagValue());
-	if(inputAt(rawMaterialDesc))map.put(id+":Raw Material Desc",rawMaterialDesc.getTagValue());
-	if(inputAt(expGrid))map.put(id+":Grid Number",expGrid.getTagValue());
-	if(inputAt(expObjectNr))map.put(id+":Object Number",expObjectNr.getTagValue());
-	if(inputAt(expObjectType))map.put(id+":Object Type",expObjectType.getTagValue());
-	if(inputAt(gridBoxNumber))map.put(id+":Grid",gridBoxNumber.getTagValue());
-	if(inputAt(gridBoxType))map.put(id+":Grid Type",gridBoxType.getTagValue());
+	String id="[Sample]:";
+	if(inputAt(preparationDate)) map.put(id+preparationDate.getTagName(),preparationDate.getTagValue());
+	if(inputAt(preparationDescription)){
+		map.put(id+preparationDescription.getTagName(),preparationDescription.getTagValue());
+	}
+	if(inputAt(rawMaterialCode)) map.put(id+rawMaterialCode.getTagName(),rawMaterialCode.getTagValue());
+	if(inputAt(rawMaterialDesc))map.put(id+rawMaterialDesc.getTagName(),rawMaterialDesc.getTagValue());
+	if(inputAt(expGrid))map.put(id+expGrid.getTagName(),expGrid.getTagValue());
+	if(inputAt(expObjectNr))map.put(id+expObjectNr.getTagName(),expObjectNr.getTagValue());
+	if(inputAt(expObjectType))map.put(id+expObjectType.getTagName(),expObjectType.getTagValue());
+	if(inputAt(gridBoxNumber))map.put(id+gridBoxNumber.getTagName(),gridBoxNumber.getTagValue());
+	if(inputAt(gridBoxType))map.put(id+gridBoxType.getTagName(),gridBoxType.getTagValue());
 	
 	return map;
 }

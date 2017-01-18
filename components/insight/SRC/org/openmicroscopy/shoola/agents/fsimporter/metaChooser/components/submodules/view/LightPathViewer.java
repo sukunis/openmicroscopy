@@ -321,12 +321,39 @@ public class LightPathViewer extends ModuleViewer{
 		return lightPathDataChanged;
 	}
 
-	public HashMap<String,String> getMapValuesOfChanges(HashMap<String, String> mapAnnotationLightPath, String chName) 
+	public HashMap<String,String> getMapValuesOfChanges(HashMap<String, String> map, String chName) 
 	{
+		if(map==null)
+			map=new HashMap<String, String>();
+		
 		LightPath lp=data.getLightPath(index);
-		List<Filter> excLits=lp.copyLinkedExcitationFilterList();
-		List<Filter> emisList=lp.copyLinkedEmissionFilterList();
-		return null;
+		int i=1;
+		for(Filter f: lp.copyLinkedExcitationFilterList()){
+			String id="["+chName+"]:[LightPath]:[Excitation Filter]:["+i+"]:";
+			map.put(id+"Model", f.getModel());
+			map.put(id+"Manufactur", f.getManufacturer());
+			map.put(id+"Type", (f.getType()==null?"": f.getType().getValue()));
+			map.put(id+"FilterWheel", f.getFilterWheel());
+			
+			i++;
+		}
+		Dichroic d= lp.getLinkedDichroic();
+		map.put("["+chName+"]:[LightPath]:["+d.getID()+"]:["+i+"]:", d.getModel());
+		i++;
+		
+		for(Filter f: lp.copyLinkedEmissionFilterList()){
+			String id="["+chName+"]:[LightPath]:[Emmission Filter]:["+i+"]:";
+			map.put(id+"Model", f.getModel());
+			map.put(id+"Manufactur", f.getManufacturer());
+			map.put(id+"Type",(f.getType()==null?"": f.getType().getValue()));
+			map.put(id+"FilterWheel", f.getFilterWheel());
+			
+			i++;
+		}
+		
+		
+		
+		return map;
 	}
 
 

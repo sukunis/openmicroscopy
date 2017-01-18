@@ -131,14 +131,9 @@ public class MetaDataModel
 	private List<Object> availableLightPathElems;
 
 	/** Objects for MapAnnotation creation*/
-	private HashMap<String, String> detectorAnnotation;
-	private HashMap<String, String> lightPathAnnotation;
-	private HashMap<String, String> imageAnnotation;
-	private HashMap<String, String> objectiveAnnotation;
-	private HashMap<String, String> lightSrcAnnotation;
-	private HashMap<String, String> channelAnnotation;
-	private HashMap<String, String> sampleAnnotation;
-	private HashMap<String, String> experimentAnnotation;
+//	private HashMap<String, String> lightPathAnnotation;
+//	private HashMap<String, String> lightSrcAnnotation;
+//	private HashMap<String, String> channelAnnotation;
 	
 	
 	
@@ -1484,104 +1479,153 @@ public class MetaDataModel
 	}
 	
 	
-	public HashMap<String,String> getMapAnnotationDetector()
+	public HashMap<String,String> getMapAnnotationDetector(int index)
 	{
-		return detectorAnnotation;
+		if(detectorModel==null)
+			return null;
+		else
+			return detectorModel.getMap(index);
 	}
 
 
 
-	public void setMapAnnotationDetector(HashMap<String, String> mapValuesOfChanges) 
+	public void setMapAnnotationDetector(HashMap<String, String> mapValuesOfChanges, int index) 
 	{
-		detectorAnnotation=mapValuesOfChanges;
+		if(detectorModel==null)
+			detectorModel=new DetectorModel();
+		detectorModel.setMap(mapValuesOfChanges, index);
 	}
 	
 
-	public HashMap<String,String> getMapAnnotationLightPath() {
-		return lightPathAnnotation;
+	public HashMap<String,String> getMapAnnotationLightPath(int index) {
+		if(lightPathModel==null)
+			return null;
+		else
+			return lightPathModel.getMap(index);
 	}
 
 
 
-	public void setMapAnnotationLightPath(HashMap<String, String> mapValuesOfChanges) 
+	public void setMapAnnotationLightPath(HashMap<String, String> mapValuesOfChanges, int index) 
 	{
-		lightPathAnnotation=mapValuesOfChanges;
+		if(lightPathModel==null)
+			lightPathModel=new LightPathModel();
+		lightPathModel.setMap(mapValuesOfChanges, index);
 	}
 	
 	
 	
 
 
-	public void setMapAnnotationLightSrc(HashMap<String, String> mapValuesOfChanges) 
+	public void setMapAnnotationLightSrc(HashMap<String, String> mapValuesOfChanges, int index) 
 	{
-		lightSrcAnnotation=mapValuesOfChanges;
+		if(lightSrcModel==null)
+			lightSrcModel=new LightSourceModel();
+		lightSrcModel.setMap(mapValuesOfChanges, index);
 	}
 
 
 
-	public HashMap<String, String> getMapAnnotationLightSrc() {
-		return lightSrcAnnotation;
+	public HashMap<String, String> getMapAnnotationLightSrc(int index) {
+		if(lightSrcModel==null)
+			return null;
+		else
+			return lightSrcModel.getMap(index);
 	}
 
 
 
-	public HashMap<String, String> getMapAnnotationChannel() {
-		return channelAnnotation;
+	public HashMap<String, String> getMapAnnotationChannel(int index) {
+		if(channelModel==null)
+			return null;
+		else
+			return channelModel.getMap(index);
 	}
 
 
 
-	public void setMapAnnotationChannel(HashMap<String, String> mapValuesOfChanges) {
-		channelAnnotation=mapValuesOfChanges;
+	public void setMapAnnotationChannel(HashMap<String, String> mapValuesOfChanges, int index) {
+		if(channelModel==null)
+			channelModel=new ChannelModel();
+		channelModel.setMap(mapValuesOfChanges, index);
 	}
 
 
 
 	public HashMap<String, String> getMapAnnotationObjective() {
-		return objectiveAnnotation;
+		if(objModel==null)
+			return null;
+		return objModel.getMap();
 	}
 
 
 
 	public void setMapAnnotationObjective(HashMap<String, String> mapValuesOfChanges) {
-		objectiveAnnotation=mapValuesOfChanges;
+		if(objModel==null)
+			objModel=new ObjectiveModel();
+		objModel.setMap(mapValuesOfChanges);
 	}
 
 
 
 	public HashMap<String, String> getMapAnnotationSample() {
-		return sampleAnnotation;
+		if(sampleModel==null)
+			return null;
+		return sampleModel.getMap();
 	}
 
 
 
 	public void setMapAnnotationSample(HashMap<String, String> mapValuesOfChanges) {
-		sampleAnnotation=mapValuesOfChanges;
+		if(sampleModel==null)
+			sampleModel=new SampleModel();
+		sampleModel.setMap(mapValuesOfChanges);
 	}
 
 
 
 	public HashMap<String, String> getMapAnnotationExperiment() {
-		return experimentAnnotation;
+		if(expModel==null)
+			return null;
+		return expModel.getMap();
 	}
 
 
 
 	public void setMapAnnotationExperiment(HashMap<String, String> mapValuesOfChanges) {
-		experimentAnnotation=mapValuesOfChanges;
+		if(expModel==null)
+			expModel=new ExperimentModel();
+		expModel.setMap(mapValuesOfChanges);
 	}
 
 
 
 	public HashMap<String, String> getMapAnnotationImage() {
-		return imageAnnotation;
+		if(imgModel==null)
+			return null;
+		return imgModel.getMap();
 	}
 
 
 
 	public void setMapAnnotationImage(HashMap<String, String> mapValuesOfChanges) {
-		imageAnnotation=mapValuesOfChanges;
+		if(imgModel==null)
+			imgModel=new ImageModel();
+		imgModel.setMap(mapValuesOfChanges);
 	}
+	
+	public HashMap<String, String> getMapAnnotationImgEnv() {
+		if(imgEnvModel==null)
+			return null;
+		return imgEnvModel.getMap();
+	}
+
+	public void setMapAnnotationImgEnv(HashMap<String, String> mapValuesOfChanges) {
+		if(imgEnvModel==null)
+			imgEnvModel=new ImageEnvModel();
+		imgEnvModel.setMap(mapValuesOfChanges);
+	}
+
 	
 	public MapAnnotationData getAnnotation()
 	{
@@ -1589,19 +1633,37 @@ public class MetaDataModel
 		List<NamedValue> values = new ArrayList<NamedValue>();
 		
 		ma.setMapValue(values);
-		values=hashMapToValueList(detectorAnnotation, values);
-		values=hashMapToValueList(objectiveAnnotation, values);
-		values=hashMapToValueList(lightPathAnnotation, values);
-		values=hashMapToValueList(lightSrcAnnotation, values);
-		values=hashMapToValueList(channelAnnotation, values);
-		values=hashMapToValueList(sampleAnnotation, values);
-		values=hashMapToValueList(experimentAnnotation, values);
-		values=hashMapToValueList(imageAnnotation, values);
+		if(detectorModel!=null){
+		for(int i=0; i<getNumberOfDetectors();i++)
+			values=hashMapToValueList(detectorModel.getMap(i), values);
+		}
+		if(channelModel!=null){
+		for(int i=0; i<getNumberOfChannels();i++)
+			values=hashMapToValueList(channelModel.getMap(i), values);
+		}
+		if(lightPathModel!=null){
+		for(int i=0; i<getNumberOfLightPath();i++)
+			values=hashMapToValueList(lightPathModel.getMap(i), values);
+		}
+		if(lightSrcModel!=null){
+		for(int i=0; i<getNumberOfLightSrc();i++)
+			values=hashMapToValueList(lightSrcModel.getMap(i), values);
+		}
+		
+		if(objModel!=null) values=hashMapToValueList(objModel.getMap(), values);
+		if(sampleModel!=null) values=hashMapToValueList(sampleModel.getMap(), values);
+		if(expModel!=null) values=hashMapToValueList(expModel.getMap(), values);
+		if(imgModel!=null) values=hashMapToValueList(imgModel.getMap(), values);
+		if(imgEnvModel!=null)values=hashMapToValueList(imgEnvModel.getMap(),values);
+		
 		return new MapAnnotationData(ma);
 	}
 	
 	private List<NamedValue> hashMapToValueList(HashMap<String,String> map,List<NamedValue> list)
 	{
+		if(list==null)
+			list = new ArrayList<NamedValue>();
+		
 		if(map!=null){
 			for (Iterator i = map.entrySet().iterator(); i.hasNext(); ) {
 				Map.Entry next = (Map.Entry)i.next();

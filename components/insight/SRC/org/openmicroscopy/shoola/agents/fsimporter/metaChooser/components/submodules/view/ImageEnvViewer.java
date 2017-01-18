@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -355,7 +356,23 @@ public class ImageEnvViewer extends ModuleViewer{
 
 		return list;
 
-
+	}
+	
+	public HashMap<String, String> getMapValuesOfChanges(HashMap<String, String> map) 
+	{
+		if(map==null)
+			map=new HashMap<String, String>();
+		
+		String id="[ImageEnv]:";
+		if(inputAt(temperature)) map.put(id+temperature.getTagName(),temperature.getTagValue()+" "+
+						temperature.getTagUnit().getSymbol());
+		if(inputAt(airPressure)) map.put(id+airPressure.getTagName(),airPressure.getTagValue()+" "+
+				airPressure.getTagUnit().getSymbol());
+		if(inputAt(humidity)) map.put(id+humidity.getTagName(),humidity.getTagValue()+" "+
+				humidity.getTagUnit().getSymbol());
+		if(inputAt(co2Percent)) map.put(id+co2Percent.getTagName(),co2Percent.getTagValue()+" "+
+				co2Percent.getTagUnit().getSymbol());
+		return map;
 	}
 	
 	public static Temperature parseTemperature(String c, Unit unit) throws Exception
