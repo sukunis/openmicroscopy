@@ -638,8 +638,10 @@ public class TagData
 	public void setTagUnit(Unit u)
 	{
 		unit=u;
-		if(unit!=null)
-			label.setText(this.name+" ["+unit.getSymbol()+"]:");
+		if(unit!=null){
+			String unitSymbol=unit.equals(UNITS.REFERENCEFRAME)? "rf" : unit.getSymbol();
+			label.setText(this.name+" ["+unitSymbol+"]:");
+		}
 	}
 	
 	public void setTagValue(Experimenter val)
