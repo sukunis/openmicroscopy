@@ -114,13 +114,13 @@ public class MetaDataModel
 
 	private List<LightPath> changesLightPath;
 
-
+	
 	private List<Detector> availableDetectors;
-
+	
 	private List<LightSource> availableLightSources;
-
+	
 	private List<Objective> availableObjectives;
-
+	
 	private List<Object> availableLightPathElems;
 
 	
@@ -451,11 +451,11 @@ public class MetaDataModel
 			availableDetectors=new ArrayList<Detector>();
 		}else if(!append)
 			availableDetectors.clear();
-		
+			
 		for(int i=0; i<micDetectorList.size(); i++){
 			availableDetectors.add(micDetectorList.get(i));
-		}
-			
+	}
+	
 	}
 	
 	public DetectorModel getDetectorModel() 
@@ -612,7 +612,7 @@ public class MetaDataModel
 		
 		for(int i=0; i<micLightSrcList.size(); i++){
 			availableLightSources.add(micLightSrcList.get(i));
-		}	
+	}
 	}
 	
 	public LightSourceModel getLightSourceModel()
@@ -791,7 +791,7 @@ public class MetaDataModel
 		
 		for(int i=0; i<list.size(); i++){
 			availableObjectives.add(list.get(i));
-		}	
+	}
 	}
 	/**
 	 * Get objective modul data
@@ -1408,9 +1408,9 @@ public class MetaDataModel
 	{
 		return changesExperiment;
 	}
+	
 
-
-
+	
 	public List<Detector> getDetectorHardwareList() {
 		return availableDetectors;
 	}
@@ -1420,14 +1420,14 @@ public class MetaDataModel
 	public List<LightSource> getLightSrcHardwareList() {
 		return availableLightSources;
 	}
-
+	
 
 
 	public List<Object> getHardwareList_LightPath() {
 		return availableLightPathElems;
 	}
 
-
+	
 
 	public List<Objective> getObjList() {
 		return availableObjectives;
@@ -1438,16 +1438,16 @@ public class MetaDataModel
 	public void addToLightPathList_Filter(List<Filter> filters, boolean append) {
 		if(filters==null || filters.size()==0)
 			return;
-		
+
 		if(availableLightPathElems==null){
 			availableLightPathElems=new ArrayList<Object>();
 		}else if(!append)
 			availableLightPathElems.clear();
-		
+
 		for(int i=0; i<filters.size(); i++){
 			availableLightPathElems.add(filters.get(i));
 		}	
-		
+	
 	}
 
 
@@ -1455,16 +1455,16 @@ public class MetaDataModel
 	public void addToLightPathList_Dichroic(List<Dichroic> dichroics, boolean append) {
 		if(dichroics==null || dichroics.size()==0)
 			return;
-		
+	
 		if(availableLightPathElems==null){
 			availableLightPathElems=new ArrayList<Object>();
 		}else if(!append)
 			availableLightPathElems.clear();
-		
+
 		for(int i=0; i<dichroics.size(); i++){
 			availableLightPathElems.add(dichroics.get(i));
 		}	
-		
-	}
 	
+	}
+
 }
