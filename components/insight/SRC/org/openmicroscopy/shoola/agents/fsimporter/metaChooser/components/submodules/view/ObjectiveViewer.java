@@ -726,7 +726,7 @@ public class ObjectiveViewer extends ModuleViewer
 		if(map==null)
 			map=new HashMap<String, String>();
 		
-		String id="Objective:";
+		String id="[Objective]:";
 		
 		if(inputAt(model)) map.put(id+TagNames.MODEL,model.getTagValue());
 		if(inputAt(manufact)) map.put(id+TagNames.MANUFAC,manufact.getTagValue());
@@ -737,7 +737,7 @@ public class ObjectiveViewer extends ModuleViewer
 		if(inputAt(correction))map.put(id+TagNames.CORRECTION,correction.getTagValue());
 		if(inputAt(workDist))map.put(id+TagNames.WORKDIST,workDist.getTagValue()+" "+workDist.getTagUnit().getSymbol());
 		
-		id="Objective:Settings:";
+		id=id+"[Settings]:";
 		//settings
 		if(inputAt(iris))map.put(id+"Iris",iris.getTagValue());
 		if(inputAt(corCollar))map.put(id+TagNames.CORCOLLAR,corCollar.getTagValue());

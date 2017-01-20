@@ -521,7 +521,7 @@ public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map)
 	if(map==null)
 		map=new HashMap<String, String>();
 	
-	String id="Channel "+data.getChannel(index).getName()+":";
+	String id="["+data.getChannel(index).getName()+"]:";
 	
 	if(inputAt(name)) map.put(id+TagNames.CH_NAME,name.getTagValue());
 	if(inputAt(color)) map.put(id+TagNames.COLOR,color.getTagValue());

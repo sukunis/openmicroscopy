@@ -450,8 +450,8 @@ public class ExperimentViewer extends ModuleViewer{
 		if(map==null)
 			map=new HashMap<String, String>();
 		
-		String id="Experiment";
-		
+		String id="[Experiment]";
+		System.out.println("# ExperimentViewer::getMapValuesOfChanges()");
 		if(inputAt(projectPartner)) map.put(id+":Project Partner",projectPartner.getTagValue());
 		if(inputAt(type)) map.put(id+":Type",type.getTagValue());
 		if(inputAt(description)) map.put(id+":Desc",description.getTagValue());
