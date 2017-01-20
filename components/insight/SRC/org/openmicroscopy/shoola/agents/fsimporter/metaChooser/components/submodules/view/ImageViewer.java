@@ -535,7 +535,13 @@ For example in a video stream.
 		if(map==null)
 			map=new HashMap<String, String>();
 		
-		String id="[Image]:";
+		String id="";
+		if(name.getTagValue()!=null && !name.getTagValue().equals(""))
+			id="["+name.getTagValue()+"]:";
+		else if(data.getImage().getID()!=null && !data.getImage().getID().equals("")){
+			id="["+data.getImage().getID()+"]:";
+		}else
+			id="[Image]:";
 		if(name.valueChanged()) map.put(id+name.getTagName(),name.getTagValue());
 		if(desc.valueChanged()) map.put(id+desc.getTagName(),desc.getTagValue());
 		if(acqTime.valueChanged()) map.put(id+acqTime.getTagName(),acqTime.getTagValue());
