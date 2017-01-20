@@ -1211,10 +1211,13 @@ class OmeroImageServiceImpl
 				}
 				
 				//addMapAnnotations(file.getName(),customAnnotationList);
-				MapAnnotationData map=object.getMapAnnotation(file.getAbsolutePath());
+				MapAnnotationObject maps=object.getMapAnnotation(file.getAbsolutePath());
 				
-				if(map!=null){
-					customAnnotationList.add((Annotation) map.asIObject());
+				// for seriesData and single file
+				if(maps!=null){
+					for(MapAnnotationData m:maps.getMapAnnotationList()){
+						customAnnotationList.add((Annotation) m.asIObject());
+					}
 				}
 				
 				importIc = icContainers.get(0);

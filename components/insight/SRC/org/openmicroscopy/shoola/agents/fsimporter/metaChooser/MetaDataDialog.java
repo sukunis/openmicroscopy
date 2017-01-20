@@ -1572,16 +1572,16 @@ private boolean disableItemListener;
         LOGGER.info("[DEBUG] -- save node "+srcFile);
         
         ((MetaDataView)metaPanel.getComponent(0)).saveToFile();
-        MapAnnotationData map=getMapAnnotation(srcFile,((MetaDataView)metaPanel.getComponent(0)));
-        firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,new MapAnnotationObject(srcFile,map));
+        MapAnnotationObject maps=getMapAnnotation(srcFile,((MetaDataView)metaPanel.getComponent(0)));
+        firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,maps);
     }
     
     private void saveMetadataForNode(String srcFile,MetaDataView view)
     {
         LOGGER.debug("[SAVE] -- save node "+srcFile);
         try {
-        	 MapAnnotationData map=getMapAnnotation(srcFile,view);
-             firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,new MapAnnotationObject(srcFile,map));
+        	MapAnnotationObject maps=getMapAnnotation(srcFile,view);
+             firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,maps);
 			view.saveToFile();
 		} catch (Exception e) {
 			LOGGER.error("Can't save metadata for "+srcFile);
@@ -1589,7 +1589,13 @@ private boolean disableItemListener;
 		}
     }
     
-    private MapAnnotationData getMapAnnotation(String srcFile,MetaDataView view)
+    /**
+     * 
+     * @param srcFile
+     * @param view
+     * @return MapAnnotationData for singleView and List<MapAnnotationdata> for seriesData
+     */
+    private MapAnnotationObject getMapAnnotation(String srcFile,MetaDataView view)
     {
 		return view.getMapAnnotation();
 	}

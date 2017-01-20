@@ -30,6 +30,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -572,17 +573,19 @@ public class MetaDataView extends JPanel
 		parentDataLoaded=b;		
 	}
 
-	public MapAnnotationData getMapAnnotation() 
+	/** return mapAnnotationData for singleView and List<MapAnnotationData> for seriesData*/ 
+	public MapAnnotationObject getMapAnnotation() 
 	{
-		MapAnnotationData result=null;
+		
 		if(seriesData){
+			List<MapAnnotationData> result=new ArrayList<>();
 			for(Component comp:cardPane.getComponents()){
-				//TODO
+				result.add(((MetaDataUI) comp).getMapAnnotation());
 			}
-			return result;
+			return new MapAnnotationObject(srcFile.getAbsolutePath(),result);
 		}else{
 			if(singleView!=null){
-				return singleView.getMapAnnotation();
+				return new MapAnnotationObject(srcFile.getAbsolutePath(),singleView.getMapAnnotation());
 			}
 		}
 		return null;

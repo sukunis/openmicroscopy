@@ -192,7 +192,7 @@ public class ImportableObject
 	private Collection<TagAnnotationData> tags;
 	
 	/** The map annotation to each file for import*/
-	private Map<String,MapAnnotationData> mapAnnots;
+	private Map<String,MapAnnotationObject> mapAnnots;
 	
 	/** The array containing pixels size.*/
 	private double[] pixelsSize;
@@ -268,7 +268,7 @@ public class ImportableObject
 		loadThumbnail = true;
 		newObjects = new ArrayList<DataObject>();
 		projectDatasetMap = new HashMap<Long, List<DatasetData>>();
-		mapAnnots=new HashMap<String,MapAnnotationData>();
+		mapAnnots=new HashMap<String,MapAnnotationObject>();
 	}
 	
 	/**
@@ -324,7 +324,7 @@ public class ImportableObject
 	 * @param fileName
 	 * @param annot
 	 */
-	public void setMapAnnotation(String fileName,MapAnnotationData annot)
+	public void setMapAnnotation(String fileName,MapAnnotationObject annot)
 	{
 		this.mapAnnots.put(fileName,annot);
 	}
@@ -457,7 +457,7 @@ public class ImportableObject
 	 */
 	public Collection<TagAnnotationData> getTags() { return tags; }
 	
-	public MapAnnotationData getMapAnnotation(String fileName)
+	public MapAnnotationObject getMapAnnotation(String fileName)
 	{
 		return mapAnnots.get(fileName);
 		

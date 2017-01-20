@@ -1,5 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import omero.gateway.model.MapAnnotationData;
@@ -8,18 +9,31 @@ import omero.model.NamedValue;
 public class MapAnnotationObject {
 
 	private String fileName;
-	private MapAnnotationData mapAnnotation;
+	private List<MapAnnotationData> mapAnnotation;
 
 	public MapAnnotationObject(String fileName, MapAnnotationData map)
 	{
 		this.fileName=fileName;
-		this.mapAnnotation=map;
+		this.mapAnnotation=new ArrayList<>();
+		this.mapAnnotation.add(map);
 	}
+	
+	public MapAnnotationObject(String fileName, List<MapAnnotationData> maps)
+	{
+		this.fileName=fileName;
+		this.mapAnnotation=maps;
+	}
+	
+	
 	public String getFileName() {
 		return fileName;
 	}
 
-	public MapAnnotationData getMapAnnotation() {
+	public MapAnnotationData getMapAnnotation(int i) {
+		return mapAnnotation.get(i);
+	}
+	
+	public List<MapAnnotationData> getMapAnnotationList() {
 		return mapAnnotation;
 	}
 
@@ -35,8 +49,13 @@ public class MapAnnotationObject {
 	
 	static public void printObject(MapAnnotationObject o)
 	{
+		if(o==null)
+			return;
 		System.out.println("\t file : "+o.getFileName());
-		printMapAnnotation(o.getMapAnnotation());
+		List<MapAnnotationData> list=o.getMapAnnotationList();
+		for(MapAnnotationData m:list){
+			printMapAnnotation(m);
+		}
 	}
 	
 }

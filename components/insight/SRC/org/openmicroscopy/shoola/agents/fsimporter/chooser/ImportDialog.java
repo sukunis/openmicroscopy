@@ -329,7 +329,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	private Map<JButton, TagAnnotationData> tagsMap;
 	
 	/** Map hosting mapAnnotations for files*/
-	private Map<String,MapAnnotationData> mapAnnotation;
+	private Map<String,MapAnnotationObject> mapAnnotation;
 	
 	private Map<String,String> fileMap;
 	private Map<String,String> fileIDMap;
@@ -689,7 +689,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		
 		fileMap=new LinkedHashMap<String,String>();
 		fileIDMap=new LinkedHashMap<String,String>();
-		mapAnnotation=new LinkedHashMap<String,MapAnnotationData>();
+		mapAnnotation=new LinkedHashMap<String,MapAnnotationObject>();
 
 		IconManager icons = IconManager.getInstance();
 		
@@ -1182,9 +1182,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		while (it.hasNext()) {
 			file = it.next();
 			//mapAnnot
-			MapAnnotationData map=mapAnnotation.get(file.getFile().getFileToImport().getAbsolutePath());
-			if(map!=null){
-				object.setMapAnnotation(file.getFile().getFileToImport().getAbsolutePath(),map);
+			MapAnnotationObject maps=mapAnnotation.get(file.getFile().getFileToImport().getAbsolutePath());
+			if(maps!=null){
+				object.setMapAnnotation(file.getFile().getFileToImport().getAbsolutePath(),maps);
 			}
 		}
 
@@ -1840,7 +1840,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		return chooser!=null ? chooser.getFileFilter() : null;
 	}
 	
-	public void setMapAnnotation(String fileName, MapAnnotationData map)
+	public void setMapAnnotation(String fileName, MapAnnotationObject map)
 	{
 		mapAnnotation.put(fileName, map);
 	}

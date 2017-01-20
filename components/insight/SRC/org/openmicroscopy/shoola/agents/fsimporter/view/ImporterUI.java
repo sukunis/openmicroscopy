@@ -832,7 +832,7 @@ class ImporterUI extends TopWindow
 
 	public void setMapAnnotation(MapAnnotationObject o)
 	{
-		chooser.setMapAnnotation(o.getFileName(), o.getMapAnnotation());
+		chooser.setMapAnnotation(o.getFileName(), o);
 	}
 	
 	public void addToMetaDataFileMap(File[] files) {
