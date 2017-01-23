@@ -1390,8 +1390,8 @@ private boolean disableItemListener;
             break;
         case CMD_REFRESH:
             LOGGER.info("[GUI-ACTION] -- refresh");
-            firePropertyChange(ImportDialog.ADD_AND_REFRESH_FILE_LIST,null, null);
-            
+//            firePropertyChange(ImportDialog.ADD_AND_REFRESH_FILE_LIST,null, null);
+            firePropertyChange(ImportDialog.REFRESH_FILE_LIST,null,null);
             break;
 //        case LOAD_MIC_SETTINGS: 
 //            JComboBox cb = (JComboBox)evt.getSource();
@@ -1546,7 +1546,7 @@ private boolean disableItemListener;
         File[] fileList={new File(srcFile),new File(fileName)};
         
 //        MapAnnotationData map=getMapAnnotation(srcFile,((FNode)fileTree.getLastSelectedPathComponent()).getView());
-        firePropertyChange(ImportDialog.ADD_AND_REFRESH_FILE_LIST,null, fileList);
+//        firePropertyChange(ImportDialog.ADD_AND_REFRESH_FILE_LIST,null, fileList);
 //        firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,new MapAnnotationObject(srcFile,map));
         fileTree.setSelectionPath(path);//TODO: 
         holdData=false;

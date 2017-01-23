@@ -423,7 +423,6 @@ class ImporterComponent
 		view.showRefreshMessage(chooser.isRefreshLocation());
 		if (data.hasNewTags()) model.setTags(null);
 		ImporterUIElement element = view.addImporterElement(data);
-		element.setMetaDataMessage(metaDataCreated);
 		//if (model.getState() == IMPORTING) return;
 		//Can I start the upload
 		Collection<ImporterUIElement> list = view.getImportElements();
@@ -660,6 +659,7 @@ class ImporterComponent
 			case DISCARDED:
 				return;
 		}
+		model.setState(Importer.READY);
 		if (chooser == null) return;
 		Set nodes = TreeViewerTranslator.transformHierarchy(result);
 		chooser.reset(nodes, type, model.getGroupId(), userID);
@@ -1004,14 +1004,7 @@ class ImporterComponent
         }
     }
     
-    public void setMetaDataText(boolean b)
-    {
-    	System.out.println("# ImporterComponent::setMetaDataText(): "+b);
-    	metaDataCreated=b;
-    }
+   
     
-    public void setLinkIDMaps(Map<String,String> fileIDMap,Map<String,String> fileMap)
-    {
-    	model.fireLinkMetaFiles(fileIDMap,fileMap);
-    }
+   
 }

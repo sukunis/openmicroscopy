@@ -27,7 +27,6 @@ import omero.gateway.model.MapAnnotationData;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
@@ -388,24 +387,17 @@ public class MetaDataView extends JPanel
 	{
 		if(ome!=null){
 			savePreValues();
-//			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
 			//file
 			if(seriesData){
 				updateGlobalSeriesData();
-//				for(Component comp:cardPane.getComponents()){
-//					list.add(((MetaDataUI) comp).getUpdatedModel());
-//				}
-				LOGGER.info("[SAVE] -- save series data to "+srcFile.getAbsolutePath());
+				LOGGER.info("[SAVE] -- save input for series data: "+srcFile.getAbsolutePath());
 				System.out.println("Save series data");
-				SaveMetadata saver=new SaveMetadata(ome, getSavedModelObject(), null, srcFile);
-				saver.save();
+				getSavedModelObject();
 				
 			}else{
 				if(singleView!=null){
-					LOGGER.info("[SAVE] -- save single data to "+srcFile.getAbsolutePath());
-					
-					SaveMetadata saver=new SaveMetadata(ome, singleView.getSavedModel(), null, srcFile);
-					saver.save();
+					LOGGER.info("[SAVE] -- save input for single data "+srcFile.getAbsolutePath());
+					singleView.getSavedModel();
 				}
 			}
 			

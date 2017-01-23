@@ -1451,14 +1451,6 @@ class OmeroImageServiceImpl
 		return gateway.saveROI(ctx, imageID, userID, roiList);
 	}
 	
-	public ImageData saveImageLink(SecurityContext ctx,long metaID,long srcID)
-			throws DSOutOfServiceException, DSAccessException
-	{
-		if(metaID <=0)
-			throw new IllegalArgumentException("No link image specified.");
-		return gateway.saveImageLink(ctx, metaID, srcID);
-	}
-
 	/**
      * Applies the transforms to the specified XML file.
      *

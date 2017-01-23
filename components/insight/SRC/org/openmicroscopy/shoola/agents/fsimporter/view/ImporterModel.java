@@ -52,14 +52,11 @@ import org.openmicroscopy.shoola.agents.fsimporter.TagsLoader;
 import org.openmicroscopy.shoola.agents.fsimporter.util.FileImportComponent;
 import org.openmicroscopy.shoola.agents.fsimporter.util.ObjectToCreate;
 import org.openmicroscopy.shoola.env.LookupNames;
-import org.openmicroscopy.shoola.env.data.OmeroImageService;
 import org.openmicroscopy.shoola.env.data.model.FileObject;
 import org.openmicroscopy.shoola.env.data.model.ImportableObject;
 import org.openmicroscopy.shoola.env.data.model.ResultsObject;
 
 import omero.gateway.SecurityContext;
-import omero.gateway.exception.DSAccessException;
-import omero.gateway.exception.DSOutOfServiceException;
 
 import org.openmicroscopy.shoola.util.CommonsLangUtils;
 import org.openmicroscopy.shoola.util.roi.io.ROIReader;
@@ -757,35 +754,6 @@ class ImporterModel
     {
         this.object = object;
     }
-
-	public void fireLinkMetaFiles(Map<String,String> idMap, Map<String,String> fileMap) 
-	{
-		System.out.println("# ImporterModel::fireLinkMetaFiles()");
-		OmeroImageService os=ImporterAgent.getRegistry().getImageService();
-		for(Map.Entry<String, String> entry: fileMap.entrySet()){
-			String srcName=entry.getKey();
-			String metaName=entry.getValue();
-
-			String srcID=null;
-			if(idMap.containsKey(srcName))
-				srcID=idMap.get(srcName);
-			
-			String metaID=null;
-			if(idMap.containsKey(metaName))
-				metaID=idMap.get(metaName);
-				
-			if(srcID!=null && metaID!=null){
-				System.out.println("\t...link "+srcID+" -- "+metaID);
-				try {
-					os.saveImageLink(getSecurityContext(), Long.parseLong(metaID), Long.parseLong(srcID));
-				} catch (NumberFormatException | DSOutOfServiceException | DSAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		
-	}
 
 
 }

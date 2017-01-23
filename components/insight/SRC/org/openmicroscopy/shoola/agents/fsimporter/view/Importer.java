@@ -23,7 +23,6 @@ package org.openmicroscopy.shoola.agents.fsimporter.view;
 import java.awt.Component;
 import java.awt.Point;
 import java.util.Collection;
-import java.util.Map;
 
 import javax.swing.JFrame;
 
@@ -394,9 +393,4 @@ public interface Importer
      *                    <code>false</code> otherwise.
      */
     void importResults(ResultsObject object, boolean importImage);
-
-
-	public void setLinkIDMaps(Map<String, String> fileIDMap, Map<String, String> fileMap);
-
-	public void setMetaDataText(boolean b);
 }

@@ -82,8 +82,6 @@ import omero.gateway.model.DataObject;
 import omero.gateway.model.DatasetData;
 import omero.gateway.model.FileAnnotationData;
 import omero.gateway.model.FilesetData;
-import omero.gateway.model.ImageData;
-import omero.gateway.model.PixelsData;
 import omero.gateway.model.ProjectData;
 import omero.gateway.model.ScreenData;
 
@@ -138,14 +136,6 @@ class ImporterUIElement
 			"When upload is complete, the import" +CommonsLangUtils.LINE_SEPARATOR+
 			"window and OMERO session can be closed." +CommonsLangUtils.LINE_SEPARATOR+
 			"Reading will continue on the server.";
-	
-	private static final String MESSAGE2 = 
-			"If you have created metadata files, "+CommonsLangUtils.LINE_SEPARATOR+
-			"please wait until the upload and processing is ready,"+CommonsLangUtils.LINE_SEPARATOR+
-			"to link source and metadata files!";
-	
-	private JTextArea descriptionText;
-	private JPanel descriptionPanel;
 	
 	/** The object hosting information about files to import. */
 	private ImportableObject object;
@@ -557,13 +547,13 @@ class ImporterUIElement
 		middlePanel.setBackground(UIUtilities.BACKGROUND_COLOR);
 		middlePanel.add(filterButton);
 		
-    	descriptionText = new JTextArea(MESSAGE);
-    	makeLabelStyle(descriptionText);
-    	descriptionText.setBackground(UIUtilities.BACKGROUND_COLOR);
+    	JTextArea description = new JTextArea(MESSAGE);
+    	makeLabelStyle(description);
+    	description.setBackground(UIUtilities.BACKGROUND_COLOR);
     	
-		descriptionPanel = new JPanel();
+		JPanel descriptionPanel = new JPanel();
 		descriptionPanel.setBackground(UIUtilities.BACKGROUND_COLOR);
-		descriptionPanel.add(descriptionText);
+		descriptionPanel.add(description);
 		
 		JPanel header = new JPanel();
 		header.setBackground(UIUtilities.BACKGROUND_COLOR);
@@ -795,25 +785,6 @@ class ImporterUIElement
 				}
 			}
 		}
-		
-		System.out.println("# ImporterUIElement()::uploadComplete() : "+countUploaded+" / "+totalToImport);
-		
-		Object res= c.getImportResult();
-		String resString="null";
-		if(res!=null){
-			resString= res.getClass().getSimpleName();
-		}
-		
-		System.out.println("# ImporterUIElement()::uploadComplete() : result class ="+resString);
-		
-//		try{
-//		addIDToFileMap(result,c);
-//		if(countUploaded==totalToImport){
-//			view.setLinkInDescription();
-//		}}catch (Exception e){
-//			e.printStackTrace();
-//		}
-		
 		setNumberOfImport();
 		setClosable(isUploadComplete());
 		return r;
@@ -848,8 +819,6 @@ class ImporterUIElement
 			setClosable(isDone());
 			filterButton.setEnabled(countFailure > 0 &&
 					countFailure != totalToImport);
-			
-			addIDToFileMap(result,fc);
 		} else { //empty folder
 			if (result instanceof Exception) {
 				fc.setStatus(result);
@@ -862,40 +831,8 @@ class ImporterUIElement
 				setClosable(isDone());
 			}
 		}
-		
-		
-		// after import set links for source and metadata files in description on db
-		if(isDone()){
-			view.setLinkInDescription();
-			setMetaDataMessage(false);
 		}
-	}
 	
-	private void addIDToFileMap(Object result,FileImportComponent component) 
-	{
-		
-		if(result ==null || result instanceof Exception){
-			System.out.println("# ImporterUIElement::addIDToFileMap() -- result=null or exception");
-			return;
-		}
-		
-		System.out.println("# ImporterUIElement::addIDToFileMap() -- result: "+result);
-		
-		Collection<PixelsData> pixels;
-		
-		pixels = (Collection<PixelsData>) result;
-		
-		if (CollectionUtils.isEmpty(pixels)) return;
-		Iterator<PixelsData> i = pixels.iterator();
-		
-		PixelsData pxd;
-		List<ImageData> ids = new ArrayList<ImageData>();
-		while (i.hasNext()) {
-			pxd = i.next();
-			view.addIDToFileMap(component.getFile().getAbsolutePath(),String.valueOf(pxd.getImage().getId()));
-		}
-	}
-
 	/**
 	 * Returns <code>true</code> if the upload is finished, <code>false</code>
 	 * otherwise.
@@ -1281,19 +1218,4 @@ class ImporterUIElement
 		}
 	}
 
-	/**set image description text 
-	 */
-	public void setMetaDataMessage(boolean metaDataCreated) 
-	{
-		System.out.println("# ImporterUIElement::setMetaDataMessage()");
-		if(metaDataCreated){
-			System.out.println("\t...overwrite message");
-			descriptionText.setText(MESSAGE2);
-			
-		}else{
-			descriptionText.setText(MESSAGE);
 		}
-		
-	}
-
-}

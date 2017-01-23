@@ -489,8 +489,7 @@ public interface OmeroImageService
 		throws ImportException, DSAccessException, DSOutOfServiceException;
 	
 	
-	public ImageData saveImageLink(SecurityContext ctx,long metaID,long srcID)
-			throws DSOutOfServiceException, DSAccessException;
+
 	/**
 	 * Returns the collection of supported file formats.
 	 * 

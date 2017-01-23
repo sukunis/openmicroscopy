@@ -67,16 +67,6 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-
-
-
-
-
-
-
-
-
-
 //Third-party libraries
 import info.clearthought.layout.TableLayout;
 
@@ -100,7 +90,6 @@ import org.openmicroscopy.shoola.env.data.model.ImportableObject;
 
 //import org.openmicroscopy.shoola.env.data.util.SecurityContext;
 import omero.gateway.SecurityContext;
-
 import org.openmicroscopy.shoola.env.ui.TaskBar;
 import org.openmicroscopy.shoola.env.ui.TopWindow;
 import org.openmicroscopy.shoola.util.ui.ClosableTabbedPane;
@@ -817,11 +806,6 @@ class ImporterUI extends TopWindow
 		chooser.importFiles();
 	}
 
-	public void addAndRefreshMetaFileView(File[] files) 
-	{
-		List<ImportableFile> list=chooser.addAndRefreshMetaFileView(files);
-		refreshMetaFileView(list);
-	}
 	
 	public void setNewTitle(String micName)
 	{
@@ -835,23 +819,9 @@ class ImporterUI extends TopWindow
 		chooser.setMapAnnotation(o.getFileName(), o);
 	}
 	
-	public void addToMetaDataFileMap(File[] files) {
-		if(files==null || files.length<2){
-			return;
-		}
-		chooser.addToMetaDataFileMap(files[0].getAbsolutePath(), files[1].getAbsolutePath());
-	}
+	
 
-	public void addIDToFileMap(String absolutePath, String id) 
-	{
-	chooser.addIDToFileMap(absolutePath, id);
-		
-	}
-
-	public void setLinkInDescription() {
-		chooser.setLinkInDescription(Importer.READY);
-		
-	}
+	
 
 	public void showMetaDataDialog() {
 		selectMetaDataChooser();

@@ -331,9 +331,6 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	/** Map hosting mapAnnotations for files*/
 	private Map<String,MapAnnotationObject> mapAnnotation;
 	
-	private Map<String,String> fileMap;
-	private Map<String,String> fileIDMap;
-
 	/** The action listener used to handle tag selection. */
 	private ActionListener tagSelectionListener;
 
@@ -687,8 +684,6 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		numberOfFolders.addPropertyChangeListener(this);
 		tagsMap = new LinkedHashMap<JButton, TagAnnotationData>();
 		
-		fileMap=new LinkedHashMap<String,String>();
-		fileIDMap=new LinkedHashMap<String,String>();
 		mapAnnotation=new LinkedHashMap<String,MapAnnotationObject>();
 
 		IconManager icons = IconManager.getInstance();
@@ -1491,8 +1486,6 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		}
 		tagsPane.removeAll();
 		tagsMap.clear();
-		fileMap.clear();
-		fileIDMap.clear();
 		mapAnnotation.clear();
 	}
 
@@ -1794,19 +1787,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		}
 	}
 
-	/**
-	 * 
-	 * @param object list: first element source, second new created ome for source
-	 * @return
-	 */
-	public List<ImportableFile> addAndRefreshMetaFileView(File[] files) 
-	{
-		if(files!=null){
-				table.addFile(files[0],files[1]);
-		}
-			
-		return table.getFilesToImport();
-	}
+	
 	
 	/**
 	 * Copy the import settings chosen but the user.
@@ -1845,34 +1826,6 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		mapAnnotation.put(fileName, map);
 	}
 	
-	public void addToMetaDataFileMap(String sourceFileName, String metaFileName)
-	{
-		// never link to oneself
-		if(sourceFileName.equals(metaFileName))
-			return;
-		fileMap.put(sourceFileName, metaFileName);
-		System.out.println("# ImportDialog::addToMetaDataFileMap(): "+sourceFileName+" -- "+metaFileName);
-	}
-
-	public void addIDToFileMap(String path, String id) 
-	{
-		if(fileMap.containsKey(path) || fileMap.containsValue(path)){
-			fileIDMap.put(path,id);
-		}else{
-			System.out.println("## No entry to set LINK for: "+path+" :: "+id);	
-		}
-		
-	}
-
-	public void setLinkInDescription(int state) 
-	{
-		//Test ausgabe
-		for(Map.Entry<String,String> entry: fileIDMap.entrySet()){
-			System.out.println(entry.getKey()+" : "+entry.getValue());
-		}
-		
-		model.setLinkIDMaps(fileIDMap,fileMap); 
-	}
 
 	public JButton getImportButton() {
 		// TODO Auto-generated method stub
