@@ -271,6 +271,7 @@ public class MetaDataView extends JPanel
 		if(parentData!=null){
 			try {
 				pane.addData(parentData);
+				pane.addMapAnnotations(parentData);
 				parentDataLoaded=true;
 			} catch (Exception e) {
 				parentDataLoaded=false;
