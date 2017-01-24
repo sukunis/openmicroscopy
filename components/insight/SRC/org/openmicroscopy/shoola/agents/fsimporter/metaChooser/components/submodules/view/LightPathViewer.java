@@ -344,8 +344,10 @@ public class LightPathViewer extends ModuleViewer{
 		}
 		
 		Dichroic d= lp.getLinkedDichroic();
+		if(d!=null){
 			map.put("["+d.getID()+"]:["+i+"]:", d.getModel());
 			i++;
+		}
 		
 		for(Filter f: lp.copyLinkedEmissionFilterList()){
 			String id="[Emmission Filter]:["+i+"]:";
