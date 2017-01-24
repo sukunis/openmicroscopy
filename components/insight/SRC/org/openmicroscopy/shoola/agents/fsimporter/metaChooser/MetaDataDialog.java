@@ -1429,8 +1429,6 @@ private boolean disableItemListener;
             unreadableFileList=new ArrayList<String>();
             deselectNodeAction(parentNode);
             saveAllChilds(parentNode);
-            insertNodes(null, parentNode.getFile().getName(), parentNode);
-            fileTree.updateUI();
             if(unreadableFileList.size()> 0){
             	String files="";
             	for(int i=0; i<unreadableFileList.size(); i++){
@@ -1508,23 +1506,23 @@ private boolean disableItemListener;
 	 */
     public void saveAllChilds(FNode parentNode) 
     {
+    	System.out.println("# MetaDataDialog::SaveAllChilds()");
     	updateModel(parentNode);
     	Enumeration children =parentNode.children();
     	while(children.hasMoreElements()){
     		FNode node=(FNode)children.nextElement();
-    		//load all data and save
+    		// save only loaded data
     		if(node !=null){
     			if(node.isLeaf()){
-    				MetaDataView view=loadData(node,parentNode);
-    				if(view.isLoaded())
-    					saveMetadataForNode(node.getAbsolutePath(),view);
-    				else
-    					unreadableFileList.add(node.getAbsolutePath());
+    				if(node.hasModelObject() && node.getView()!=null && node.getView().isLoaded()){
+    					saveMetadataForNode(node.getAbsolutePath(),node.getView());
+    				}
     			}else{
     				saveAllChilds(node);
     			}
     		}
     	}
+    	System.out.println("// MetaDataDialog::SaveAllChilds()");
     }
 
 
@@ -1570,6 +1568,7 @@ private boolean disableItemListener;
 	private void saveCurrentNode(TreePath path, String srcFile) throws Exception
     {
         LOGGER.info("[DEBUG] -- save node "+srcFile);
+        System.out.println("# MetaDataDialog::saveCurrentNode()");
         
         ((MetaDataView)metaPanel.getComponent(0)).saveToFile();
         MapAnnotationObject maps=getMapAnnotation(srcFile,((MetaDataView)metaPanel.getComponent(0)));
@@ -1579,6 +1578,7 @@ private boolean disableItemListener;
     private void saveMetadataForNode(String srcFile,MetaDataView view)
     {
         LOGGER.debug("[SAVE] -- save node "+srcFile);
+        System.out.println("# MetaDataDialog::saveMetaDataForNode()");
         try {
         	MapAnnotationObject maps=getMapAnnotation(srcFile,view);
              firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,maps);
