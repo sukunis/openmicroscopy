@@ -1886,6 +1886,29 @@ public class MetaDataUI extends JPanel
 		return ma;
 	}
 	
+	public void addMapAnnotations(MetaDataModel m)
+	{
+		System.out.println("# MetaDataUI::addMapAnnotations()");
+		model.setMapAnnotationImage(m.getMapAnnotationImage());
+		model.setMapAnnotationImgEnv(m.getMapAnnotationImgEnv());
+		model.setMapAnnotationExperiment(m.getMapAnnotationExperiment());
+		model.setMapAnnotationSample(m.getMapAnnotationSample());
+		model.setMapAnnotationObjective(m.getMapAnnotationObjective());
+		
+		for(int i=0; i<m.getNumberOfChannels();i++){
+			model.setMapAnnotationChannel(m.getMapAnnotationChannel(i), i);
+		}
+		for(int i=0; i<m.getNumberOfDetectors();i++){
+			model.setMapAnnotationDetector(m.getMapAnnotationDetector(i), i);
+		}
+		for(int i=0; i<m.getNumberOfLightPath();i++){
+			model.setMapAnnotationLightPath(m.getMapAnnotationLightPath(i), i);
+		}
+		for(int i=0; i<m.getNumberOfLightSrc();i++){
+			model.setMapAnnotationLightSrc(m.getMapAnnotationLightSrc(i), i);
+		}
+	}
+	
 
 	
 }

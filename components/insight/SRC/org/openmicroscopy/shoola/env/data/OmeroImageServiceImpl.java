@@ -239,6 +239,7 @@ class OmeroImageServiceImpl
 							label.setCallback(Boolean.valueOf(false));
 						else {
 							importIc = icContainers.get(0);
+							addMetaDataAnnotations(object, list, file);
 							importIc.setCustomAnnotationList(list);
 							System.out.println("# OmeroImageServiceImpl::importFile(): importImageFile3");
 							label.setCallback(gateway.importImageFile(ctx,
@@ -1163,6 +1164,7 @@ class OmeroImageServiceImpl
 					status.resetFile(f);
 					if (ioContainer == null) status.setNoContainer();
 					importIc = ic.getContainers().get(0);
+					addMetaDataAnnotations(object, customAnnotationList, file);
 					importIc.setCustomAnnotationList(customAnnotationList);
 					status.setUsedFiles(importIc.getUsedFiles());
 					//Check after scanning
@@ -1210,15 +1212,7 @@ class OmeroImageServiceImpl
 							ImportException.FILE_NOT_VALID_TEXT);
 				}
 				
-				//addMapAnnotations(file.getName(),customAnnotationList);
-				MapAnnotationObject maps=object.getMapAnnotation(file.getAbsolutePath());
-				
-				// for seriesData and single file
-				if(maps!=null){
-					for(MapAnnotationData m:maps.getMapAnnotationList()){
-						customAnnotationList.add((Annotation) m.asIObject());
-					}
-				}
+				addMetaDataAnnotations(object, customAnnotationList, file);
 				
 				importIc = icContainers.get(0);
 				importIc.setCustomAnnotationList(customAnnotationList);
@@ -1370,17 +1364,20 @@ class OmeroImageServiceImpl
 		return Boolean.valueOf(true);
 	}
 
-	private void addMapAnnotations(String string, List<Annotation> customAnnotationList) {
-		System.out.println("# OmeroImageServiceImpl::add MapAnnotation");
-		MapAnnotation ma = new MapAnnotationI();
-		List<NamedValue> values = new ArrayList<NamedValue>();
-		for (int i = 0; i < 3; i++)
-			values.add(new NamedValue(string + i, "value " + i));
-		ma.setMapValue(values);
+	private void addMetaDataAnnotations(ImportableObject object, List<Annotation> customAnnotationList, File file) {
+		MapAnnotationObject maps=object.getMapAnnotation(file.getAbsolutePath());
 		
-		MapAnnotationData map=new MapAnnotationData(ma);
-		customAnnotationList.add((Annotation) map.asIObject());
+		// for seriesData and single file
+		if(maps!=null){
+			for(MapAnnotationData m:maps.getMapAnnotationList()){
+				System.out.println("MAPANNOT: "+file.getAbsolutePath()+"\n\t"+m.getContentAsString());
+				
+				customAnnotationList.add((Annotation) m.asIObject());
+			}
+		}
 	}
+
+	
 
 	
 

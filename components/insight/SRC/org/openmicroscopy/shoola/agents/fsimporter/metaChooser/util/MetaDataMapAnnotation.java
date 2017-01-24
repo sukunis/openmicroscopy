@@ -28,7 +28,6 @@ public class MetaDataMapAnnotation
 		try{
 			result=last(key.split(":"));
 		}catch(Exception e){
-			System.err.println("# DetectorViewer::setInputValuesFromMap(): can't parse tag name");
 			e.printStackTrace();
 		}
 		return result;
