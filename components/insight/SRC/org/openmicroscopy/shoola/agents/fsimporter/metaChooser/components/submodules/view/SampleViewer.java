@@ -512,7 +512,7 @@ public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map)
 	if(map==null)
 		map=new HashMap<String, String>();
 	
-	String id="[Sample]:";
+	String id="";
 	if(inputAt(preparationDate)) map.put(id+preparationDate.getTagName(),preparationDate.getTagValue());
 	if(inputAt(preparationDescription)){
 		map.put(id+preparationDescription.getTagName(),preparationDescription.getTagValue());

@@ -363,7 +363,7 @@ public class ImageEnvViewer extends ModuleViewer{
 		if(map==null)
 			map=new HashMap<String, String>();
 		
-		String id="[ImageEnv]:";
+		String id="";
 		if(inputAt(temperature)) map.put(id+temperature.getTagName(),temperature.getTagValue()+" "+
 						temperature.getTagUnit().getSymbol());
 		if(inputAt(airPressure)) map.put(id+airPressure.getTagName(),airPressure.getTagValue()+" "+

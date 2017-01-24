@@ -454,7 +454,7 @@ public class LightSourceViewer extends ModuleViewer{
 		}else if(l instanceof LightEmittingDiode){
 			kindOfLS=LightSourceModel.LIGHT_EMITTING_DIODE;
 		}
-		String id="["+chName+"]:["+kindOfLS+"]:";
+		String id="["+kindOfLS+"]:";
 		map=((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getMapValuesOfChanges(map,id);
 		
 		

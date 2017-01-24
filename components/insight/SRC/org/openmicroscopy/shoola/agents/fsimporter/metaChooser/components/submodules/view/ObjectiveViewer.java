@@ -726,7 +726,7 @@ public class ObjectiveViewer extends ModuleViewer
 		if(map==null)
 			map=new HashMap<String, String>();
 		
-		String id="[Objective]:";
+		String id="";
 		
 		if(inputAt(model)) map.put(id+TagNames.MODEL,model.getTagValue());
 		if(inputAt(manufact)) map.put(id+TagNames.MANUFAC,manufact.getTagValue());
