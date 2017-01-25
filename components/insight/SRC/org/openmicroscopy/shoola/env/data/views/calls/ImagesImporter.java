@@ -99,31 +99,7 @@ public class ImagesImporter
         }
     }
 
-    /**
-     * Set link in source image to metadata file
-     * Link coded in src as: LINK METADATA:
-     * Link coded in metadatafile as : LINK SOURCE:
-     * @param object2
-     */
-    private void setMetadataLink(ImportableObject object2) 
-    {
-    	String linkSrc="LINK SOURCE: Image ID:";
-    	String linkData="LINK METADATA: Image ID:";
-    	
-    	 ImportableFile io;
-        List<ImportableFile> files = object2.getFiles();
-        Iterator<ImportableFile> i = files.iterator();
-        int index = 0;
-        int n = files.size()-1;
-        while (i.hasNext()) {
-        	io=(ImportableFile) i.next();
-        	String name=io.getFile().getAbsolutePath();
-        	String dataset="";
-        	if(io.getDataset()!=null)
-        		dataset=io.getDataset().getName();
-        	System.out.println("\t...File: "+name+" :: "+dataset);
-        }
-	}
+
 
 	/**
      * Returns the lastly retrieved thumbnail.
