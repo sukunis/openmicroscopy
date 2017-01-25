@@ -569,16 +569,20 @@ public class MetaDataView extends JPanel
 	/** return mapAnnotationData for singleView and List<MapAnnotationData> for seriesData*/ 
 	public MapAnnotationObject getMapAnnotation() 
 	{
+		String name="";
+		if(srcFile!=null)
+			name=srcFile.getAbsolutePath();
 		
 		if(seriesData){
 			List<MapAnnotationData> result=new ArrayList<>();
 			for(Component comp:cardPane.getComponents()){
 				result.add(((MetaDataUI) comp).getMapAnnotation());
 			}
-			return new MapAnnotationObject(srcFile.getAbsolutePath(),result);
+			return new MapAnnotationObject(name,result);
 		}else{
+			
 			if(singleView!=null){
-				return new MapAnnotationObject(srcFile.getAbsolutePath(),singleView.getMapAnnotation());
+				return new MapAnnotationObject(name,singleView.getMapAnnotation());
 			}
 		}
 		return null;

@@ -323,10 +323,10 @@ public class ImportableObject
 	 * 
 	 * @param fileName
 	 * @param annot
-	 */
-	public void setMapAnnotation(String fileName,MapAnnotationObject annot)
+	 */	
+	public void setMapAnnotation(Map<String,MapAnnotationObject> maps)
 	{
-		this.mapAnnots.put(fileName,annot);
+		this.mapAnnots=maps;
 	}
 	
 	/**

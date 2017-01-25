@@ -1071,17 +1071,18 @@ private boolean disableItemListener;
      */
     private void updateChildsOfDirectory(FNode node) 
     {
-    	System.out.println("# MetaDataDialog::updateChildDirectories of "+node.getAbsolutePath());
+    	System.out.println("# MetaDataDialog::updateChildsOfDirectories of "+node.getAbsolutePath());
 		int numChilds=node.getChildCount();
 		for(int i=0; i<numChilds;i++){
 			FNode child = (FNode) node.getChildAt(i);
 			if(node.hasModelObject()){
 				if(child.hasModelObject() ){
-					System.out.println("\t ...update "+child.getAbsolutePath());
+					System.out.println("\t ...update model of "+child.getAbsolutePath());
 					LOGGER.debug("Update "+child.getAbsolutePath());
 					try {
 						child.getModelObject().updateData(node.getModelObject());
-						child.getView().setParentDataLoaded(true);
+						if(child.getView()!=null)
+							child.getView().setParentDataLoaded(true);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -1089,7 +1090,16 @@ private boolean disableItemListener;
 					if(!child.isLeaf()){
 						updateChildsOfDirectory(child);
 					}
-				}//else load data at loadParentData
+				}else{
+					//save parent mapannotations to child
+					MapAnnotationObject o=node.getMapAnnotation();
+					if(o!=null){
+						o.setFileName(child.getAbsolutePath());
+						child.setMapAnnotation(o);
+						System.out.println("\t ...update mapAnnot of "+child.getAbsolutePath());
+						firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,o);
+					}
+				}
 			}
 		}
 		node.getModelObject().clearListOfModifications();
@@ -1537,20 +1547,6 @@ private boolean disableItemListener;
     {
         saveCurrentNode(path, srcFile);
         //freeze status fileTree
-        holdData=true;
-        
-        
-        String fileName="";
-        if(!srcFile.equals(""))
-            fileName=FilenameUtils.removeExtension(srcFile)+".ome";
-        
-        File[] fileList={new File(srcFile),new File(fileName)};
-        
-//        MapAnnotationData map=getMapAnnotation(srcFile,((FNode)fileTree.getLastSelectedPathComponent()).getView());
-//        firePropertyChange(ImportDialog.ADD_AND_REFRESH_FILE_LIST,null, fileList);
-//        firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,new MapAnnotationObject(srcFile,map));
-        fileTree.setSelectionPath(path);//TODO: 
-        holdData=false;
     }
     
     

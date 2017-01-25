@@ -17,6 +17,7 @@ public class FNode extends DefaultMutableTreeNode
 	private MetaDataView view;
 	
 	private Boolean saved;
+	private MapAnnotationObject mapAnnot;
 	
 	public FNode(File file){
 		this.importData=null;
@@ -140,7 +141,29 @@ public class FNode extends DefaultMutableTreeNode
 
 		modelObj = view.getSavedModelObject();
 	}
+
+	/**
+	 * A node can have a mapannotation (inherit from parent) but not a view.
+	 * If a node has a view, mapAnnotation of parent will be automated loaded to the view at creation time.
+	 * @param map
+	 */
+	public void setMapAnnotation(MapAnnotationObject map)
+	{
+		mapAnnot=map;
+			
+	}
 	
+	/**
+	 * A node can have a mapannotation (inherit from parent) but not a view.
+	 * If a node has a view, mapAnnotation of parent will be automated loaded to the view at creation time.
+	 * @param map
+	 */
+	public MapAnnotationObject getMapAnnotation()
+	{
+		if(view!=null)
+			return view.getMapAnnotation();
+		return mapAnnot;
+	}
 //	public void addFiles(int showHidden) {
 //		File[] files = getFile().listFiles();
 //		for (File f : files) {

@@ -1176,11 +1176,8 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		Iterator<ImportableFile> it = files.iterator();
 		while (it.hasNext()) {
 			file = it.next();
-			//mapAnnot
-			MapAnnotationObject maps=mapAnnotation.get(file.getFile().getFileToImport().getAbsolutePath());
-			if(maps!=null){
-				object.setMapAnnotation(file.getFile().getFileToImport().getAbsolutePath(),maps);
-			}
+			object.setMapAnnotation(mapAnnotation);
+			
 		}
 
 		object.setScanningDepth(ImporterAgent.getScanningDepth());
