@@ -65,6 +65,9 @@ public class LightPathModel
 	public void addData(LightPath newElem,boolean overwrite,int i) throws Exception
 	{
 		System.out.println("# LightPathModel::addData()");
+		if(newElem==null)
+			return;
+		
 		if(element.size()<=i){
 			expandList(element.size(),i);
 		}

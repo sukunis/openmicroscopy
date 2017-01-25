@@ -292,7 +292,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 			}
 		}
 	 
-	      JMenu insert= new JMenu("Insert Filter before");
+	    JMenu insert= new JMenu("Insert Filter before");
 	    createFilterListMenu(insert,availableFilter);
 	    lightPathTable.notifyAvFilter(insert);  
 

@@ -201,6 +201,8 @@ public void loadLightPathConf(boolean b)
 {
 	lightPathConf= new ModuleConfiguration(b, GUIPlaceholder.Pos_F, "1");
 	int index=lightPathConf.addNewElement("Filter",null);
+	if(index==-1)
+		return;
 	lightPathConf.setTag(TagNames.MODEL, null, null, true, index);
 	lightPathConf.setTag(TagNames.MANUFAC, null, null, true, index);
 	lightPathConf.setTag(TagNames.LP_TYPE, null, null, true, index);

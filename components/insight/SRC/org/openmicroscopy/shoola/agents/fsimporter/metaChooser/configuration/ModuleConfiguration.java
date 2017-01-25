@@ -318,17 +318,21 @@ public class ModuleConfiguration
 		elementList=list;
 	}
 
+	/** add new filter element to list only if one parameter of the filter is not empty
+	 * 
+	 * @param clazz filter class
+	 * @param list of parameters of the filter
+	 * @return
+	 */
 	public int addNewElement(String clazz, List<TagConfiguration> list) 
 	{
-		
-		
 		if(elementList==null)
 			elementList=new ArrayList<LightPathElement>();
 		
-		System.out.println("# ModulConfiguration::addNewElement(): "+elementList.size());
-		
 		LightPathElement newElem=new LightPathElement(clazz, list);
-		elementList.add(newElem);
+		if(!newElem.isEmpty()){
+			elementList.add(newElem);
+		}
 		return elementList.size()-1;
 	}
 

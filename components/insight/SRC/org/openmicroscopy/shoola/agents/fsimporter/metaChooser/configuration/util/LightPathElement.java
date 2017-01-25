@@ -16,6 +16,22 @@ public class LightPathElement
 		this.clazz=clazz;
 		this.tagList=list;
 	}
+	
+	public boolean isEmpty()
+	{
+		if(tagList==null)
+			return true;
+		
+		int counter=0;
+		for(TagConfiguration t:tagList){
+			if(t.getValue()!=null && !t.getValue().equals("") )
+				counter++;
+		}
+		if(counter>0)
+			return false;
+		else
+			return true;
+	}
 
 	public List<TagConfiguration> getTagList() {
 		return tagList;

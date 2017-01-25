@@ -307,8 +307,11 @@ public class ProfileConfPanel_LP extends JPanel
 		if (myTable.isEditing()) myTable.getCellEditor().stopCellEditing();
 		
 		for(int i=0; i<dataModel.getRowCount(); i++){
-			elementList.add((LightPathElement) dataModel.getRow(i));
+			LightPathElement e= dataModel.getRow(i);
+			if(e!=null)
+				elementList.add(e);
 		}
+		
 		conf.setElementList(elementList);
 		return conf;
 	}
@@ -457,13 +460,33 @@ public class ProfileConfPanel_LP extends JPanel
 		 */
 		public LightPathElement getRow(int rowIndex)
 		{
+			int counter=0;
 			LightPathElement elem=new LightPathElement((String)getValueAt(rowIndex,COL_CLASS), null);
-			elem.setTag(TagNames.MODEL, (String) getValueAt(rowIndex,COL_MODEL));
-			elem.setTag(TagNames.MANUFAC, (String) getValueAt(rowIndex,COL_MANU));
-			elem.setTag(TagNames.LP_TYPE, (String) getValueAt(rowIndex,COL_TYPE));
-			elem.setTag(TagNames.FILTERWHEEL, (String) getValueAt(rowIndex,COL_FW));
+			String val=(String) getValueAt(rowIndex,COL_MODEL);
+			if(val!=null && !val.equals("")){
+				elem.setTag(TagNames.MODEL, val);
+				counter++;
+			}
+			val= (String) getValueAt(rowIndex,COL_MANU);
+			if(val!=null && !val.equals("")){
+				elem.setTag(TagNames.MANUFAC,val);
+				counter++;
+			}
 			
-			return elem;
+			val=(String) getValueAt(rowIndex,COL_TYPE);
+			if(val!=null && !val.equals("")){
+				elem.setTag(TagNames.LP_TYPE, val);
+				counter++;
+			}
+			val=(String) getValueAt(rowIndex,COL_FW);
+			if(val!=null && !val.equals("")){
+				elem.setTag(TagNames.FILTERWHEEL, val);
+				counter++;
+			}
+			if(counter>0)
+				return elem;
+			else
+				return null;
 		}
 	}//end class LP_TagTableModel
 	

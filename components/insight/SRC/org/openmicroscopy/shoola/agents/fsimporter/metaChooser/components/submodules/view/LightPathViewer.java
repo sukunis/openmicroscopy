@@ -128,7 +128,7 @@ public class LightPathViewer extends ModuleViewer{
 	 */
 	private void initComponents(ModuleConfiguration conf) 
 	{
-		lightPathTable=new LightPathTableSmall();
+
 		setLayout(new BorderLayout(5,5));
 
 		JButton editBtn=new JButton("Choose...");
@@ -182,12 +182,14 @@ public class LightPathViewer extends ModuleViewer{
 	 */
 	private void setGUIData() 
 	{
+		lightPathTable.clearData();
+		
 		if(data==null || data.getNumberOfLightPaths()==0)
 			return;
 
 		LightPath lightPath=data.getLightPath(index);
 		if(lightPath!=null){
-			lightPathTable.clearData();
+			
 			//load primary dichroic of instrument
 			Dichroic d=lightPath.getLinkedDichroic();
 			List<Filter> emList=lightPath.copyLinkedEmissionFilterList();
@@ -272,34 +274,36 @@ public class LightPathViewer extends ModuleViewer{
 			int linkType=1;
 			for(Object f : list)
 			{
-				Dichroic pD=newElement.getLinkedDichroic();
-				boolean primDNotExists= pD==null ? true : false ;
+				if(f!=null){
+					Dichroic pD=newElement.getLinkedDichroic();
+					boolean primDNotExists= pD==null ? true : false ;
 
-				// Dichroic
-				if(f instanceof Dichroic){
-					linkType=2;
-					// primary dichroic exists?
-					if(primDNotExists){
-						newElement.linkDichroic((Dichroic) f);
-					}else{
-						LOGGER.warn("primary Dichroic still exists! [LightPathViewer::createLightPath]");
-						newElement.linkEmissionFilter(MetaDataModel.convertDichroicToFilter((Dichroic)f));
-					}
-
-				}else{
-
-					String	type= ((Filter) f).getType()!=null ? ((Filter) f).getType().toString() : "";
-					//filters that comes before and dichroic are exitation filters by definition
-					if(	!type.equals(FilterType.DICHROIC.getValue()) && 
-							linkType==1){
-						newElement.linkExcitationFilter((Filter) f);
-					}else{// link additional dichroic as emission filter
+					// Dichroic
+					if(f instanceof Dichroic){
 						linkType=2;
-
-						if( primDNotExists){
-							newElement.linkDichroic(MetaDataModel.convertFilterToDichroic((Filter) f));
+						// primary dichroic exists?
+						if(primDNotExists){
+							newElement.linkDichroic((Dichroic) f);
 						}else{
-							newElement.linkEmissionFilter((Filter) f);
+							LOGGER.warn("primary Dichroic still exists! [LightPathViewer::createLightPath]");
+							newElement.linkEmissionFilter(MetaDataModel.convertDichroicToFilter((Dichroic)f));
+						}
+
+					}else{
+
+						String	type= ((Filter) f).getType()!=null ? ((Filter) f).getType().toString() : "";
+						//filters that comes before and dichroic are exitation filters by definition
+						if(	!type.equals(FilterType.DICHROIC.getValue()) && 
+								linkType==1){
+							newElement.linkExcitationFilter((Filter) f);
+						}else{// link additional dichroic as emission filter
+							linkType=2;
+
+							if( primDNotExists){
+								newElement.linkDichroic(MetaDataModel.convertFilterToDichroic((Filter) f));
+							}else{
+								newElement.linkEmissionFilter((Filter) f);
+							}
 						}
 					}
 				}
