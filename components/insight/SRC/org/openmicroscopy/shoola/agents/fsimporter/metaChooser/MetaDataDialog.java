@@ -1470,12 +1470,15 @@ private boolean disableItemListener;
             break;
         case CMD_PROFILE:
         	//TODO: reload all available views
-            LOGGER.info("[GUI-ACTION] -- load profile file");
-            
+            LOGGER.info("[GUI-ACTION] -- CUSTUMIZE... ----");
+            System.out.println("[GUI-ACTION] -- CUSTUMIZE... ----");
             UOSProfileEditorUI profileWriter=new UOSProfileEditorUI(customSettings, enabledPredefinedData);
             profileWriter.setVisible(true);
             customSettings=profileWriter.getProperties();
 			enabledPredefinedData =profileWriter.shouldPredefinedValLoaded();
+
+			deselectNodeAction((FNode)fileTree.getLastSelectedPathComponent());
+            
             //TODO reload current view if changes
             loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
 //            firePropertyChange(CHANGE_CUSTOMSETT, null, customSettings); MetaDataControl
