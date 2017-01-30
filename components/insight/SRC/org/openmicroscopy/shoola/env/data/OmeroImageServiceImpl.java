@@ -239,9 +239,9 @@ class OmeroImageServiceImpl
 							label.setCallback(Boolean.valueOf(false));
 						else {
 							importIc = icContainers.get(0);
-							addMetaDataAnnotations(object, list, file);
-							importIc.setCustomAnnotationList(list);
-							System.out.println("# OmeroImageServiceImpl::importFile(): importImageFile3");
+							List<Annotation> newList=addMetaDataAnnotations(object, list, file);
+							importIc.setCustomAnnotationList(newList);
+							System.out.println("# OmeroImageServiceImpl::importCandidates(): importImageFile3 : "+file.getAbsolutePath()+", list:"+newList.size());
 							label.setCallback(gateway.importImageFile(ctx,
 									object, ioContainer, importIc,
 									label, toClose, userName));
@@ -1164,8 +1164,8 @@ class OmeroImageServiceImpl
 					status.resetFile(f);
 					if (ioContainer == null) status.setNoContainer();
 					importIc = ic.getContainers().get(0);
-					addMetaDataAnnotations(object, customAnnotationList, file);
-					importIc.setCustomAnnotationList(customAnnotationList);
+					List<Annotation> newList=addMetaDataAnnotations(object, customAnnotationList, file);
+					importIc.setCustomAnnotationList(newList);
 					status.setUsedFiles(importIc.getUsedFiles());
 					//Check after scanning
 					if (status.isMarkedAsCancel())
@@ -1364,17 +1364,20 @@ class OmeroImageServiceImpl
 		return Boolean.valueOf(true);
 	}
 
-	private void addMetaDataAnnotations(ImportableObject object, List<Annotation> customAnnotationList, File file) {
+	private List<Annotation> addMetaDataAnnotations(ImportableObject object, List<Annotation> customAnnotationList, File file) {
+		List<Annotation> result=null;
 		MapAnnotationObject maps=object.getMapAnnotation(file.getAbsolutePath());
 		
 		// for seriesData and single file
 		if(maps!=null){
+			result=new ArrayList<Annotation>(customAnnotationList);
 			for(MapAnnotationData m:maps.getMapAnnotationList()){
 				System.out.println("MAPANNOT: "+file.getAbsolutePath()+"\n\t"+m.getContentAsString());
 				
-				customAnnotationList.add((Annotation) m.asIObject());
+				result.add((Annotation) m.asIObject());
 			}
 		}
+		return result;
 	}
 
 	
