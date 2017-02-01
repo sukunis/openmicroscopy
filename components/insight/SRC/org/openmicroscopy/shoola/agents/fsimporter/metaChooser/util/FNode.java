@@ -160,8 +160,9 @@ public class FNode extends DefaultMutableTreeNode
 	 */
 	public MapAnnotationObject getMapAnnotation()
 	{
-		if(view!=null)
-			return view.getMapAnnotation();
+		if(view!=null){
+			mapAnnot=view.getMapAnnotation();
+		}
 		return mapAnnot;
 	}
 //	public void addFiles(int showHidden) {
