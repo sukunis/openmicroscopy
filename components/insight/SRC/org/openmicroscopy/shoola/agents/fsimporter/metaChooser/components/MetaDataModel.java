@@ -41,6 +41,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.SampleModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
 
@@ -1687,26 +1688,42 @@ public class MetaDataModel
 		
 		ma.setMapValue(values);
 		
-		for(int i=0; i<getNumberOfChannels();i++){
-			String id="";
-			if(channelModel!=null){
-				if(channelModel.getChannel(i).getName()==null || channelModel.getChannel(i).getName().equals("")){
-					id="[Channel "+String.valueOf(i)+"]:";
-				}else{
-					id="["+channelModel.getChannel(i).getName()+"]:";
+		if(getNumberOfChannels()>0){
+			for(int i=0; i<getNumberOfChannels();i++){
+				String id="";
+				if(channelModel!=null){
+					if(channelModel.getChannel(i).getName()==null || channelModel.getChannel(i).getName().equals("")){
+						id="[Channel "+String.valueOf(i)+"]:";
+					}else{
+						id="["+channelModel.getChannel(i).getName()+"]:";
+					}
+				}
+				if(detectorModel!=null){
+					values=hashMapToValueList(detectorModel.getMap(i), values,id+"[Detector]:");
+				}
+				if(channelModel!=null){
+					values=hashMapToValueList(channelModel.getMap(i), values,id);
+				}
+				if(lightPathModel!=null){
+					values=hashMapToValueList(lightPathModel.getMap(i), values,id+"[LightPath]:");
+				}
+				if(lightSrcModel!=null){
+					values=hashMapToValueList(lightSrcModel.getMap(i), values,id);
 				}
 			}
+		}else{// no channel available, don't link to any channel
+			String id="";
 			if(detectorModel!=null){
-				values=hashMapToValueList(detectorModel.getMap(i), values,id+"[Detector]:");
-			}
-			if(channelModel!=null){
-				values=hashMapToValueList(channelModel.getMap(i), values,id);
+				for(int i=0;i<getNumberOfDetectors();i++)
+					values=hashMapToValueList(detectorModel.getMap(i), values,id+"[Detector]:");
 			}
 			if(lightPathModel!=null){
-				values=hashMapToValueList(lightPathModel.getMap(i), values,id+"[LightPath]:");
+				for(int i=0;i<getNumberOfLightPath();i++)
+					values=hashMapToValueList(lightPathModel.getMap(i), values,id+"[LightPath]:");
 			}
 			if(lightSrcModel!=null){
-				values=hashMapToValueList(lightSrcModel.getMap(i), values,id);
+				for(int i=0;i<getNumberOfLightSrc();i++)
+					values=hashMapToValueList(lightSrcModel.getMap(i), values,id);
 			}
 		}
 		
