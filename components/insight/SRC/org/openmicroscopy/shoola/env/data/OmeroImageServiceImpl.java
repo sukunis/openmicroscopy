@@ -1364,7 +1364,9 @@ class OmeroImageServiceImpl
 		return Boolean.valueOf(true);
 	}
 
-	private List<Annotation> addMetaDataAnnotations(ImportableObject object, List<Annotation> customAnnotationList, File file) {
+	private List<Annotation> addMetaDataAnnotations(ImportableObject object, List<Annotation> customAnnotationList, File file)
+	{
+		System.out.println("# OmeroImageServiceImpl::addMetaDataAnnotations()...");
 		List<Annotation> result=null;
 		MapAnnotationObject maps=object.getMapAnnotation(file.getAbsolutePath());
 		
@@ -1372,11 +1374,13 @@ class OmeroImageServiceImpl
 		if(maps!=null){
 			result=new ArrayList<Annotation>(customAnnotationList);
 			for(MapAnnotationData m:maps.getMapAnnotationList()){
-				System.out.println("MAPANNOT: "+file.getAbsolutePath()+"\n\t"+m.getContentAsString());
+				System.out.println("\tMAPANNOT: "+file.getAbsolutePath()+"\n\t"+m.getContentAsString());
 				
 				result.add((Annotation) m.asIObject());
 			}
-		}
+		}else
+			result=customAnnotationList;
+		System.out.println("... OmeroImageServiceImpl::addMetaDataAnnotations()");
 		return result;
 	}
 
