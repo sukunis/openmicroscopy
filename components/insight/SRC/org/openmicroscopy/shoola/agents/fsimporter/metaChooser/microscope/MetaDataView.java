@@ -580,7 +580,6 @@ public class MetaDataView extends JPanel
 			}
 			return new MapAnnotationObject(name,result);
 		}else{
-			
 			if(singleView!=null){
 				return new MapAnnotationObject(name,singleView.getMapAnnotation());
 			}

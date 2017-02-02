@@ -1882,7 +1882,6 @@ public class MetaDataUI extends JPanel
 	public MapAnnotationData getMapAnnotation() 
 	{
 		MapAnnotationData ma=model.getAnnotation();
-		MapAnnotationObject.printMapAnnotation(ma);
 		return ma;
 	}
 	

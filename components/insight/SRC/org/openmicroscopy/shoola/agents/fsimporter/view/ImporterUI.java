@@ -487,8 +487,9 @@ class ImporterUI extends TopWindow
 		pack();
 	}
 	
+	/** refresh filetree of MetaDataEditor*/
 	public void refreshMetaFileView(List<ImportableFile> files){
-		if (files == null)
+		if (files == null || files.size()==0)
 			LOGGER.info("No data select");
 	
 		metaData.refreshFileView(files,chooser.getFileFilter());
@@ -816,6 +817,9 @@ class ImporterUI extends TopWindow
 
 	public void setMapAnnotation(MapAnnotationObject o)
 	{
+		if(o!=null){
+		System.out.println("\t # ImporterUI::setMapAnnotation() for "+o.getFileName());
+		}
 		chooser.setMapAnnotation(o.getFileName(), o);
 	}
 	

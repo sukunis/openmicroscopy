@@ -1265,45 +1265,54 @@ public class MetaDataModel
 	private void update(MetaDataModel metaDataModel,int index) throws Exception
 	{
 		if(imgModel!=null){
+			System.out.println("# MetaDataModel::update(): image");
 			imgModel.update(metaDataModel.getChangesImage());
 			updateMapAnnotation(imgModel.getMap(),metaDataModel.getMapAnnotationImage());
 		}
 		if(imgEnvModel!=null){
+			System.out.println("# MetaDataModel::update(): imageEnv");
 			imgEnvModel.update(metaDataModel.getChangesImgEnv());
 			updateMapAnnotation(imgEnvModel.getMap(), metaDataModel.getMapAnnotationImgEnv());
 		}
 		if(channelModel!=null){
+			System.out.println("# MetaDataModel::update(): channel");
 			channelModel.update(metaDataModel.getChangesChannel()); 
 			for(int i=0; i<metaDataModel.getNumberOfChannels();i++)
 				updateMapAnnotation(channelModel.getMap(i),metaDataModel.getMapAnnotationChannel(i));
 		}
 		if(objModel!=null){
+			System.out.println("# MetaDataModel::update(): objective");
 			objModel.update(metaDataModel.getChangesObject()); 
 			updateMapAnnotation(objModel.getMap(),metaDataModel.getMapAnnotationObjective());
 		}
 		if(detectorModel!=null){
+			System.out.println("# MetaDataModel::update(): detector");
 			detectorModel.update(metaDataModel.getChangesDetector());
 			for(int i=0; i<metaDataModel.getNumberOfDetectors();i++)
 				updateMapAnnotation(detectorModel.getMap(i),metaDataModel.getMapAnnotationDetector(i));
 		}
 
 		if(lightSrcModel!=null){
+			System.out.println("# MetaDataModel::update(): lightSrc");
 			lightSrcModel.update(metaDataModel.getChangesLightSrc());
 			for(int i=0; i<metaDataModel.getNumberOfLightSrc();i++)
 				updateMapAnnotation(lightSrcModel.getMap(i),metaDataModel.getMapAnnotationLightSrc(i));
 		}
 		
 		if(lightPathModel!=null){
+			System.out.println("# MetaDataModel::update(): lightPath");
 			lightPathModel.update(metaDataModel.getChangesLightPath());
 			for(int i=0; i<metaDataModel.getNumberOfLightPath();i++)
 				updateMapAnnotation(lightPathModel.getMap(i),metaDataModel.getMapAnnotationLightPath(i));
 		}
 		
 		if(sampleModel!=null){
+			System.out.println("# MetaDataModel::update(): sample");
 			sampleModel.update(metaDataModel.getChangesSample());
 			updateMapAnnotation(sampleModel.getMap(),metaDataModel.getMapAnnotationSample());
 		}
 		if(expModel!=null){
+			System.out.println("# MetaDataModel::update(): experimenter");
 			expModel.update(metaDataModel.getChangesExperiment());
 			updateMapAnnotation(expModel.getMap(),metaDataModel.getMapAnnotationExperiment());
 		}
@@ -1317,7 +1326,6 @@ public class MetaDataModel
 				map=new HashMap<String,String>();
 			}
 			
-			System.out.println("# MetaDataModel::updateMapAnnotation()");
 			for (Iterator i = map2.entrySet().iterator(); i.hasNext(); ) {
 				Map.Entry next = (Map.Entry)i.next();
 				map.put((String)next.getKey(),(String) next.getValue());

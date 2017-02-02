@@ -165,6 +165,19 @@ public class FNode extends DefaultMutableTreeNode
 		}
 		return mapAnnot;
 	}
+	
+	public void printMaps()
+	{
+		System.out.println("FNODE :: "+getAbsolutePath());
+		if(view!=null){
+			System.out.println("\t View Map:");
+			view.getMapAnnotation().printObject();
+		}
+		if(mapAnnot!=null){
+			System.out.println("\t Intern Map:");	
+			mapAnnot.printObject();
+		}
+	}
 //	public void addFiles(int showHidden) {
 //		File[] files = getFile().listFiles();
 //		for (File f : files) {

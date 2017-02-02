@@ -566,7 +566,6 @@ public class ObjectiveViewer extends ModuleViewer
 	@Override
 	public void saveData() 
 	{
-		System.out.println("# ObjectiveViewer::saveData() ");
 		if(data==null){
 			data=new ObjectiveModel();
 		}

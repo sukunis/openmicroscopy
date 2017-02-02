@@ -195,6 +195,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 private List<String> unreadableFileList;
 
 private boolean disableItemListener;
+private boolean disableTreeListener;
 
 
 
@@ -436,6 +437,7 @@ private boolean disableItemListener;
             ImporterAction importerAction)
     {
         holdData=false;
+        disableTreeListener=false;
 //        cancelImportButton = new JButton(importerAction);
 //		importerAction.setEnabled(false);
                 
@@ -998,6 +1000,7 @@ private boolean disableItemListener;
         	saveInputToModel(node);
         	lastNode=node;
         	seriesList.setModel(new DefaultListModel());
+        	System.out.println("...# MetaDataDialog::deselectNodeAction("+node.getAbsolutePath()+")");
         }
 	}
     
@@ -1024,20 +1027,13 @@ private boolean disableItemListener;
      */
     private MetaDataView loadData(FNode node,FNode parentNode)
     {
+    	System.out.println("# MetaDataDialog::loadData(): "+node.getAbsolutePath());
         //import user data
         ImportUserData importData = getImportData();
         
         //set parent dir data
-//        MetaDataModel parentModel=parentNode.getModelOfSeries(0);
         MetaDataModel parentModel = getParentMetaDataModel(node);
-        
-        if(parentNode!=null && parentModel!=null){
-            LOGGER.info("[DEBUG] -- READ MODEL OF "+parentNode.getAbsolutePath());
-           
-            boolean parentDataChange=parentModel.noticUserInput();
-        }
-        //set current dir data
-        MetaDataModel dirModel=getCurrentSelectionMetaDataModel(parentNode);
+       MetaDataModel dirModel=getCurrentSelectionMetaDataModel(parentNode);
 
         MetaDataView dataView=null;
         try {
@@ -1045,6 +1041,7 @@ private boolean disableItemListener;
         } catch (Exception e) {
             return null;
         }
+        System.out.println("...# MetaDataDialog::loadData(): "+node.getAbsolutePath());
         return dataView;
     }
 
@@ -1066,18 +1063,19 @@ private boolean disableItemListener;
     }
 
     /**
-     * Update all childs of type directory with existing model with tags changes
+     * GUI input : Update all child views of type directory with existing model with tags changes
      * @param node
      */
     private void updateChildsOfDirectory(FNode node) 
     {
     	System.out.println("# MetaDataDialog::updateChildsOfDirectories of "+node.getAbsolutePath());
-		int numChilds=node.getChildCount();
+    	
+    	int numChilds=node.getChildCount();
 		for(int i=0; i<numChilds;i++){
 			FNode child = (FNode) node.getChildAt(i);
 			if(node.hasModelObject()){
 				if(child.hasModelObject() ){
-					System.out.println("\t ...update model of "+child.getAbsolutePath());
+					System.out.println("\t ...update existing model/view of "+child.getAbsolutePath());
 					LOGGER.debug("Update "+child.getAbsolutePath());
 					try {
 						child.getModelObject().updateData(node.getModelObject());
@@ -1087,22 +1085,17 @@ private boolean disableItemListener;
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					//for all subdirectories updateChilds
 					if(!child.isLeaf()){
 						updateChildsOfDirectory(child);
 					}
 				}else{
-					//save parent mapannotations to child
-					MapAnnotationObject o=node.getMapAnnotation();
-					if(o!=null){
-						o.setFileName(child.getAbsolutePath());
-						child.setMapAnnotation(o);
-						System.out.println("\t ...update mapAnnot of "+child.getAbsolutePath());
-						firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,o);
-					}
+					System.out.println("\t ...don't update view of "+child.getAbsolutePath());
 				}
+				
+				node.getModelObject().clearListOfModifications();
 			}
 		}
-		node.getModelObject().clearListOfModifications();
 	}
 
 
@@ -1341,10 +1334,18 @@ private boolean disableItemListener;
     
     public void refreshFileView(List<ImportableFile> files, FileFilter fileFilter)
     {
-    	System.out.println("# MetaDataDialog::refreshFileView()");
+    	
         this.fileFilter=fileFilter;
+        if(files==null || files.size()==0){
+        	// TODO: changes should be save
+        	System.out.println("# MetaDataDialog::resfreshFileView(): Filelist is null -> IMPORT ?");
+//        	disableTreeListener=true;
+        }else
+        	System.out.println("# MetaDataDialog::refreshFileView(): list= "+files.size());
+        
         metaPanel.removeAll();
         createNodes(files);
+        disableTreeListener=false;
     }
     
     
@@ -1436,18 +1437,9 @@ private boolean disableItemListener;
             System.out.println("\n+++ EVENT: SAVE ALL ++++\n");
             //only for directory
             FNode parentNode = (FNode)fileTree.getLastSelectedPathComponent();
-            unreadableFileList=new ArrayList<String>();
             deselectNodeAction(parentNode);
             saveAllChilds(parentNode);
-            if(unreadableFileList.size()> 0){
-            	String files="";
-            	for(int i=0; i<unreadableFileList.size(); i++){
-            		files=files+"\n"+unreadableFileList.get(i);
-            	}
-            	WarningDialog ld=new WarningDialog("Not supported file format!", 
-    					"Can't read metadata of following files! Format is not supported.\n "+files,this.getClass().getSimpleName());
-    			ld.setVisible(true);
-            }
+            
             break;
         case CMD_RESET:
         	LOGGER.info("[GUI-ACTION] -- reset");
@@ -1514,28 +1506,34 @@ private boolean disableItemListener;
 
 
 	/**
-	 * Save recursive all childs.
+	 * Save data for all childs. Overwrite child data if exists. Need updateChildsOfDirectory call first to merge
+	 * view input data.
 	 * @param parentNode
 	 */
     public void saveAllChilds(FNode parentNode) 
     {
-    	System.out.println("# MetaDataDialog::SaveAllChilds()");
-    	updateModel(parentNode);
+    	System.out.println("# MetaDataDialog::SaveAllChilds() of "+parentNode.getAbsolutePath()+"...");
+    	
+    	MapAnnotationObject parentMap=parentNode.getMapAnnotation();
+    	if(parentMap!=null)
+    		parentMap.printObject();
+    	
     	Enumeration children =parentNode.children();
     	while(children.hasMoreElements()){
     		FNode node=(FNode)children.nextElement();
     		// save only loaded data
     		if(node !=null){
     			if(node.isLeaf()){
-    				if(node.hasModelObject() && node.getView()!=null && node.getView().isLoaded()){
-    					saveMetadataForNode(node.getAbsolutePath(),node.getView());
-    				}
+    					saveMetadataForNode(node,parentMap);
     			}else{
+    				MapAnnotationObject o=new MapAnnotationObject(parentMap);
+    				o.setFileName(node.getAbsolutePath());
+    				node.setMapAnnotation(o);
     				saveAllChilds(node);
     			}
     		}
     	}
-    	System.out.println("// MetaDataDialog::SaveAllChilds()");
+    	System.out.println("...MetaDataDialog::SaveAllChilds() of "+parentNode.getAbsolutePath());
     }
 
 
@@ -1574,21 +1572,35 @@ private boolean disableItemListener;
         firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,maps);
     }
     
-    private void saveMetadataForNode(String srcFile,MetaDataView view)
+    private void saveMetadataForNode(FNode node,MapAnnotationObject parentMap)
     {
-        LOGGER.debug("[SAVE] -- save node "+srcFile);
-        System.out.println("# MetaDataDialog::saveMetaDataForNode()");
+        LOGGER.debug("[SAVE] -- save metadata for node "+node.getAbsolutePath());
+        System.out.println("# MetaDataDialog::saveMetaDataForNode(): "+node.getAbsolutePath());
         try {
-        	MapAnnotationObject maps=getMapAnnotation(srcFile,view);
-             firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,maps);
-			view.saveToFile();
+        	//save gui
+        	if(node.getView()!=null)
+        		node.getView().saveToFile();
+        	MapAnnotationObject maps= node.getMapAnnotation();
+        	
+        	// no view exists and no changes input for node
+        	if(maps==null)
+        		maps=new MapAnnotationObject(parentMap);
+        	
+        	if(maps!=null){
+        		maps.setFileName(node.getAbsolutePath());
+        		maps.printObject();
+        		firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,maps);
+        	}
+
 		} catch (Exception e) {
-			LOGGER.error("Can't save metadata for "+srcFile);
+			LOGGER.error("Can't save metadata for "+node.getAbsolutePath());
 			LOGGER.debug(e.getStackTrace().toString());
 		}
     }
     
-    /**
+
+
+ /**
      * 
      * @param srcFile
      * @param view
@@ -1604,22 +1616,29 @@ private boolean disableItemListener;
     @Override
     public void valueChanged(TreeSelectionEvent e) 
     {
-        FNode selectedNode=null;
-        FNode lastSelectedNode=null;
-        
-        TreePath[] paths = e.getPaths();
-        
-        // maximum 2 paths in the list -> last and current
-        for (int i = 0; i < paths.length; i++) {
-          if (e.isAddedPath(i)) {
-            selectedNode=(FNode)paths[i].getLastPathComponent();
-          } else {
-            lastSelectedNode = (FNode)paths[i].getLastPathComponent();
-          }
-        }
-        System.out.println("\n+++ EVENT TREE +++\n");
-        deselectNodeAction(lastSelectedNode);
-        selectNodeAction(selectedNode);
+    	if(!disableTreeListener){
+    		FNode selectedNode=null;
+    		FNode lastSelectedNode=null;
+
+    		TreePath[] paths = e.getPaths();
+
+    		// maximum 2 paths in the list -> last and current
+    		for (int i = 0; i < paths.length; i++) {
+    			if (e.isAddedPath(i)) {
+    				selectedNode=(FNode)paths[i].getLastPathComponent();
+    			} else {
+    				lastSelectedNode = (FNode)paths[i].getLastPathComponent();
+    			}
+    		}
+
+    		String action=lastSelectedNode==null?"\n+++ INIT TREE +++":"\n+++ EVENT TREE DESELECT "+lastSelectedNode.getAbsolutePath()+"+++\n";
+    		System.out.println(action);
+    		deselectNodeAction(lastSelectedNode);
+
+    		action=selectedNode==null?"":"\n+++ EVENT TREE SELECT "+selectedNode.getAbsolutePath()+"+++\n";
+    		System.out.println(action);
+    		selectNodeAction(selectedNode);
+    	}
     }
 
     /**
@@ -1630,6 +1649,7 @@ private boolean disableItemListener;
    {
 	   if(selectedNode!=null ){
 		   System.out.println("\n# MetaDataDialog::selectNodeAction("+selectedNode.getAbsolutePath()+")");
+		   selectedNode.printMaps();
 		   LOGGER.debug("Select node action for "+selectedNode.getAbsolutePath());
            
 		   enableSaveButtons(selectedNode.isLeaf());
@@ -1705,7 +1725,7 @@ private boolean disableItemListener;
 //				enabledPredefinedData=false;
 //			}
 //		}
-		System.out.println("\n+++EVENT : FILTERVIEW +++\n");
+		System.out.println("\n+++EVENT : SET FILTER FOR VIEW +++\n");
 		if(!disableItemListener)
 			showFilteredData(showDirData.isSelected(),showFileData.isSelected(),
 					showCustomData.isSelected());

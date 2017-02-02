@@ -1173,12 +1173,12 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		}
 		
 		//maps
-		Iterator<ImportableFile> it = files.iterator();
-		while (it.hasNext()) {
-			file = it.next();
+//		Iterator<ImportableFile> it = files.iterator();
+//		while (it.hasNext()) {
+//			file = it.next();
 			object.setMapAnnotation(mapAnnotation);
 			
-		}
+//		}
 
 		object.setScanningDepth(ImporterAgent.getScanningDepth());
 		Boolean loadThumbnails = (Boolean) ImporterAgent.getRegistry()
