@@ -99,6 +99,7 @@ public class DetectorViewer extends ModuleViewer{
 		initTagList();
 		buildGUI();
 		// set data from model
+		resetAttributesForType();
 		setGUIData();
 		setSettingsGUIData();
 		
@@ -402,7 +403,6 @@ public class DetectorViewer extends ModuleViewer{
 			return;
 		Detector detector=data.getDetector(index);
 		if(detector!=null){
-			System.out.println("# DetectorViewer::setGUIData()");
 			try{setModel(detector.getModel(), REQUIRED);
 			} catch (NullPointerException e) { }
 			try{setManufact(detector.getManufacturer(),  REQUIRED);
@@ -459,6 +459,7 @@ public class DetectorViewer extends ModuleViewer{
 	 * */
 	private void activateAttributesForType(DetectorType type) 
 	{
+		System.out.println("# DetectorType::activateAttributesFotType():type= "+type.getValue());
 		if(type == DetectorType.PMT){
 			offset.setEnable(false);
 			binning.setEnable(false);
@@ -478,6 +479,15 @@ public class DetectorViewer extends ModuleViewer{
 			gain.setEnable(false);
 			binning.setEnable(false);
 		}
+	}
+	
+	private void resetAttributesForType()
+	{
+		voltage.setEnable(true);
+		zoom.setEnable(true);
+		offset.setEnable(true);
+		gain.setEnable(true);
+		binning.setEnable(true);
 	}
 
 
