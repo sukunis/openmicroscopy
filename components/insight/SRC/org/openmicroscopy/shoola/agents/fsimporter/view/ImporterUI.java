@@ -489,9 +489,6 @@ class ImporterUI extends TopWindow
 	
 	/** refresh filetree of MetaDataEditor*/
 	public void refreshMetaFileView(List<ImportableFile> files){
-		if (files == null || files.size()==0)
-			LOGGER.info("No data select");
-	
 		metaData.refreshFileView(files,chooser.getFileFilter());
 	}
 	

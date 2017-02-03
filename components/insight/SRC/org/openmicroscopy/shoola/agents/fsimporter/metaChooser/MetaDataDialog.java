@@ -128,7 +128,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private JButton importButton;
     
     /** Button to refresh the file chooser. */
-    private JButton refreshFilesButton;
+//    private JButton refreshFilesButton;
     
     /** load another profile xml */
     private JButton loadProfileButton;
@@ -211,7 +211,7 @@ private boolean disableTreeListener;
     /** Action id indicating to close the dialog. */
     private static final int CMD_CLOSE = 2;
     /** Action id indicating to reset the names. */
-    private static final int CMD_REFRESH = 3;
+//    private static final int CMD_REFRESH = 3;
     private static final int LOAD_MIC_SETTINGS=4;
 
     private static final int CMD_SAVEALL = 5;
@@ -353,9 +353,14 @@ private boolean disableTreeListener;
         
         root.setModelObject(null);
         
+       
+        
         if(!holdData){
             root.removeAllChildren();
 
+            if(files==null){
+            	return;
+            }
             ImportableFile f;
             Iterator<ImportableFile> j=files.iterator();
 
@@ -438,20 +443,12 @@ private boolean disableTreeListener;
     {
         holdData=false;
         disableTreeListener=false;
-//        cancelImportButton = new JButton(importerAction);
-//		importerAction.setEnabled(false);
-                
-//        importButton = new JButton("Import");
-//        importButton.setToolTipText("Import the selected data");
-//        importButton.setActionCommand("" + CMD_IMPORT);
-//        importButton.addActionListener(this);
-//        importButton.setEnabled(false);	
         
-        refreshFilesButton= new JButton("Refresh");
-        refreshFilesButton.setBackground(UIUtilities.BACKGROUND);
-        refreshFilesButton.setToolTipText("Refresh the selected files and metaData");
-        refreshFilesButton.setActionCommand("" + CMD_REFRESH);
-        refreshFilesButton.addActionListener(this);
+//        refreshFilesButton= new JButton("Refresh");
+//        refreshFilesButton.setBackground(UIUtilities.BACKGROUND);
+//        refreshFilesButton.setToolTipText("Refresh the selected files and metaData");
+//        refreshFilesButton.setActionCommand("" + CMD_REFRESH);
+//        refreshFilesButton.addActionListener(this);
         
 
         loadProfileButton=new JButton("Customize...");
@@ -475,17 +472,18 @@ private boolean disableTreeListener;
         resetFileDataButton.setToolTipText("Reset metadata. Show only metadata of selected image file.");
         resetFileDataButton.setActionCommand("" + CMD_RESET);
         resetFileDataButton.addActionListener(this);
+        resetFileDataButton.setEnabled(false);
         
-        saveDataButton=new JButton("Save To File");
+        saveDataButton=new JButton("Save");
         saveDataButton.setBackground(UIUtilities.BACKGROUND);
-        saveDataButton.setToolTipText("Save selected image metadata to separate *.ome file with image name");
+        saveDataButton.setToolTipText("Save input to selected file.");
         saveDataButton.setActionCommand("" + CMD_SAVE);
         saveDataButton.addActionListener(this);
         saveDataButton.setEnabled(false);
         
-        saveAllDataButton=new JButton("Save All");
+        saveAllDataButton=new JButton("Save To All");
         saveAllDataButton.setBackground(UIUtilities.BACKGROUND);
-        saveAllDataButton.setToolTipText("Save metadata of all images of selected directory.");
+        saveAllDataButton.setToolTipText("Save input to all images of selected directory.");
         saveAllDataButton.setActionCommand("" + CMD_SAVEALL);
         saveAllDataButton.addActionListener(this);
         saveAllDataButton.setEnabled(false);
@@ -559,13 +557,27 @@ private boolean disableTreeListener;
      */
     private void initFilterViewBar() 
     {
-    	
+    	String tooltipText="<html>Show file data for selection:<br>"
+    			+ "Attention: file data will overwrite by dir data and pre data.</html>";
     	showFileData=new JCheckBox("File Data");
+    	showFileData.setToolTipText(tooltipText);
     	showFileData.addItemListener(this);
+    	showFileData.setEnabled(false);
+    	
+    	tooltipText="<html>Show parent directory data for selection(inherit from parent):<br>"
+    			+ "Attention: dir data overwrites file data and pre data.</html>";
     	 showDirData=new JCheckBox("Dir Data");
          showDirData.addItemListener(this);
+        showDirData.setToolTipText(tooltipText);
+        showDirData.setEnabled(false);
+         
+        tooltipText="<html>Show predefine data for selection:<br>"
+    			+ "Attention: pre data overwrites file data and will be overwrite by dir data.</html>";
          showCustomData=new JCheckBox("Pre Data");
          showCustomData.addItemListener(this);
+         showCustomData.setToolTipText(tooltipText);
+         showCustomData.setEnabled(false);
+         
          enabledPredefinedData=true;
          
 	}
@@ -619,17 +631,17 @@ private boolean disableTreeListener;
      * 
      * @return See above.
      */
-    private JPanel buildToolBarLeft() {
-        JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        int plugin = ImporterAgent.runAsPlugin();
-        if (!(plugin == LookupNames.IMAGE_J_IMPORT ||
-                plugin == LookupNames.IMAGE_J)) {
-            bar.add(Box.createHorizontalStrut(5));
-            bar.add(refreshFilesButton);
-        }
-
-        return bar;
-    }
+//    private JPanel buildToolBarLeft() {
+//        JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+//        int plugin = ImporterAgent.runAsPlugin();
+//        if (!(plugin == LookupNames.IMAGE_J_IMPORT ||
+//                plugin == LookupNames.IMAGE_J)) {
+//            bar.add(Box.createHorizontalStrut(5));
+//            bar.add(refreshFilesButton);
+//        }
+//
+//        return bar;
+//    }
     
     /**
      * Builds and lays out the tool bar.
@@ -650,23 +662,24 @@ private boolean disableTreeListener;
         JPanel bar = new JPanel();
         bar.setLayout(new BoxLayout(bar, BoxLayout.X_AXIS));
         
-        JPanel barL=new JPanel(new FlowLayout(FlowLayout.LEFT));
-        barL.add(Box.createHorizontalStrut(5));
-        //refresh
-        int plugin = ImporterAgent.runAsPlugin();
-        if (!(plugin == LookupNames.IMAGE_J_IMPORT ||
-                plugin == LookupNames.IMAGE_J)) {
-
-            barL.add(refreshFilesButton);
-        }
-        //load profile
-        barL.add(Box.createHorizontalStrut(10));
-        barL.add(loadProfileButton);
-        barL.add(Box.createHorizontalStrut(2));
-        //load Hardware specification
-        barL.add(loadHardwareSpecButton);
-        loadHardwareSpecButton.setEnabled(false);
-        barL.add(Box.createHorizontalStrut(10));
+//        JPanel barL=new JPanel(new FlowLayout(FlowLayout.LEFT));
+//        barL.add(Box.createHorizontalStrut(5));
+//        //refresh
+//        int plugin = ImporterAgent.runAsPlugin();
+//        if (!(plugin == LookupNames.IMAGE_J_IMPORT ||
+//                plugin == LookupNames.IMAGE_J)) {
+//
+//            barL.add(refreshFilesButton);
+//        }
+//        //load profile
+//        barL.add(Box.createHorizontalStrut(10));
+//        barL.add(loadProfileButton);
+//        loadProfileButton.setEnabled(false);
+//        barL.add(Box.createHorizontalStrut(2));
+//        //load Hardware specification
+//        barL.add(loadHardwareSpecButton);
+//        loadHardwareSpecButton.setEnabled(false);
+//        barL.add(Box.createHorizontalStrut(10));
         
         JPanel barM = buildFilterViewBar();
         
@@ -684,7 +697,7 @@ private boolean disableTreeListener;
         
        JPanel barRR=buildToolBarRight();
         
-        bar.add(barL);
+//        bar.add(barL);
         bar.add(barM);
         bar.add(barR);
         bar.add(barRR);
@@ -1337,6 +1350,7 @@ private boolean disableTreeListener;
     	
         this.fileFilter=fileFilter;
         if(files==null || files.size()==0){
+        	LOGGER.info("No data select");
         	// TODO: changes should be save
         	System.out.println("# MetaDataDialog::resfreshFileView(): Filelist is null -> IMPORT ?");
 //        	disableTreeListener=true;
@@ -1399,11 +1413,10 @@ private boolean disableTreeListener;
             if(c instanceof ImportDialog)
                 ((ImportDialog)c).importFiles();
             break;
-        case CMD_REFRESH:
-            LOGGER.info("[GUI-ACTION] -- refresh");
-//            firePropertyChange(ImportDialog.ADD_AND_REFRESH_FILE_LIST,null, null);
-            firePropertyChange(ImportDialog.REFRESH_FILE_LIST,null,null);
-            break;
+//        case CMD_REFRESH:
+//            LOGGER.info("[GUI-ACTION] -- refresh");
+//            firePropertyChange(ImportDialog.REFRESH_FILE_LIST,null,null);
+//            break;
 //        case LOAD_MIC_SETTINGS: 
 //            JComboBox cb = (JComboBox)evt.getSource();
 //            String petName = (String)cb.getSelectedItem();
@@ -1443,7 +1456,7 @@ private boolean disableTreeListener;
             break;
         case CMD_RESET:
         	LOGGER.info("[GUI-ACTION] -- reset");
-        	System.out.println("\n +++ EVENT RESET +++\n");
+        	System.out.println("\n +++ EVENT RESET INPUT +++\n");
         	FNode selection=(FNode)fileTree.getLastSelectedPathComponent();
         	//TODO: profile default data eliminate
         	//file
@@ -1653,6 +1666,8 @@ private boolean disableTreeListener;
 		   LOGGER.debug("Select node action for "+selectedNode.getAbsolutePath());
            
 		   enableSaveButtons(selectedNode.isLeaf());
+		   enableViewButtons();
+		   resetFileDataButton.setEnabled(true);
            loadAndShowDataForSelection(selectedNode);
            
            revalidate();
@@ -1674,6 +1689,13 @@ private boolean disableTreeListener;
                saveDataButton.setEnabled(false);
                saveAllDataButton.setEnabled(true);
            }
+	}
+	
+	public void enableViewButtons()
+	{
+		showFileData.setEnabled(true);
+		showDirData.setEnabled(true);
+		showCustomData.setEnabled(true);
 	}
 
 
