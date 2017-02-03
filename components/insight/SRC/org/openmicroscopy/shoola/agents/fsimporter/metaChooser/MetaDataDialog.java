@@ -68,6 +68,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileEditorUI;
@@ -867,6 +868,7 @@ private boolean disableTreeListener;
     			//if model still exists, it was still updated by parent data at deselectedNodeAction()
     			if(node.hasModelObject()){
     				view = node.getView();
+    				view.setVisible();
     			}else{
     				view = loadAndShowDataForFile(file, importData, parentModel, view, true, true && enabledPredefinedData);
     			}
@@ -1084,31 +1086,37 @@ private boolean disableTreeListener;
     	System.out.println("# MetaDataDialog::updateChildsOfDirectories of "+node.getAbsolutePath());
     	
     	int numChilds=node.getChildCount();
-		for(int i=0; i<numChilds;i++){
-			FNode child = (FNode) node.getChildAt(i);
-			if(node.hasModelObject()){
-				if(child.hasModelObject() ){
-					System.out.println("\t ...update existing model/view of "+child.getAbsolutePath());
-					LOGGER.debug("Update "+child.getAbsolutePath());
-					try {
-						child.getModelObject().updateData(node.getModelObject());
-						if(child.getView()!=null)
-							child.getView().setParentDataLoaded(true);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					//for all subdirectories updateChilds
-					if(!child.isLeaf()){
-						updateChildsOfDirectory(child);
-					}
-				}else{
-					System.out.println("\t ...don't update view of "+child.getAbsolutePath());
-				}
-				
-				node.getModelObject().clearListOfModifications();
-			}
-		}
+    	MetaDataModelObject nodeModel=null;
+    	
+    	if(node.hasModelObject())
+    		nodeModel=node.getModelObject();
+    	else
+    		return;
+    	
+    	for(int i=0; i<numChilds;i++){
+    		FNode child = (FNode) node.getChildAt(i);
+
+    		if(child.hasModelObject() ){
+    			System.out.println("\t ...update existing model/view of "+child.getAbsolutePath());
+    			LOGGER.debug("Update "+child.getAbsolutePath());
+    			try {
+    				child.getModelObject().updateData(nodeModel);
+    				if(child.getView()!=null){
+    					child.getView().setParentDataLoaded(true);
+    				}
+    			} catch (Exception e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    			//for all subdirectories updateChilds
+    			if(!child.isLeaf()){
+    				updateChildsOfDirectory(child);
+    			}
+    		}else{
+    			System.out.println("\t ...don't update view of "+child.getAbsolutePath());
+    		}
+    	}
+    	nodeModel.clearListOfModifications();
 	}
 
 
@@ -1603,6 +1611,8 @@ private boolean disableTreeListener;
         		maps.setFileName(node.getAbsolutePath());
         		maps.printObject();
         		firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,maps);
+        	}else{
+        		System.out.println("\t mapAnnotation is null");
         	}
 
 		} catch (Exception e) {
