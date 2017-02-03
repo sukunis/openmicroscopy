@@ -459,6 +459,10 @@ public class DetectorViewer extends ModuleViewer{
 	 * */
 	private void activateAttributesForType(DetectorType type) 
 	{
+		if(type==null){
+			resetAttributesForType();
+			return;
+		}
 		System.out.println("# DetectorType::activateAttributesFotType():type= "+type.getValue());
 		if(type == DetectorType.PMT){
 			offset.setEnable(false);
