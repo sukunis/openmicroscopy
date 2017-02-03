@@ -164,6 +164,7 @@ public class ImageEnvViewer extends ModuleViewer{
 			try{
 				Temperature v=parseTemperature(t.getValue(), t.getUnit());
 				setTemperature(v, prop);
+				temperature.dataSaved(false);
 			}catch(Exception e){
 				String unitError=t.getUnitSymbol();
 				if(t.getUnit()==null){
@@ -181,6 +182,7 @@ public class ImageEnvViewer extends ModuleViewer{
 			try{
 				Pressure p=parsePressure(t.getValue(), t.getUnit());
 				setAirPressure(p, prop);
+				airPressure.dataSaved(false);
 			}catch(Exception e){
 				airPressure.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnit()+"]");
 			}
@@ -191,6 +193,7 @@ public class ImageEnvViewer extends ModuleViewer{
 				return;
 			try{
 				setHumidity(parseToPercentFraction(t.getValue()), prop);
+				humidity.dataSaved(false);
 			}catch(Exception e){
 				humidity.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -201,6 +204,7 @@ public class ImageEnvViewer extends ModuleViewer{
 			try{
 				PercentFraction p= parseToPercentFraction(t.getValue());
 				setCo2Percent(p, prop);
+				co2Percent.dataSaved(false);
 			}catch(Exception e){
 				co2Percent.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}

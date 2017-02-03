@@ -49,6 +49,7 @@ public abstract class ModuleViewer extends JPanel
 	
 	public abstract void saveData();
 	protected abstract void initTag(TagConfiguration t); 
+	/** handle predefinitions as user input (dataSaved(false)->valChange==true)*/
 	protected abstract void setPredefinedTag(TagConfiguration t);
 	
 	private static String pattern_double = "\\s|[0-9]+.*[0-9]*";//"\\d*+\\.\\d{1,}";

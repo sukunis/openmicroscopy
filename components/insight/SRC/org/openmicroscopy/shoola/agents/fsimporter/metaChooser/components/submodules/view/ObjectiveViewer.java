@@ -274,6 +274,7 @@ public class ObjectiveViewer extends ModuleViewer
 				return;
 			try{
 				setCorCollar(ModuleViewer.parseToDouble(t.getValue()), prop);
+				corCollar.dataSaved(false);//handle as user input
 			}catch(Exception e){
 				corCollar.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -285,12 +286,14 @@ public class ObjectiveViewer extends ModuleViewer
 			if(m==null)
 				medium.setTagInfo(ERROR_PREVALUE+t.getValue());
 			setMedium(m,prop);
+			medium.dataSaved(false);
 			break;
 		case TagNames.REFINDEX:
 			if(refractIndex!=null && !refractIndex.getTagValue().equals(""))
 				return;
 			try{
 			setRefractIndex(ModuleViewer.parseToDouble(t.getValue()), prop);
+			refractIndex.dataSaved(false);
 			}catch(Exception e){
 				refractIndex.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -299,17 +302,20 @@ public class ObjectiveViewer extends ModuleViewer
 			if(model!=null && !model.getTagValue().equals(""))
 				return;
 			setModel(t.getValue(),prop);
+			model.dataSaved(false);
 			break;
 		case TagNames.MANUFAC:
 			if(manufact!=null && !manufact.getTagValue().equals(""))
 				return;
 			setManufact(t.getValue(),prop);
+			manufact.dataSaved(false);
 			break;
 		case TagNames.NOMMAGN:
 			if(nomMagn!=null && !nomMagn.getTagValue().equals(""))
 				return;
 			try{
 			setNomMagnification(ModuleViewer.parseToDouble(t.getValue()), prop);
+			nomMagn.dataSaved(false);
 			}catch(Exception e){
 				nomMagn.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -319,6 +325,7 @@ public class ObjectiveViewer extends ModuleViewer
 				return;
 			try{
 			setCalMagnification(ModuleViewer.parseToDouble(t.getValue()),prop);
+			calMagn.dataSaved(false);
 			}catch(Exception e){
 				calMagn.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -328,6 +335,7 @@ public class ObjectiveViewer extends ModuleViewer
 				return;
 			try{
 			setLensNA(ModuleViewer.parseToDouble(t.getValue()),prop);
+			lensNA.dataSaved(false);
 			}catch(Exception e){
 				lensNA.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -339,6 +347,7 @@ public class ObjectiveViewer extends ModuleViewer
 			if(i==null)
 				immersion.setTagInfo(ERROR_PREVALUE+t.getValue());
 			setImmersion(i, prop);
+			immersion.dataSaved(false);
 			break;
 		case TagNames.CORRECTION:
 			if(correction!=null && !correction.getTagValue().equals(""))
@@ -347,12 +356,14 @@ public class ObjectiveViewer extends ModuleViewer
 			if(c==null)
 				correction.setTagInfo(ERROR_PREVALUE+t.getValue());
 			setCorrection(c, prop);
+			correction.dataSaved(false);
 			break;
 		case TagNames.WORKDIST:
 			if(workDist!=null && !workDist.getTagValue().equals(""))
 				return;
 			try {
 				setWorkingDist(ModuleViewer.parseToLength(t.getValue(),t.getUnit(), false),prop);
+				workDist.dataSaved(false);
 			} catch (Exception e) {
 				workDist.setTagInfo(ERROR_PREVALUE+t.getValue()+"["+t.getUnitSymbol()+"]");
 			}

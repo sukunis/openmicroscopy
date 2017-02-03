@@ -192,22 +192,26 @@ public class ExperimentViewer extends ModuleViewer{
 			if(et==null)
 				type.setTagInfo(ERROR_PREVALUE+t.getValue());
 			setType(et, prop);
+			type.dataSaved(false);
 			break;
 		case TagNames.DESC:
 			if(description!=null && !description.getTagValue().equals(""))
 				return;
 			setDescription(t.getValue(), prop);
+			description.dataSaved(false);
 			break;
 			//Set by system
 		case TagNames.GROUP:
 //			if(type!=null && !type.getTagValue().equals(""))
 //				return;
 //			setGroupName(t.getValue(), prop);
+//			type.dataSaved(false);
 			break;
 		case TagNames.EXPNAME:
 //			if(expName!=null && !expName.getTagValue().equals(""))
 //				return;
 //			setName(t.getValue(), prop);
+//			expName.dataSaved(false);
 			break;
 			//set by system
 		case TagNames.PROJECTNAME:
@@ -217,6 +221,7 @@ public class ExperimentViewer extends ModuleViewer{
 			if(projectPartner!=null && !projectPartner.getTagValue().equals(""))
 				return;
 			setProjectPartner(t.getValue(), prop);
+			projectPartner.dataSaved(false);
 			break;
 		default:
 			LOGGER.warn("[CONF] unknown tag: "+name );break;

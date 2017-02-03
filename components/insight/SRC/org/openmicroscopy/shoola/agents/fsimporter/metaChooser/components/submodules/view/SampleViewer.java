@@ -205,47 +205,56 @@ protected void setPredefinedTag(TagConfiguration t)
 		if(preparationDate!=null && !preparationDate.getTagValue().equals(""))
 			return;
 		setPreparationDate(t.getValue(), prop);
+		preparationDate.dataSaved(false);
 		break;
 	case TagNames.PREPDESC:
 		if(preparationDescription!=null && !preparationDescription.getTagValue().equals(""))
 			return;
 		setPreparationDescription(t.getValue(), prop);
+		preparationDescription.dataSaved(false);
 		break;
 	case TagNames.RAWCODE:
 		if(rawMaterialCode!=null && !rawMaterialCode.getTagValue().equals(""))
 			return;
 		setRawMaterialCode(t.getValue(), prop); 
+		rawMaterialCode.dataSaved(false);
 		break;
 	case TagNames.RAWDESC:
 		if(rawMaterialDesc!=null && !rawMaterialDesc.getTagValue().equals(""))
 			return;
 		System.out.println("Raw desc = "+t.getValue());
 		setRawMaterialDesc(t.getValue(), prop);
+		rawMaterialDesc.dataSaved(false);
 		break;
 	case TagNames.GRIDBOXNR:
 		if(gridBoxNumber!=null && !gridBoxNumber.getTagValue().equals(""))
 			return;
 		setGridBoxNumber(t.getValue(), prop);
+		gridBoxNumber.dataSaved(false);
 		break;
 	case TagNames.GRIDBOXTYPE:
 		if(gridBoxType!=null && !gridBoxType.getTagValue().equals(""))
 			return;
 		setGridType(t.getValue(), prop);
+		gridBoxType.dataSaved(false);
 		break;
 	case TagNames.EXPGRID:
 		if(expGrid!=null && !expGrid.getTagValue().equals(""))
 			return;
 		setExpGridNumber(parseExpGrid(t.getValue()), prop);
+		expGrid.dataSaved(false);
 		break;
 	case TagNames.EXPOBJNR:
 		if(expObjectNr!=null && !expObjectNr.getTagValue().equals(""))
 			return;
 		setExpObjectNr(t.getValue(), prop);
+		expObjectNr.dataSaved(false);
 		break;
 	case TagNames.EXPOBJTYPE: 
 		if(expObjectType!=null && !expObjectType.getTagValue().equals(""))
 			return;
 		setExpObjectType(t.getValue(), prop);
+		expObjectType.dataSaved(false);
 		break;
 	default:
 		LOGGER.warn("[CONF] unknown tag: "+name );break;

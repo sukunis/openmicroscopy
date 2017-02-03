@@ -273,6 +273,7 @@ public class LightSourceViewer extends ModuleViewer{
 				return;
 			try {
 				setWavelength(parseToLength(t.getValue(),t.getUnit(), true), prop);
+				waveLengthSett.dataSaved(false);
 			} catch (Exception e) {
 				waveLengthSett.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnitSymbol()+"]");
 			}
@@ -282,6 +283,7 @@ public class LightSourceViewer extends ModuleViewer{
 				return;
 			try{
 			setAttenuation(parseAttenuation(t.getValue()), prop);
+			attenuation.dataSaved(false);
 			}catch(Exception e){
 				attenuation.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}

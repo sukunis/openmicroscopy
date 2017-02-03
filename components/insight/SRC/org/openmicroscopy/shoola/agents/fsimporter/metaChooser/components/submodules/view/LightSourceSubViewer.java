@@ -354,11 +354,13 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			if(model!=null && !model.getTagValue().equals(""))
 				return;
 			setModel(t.getValue(), prop);
+			model.dataSaved(false);
 			break;
 		case TagNames.MANUFAC:
 			if(manufact!=null && !manufact.getTagValue().equals(""))
 				return;
 			setManufact(t.getValue(), prop);
+			manufact.dataSaved(false);
 			break;
 //		case TagNames.TYPE:
 //			if(type!=null && !type.getTagValue().equals(""))
@@ -369,6 +371,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 				if(d==null)
 					type.setTagInfo(ERROR_PREVALUE+t.getValue());
 				setType(d, prop);
+				type.dataSaved(false);
 			}
 			break;
 		case TagNames.A_TYPE:
@@ -377,6 +380,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 				if(da==null)
 					type.setTagInfo(ERROR_PREVALUE+t.getValue());
 				setType(da, prop);
+				type.dataSaved(false);
 			}
 			break;
 		case TagNames.F_TYPE:
@@ -385,6 +389,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 				if(df==null)
 					type.setTagInfo(ERROR_PREVALUE+t.getValue());
 				setType(df, prop);
+				type.dataSaved(false);
 			}
 			break;
 		case TagNames.POWER:
@@ -392,6 +397,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 				return;
 			try {
 				setPower(parsePower(t.getValue(),t.getUnit()), prop);
+				power.dataSaved(false);
 			} catch (Exception e1) {
 				power.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnit()+"]");
 			}
@@ -403,12 +409,14 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			if(m==null)
 				medium.setTagInfo(ERROR_PREVALUE+t.getValue());
 			setMedium(m, prop);
+			medium.dataSaved(false);
 			break;
 		case TagNames.FREQMUL:
 			if(freqMul!=null && !freqMul.getTagValue().equals(""))
 				return;
 			try {
 				setFreqMultiplication(parseToPositiveInt(t.getValue()), prop);
+				freqMul.dataSaved(false);
 			} catch (Exception e1) {
 				freqMul.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -418,6 +426,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 				return;
 			try{
 				setTunable(parseToBoolean(t.getValue()), prop);
+				tunable.dataSaved(false);
 			}catch(Exception e){
 				tunable.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -432,12 +441,14 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 				pulse.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
 			setPulse(p,prop);
+			pulse.dataSaved(false);
 			break;
 		case TagNames.POCKELCELL:
 			if(pockelCell!=null && !pockelCell.getTagValue().equals(""))
 				return;
 			try{
 				setPocketCell(parseToBoolean(t.getValue()), prop);
+				pockelCell.dataSaved(false);
 			}catch(Exception e){
 				pockelCell.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -447,6 +458,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 				return;
 			try {
 				setRepititationRate(parseFrequency(t.getValue(),t.getUnit()), prop);
+				repRate.dataSaved(false);
 			} catch (Exception e) {
 				repRate.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnit()+"]");
 			}
@@ -455,12 +467,14 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			if(pump!=null && !pump.getTagValue().equals(""))
 				return;
 				setPump(t.getValue(), prop);
+				pump.dataSaved(false);
 			break;
 		case TagNames.WAVELENGTH:
 			if(waveLength!=null && !waveLength.getTagValue().equals(""))
 				return;
 			try {
 				setWavelength(parseToLength(t.getValue(),t.getUnit(), true), prop);
+				waveLength.dataSaved(false);
 			} catch (Exception e) {
 				waveLength.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnit()+"]");
 			}
@@ -473,6 +487,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			if(description!=null && !description.getTagValue().equals(""))
 				return;
 			setDescription(t.getValue(), prop);
+			description.dataSaved(false);
 			break;
 		default:
 			System.out.println("[CONF] unknown tag: "+name );break;
