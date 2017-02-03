@@ -233,42 +233,53 @@ public class ObjectiveModel
 
 	private void setTag(String tagName, String tagValue, Unit tagUnit) throws Exception 
 	{
-		if(tagValue.equals(""))
+		if(tagValue.equals("") )
 			return;
 		
 
 		switch (tagName) {
 		case TagNames.MODEL:
-			element.setModel(tagValue);
+			if(element!=null)
+				element.setModel(tagValue);
 			break;
 		case TagNames.MANUFAC:
+			if(element!=null)
 			element.setManufacturer(tagValue);
 			break;
 		case TagNames.NOMMAGN:
+			if(element!=null)
 			element.setNominalMagnification(ModuleViewer.parseToDouble(tagValue));
 			break;
 		case TagNames.CALMAGN:
+			if(element!=null)
 			element.setCalibratedMagnification(ModuleViewer.parseToDouble(tagValue));
 			break;
 		case TagNames.LENSNA:
+			if(element!=null)
 			element.setLensNA(ModuleViewer.parseToDouble(tagValue));
 			break;
 		case TagNames.IMMERSION:
+			if(element!=null)
 			element.setImmersion(ObjectiveViewer.parseImmersion(tagValue));
 			break;
 		case TagNames.CORRECTION:
+			if(element!=null)
 			element.setCorrection(ObjectiveViewer.parseCorrection(tagValue));
 			break;
 		case TagNames.WORKDIST:
+			if(element!=null)
 			element.setWorkingDistance(ModuleViewer.parseToLength(tagValue, tagUnit, false));
 			break;
-		case TagNames.CORCOLLAR: 
+		case TagNames.CORCOLLAR:
+			if(settings!=null)
 			settings.setCorrectionCollar(ModuleViewer.parseToDouble(tagValue));
 			break;
 		case TagNames.OBJ_MEDIUM:
+			if(settings!=null)
 			settings.setMedium(ObjectiveViewer.parseMedium(tagValue));
 			break;
 		case TagNames.REFINDEX:
+			if(settings!=null)
 			settings.setRefractiveIndex(ModuleViewer.parseToDouble(tagValue));
 			break;
 		default:
