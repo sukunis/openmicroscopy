@@ -1252,11 +1252,11 @@ public class MetaDataModel
 			update(metaDataModel,0);
 		}else{
 			System.out.println("# MetaDataModel::updateData() -- FILE");
-			if(getNumberOfChannels()>1){
-				
-			}else{
+//			if(getNumberOfChannels()>1){
+//				
+//			}else{
 				update(metaDataModel,0);
-			}
+//			}
 		}
 		
 		
