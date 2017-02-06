@@ -110,7 +110,6 @@ public class LightSourceModel
 	 */
 	public void addData(LightSource newElem,boolean overwrite,int i) throws Exception
 	{
-		System.out.println("# LightSrcModel::addData()");
 		if(element.size()<=i){
 			switch(newElem.getClass().getSimpleName()){
 			case LASER: expandList(element.size(),i,new Laser());break;
@@ -122,10 +121,13 @@ public class LightSourceModel
 			}
 			
 		}
-		if(overwrite || (newElem.getClass()!= element.getClass())){
+	
+		if(overwrite || (newElem.getClass()!= element.get(i).getClass())){
+			System.out.println("# LightSrc::replaceData() at "+i+": "+newElem.getClass().getSimpleName());
 			replaceData(newElem,i);
 			LOGGER.info("[DATA] -- replace LightSource data");
 		}else{
+			System.out.println("# LightSrc::completeData() at "+i+": "+newElem.getClass().getSimpleName());
 			completeData(newElem,i);
 			LOGGER.info("[DATA] -- complete LightSource data");
 		}
@@ -159,8 +161,8 @@ public class LightSourceModel
 	 */
 	private void replaceData(LightSource newElem,int i)
 	{
+		
 		if(newElem!=null){
-			System.out.println("# LightSrcModel::replaceData()");
 			if(newElem instanceof Arc){
 				element.set(i,new Arc((Arc) newElem));
 			}else if(newElem instanceof Laser){
