@@ -1418,8 +1418,12 @@ private boolean disableTreeListener;
         case CMD_IMPORT: // call importFiles function of chooser
             LOGGER.info("[GUI-ACTION] -- import");
             Component c=owner.getComponent(0);
-            if(c instanceof ImportDialog)
+            if(c instanceof ImportDialog){
+            	//TODO check if some unsaved changes in current view
+            	  FNode currentNode = (FNode)fileTree.getLastSelectedPathComponent();
+                  deselectNodeAction(currentNode);
                 ((ImportDialog)c).importFiles();
+            }
             break;
 //        case CMD_REFRESH:
 //            LOGGER.info("[GUI-ACTION] -- refresh");
