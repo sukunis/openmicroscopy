@@ -29,6 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -79,6 +80,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDia
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.FNode;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.SaveInputDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
 import org.openmicroscopy.shoola.env.LookupNames;
@@ -1415,16 +1417,7 @@ private boolean disableTreeListener;
             firePropertyChange(CANCEL_SELECTION_PROPERTY,
                     Boolean.valueOf(false), Boolean.valueOf(true));
             break;
-        case CMD_IMPORT: // call importFiles function of chooser
-            LOGGER.info("[GUI-ACTION] -- import");
-            Component c=owner.getComponent(0);
-            if(c instanceof ImportDialog){
-            	//TODO check if some unsaved changes in current view
-            	  FNode currentNode = (FNode)fileTree.getLastSelectedPathComponent();
-                  deselectNodeAction(currentNode);
-                ((ImportDialog)c).importFiles();
-            }
-            break;
+       
 //        case CMD_REFRESH:
 //            LOGGER.info("[GUI-ACTION] -- refresh");
 //            firePropertyChange(ImportDialog.REFRESH_FILE_LIST,null,null);
@@ -1794,6 +1787,39 @@ private boolean disableTreeListener;
     private void addCancelImportButtonLink(JButton cancelImportBtn) {
 		this.cancelImportButton=cancelImportBtn;
 		
+	}
+
+
+	public void saveChanges(String text) 
+	{
+		System.out.println("\n+++ EVENT: IMPORT SAVE CHANGES ++++\n");
+
+		String defaultText="Save changes?\n";
+		
+		if(text==null || text.equals(""))
+			text=defaultText;
+		
+		//TODO check if some unsaved changes in current view
+		FNode currentNode = (FNode)fileTree.getLastSelectedPathComponent();
+		MetaDataView view=getMetaDataView(metaPanel);
+		boolean shouldSave=true;
+		if(view!=null && view.hasUserInput()){
+			int reply = JOptionPane.showConfirmDialog(null, 
+					"Unsaved changes for "+currentNode.getAbsolutePath()+"!\n"+text,
+					"Save Input", JOptionPane.YES_NO_OPTION);
+	        if (reply == JOptionPane.YES_OPTION) {
+	        	shouldSave =true;
+	        }
+	        else {
+	        	shouldSave=false;
+	        }
+		}
+		if(shouldSave){
+			if(currentNode.isLeaf())
+				saveDataButton.doClick();
+			else
+				saveAllDataButton.doClick();
+		}
 	}
     
 
