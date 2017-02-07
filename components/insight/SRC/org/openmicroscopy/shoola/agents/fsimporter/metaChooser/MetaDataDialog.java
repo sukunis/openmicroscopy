@@ -1074,7 +1074,7 @@ private boolean disableTreeListener;
     		if(node.getModelObject()!=null && node.getModelObject().hasBeenModified()){ 
     			LOGGER.debug("Update childs of "+node.getAbsolutePath());
     			System.out.println("# MeatDataDialog:: saveInputToModel("+node.getAbsolutePath()+")-- update childs");
-    			updateChildsOfDirectory(node);
+    			updateChildsOfDirectory(node,null);
     		}
     	}
     }
@@ -1083,7 +1083,7 @@ private boolean disableTreeListener;
      * GUI input : Update all child views of type directory with existing model with tags changes
      * @param node
      */
-    private void updateChildsOfDirectory(FNode node) 
+    private void updateChildsOfDirectory(FNode node,MetaDataModelObject modelToInherit) 
     {
     	System.out.println("# MetaDataDialog::updateChildsOfDirectories of "+node.getAbsolutePath());
     	
@@ -1092,6 +1092,8 @@ private boolean disableTreeListener;
     	
     	if(node.hasModelObject())
     		nodeModel=node.getModelObject();
+    	else if(modelToInherit!=null)
+    		nodeModel=modelToInherit;
     	else
     		return;
     	
@@ -1112,10 +1114,14 @@ private boolean disableTreeListener;
     			}
     			//for all subdirectories updateChilds
     			if(!child.isLeaf()){
-    				updateChildsOfDirectory(child);
+    				updateChildsOfDirectory(child,null);
     			}
     		}else{
     			System.out.println("\t ...don't update view of "+child.getAbsolutePath());
+    			//for all subdirectories updateChilds
+    			if(!child.isLeaf()){
+    				updateChildsOfDirectory(child,nodeModel);
+    			}
     		}
     	}
     	nodeModel.clearListOfModifications();
