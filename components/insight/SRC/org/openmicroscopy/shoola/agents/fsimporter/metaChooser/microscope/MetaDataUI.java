@@ -218,8 +218,8 @@ public class MetaDataUI extends JPanel
 		model=new MetaDataModel();
 		initModelComponents();
 		control=new MetaDataControl(model,this);
-	}
-	
+					}
+					
 	/**
 	 * Constructor
 	 * @param parent panel
@@ -1504,6 +1504,8 @@ public class MetaDataUI extends JPanel
 		
 		if(initImageUI && imageUI!=null){
 			result=result || imageUI.hasDataToSave() || model.getChangesImage()!=null;
+			System.out.println("\t ... image : changed data - "+
+					(imageUI.hasDataToSave()|| model.getChangesImage()!=null));
 		}
 		if(initExperimentUI && experimentUI!=null){
 			result=result || experimentUI.hasDataToSave() || model.getChangesExperiment()!=null;
@@ -1512,6 +1514,8 @@ public class MetaDataUI extends JPanel
 		}
 		if(initObjectiveUI && objectiveUI!=null){
 			result=result || objectiveUI.hasDataToSave()|| model.getChangesObject()!=null;
+			System.out.println("\t ... Objective : changed data - "+
+			(objectiveUI.hasDataToSave()|| model.getChangesObject()!=null));
 		}
 		if(initSampleUI && sampleUI!=null){
 			result = result || sampleUI.hasDataToSave()|| model.getChangesSample()!=null;
@@ -1520,12 +1524,18 @@ public class MetaDataUI extends JPanel
 		}
 		if(initImageEnvUI && imgEnvViewer!=null){
 			result=result || imgEnvViewer.hasDataToSave() || model.getChangesImgEnv()!=null;
+			System.out.println("\t ... ImageEnv : changed data - "+
+					(imgEnvViewer.hasDataToSave()|| model.getChangesImgEnv()!=null));
 		}
 		
 		if(initChannelUI  && model.getNumberOfChannels()>0){
 			if(channelTab!=null){
 				for(int i=0; i< channelTab.getTabCount(); i++){
+					if(channelTab.getTabComponentAt(i)!=null){
 					result=result || ((ChannelViewer) channelTab.getTabComponentAt(i)).hasDataToSave();
+					System.out.println("\t ... Channel : changed data - "+
+							((ChannelViewer) channelTab.getTabComponentAt(i)).hasDataToSave());
+					}
 				}
 			}
 			if(initDetectorUI)
@@ -1535,14 +1545,28 @@ public class MetaDataUI extends JPanel
 			if(initLightSrcUI )
 				result=result || lightSrcInput;
 		}else{
-			if(initChannelUI && channelTab!=null && channelTab.getTabCount()>0)
+			if(initChannelUI && channelTab!=null && channelTab.getTabCount()>0){
+				if(channelTab.getTabComponentAt(0)!=null){
 				result=result || ((ChannelViewer) channelTab.getTabComponentAt(0)).hasDataToSave();
-			if(initDetectorUI && detectorViewer!=null)
+				System.out.println("\t ... Channel : changed data - ??");
+//						(((ChannelViewer) channelTab.getTabComponentAt(0)).hasDataToSave()));
+				}
+			}
+			if(initDetectorUI && detectorViewer!=null){
 				result=result || detectorViewer.hasDataToSave() || model.getChangesDetector()!=null;
-			if(initLightPathUI && lightPathViewer!=null)
+				System.out.println("\t ... Detector : changed data - "+
+						(detectorViewer.hasDataToSave()|| model.getChangesDetector()!=null));
+			}
+			if(initLightPathUI && lightPathViewer!=null){
 				result=result || lightPathViewer.hasDataToSave();
-			if(initLightSrcUI && lightSrcViewer!=null)
+				System.out.println("\t ... LightPath : changed data - "+
+						(lightPathViewer.hasDataToSave()));
+			}
+			if(initLightSrcUI && lightSrcViewer!=null){
 				result=result || lightSrcViewer.hasDataToSave()||model.getChangesLightSrc()!=null;
+				System.out.println("\t ... LightSrc : changed data - "+
+						(lightSrcViewer.hasDataToSave()|| model.getChangesLightSrc()!=null));
+			}
 		}
 		
 		model.setDataChange(result);
@@ -1616,13 +1640,11 @@ public class MetaDataUI extends JPanel
 				chViewer.saveData();
 				model.setChangesChannel(list, chViewer.getIndex());
 				model.setMapAnnotationChannel(chViewer.getMapValuesOfChanges(model.getMapAnnotationChannel(chViewer.getIndex())),chViewer.getIndex()); 
-				System.out.println("\t...Save current Channel ");
 			}
 		}
 		// save selected component, other saved by deselect the channel
 		if(detectorViewer!=null && detectorViewer.hasDataToSave()){
 			int thisIndex=detectorViewer.getIndex();
-			System.out.println("-- SAVE detector data for channel "+chName+" : "+thisIndex);
 			List<TagData> list=detectorViewer.getChangedTags();
 			HashMap<String,String> map=model.getMapAnnotationDetector(thisIndex);
 			
