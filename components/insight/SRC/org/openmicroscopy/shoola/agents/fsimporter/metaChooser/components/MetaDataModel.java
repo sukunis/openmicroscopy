@@ -1249,20 +1249,118 @@ public class MetaDataModel
 			}
 			
 			
-			update(metaDataModel,0);
+			updateDir(metaDataModel,0);
 		}else{
 			System.out.println("# MetaDataModel::updateData() -- FILE");
 //			if(getNumberOfChannels()>1){
 //				
 //			}else{
-				update(metaDataModel,0);
+				updateFile(metaDataModel,0);
 //			}
 		}
 		
 		
 	}
 	
-	private void update(MetaDataModel metaDataModel,int index) throws Exception
+	/**
+	 * adopt changes of parent data. Inherit changes to inherit again to child
+	 * @param metaDataModel
+	 * @param index
+	 * @throws Exception
+	 */
+	private void updateDir(MetaDataModel metaDataModel,int index) throws Exception
+	{
+		if(imgModel!=null){
+			System.out.println("# MetaDataModel::update(): image");
+			if(metaDataModel.getChangesImage()!=null){
+				imgModel.update(metaDataModel.getChangesImage());
+				this.setChangesImage(new ArrayList<>(metaDataModel.getChangesImage()));
+			}
+			updateMapAnnotation(imgModel.getMap(),metaDataModel.getMapAnnotationImage());
+		}
+		if(imgEnvModel!=null){
+			System.out.println("# MetaDataModel::update(): imageEnv");
+			if(metaDataModel.getChangesImgEnv()!=null){
+				imgEnvModel.update(metaDataModel.getChangesImgEnv());
+				this.setChangesImageEnv(new ArrayList<>(metaDataModel.getChangesImgEnv()));
+			}
+			updateMapAnnotation(imgEnvModel.getMap(), metaDataModel.getMapAnnotationImgEnv());
+		}
+		if(channelModel!=null){
+			System.out.println("# MetaDataModel::update(): channel");
+			if(metaDataModel.getChangesChannel()!=null){
+				channelModel.update(metaDataModel.getChangesChannel()); 
+				this.setChangesChannel(metaDataModel.getChangesChannel());
+			}
+			for(int i=0; i<metaDataModel.getNumberOfChannels();i++){
+				updateMapAnnotation(channelModel.getMap(i),metaDataModel.getMapAnnotationChannel(i));
+			}
+		}
+		if(objModel!=null){
+			System.out.println("# MetaDataModel::update(): objective");
+			if(metaDataModel.getChangesObject()!=null){
+				objModel.update(metaDataModel.getChangesObject()); 
+				this.setChangesObject(metaDataModel.getChangesObject());
+			}
+			updateMapAnnotation(objModel.getMap(),metaDataModel.getMapAnnotationObjective());
+		}
+		if(detectorModel!=null){
+			System.out.println("# MetaDataModel::update(): detector");
+			if(metaDataModel.getChangesDetector()!=null){
+				detectorModel.update(metaDataModel.getChangesDetector());
+				this.setChangesDetector(metaDataModel.getChangesDetector());
+			}
+			for(int i=0; i<metaDataModel.getNumberOfDetectors();i++)
+				updateMapAnnotation(detectorModel.getMap(i),metaDataModel.getMapAnnotationDetector(i));
+		}
+
+		if(lightSrcModel!=null){
+			System.out.println("# MetaDataModel::update(): lightSrc");
+			if(metaDataModel.getChangesLightSrc()!=null){
+				lightSrcModel.update(metaDataModel.getChangesLightSrc());
+				this.setChangesLightSrc(metaDataModel.getChangesLightSrc());
+			}
+			for(int i=0; i<metaDataModel.getNumberOfLightSrc();i++)
+				updateMapAnnotation(lightSrcModel.getMap(i),metaDataModel.getMapAnnotationLightSrc(i));
+		}
+
+		if(lightPathModel!=null){
+			System.out.println("# MetaDataModel::update(): lightPath");
+			if(metaDataModel.getChangesLightPath()!=null){
+				lightPathModel.update(metaDataModel.getChangesLightPath());
+				this.setChangesLightPath(metaDataModel.getChangesLightPath());
+			}
+			for(int i=0; i<metaDataModel.getNumberOfLightPath();i++)
+				updateMapAnnotation(lightPathModel.getMap(i),metaDataModel.getMapAnnotationLightPath(i));
+		}
+
+		if(sampleModel!=null){
+			System.out.println("# MetaDataModel::update(): sample");
+			if(metaDataModel.getChangesSample()!=null){
+				sampleModel.update(metaDataModel.getChangesSample());
+				this.setChangesSample(metaDataModel.getChangesSample());
+			}
+			updateMapAnnotation(sampleModel.getMap(),metaDataModel.getMapAnnotationSample());
+		}
+		if(expModel!=null){
+			System.out.println("# MetaDataModel::update(): experimenter");
+			if(metaDataModel.getChangesExperiment()!=null){
+				expModel.update(metaDataModel.getChangesExperiment());
+				this.setChangesExperiment(metaDataModel.getChangesExperiment());
+			}
+			updateMapAnnotation(expModel.getMap(),metaDataModel.getMapAnnotationExperiment());
+		}
+
+	}
+	
+	
+	/**
+	 * adopt changes of parent data. 
+	 * @param metaDataModel
+	 * @param index
+	 * @throws Exception
+	 */
+	private void updateFile(MetaDataModel metaDataModel,int index) throws Exception
 	{
 		if(imgModel!=null){
 			System.out.println("# MetaDataModel::update(): image");
@@ -1277,8 +1375,9 @@ public class MetaDataModel
 		if(channelModel!=null){
 			System.out.println("# MetaDataModel::update(): channel");
 			channelModel.update(metaDataModel.getChangesChannel()); 
-			for(int i=0; i<metaDataModel.getNumberOfChannels();i++)
+			for(int i=0; i<metaDataModel.getNumberOfChannels();i++){
 				updateMapAnnotation(channelModel.getMap(i),metaDataModel.getMapAnnotationChannel(i));
+			}
 		}
 		if(objModel!=null){
 			System.out.println("# MetaDataModel::update(): objective");
@@ -1319,7 +1418,11 @@ public class MetaDataModel
 		
 	}
 
+
 	
+	
+
+
 	private void updateMapAnnotation(HashMap<String, String> map, HashMap<String, String> map2) {
 		if(map2!=null){
 			if(map==null){
@@ -1405,6 +1508,11 @@ public class MetaDataModel
 		return changesChannel;
 	}
 	
+	
+	public void setChangesChannel(List<List<TagData>> list)
+	{
+		changesChannel=list;
+	}
 	public void setChangesChannel(List<TagData> newValue,int index)
 	{
 		if(changesChannel==null)
@@ -1465,6 +1573,24 @@ public class MetaDataModel
 	{
 		return changesLightPath;
 	}
+	
+	private void setChangesLightPath(List<LightPath> list) {
+		changesLightPath=list;
+	}
+
+
+
+	private void setChangesLightSrc(List<List<TagData>> list) {
+		changesLightSrc=list;
+	}
+
+
+
+	private void setChangesDetector(List<List<TagData>> list) {
+		changesDetector=list;
+		
+	}
+
 
 	public void setChangesSample(List<TagData> newValue) {
 		changesSample=newValue;
