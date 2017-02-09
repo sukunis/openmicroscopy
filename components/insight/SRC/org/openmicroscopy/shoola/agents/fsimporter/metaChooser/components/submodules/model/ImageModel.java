@@ -148,8 +148,10 @@ public class ImageModel
 	 */
 	public void update(List<TagData> changesImage) throws Exception 
 	{
-		if(changesImage==null)
+		if(changesImage==null){
+			System.out.println("\t no changes for image");
 			return;
+		}
 		for(TagData t: changesImage){
 			updateTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
 		}

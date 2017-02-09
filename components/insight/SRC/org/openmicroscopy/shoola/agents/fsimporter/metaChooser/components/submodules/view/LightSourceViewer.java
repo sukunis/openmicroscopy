@@ -372,7 +372,7 @@ public class LightSourceViewer extends ModuleViewer{
 //			}
 //		}
 		
-		System.out.println("\t...save data for "+((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getClassification());
+//		System.out.println("\t...save data for "+((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getClassification());
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).saveData();
 
 		// --- Settings --------------------

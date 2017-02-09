@@ -1091,14 +1091,18 @@ private boolean saveCurrentView;
     {
     	System.out.println("# MetaDataDialog::updateChildsOfDirectories of "+node.getAbsolutePath());
     	
+    	
     	int numChilds=node.getChildCount();
     	MetaDataModelObject nodeModel=null;
     	
-    	if(node.hasModelObject())
+    	if(node.hasModelObject()){
+    		System.out.println("\t Use own model");
     		nodeModel=node.getModelObject();
-    	else if(modelToInherit!=null)
+    	}
+    	else if(modelToInherit!=null){
+    		System.out.println("\t Use parent model");
     		nodeModel=modelToInherit;
-    	else
+    	}else
     		return;
     	
     	for(int i=0; i<numChilds;i++){
@@ -1127,9 +1131,11 @@ private boolean saveCurrentView;
     				updateChildsOfDirectory(child,nodeModel);
     			}
     		}
-    	}
-    	if(node.hasModelObject())
+    	}//for
+    	if(node.hasModelObject()){
+    		System.out.println("# MetaDataDialog::updateChildsOfDirectory(): clear list for "+node.getAbsolutePath());
     		node.getModelObject().clearListOfModifications();
+    	}
 	}
 
 
@@ -1617,7 +1623,7 @@ private boolean saveCurrentView;
         	
         	if(maps!=null){
         		maps.setFileName(node.getAbsolutePath());
-        		maps.printObject();
+//        		maps.printObject();
         		firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,maps);
         	}else{
         		System.out.println("\t mapAnnotation is null");
@@ -1680,7 +1686,7 @@ private boolean saveCurrentView;
    {
 	   if(selectedNode!=null ){
 		   System.out.println("\n# MetaDataDialog::selectNodeAction("+selectedNode.getAbsolutePath()+")");
-		   selectedNode.printMaps();
+//		   selectedNode.printMaps();
 		   LOGGER.debug("Select node action for "+selectedNode.getAbsolutePath());
            
 		   enableSaveButtons(selectedNode.isLeaf());

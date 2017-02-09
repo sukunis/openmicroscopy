@@ -329,9 +329,10 @@ public class ExperimentModel {
 
 	public void update(List<TagData> changesExperiment) throws Exception 
 	{
-		if(changesExperiment==null)
+		if(changesExperiment==null){
+			System.out.println("\t no changes for experiment");
 			return;
-		System.out.println("# ExperimentModel::update()");
+		}
 		for(TagData t: changesExperiment){
 			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
 		}

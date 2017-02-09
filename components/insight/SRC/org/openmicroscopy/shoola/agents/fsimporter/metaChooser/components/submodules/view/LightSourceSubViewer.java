@@ -433,7 +433,6 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			break;
 		case TagNames.PULSE:
 			if(pulse!=null && !pulse.getTagValue().equals("")){
-			System.out.println("\t...pulse still set");
 				return;
 			}
 			Pulse p=parsePulse(t.getValue());

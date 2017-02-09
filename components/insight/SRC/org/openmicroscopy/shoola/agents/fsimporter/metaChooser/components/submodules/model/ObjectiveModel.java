@@ -92,7 +92,6 @@ public class ObjectiveModel
 	private void replaceData(Objective newElem)
 	{
 		if(newElem!=null){
-			System.out.println("# ObjectiveModel::replaceData()");
 			element=new Objective(newElem);
 		}
 	}
@@ -223,6 +222,7 @@ public class ObjectiveModel
 	public void update(List<TagData> changesObjective) throws Exception 
 	{
 		if(changesObjective==null){
+			System.out.println("\t no changes for objective");
 			return;
 		}
 		

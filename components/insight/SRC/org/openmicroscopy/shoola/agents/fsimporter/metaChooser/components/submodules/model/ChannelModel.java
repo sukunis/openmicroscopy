@@ -185,15 +185,17 @@ public class ChannelModel
 	}
 
 	/**
-	 * Update list of channels with given modified tags.
+	 * Update list of channels with given modified tags. (Inherit tags from parent)
 	 * Do nothing if channel at index doesn't exist. 
 	 * @param changesChannel
 	 * @throws Exception
 	 */
 	public void update(List<List<TagData>> changesChannel) throws Exception
 	{
-		if(changesChannel==null)
+		if(changesChannel==null){
+			System.out.println("\t no changes for channel");
 			return;
+		}
 		int index=0;
 		for(List<TagData> list : changesChannel){
 			if(list!=null && element.size()>index && element.get(index)!=null){

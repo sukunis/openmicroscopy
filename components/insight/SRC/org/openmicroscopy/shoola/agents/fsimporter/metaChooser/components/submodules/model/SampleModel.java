@@ -133,9 +133,10 @@ public class SampleModel
 	public void update(List<TagData> changesSample) 
 	{
 		
-		if(changesSample==null)
+		if(changesSample==null){
+			System.out.println("\t no changes for sample");
 			return;
-		System.out.println("# SampleModel::update()");
+		}
 		for(TagData t: changesSample){
 			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
 		}		

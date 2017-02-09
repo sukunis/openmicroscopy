@@ -445,8 +445,10 @@ public class LightSourceModel
 	 */
 	public void update(List<List<TagData>> changesLightSrc) throws Exception 
 	{
-		if(changesLightSrc==null)
+		if(changesLightSrc==null){
+			System.out.println("\t no changes for lightSource");
 			return;
+		}
 		int index=0;
 		for(List<TagData> list :changesLightSrc){
 			if(list!=null && element.size()>index 

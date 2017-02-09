@@ -222,8 +222,10 @@ public class LightPathModel
 	// replace lightPaths with changed lightPaths
 	public void update(List<LightPath> changesLightPath) 
 	{
-		if(changesLightPath==null)
+		if(changesLightPath==null){
+			System.out.println("\t no changes for lightPath");
 			return;
+		}
 		int index=0;
 		for(LightPath lp:changesLightPath)
 		{

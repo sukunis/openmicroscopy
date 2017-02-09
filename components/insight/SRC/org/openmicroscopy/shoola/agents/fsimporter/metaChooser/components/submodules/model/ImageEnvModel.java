@@ -102,9 +102,10 @@ public class ImageEnvModel
 	}
 
 	public void update(List<TagData> changesImgEnv) {
-		if(changesImgEnv==null)
+		if(changesImgEnv==null){
+			System.out.println("\t no changes for imgEnv");
 			return;
-		System.out.println("# ImgEnvModel::update()");
+		}
 		for(TagData t: changesImgEnv){
 			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
 		}

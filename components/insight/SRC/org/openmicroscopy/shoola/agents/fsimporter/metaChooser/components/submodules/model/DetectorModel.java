@@ -97,16 +97,11 @@ public class DetectorModel
 	private void replaceData(Detector newElem,int index)
 	{
 		if(newElem!=null){
-			System.out.println("# DetectorModel::replaceData() - index: "+index);
 			element.set(index, new Detector(newElem));
 			DetectorType t=newElem.getType();
-			if(t!=null)
-				System.out.println("\t...orig Detector type = "+t.getValue());
+			
 			t=element.get(index).getType();
-			if(t!=null)
-				System.out.println("\t...new Detector type = "+t.getValue());
-		}else{
-			System.out.println("# DetectorModel::replaceData() - empty element");
+			
 		}
 		
 	}
@@ -297,8 +292,10 @@ public class DetectorModel
 	 */
 	public void update(List<List<TagData>> changesDetector) throws Exception 
 	{
-		if(changesDetector==null)
+		if(changesDetector==null){
+			System.out.println("\t no changes for detector");
 			return;
+		}
 		int index=0;
 		for(List<TagData> list :changesDetector){
 			if(list!=null && element.size()>index 

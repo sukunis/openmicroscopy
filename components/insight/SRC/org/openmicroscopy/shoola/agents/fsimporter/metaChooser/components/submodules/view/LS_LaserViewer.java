@@ -121,13 +121,12 @@ tagList=new ArrayList<TagData>();
 	@Override
 	public void saveData() 
 	{
-		System.out.println("# LS_LaserViewer::saveData()");
 		
-		System.out.println("\t... lightSrc dataChanged = "+dataChanged);
+//		System.out.println("\t... lightSrc dataChanged = "+dataChanged);
 		if(tagList!=null){
 			for(int i=0; i<tagList.size();i++){
 				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
-				System.out.println("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
+//				System.out.println("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
 			}
 		}
 		
@@ -197,7 +196,6 @@ tagList=new ArrayList<TagData>();
 		}
 		try{
 				((Laser)lightSrc).setTuneable(parseToBoolean(tunable.getTagValue()));
-				System.out.println("\t... setGUIData(): set tunable = "+parseToBoolean(tunable.getTagValue())+" val: "+tunable.getTagValue());
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC tunable input");
 		}

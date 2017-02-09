@@ -57,16 +57,16 @@ public class MetaDataModelObject
 	 */
 	public boolean hasBeenModified() 
 	{
-		System.out.println("# MetaDataModel::hasBeenModified()");
+		
 		boolean res=false;
 		if(list==null || list.isEmpty()){
-			System.out.println("\t...return false");
+			System.out.println("# MetaDataModel::hasBeenModified(): false");
 			return res;
 		}
 		for(MetaDataModel m: list){
 			res= res || m.noticUserInput();
 		}
-		System.out.println("\t...return "+res);
+		System.out.println("# MetaDataModel::hasBeenModified(): "+res);
 		return res;
 	}
 
@@ -75,6 +75,7 @@ public class MetaDataModelObject
 		if(list==null || list.isEmpty()){
 			return;
 		}
+		System.out.println("## MetaDataModelObject::clearListOfModifications()");
 		for(MetaDataModel m: list){
 			m.setDataChange(false);
 		}
