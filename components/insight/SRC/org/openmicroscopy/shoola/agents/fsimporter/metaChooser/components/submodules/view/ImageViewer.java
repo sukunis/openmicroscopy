@@ -72,6 +72,7 @@ public class ImageViewer extends ModuleViewer{
 		initComponents(conf);
 		initTagList();
 		buildGUI();
+		resetInputEvent();
 	}
 
 	private void initTagList()

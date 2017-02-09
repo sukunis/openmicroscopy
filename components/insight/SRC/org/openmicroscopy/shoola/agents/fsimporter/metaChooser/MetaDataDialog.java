@@ -64,8 +64,6 @@ import omero.model.MapAnnotation;
 import omero.model.MapAnnotationI;
 import omero.model.NamedValue;
 
-import org.apache.commons.io.FilenameUtils;
-import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
@@ -80,10 +78,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDia
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.FNode;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.SaveInputDialog;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.WarningDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
-import org.openmicroscopy.shoola.env.LookupNames;
 import org.openmicroscopy.shoola.env.data.model.FileObject;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.util.ui.ClosableTabbedPaneComponent;
@@ -1809,7 +1804,11 @@ private boolean saveCurrentView;
 
 	public void saveChanges(String text) 
 	{
-		if(!saveCurrentView){
+		//TODO check if some unsaved changes in current view
+		FNode currentNode = (FNode)fileTree.getLastSelectedPathComponent();
+		MetaDataView view=getMetaDataView(metaPanel);
+		
+		if(view!=null && view.hasUserInput()){
 			System.out.println("\n+++ EVENT: IMPORT SAVE CHANGES ++++\n");
 
 			String defaultText="Save changes?\n";
@@ -1817,9 +1816,7 @@ private boolean saveCurrentView;
 			if(text==null || text.equals(""))
 				text=defaultText;
 
-			//TODO check if some unsaved changes in current view
-			FNode currentNode = (FNode)fileTree.getLastSelectedPathComponent();
-			MetaDataView view=getMetaDataView(metaPanel);
+			
 			boolean shouldSave=true;
 			if(view!=null && view.hasUserInput()){
 				int reply = JOptionPane.showConfirmDialog(null, 

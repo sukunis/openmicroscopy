@@ -26,6 +26,7 @@ public class LS_LEDViewer extends LightSourceSubViewer
 		this.index=index;
 		initComponents(conf);
 		buildGUI();
+		resetInputEvent();
 		initTagList();
 //		showPredefinitions(conf.getTagList(), showPreValues);
 	}

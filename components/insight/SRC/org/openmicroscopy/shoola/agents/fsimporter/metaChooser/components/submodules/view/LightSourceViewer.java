@@ -89,6 +89,7 @@ public class LightSourceViewer extends ModuleViewer{
 		initComponents(conf,showPreValues);
 		
 		buildGUI();
+		resetInputEvent();
 		
 		// set data from model
 		setGUIData();
@@ -193,6 +194,7 @@ public class LightSourceViewer extends ModuleViewer{
 						"Select From Available LightSource", availableElems); 
 				LightSource l=editor.getSelectedLightSource();
 				if(l!=null ){
+					inputKeyPressed();
 					dataChanged=true;
 					try {
 						data.addData(l, true,index);

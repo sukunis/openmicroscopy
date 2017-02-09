@@ -61,6 +61,7 @@ public SampleViewer(SampleModel model,ModuleConfiguration conf,boolean showPreVa
 	initComponents(conf);
 	initTagList();
 	buildGUI();
+	resetInputEvent();
 	showPredefinitions(conf.getTagList(), showPreValues);
 }
 

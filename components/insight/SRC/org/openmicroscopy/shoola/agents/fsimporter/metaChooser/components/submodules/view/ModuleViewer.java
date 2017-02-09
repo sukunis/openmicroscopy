@@ -5,6 +5,12 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,6 +20,7 @@ import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -45,6 +52,7 @@ public abstract class ModuleViewer extends JPanel
 	
 	protected List<TagData> tagList;
 	protected boolean dataChanged;
+	protected boolean inputEvent;
 	
 	
 	public abstract void saveData();
@@ -62,7 +70,15 @@ public abstract class ModuleViewer extends JPanel
 	
 	public final static String ERROR_PREVALUE="Invalid predefined value: ";
 	
+	public boolean inputEvent()
+	{
+		return inputEvent;
+	}
 	
+	public void resetInputEvent()
+	{
+		inputEvent=false;
+	}
 	
 	protected boolean inputAt(TagData tag)
 	{
@@ -112,7 +128,6 @@ public abstract class ModuleViewer extends JPanel
 	protected Boolean parseToBoolean(String val) 
 	{
 		if(val==null || val.equals("")){
-			System.out.println("# ModuleViewer::parseBoolean(): return null");
 			return null;
 		}
 		
@@ -208,7 +223,33 @@ public abstract class ModuleViewer extends JPanel
 		if(tag != null && tag.isVisible()){
 			labels.add(tag.getTagLabel());
 			comp.add(tag.getInputField());
+			// input listener
+			tag.setKeyListener(new KeyListener() {
+				
+				@Override
+				public void keyTyped(KeyEvent e) {
+//					System.out.println("########## INPUT TYPE############### "+e.getSource().getClass().getName());
+					
+				}
+				
+				@Override
+				public void keyReleased(KeyEvent e) {
+					inputKeyPressed();
+					
+				}
+				
+				@Override
+				public void keyPressed(KeyEvent e) {
+//					System.out.println("########## INPUT PRESSED ############### "+e.getSource().getClass().getName());
+					
+				}
+			});
+			tag.addActionListener(new TagActionListener(tag));
 		}
+	}
+	public void inputKeyPressed()
+	{
+		inputEvent=true;
 	}
 	
 	protected void addLabelToGUI(JLabel l,List<JLabel> labels,List<JComponent> comp)
@@ -351,5 +392,20 @@ public abstract class ModuleViewer extends JPanel
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {}
+		}
+		
+		class TagActionListener implements ActionListener
+		{
+			private TagData tag;
+			public TagActionListener(TagData tag)
+			{
+				this.tag=tag;
+			}
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tag.dataSaved(false);
+				inputKeyPressed();
+			}
+			
 		}
 }

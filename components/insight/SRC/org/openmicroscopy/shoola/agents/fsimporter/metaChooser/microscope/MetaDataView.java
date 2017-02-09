@@ -525,12 +525,14 @@ public class MetaDataView extends JPanel
 		if(seriesData){
 			boolean result=false;
 			for(Component comp:cardPane.getComponents()){
-				result=result ||((MetaDataUI) comp).hasDataToSave();
+//				result=result ||((MetaDataUI) comp).hasDataToSave();
+				result=result ||((MetaDataUI) comp).userInput();
 			}
 			return result;
 		}else{
 			if(singleView!=null){
-				return singleView.hasDataToSave();
+//				return singleView.hasDataToSave();
+				return singleView.userInput();
 			}
 		}
 		return false;

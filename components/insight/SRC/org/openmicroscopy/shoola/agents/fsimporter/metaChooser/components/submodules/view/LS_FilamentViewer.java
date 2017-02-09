@@ -27,6 +27,7 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 		this.index=index;
 		initComponents(conf);
 		buildGUI();
+		resetInputEvent();
 		initTagList();
 //		showPredefinitions(conf.getTagList(), showPreValues);
 	}

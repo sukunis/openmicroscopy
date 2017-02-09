@@ -440,39 +440,56 @@ public class TagData
 
 
 	}
+	
+	public void setKeyListener(KeyListener l){
+		fieldKeyListener=l;
+	
+		inputField.addKeyListener(l);
+		if(type==ARRAYFIELDS){
+			for(int i=0; i<inputField.getComponentCount();i++){
+				Component comp=inputField.getComponent(i);
+				comp.addKeyListener(l);
+			}
+		}
+		
+			
+	}
 
 	public void activateActionListener(boolean a)
 	{
 		actionListenerActiv=a;
 	}
 	
-	
+			
 	/** Action Listener for tagData*/
 	public void addActionListener(ActionListener l)
 	{
-		switch (type) {
-		case TEXTFIELD:
-			((JTextField)inputField).addActionListener(l);
-			break;
-		case COMBOBOX:
+		if(type==COMBOBOX)
 			((JComboBox)inputField).addActionListener(l); 
-			break;
-		case TEXTPANE:
-			break;
-		case TEXTAREA:
-			break;
-		case CHECKBOX:
-			((JCheckBox)inputField).addActionListener(l);
-			break;
-		case ARRAYFIELDS:
-
-			break;
-		case TIMESTAMP:
-			break;
-		default:
-			((JTextField)inputField).addActionListener(l);
-			break;
-		}
+		
+//		switch (type) {
+//		case TEXTFIELD:
+//			((JTextField)inputField).addActionListener(l);
+//			break;
+//		case COMBOBOX:
+//			((JComboBox)inputField).addActionListener(l); 
+//			break;
+//		case TEXTPANE:
+//			break;
+//		case TEXTAREA:
+//			break;
+//		case CHECKBOX:
+//			((JCheckBox)inputField).addActionListener(l);
+//			break;
+//		case ARRAYFIELDS:
+//
+//			break;
+//		case TIMESTAMP:
+//			break;
+//		default:
+//			((JTextField)inputField).addActionListener(l);
+//			break;
+//		}
 	}
 	
 	public void addDocumentListener(DocumentListener l)

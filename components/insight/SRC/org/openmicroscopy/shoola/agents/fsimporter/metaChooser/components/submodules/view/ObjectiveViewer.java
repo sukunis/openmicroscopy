@@ -78,6 +78,7 @@ public class ObjectiveViewer extends ModuleViewer
 		initComponents(conf);
 		initTagList();
 		buildGUI();
+		resetInputEvent();
 		showPredefinitions(conf.getTagList(), showPreValues);
 		showPredefinitions(conf.getSettingList(), showPreValues);
 	}
@@ -177,6 +178,7 @@ public class ObjectiveViewer extends ModuleViewer
 						availableElems);
 				Objective selectedObj=creator.getObjective();  
 				if(selectedObj!=null ){
+					inputKeyPressed();
 					System.out.println("ObjectiveViewer::Choose - addData()");
 					try {
 						data.addData(selectedObj, true);

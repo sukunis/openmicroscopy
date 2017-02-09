@@ -25,6 +25,7 @@ public class LS_GESViewer extends LightSourceSubViewer
 		this.index=index;
 		initComponents(conf);
 		buildGUI();
+		resetInputEvent();
 		initTagList();
 //		showPredefinitions(conf.getTagList(), showPreValues);
 	}

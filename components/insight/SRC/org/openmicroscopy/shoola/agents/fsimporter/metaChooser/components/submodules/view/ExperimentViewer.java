@@ -67,6 +67,7 @@ public class ExperimentViewer extends ModuleViewer{
 		initComponents(conf);
 		initTagList();
 		buildGUI();
+		resetInputEvent();
 		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 

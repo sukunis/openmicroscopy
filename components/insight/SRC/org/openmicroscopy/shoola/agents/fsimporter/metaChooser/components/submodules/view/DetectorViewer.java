@@ -98,6 +98,7 @@ public class DetectorViewer extends ModuleViewer{
 		initComponents(conf);
 		initTagList();
 		buildGUI();
+		resetInputEvent();
 		// set data from model
 		resetAttributesForType();
 		setGUIData();
@@ -201,6 +202,7 @@ public class DetectorViewer extends ModuleViewer{
 						availableElems);
 				Detector selected=creator.getDetector();  
 				if(selected!=null ){
+					inputKeyPressed();
 					try {
 						data.addData(selected, true,index);
 					} catch (Exception e1) {

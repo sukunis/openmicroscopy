@@ -82,6 +82,7 @@ public ChannelViewer(ChannelModel model,ModuleConfiguration conf,int index)
 	initComponents(conf);
 	initTagList();
 	buildGUI();
+	resetInputEvent();
 }
 
 private void initTagList()

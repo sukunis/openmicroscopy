@@ -63,6 +63,7 @@ public class LightPathViewer extends ModuleViewer{
 		this.availableElems=availableElems;
 		initComponents(conf);
 		buildGUI();
+		resetInputEvent();
 		showPreDefinitions(conf);
 		lightPathDataChanged=false;
 	}
@@ -149,6 +150,7 @@ public class LightPathViewer extends ModuleViewer{
 				List<Object> newList=creator.getLightPathList(); 
 				lightPathDataChanged= creator.hasDataChanged();
 				if(newList!=null && !newList.isEmpty()){
+					inputKeyPressed();
 					try {
 						createLightPath(newList);
 					} catch (Exception e1) {
