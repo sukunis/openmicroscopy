@@ -801,6 +801,7 @@ class ImporterUI extends TopWindow
 	}
 
 	public void startImport() {
+		metaData.saveChanges("");
 		chooser.importFiles();
 	}
 
@@ -808,16 +809,18 @@ class ImporterUI extends TopWindow
 	public void setNewTitle(String micName)
 	{
 		titlePane.setTitle(TEXT_TITLE+": "+micName);
-//		revalidate();
-//		repaint();
 	}
 
 	public void setMapAnnotation(MapAnnotationObject o)
 	{
 		if(o!=null){
-		System.out.println("\t # ImporterUI::setMapAnnotation() for "+o.getFileName());
+			System.out.println("\t # ImporterUI::setMapAnnotation() for "+o.getFileName());
 		}
 		chooser.setMapAnnotation(o.getFileName(), o);
+	}
+	
+	public void deleteMapAnnotations() {
+		chooser.deleteMapAnnotations();
 	}
 	
 	
@@ -828,5 +831,7 @@ class ImporterUI extends TopWindow
 		selectMetaDataChooser();
 		
 	}
+
+	
 
 }

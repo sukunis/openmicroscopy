@@ -430,6 +430,7 @@ class ImporterControl
                 checkDisableCancelAllButtons();
             } else if (StatusLabel.IMPORT_DONE_PROPERTY.equals(name)) {
                     model.onImportComplete((FileImportComponent) evt.getNewValue());
+                    view.deleteMapAnnotations();
             } else if (StatusLabel.UPLOAD_DONE_PROPERTY.equals(name)) {
                     model.onUploadComplete((FileImportComponent) evt.getNewValue());
             } else if(ImportDialog.REFRESH_FILE_LIST.equals(name)){

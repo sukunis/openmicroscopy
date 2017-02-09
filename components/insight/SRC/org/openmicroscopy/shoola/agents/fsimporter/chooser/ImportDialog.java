@@ -1823,6 +1823,11 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		mapAnnotation.put(fileName, map);
 	}
 	
+	public void deleteMapAnnotations()
+	{
+		mapAnnotation.clear();
+	}
+	
 
 	public JButton getImportButton() {
 		// TODO Auto-generated method stub
