@@ -814,7 +814,8 @@ class ImporterUI extends TopWindow
 	public void setMapAnnotation(MapAnnotationObject o)
 	{
 		if(o!=null){
-			System.out.println("\t # ImporterUI::setMapAnnotation() for "+o.getFileName());
+//			System.out.println("\t # ImporterUI::setMapAnnotation() for "+o.getFileName());
+			o.printObject();
 		}
 		chooser.setMapAnnotation(o.getFileName(), o);
 	}

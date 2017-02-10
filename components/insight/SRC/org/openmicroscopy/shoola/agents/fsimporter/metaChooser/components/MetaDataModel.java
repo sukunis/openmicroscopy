@@ -1462,7 +1462,7 @@ public class MetaDataModel
 	
 	public boolean noticUserInput()
 	{
-		System.out.println("# MetaDataModel::noticeUserInput()");
+	
 		boolean res=false;
 		res=res || (changesImg!=null && !changesImg.isEmpty())
 				|| (changesImgEnv!=null && !changesImgEnv.isEmpty())
@@ -1474,16 +1474,16 @@ public class MetaDataModel
 				|| (changesSample!=null && !changesSample.isEmpty())
 				|| (changesExperiment!=null && !changesExperiment.isEmpty());
 		
-		System.out.println("\t...Changes Image: "+(changesImg!=null && !changesImg.isEmpty()));
-		System.out.println("\t...Changes Objective: "+(changesObj!=null && !changesObj.isEmpty()));
-		System.out.println("\t...Changes Detector: "+(changesDetector!=null && !changesDetector.isEmpty()));
-		System.out.println("\t...Changes LightSrc: "+(changesLightSrc!=null && !changesLightSrc.isEmpty()));
-		System.out.println("\t...Changes LightPath: "+(changesLightPath!=null && !changesLightPath.isEmpty()));
-		System.out.println("\t...Changes Channel: "+(changesChannel!=null && !changesChannel.isEmpty()));
-		System.out.println("\t...Changes Sample: "+(changesSample!=null && !changesSample.isEmpty()));
-		System.out.println("\t...Changes Experiment: "+(changesExperiment!=null && !changesExperiment.isEmpty()));
-		System.out.println("\t...Changes ImgEnv: "+(changesImgEnv!=null && !changesImgEnv.isEmpty()));
-				
+//		System.out.println("\t...Changes Image: "+(changesImg!=null && !changesImg.isEmpty()));
+//		System.out.println("\t...Changes Objective: "+(changesObj!=null && !changesObj.isEmpty()));
+//		System.out.println("\t...Changes Detector: "+(changesDetector!=null && !changesDetector.isEmpty()));
+//		System.out.println("\t...Changes LightSrc: "+(changesLightSrc!=null && !changesLightSrc.isEmpty()));
+//		System.out.println("\t...Changes LightPath: "+(changesLightPath!=null && !changesLightPath.isEmpty()));
+//		System.out.println("\t...Changes Channel: "+(changesChannel!=null && !changesChannel.isEmpty()));
+//		System.out.println("\t...Changes Sample: "+(changesSample!=null && !changesSample.isEmpty()));
+//		System.out.println("\t...Changes Experiment: "+(changesExperiment!=null && !changesExperiment.isEmpty()));
+//		System.out.println("\t...Changes ImgEnv: "+(changesImgEnv!=null && !changesImgEnv.isEmpty()));
+		System.out.println("# MetaDataModel::noticeUserInput(): "+res);
 		return res;
 	}
 

@@ -1500,7 +1500,10 @@ public class MetaDataUI extends JPanel
 		return d;
 	}
 
-	
+	/**
+	 * Notice user gui input
+	 * @return
+	 */
 	public boolean userInput()
 	{
 		boolean result=false;
@@ -1571,6 +1574,10 @@ public class MetaDataUI extends JPanel
 		
 		return result;
 	}
+	
+	/** notice all added data (input and predefinition values)
+	 * @return
+	 */
 	public boolean hasDataToSave() 
 	{
 		boolean result=false;

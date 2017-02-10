@@ -75,7 +75,6 @@ public class MetaDataModelObject
 		if(list==null || list.isEmpty()){
 			return;
 		}
-		System.out.println("## MetaDataModelObject::clearListOfModifications()");
 		for(MetaDataModel m: list){
 			m.setDataChange(false);
 		}
