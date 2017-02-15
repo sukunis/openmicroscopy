@@ -386,8 +386,9 @@ public class MetaDataView extends JPanel
 	 */
 	public void saveModel() throws Exception
 	{
+		savePreValues();
 		if(ome!=null){
-			savePreValues();
+			
 			//file
 			if(seriesData){
 				updateGlobalSeriesData();
