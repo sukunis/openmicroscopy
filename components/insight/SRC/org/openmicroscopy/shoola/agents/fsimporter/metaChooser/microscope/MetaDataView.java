@@ -361,30 +361,30 @@ public class MetaDataView extends JPanel
 	 * 
 	 * @return metaData model that holds a list of all series data models of current img data.
 	 */
-	public MetaDataModelObject getSavedModelObject() 
-	{
-		try{
-			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
-			if(seriesData){
-				for(Component comp:cardPane.getComponents()){
-					list.add(((MetaDataUI) comp).getSavedModel());
-				}
-			}else{
-				list.add(singleView.getSavedModel());
-			}
-			MetaDataModelObject obj=new MetaDataModelObject(seriesData,list);
-
-			return obj;
-		}catch(Exception e){
-			e.printStackTrace();
-			return null;
-		}
-	}
+//	public MetaDataModelObject getSavedModelObject() 
+//	{
+//		try{
+//			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
+//			if(seriesData){
+//				for(Component comp:cardPane.getComponents()){
+//					list.add(((MetaDataUI) comp).getSavedModel());
+//				}
+//			}else{
+//				list.add(singleView.getSavedModel());
+//			}
+//			MetaDataModelObject obj=new MetaDataModelObject(seriesData,list);
+//
+//			return obj;
+//		}catch(Exception e){
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
 	
 	/**
 	 * Save data from GUI to file.
 	 */
-	public void saveToFile() throws Exception
+	public void saveModel() throws Exception
 	{
 		if(ome!=null){
 			savePreValues();
@@ -393,20 +393,20 @@ public class MetaDataView extends JPanel
 				updateGlobalSeriesData();
 				LOGGER.info("[SAVE] -- save input for series data: "+srcFile.getAbsolutePath());
 				System.out.println("Save series data");
-				getSavedModelObject();
-				
+				for(Component comp:cardPane.getComponents()){
+					((MetaDataUI) comp).save();
+				}
 			}else{
 				if(singleView!=null){
 					LOGGER.info("[SAVE] -- save input for single data "+srcFile.getAbsolutePath());
-					singleView.getSavedModel();
+					singleView.save();
 				}
 			}
-			
 		}else{
 			//dir
 			if(singleView!=null){
 				LOGGER.info("[SAVE] -- save model for directory");
-				singleView.getSavedModel();
+				singleView.save();
 			}
 		}
 	}

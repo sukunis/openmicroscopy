@@ -154,6 +154,10 @@ public class ImageModel
 		}
 		for(TagData t: changesImage){
 			updateTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
+			if(t.getTagUnit()!=null)
+				map.put(t.getTagName(), t.getTagValue()+" "+t.getTagUnit().getSymbol());
+			else
+				map.put(t.getTagName(), t.getTagValue());
 		}
 	}
 

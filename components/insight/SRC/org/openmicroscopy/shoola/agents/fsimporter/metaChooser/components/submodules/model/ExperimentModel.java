@@ -335,6 +335,10 @@ public class ExperimentModel {
 		}
 		for(TagData t: changesExperiment){
 			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
+			if(t.getTagUnit()!=null)
+				map.put(t.getTagName(), t.getTagValue()+" "+t.getTagUnit().getSymbol());
+			else
+				map.put(t.getTagName(), t.getTagValue());
 		}
 	}
 	private void setTag(String name,String val,Unit unit) throws Exception

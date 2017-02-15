@@ -202,6 +202,10 @@ public class ChannelModel
 				Channel ch=element.get(index);
 				for(TagData t: list){
 					updateTag(ch, t.getTagName(),t.getTagValue(),t.getTagUnit());
+					if(t.getTagUnit()!=null)
+						maps.get(index).put(t.getTagName(), t.getTagValue()+" "+t.getTagUnit().getSymbol());
+					else
+						maps.get(index).put(t.getTagName(), t.getTagValue());
 				}
 			}
 			index++;

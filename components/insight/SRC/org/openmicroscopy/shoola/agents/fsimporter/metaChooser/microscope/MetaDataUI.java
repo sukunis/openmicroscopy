@@ -240,6 +240,10 @@ public class MetaDataUI extends JPanel
 		
 		// create model
 		this.model=model;
+		// ensure, that a model exists
+		if(this.model==null)
+			this.model=new MetaDataModel();
+			
 		
 		initModelComponents();
 		control=new MetaDataControl(model,this);
@@ -1172,7 +1176,7 @@ public class MetaDataUI extends JPanel
 			List<TagData> list=lastSelection.getChangedTags();
 			lastSelection.saveData();
 			model.setChangesChannel(list, lastSelection.getIndex());
-			model.setMapAnnotationChannel(lastSelection.getMapValuesOfChanges(model.getMapAnnotationChannel(lastSelection.getIndex())),lastSelection.getIndex()); 
+			model.setMapAnnotationChannel(lastSelection.getMapValuesOfChanges(model.getMapAnnotationChannel(lastSelection.getIndex())),lastSelection.getIndex(), true); 
 		}
 		
 		channelTab.setSelectedIndex(chNr);
@@ -1191,7 +1195,7 @@ public class MetaDataUI extends JPanel
 				lightSrcViewer.saveData();
 				model.setChangesLightSrc(list,elemIndex);
 				model.setMapAnnotationLightSrc(
-						lightSrcViewer.getMapValuesOfChanges(model.getMapAnnotationLightSrc(elemIndex),lastSelection.getName()), elemIndex); 
+						lightSrcViewer.getMapValuesOfChanges(model.getMapAnnotationLightSrc(elemIndex),lastSelection.getName()), elemIndex, true); 
 			}
 			// show referenced lightSrc + settings
 			setLightSrcVisible(chName, chNr);
@@ -1207,7 +1211,7 @@ public class MetaDataUI extends JPanel
 				HashMap<String,String> map=model.getMapAnnotationDetector(elemIndex);
 				detectorViewer.saveData();
 				model.setChangesDetector(list,elemIndex);
-				model.setMapAnnotationDetector(detectorViewer.getMapValuesOfChanges(map,lastSelection.getName()),elemIndex);
+				model.setMapAnnotationDetector(detectorViewer.getMapValuesOfChanges(map,lastSelection.getName()),elemIndex, true);
 			}
 			// show referenced detector + settings
 			setDetectorVisible(chName, chNr);
@@ -1222,7 +1226,7 @@ public class MetaDataUI extends JPanel
 				try {
 					model.setChangesLightPath(model.getLightPath(index),index);
 					model.setMapAnnotationLightPath(
-							lightPathViewer.getMapValuesOfChanges(model.getMapAnnotationLightPath(index),lastSelection.getName()),index);
+							lightPathViewer.getMapValuesOfChanges(model.getMapAnnotationLightPath(index),lastSelection.getName()),index, true);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -1506,6 +1510,7 @@ public class MetaDataUI extends JPanel
 	 */
 	public boolean userInput()
 	{
+		System.out.println("# MetaDataUI::userInput()");
 		boolean result=false;
 		if(initImageUI && imageUI!=null){
 			System.out.println("\t ... image : changed data - "+imageUI.inputEvent());
@@ -1581,7 +1586,7 @@ public class MetaDataUI extends JPanel
 	public boolean hasDataToSave() 
 	{
 		boolean result=false;
-		
+		System.out.println("# MetaDataUI::hasDataToSave()");
 		if(initImageUI && imageUI!=null){
 			result=result || imageUI.hasDataToSave() || model.getChangesImage()!=null;
 			System.out.println("\t ... image : changed data - "+
@@ -1618,12 +1623,34 @@ public class MetaDataUI extends JPanel
 					}
 				}
 			}
-			if(initDetectorUI)
-				result=result || detectorInput;
-			if(initLightPathUI )
-				result=result || lightPathInput;
-			if(initLightSrcUI )
-				result=result || lightSrcInput;
+			
+			if(initDetectorUI && detectorViewer!=null){
+				result=result || detectorViewer.hasDataToSave() || model.getChangesDetector()!=null;
+				System.out.println("\t ... Detector : changed data - "+
+						(detectorViewer.hasDataToSave()|| model.getChangesDetector()!=null));
+			}
+			if(initLightPathUI && lightPathViewer!=null){
+				result=result || lightPathViewer.hasDataToSave();
+				System.out.println("\t ... LightPath : changed data - "+
+						(lightPathViewer.hasDataToSave()));
+			}
+			if(initLightSrcUI && lightSrcViewer!=null){
+				result=result || lightSrcViewer.hasDataToSave()||model.getChangesLightSrc()!=null;
+				System.out.println("\t ... LightSrc : changed data - "+
+						(lightSrcViewer.hasDataToSave()|| model.getChangesLightSrc()!=null));
+			}
+//			if(initDetectorUI){
+//				result=result || detectorInput;
+//				System.out.println("\t ... Detector : changed data - "+detectorInput);
+//			}
+//			if(initLightPathUI ){
+//				result=result || lightPathInput;
+//				System.out.println("\t ... Objective : changed data - "+lightPathInput);
+//			}
+//			if(initLightSrcUI ){
+//				result=result || lightSrcInput;
+//				System.out.println("\t ... LightSrc : changed data - "+lightSrcInput);
+//			}
 		}else{
 			if(initChannelUI && channelTab!=null && channelTab.getTabCount()>0){
 				if(channelTab.getTabComponentAt(0)!=null){
@@ -1660,7 +1687,7 @@ public class MetaDataUI extends JPanel
 		System.out.println("# MetaDataUI::save()");
 		if(imageUI!=null && imageUI.hasDataToSave()){
 			List<TagData> list=imageUI.getChangedTags();
-			model.setMapAnnotationImage(imageUI.getMapValuesOfChanges(model.getMapAnnotationImage())); 
+			model.setMapAnnotationImage(imageUI.getMapValuesOfChanges(model.getMapAnnotationImage()), false); 
 			printList("Image",list);
 			imageUI.saveData();
 			model.setChangesImage(list);
@@ -1670,7 +1697,7 @@ public class MetaDataUI extends JPanel
 		if(experimentUI!=null && experimentUI.hasDataToSave()){
 			List<TagData> list=experimentUI.getChangedTags();
 //			model.setMapAnnotationExperiment(wrapListToMap(list,model.getMapAnnotationExperiment(),"Experiment"));
-			model.setMapAnnotationExperiment(experimentUI.getMapValuesOfChanges(model.getMapAnnotationExperiment())); 
+			model.setMapAnnotationExperiment(experimentUI.getMapValuesOfChanges(model.getMapAnnotationExperiment()), false); 
 			printList("Experiment",list);
 			experimentUI.saveData();
 			model.setChangesExperiment(list);
@@ -1680,7 +1707,7 @@ public class MetaDataUI extends JPanel
 		if(sampleUI!=null && sampleUI.hasDataToSave()){
 			List<TagData> list=sampleUI.getChangedTags();
 //			model.setMapAnnotationSample(wrapListToMap(list,model.getMapAnnotationSample(),"Sample"));
-			model.setMapAnnotationSample(sampleUI.getMapValuesOfChanges(model.getMapAnnotationSample())); 
+			model.setMapAnnotationSample(sampleUI.getMapValuesOfChanges(model.getMapAnnotationSample()), false); 
 			printList("Sample",list);
 			sampleUI.saveData();
 			model.setChangesSample(list);
@@ -1692,13 +1719,13 @@ public class MetaDataUI extends JPanel
 			printList("Objective",list);
 			objectiveUI.saveData();
 			model.setChangesObject(list);
-			model.setMapAnnotationObjective(objectiveUI.getMapValuesOfChanges(model.getMapAnnotationObjective()));
+			model.setMapAnnotationObjective(objectiveUI.getMapValuesOfChanges(model.getMapAnnotationObjective()), false);
 			objectiveUI.resetInputEvent();
 //			firePropertyChange(CHANGE_OBJDATA, null, list);
 		}
 		if(imgEnvViewer!=null && imgEnvViewer.hasDataToSave()){
 			List<TagData> list=imgEnvViewer.getChangedTags();
-			model.setMapAnnotationImgEnv(imgEnvViewer.getMapValuesOfChanges(model.getMapAnnotationImgEnv()));
+			model.setMapAnnotationImgEnv(imgEnvViewer.getMapValuesOfChanges(model.getMapAnnotationImgEnv()), false);
 			printList("ImgEnv",list);
 			imgEnvViewer.saveData();
 			model.setChangesImageEnv(list);
@@ -1721,7 +1748,7 @@ public class MetaDataUI extends JPanel
 				printList("Channel "+chViewer.getIndex(),list);
 				chViewer.saveData();
 				model.setChangesChannel(list, chViewer.getIndex());
-				model.setMapAnnotationChannel(chViewer.getMapValuesOfChanges(model.getMapAnnotationChannel(chViewer.getIndex())),chViewer.getIndex());
+				model.setMapAnnotationChannel(chViewer.getMapValuesOfChanges(model.getMapAnnotationChannel(chViewer.getIndex())),chViewer.getIndex(), false);
 				chViewer.resetInputEvent();
 			}
 		}
@@ -1734,7 +1761,7 @@ public class MetaDataUI extends JPanel
 			printList("Detector "+thisIndex,list);
 			detectorViewer.saveData();
 			model.setChangesDetector(list,thisIndex);
-			model.setMapAnnotationDetector(detectorViewer.getMapValuesOfChanges(map,chName),thisIndex);
+			model.setMapAnnotationDetector(detectorViewer.getMapValuesOfChanges(map,chName),thisIndex, false);
 			detectorViewer.resetInputEvent();
 		}
 		if(lightPathViewer!=null && lightPathViewer.hasDataToSave()){
@@ -1742,7 +1769,7 @@ public class MetaDataUI extends JPanel
 			lightPathViewer.saveData();
 			try {
 				model.setChangesLightPath(model.getLightPath(index),lightPathViewer.getIndex());
-				model.setMapAnnotationLightPath(lightPathViewer.getMapValuesOfChanges(model.getMapAnnotationLightPath(lightPathViewer.getIndex()),chName),lightPathViewer.getIndex());
+				model.setMapAnnotationLightPath(lightPathViewer.getMapValuesOfChanges(model.getMapAnnotationLightPath(lightPathViewer.getIndex()),chName),lightPathViewer.getIndex(), false);
 				lightPathViewer.resetInputEvent();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -1754,7 +1781,7 @@ public class MetaDataUI extends JPanel
 			printList("LightSrc "+lightSrcViewer.getIndex(),list);
 			lightSrcViewer.saveData();
 			model.setChangesLightSrc(list,lightSrcViewer.getIndex());
-			model.setMapAnnotationLightSrc(lightSrcViewer.getMapValuesOfChanges(model.getMapAnnotationLightSrc(lightSrcViewer.getIndex()),chName),lightSrcViewer.getIndex()); 
+			model.setMapAnnotationLightSrc(lightSrcViewer.getMapValuesOfChanges(model.getMapAnnotationLightSrc(lightSrcViewer.getIndex()),chName),lightSrcViewer.getIndex(), false); 
 			lightSrcViewer.resetInputEvent();
 		}
 		
@@ -1776,7 +1803,7 @@ public class MetaDataUI extends JPanel
 		return map;
 	}
 
-	private void printList(String string, List<TagData> list) 
+	public static void printList(String string, List<TagData> list) 
 	{
 		System.out.println("\t Changes in "+string);
 		for(TagData t:list){
@@ -1996,23 +2023,23 @@ public class MetaDataUI extends JPanel
 	public void addMapAnnotations(MetaDataModel m)
 	{
 		System.out.println("# MetaDataUI::addMapAnnotations()");
-		model.setMapAnnotationImage(m.getMapAnnotationImage());
-		model.setMapAnnotationImgEnv(m.getMapAnnotationImgEnv());
-		model.setMapAnnotationExperiment(m.getMapAnnotationExperiment());
-		model.setMapAnnotationSample(m.getMapAnnotationSample());
-		model.setMapAnnotationObjective(m.getMapAnnotationObjective());
+		model.setMapAnnotationImage(m.getMapAnnotationImage(), true);
+		model.setMapAnnotationImgEnv(m.getMapAnnotationImgEnv(), true);
+		model.setMapAnnotationExperiment(m.getMapAnnotationExperiment(), true);
+		model.setMapAnnotationSample(m.getMapAnnotationSample(), true);
+		model.setMapAnnotationObjective(m.getMapAnnotationObjective(), true);
 		
 		for(int i=0; i<m.getNumberOfChannels();i++){
-			model.setMapAnnotationChannel(m.getMapAnnotationChannel(i), i);
+			model.setMapAnnotationChannel(m.getMapAnnotationChannel(i), i, true);
 		}
 		for(int i=0; i<m.getNumberOfDetectors();i++){
-			model.setMapAnnotationDetector(m.getMapAnnotationDetector(i), i);
+			model.setMapAnnotationDetector(m.getMapAnnotationDetector(i), i, true);
 		}
 		for(int i=0; i<m.getNumberOfLightPath();i++){
-			model.setMapAnnotationLightPath(m.getMapAnnotationLightPath(i), i);
+			model.setMapAnnotationLightPath(m.getMapAnnotationLightPath(i), i, true);
 		}
 		for(int i=0; i<m.getNumberOfLightSrc();i++){
-			model.setMapAnnotationLightSrc(m.getMapAnnotationLightSrc(i), i);
+			model.setMapAnnotationLightSrc(m.getMapAnnotationLightSrc(i), i, true);
 		}
 	}
 	

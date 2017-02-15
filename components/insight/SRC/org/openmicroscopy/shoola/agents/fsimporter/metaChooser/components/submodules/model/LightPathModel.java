@@ -232,6 +232,36 @@ public class LightPathModel
 			if(lp!=null && element.size()>index){
 				element.set(index, lp);
 			}
+			
+			//update map annotation
+			int i=1;
+			for(Filter f: lp.copyLinkedExcitationFilterList()){
+				String id="[Excitation Filter]:["+i+"]:";
+				maps.get(index).put(id+"Model", f.getModel());
+				maps.get(index).put(id+"Manufactur", f.getManufacturer());
+				maps.get(index).put(id+"Type", (f.getType()==null?"": f.getType().getValue()));
+				maps.get(index).put(id+"FilterWheel", f.getFilterWheel());
+				
+				i++;
+			}
+			
+			Dichroic d= lp.getLinkedDichroic();
+			if(d!=null){
+				maps.get(index).put("["+d.getID()+"]:["+i+"]:", d.getModel());
+				i++;
+			}
+			
+			for(Filter f: lp.copyLinkedEmissionFilterList()){
+				String id="[Emmission Filter]:["+i+"]:";
+				maps.get(index).put(id+"Model", f.getModel());
+				maps.get(index).put(id+"Manufactur", f.getManufacturer());
+				maps.get(index).put(id+"Type",(f.getType()==null?"": f.getType().getValue()));
+				maps.get(index).put(id+"FilterWheel", f.getFilterWheel());
+				
+				i++;
+			}
+			
+			
 			index++;
 		}
 	}

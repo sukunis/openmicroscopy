@@ -404,7 +404,7 @@ public class LightSourceViewer extends ModuleViewer{
 		
 		dataChanged=false;
 	}
-	private PercentFraction parseAttenuation(String c) throws Exception
+	public static PercentFraction parseAttenuation(String c) throws Exception
 	{
 		if(c==null || c.equals(""))
 			return null;
@@ -434,7 +434,7 @@ public class LightSourceViewer extends ModuleViewer{
 		if(inputAt(waveLengthSett)) result.add(waveLengthSett);
 		if(inputAt(attenuation)) result.add(attenuation);
 		
-		result.add(new TagData("SourceType", String.valueOf(sourceType.getSelectedIndex()), OPTIONAL, TagData.TEXTFIELD));
+		result.add(new TagData("SourceType", sourceTypeList[sourceType.getSelectedIndex()], OPTIONAL, TagData.TEXTFIELD));
 		
 		return result;
 	}
@@ -462,7 +462,7 @@ public class LightSourceViewer extends ModuleViewer{
 		map=((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getMapValuesOfChanges(map,id);
 		
 		
-		id=id+"[Settings]:";
+//		id=id+"[Settings]:";
 		if(inputAt(waveLengthSett)) map.put(id+TagNames.WAVELENGTH,waveLengthSett.getTagValue()+" "+waveLengthSett.getTagUnit().getSymbol());
 		if(inputAt(attenuation)) map.put(id+TagNames.ATTENUATION,attenuation.getTagValue());
 		

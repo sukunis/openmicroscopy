@@ -1276,7 +1276,6 @@ public class MetaDataModel
 				imgModel.update(metaDataModel.getChangesImage());
 				this.setChangesImage(new ArrayList<>(metaDataModel.getChangesImage()));
 			}
-			updateMapAnnotation(imgModel.getMap(),metaDataModel.getMapAnnotationImage());
 		}
 		if(imgEnvModel!=null){
 			System.out.println("# MetaDataModel::update(): imageEnv");
@@ -1284,16 +1283,12 @@ public class MetaDataModel
 				imgEnvModel.update(metaDataModel.getChangesImgEnv());
 				this.setChangesImageEnv(new ArrayList<>(metaDataModel.getChangesImgEnv()));
 			}
-			updateMapAnnotation(imgEnvModel.getMap(), metaDataModel.getMapAnnotationImgEnv());
 		}
 		if(channelModel!=null){
 			System.out.println("# MetaDataModel::update(): channel");
 			if(metaDataModel.getChangesChannel()!=null){
 				channelModel.update(metaDataModel.getChangesChannel()); 
 				this.setChangesChannel(metaDataModel.getChangesChannel());
-			}
-			for(int i=0; i<metaDataModel.getNumberOfChannels();i++){
-				updateMapAnnotation(channelModel.getMap(i),metaDataModel.getMapAnnotationChannel(i));
 			}
 		}
 		if(objModel!=null){
@@ -1302,7 +1297,6 @@ public class MetaDataModel
 				objModel.update(metaDataModel.getChangesObject()); 
 				this.setChangesObject(metaDataModel.getChangesObject());
 			}
-			updateMapAnnotation(objModel.getMap(),metaDataModel.getMapAnnotationObjective());
 		}
 		if(detectorModel!=null){
 			System.out.println("# MetaDataModel::update(): detector");
@@ -1310,8 +1304,6 @@ public class MetaDataModel
 				detectorModel.update(metaDataModel.getChangesDetector());
 				this.setChangesDetector(metaDataModel.getChangesDetector());
 			}
-			for(int i=0; i<metaDataModel.getNumberOfDetectors();i++)
-				updateMapAnnotation(detectorModel.getMap(i),metaDataModel.getMapAnnotationDetector(i));
 		}
 
 		if(lightSrcModel!=null){
@@ -1320,8 +1312,6 @@ public class MetaDataModel
 				lightSrcModel.update(metaDataModel.getChangesLightSrc());
 				this.setChangesLightSrc(metaDataModel.getChangesLightSrc());
 			}
-			for(int i=0; i<metaDataModel.getNumberOfLightSrc();i++)
-				updateMapAnnotation(lightSrcModel.getMap(i),metaDataModel.getMapAnnotationLightSrc(i));
 		}
 
 		if(lightPathModel!=null){
@@ -1330,8 +1320,6 @@ public class MetaDataModel
 				lightPathModel.update(metaDataModel.getChangesLightPath());
 				this.setChangesLightPath(metaDataModel.getChangesLightPath());
 			}
-			for(int i=0; i<metaDataModel.getNumberOfLightPath();i++)
-				updateMapAnnotation(lightPathModel.getMap(i),metaDataModel.getMapAnnotationLightPath(i));
 		}
 
 		if(sampleModel!=null){
@@ -1340,7 +1328,6 @@ public class MetaDataModel
 				sampleModel.update(metaDataModel.getChangesSample());
 				this.setChangesSample(metaDataModel.getChangesSample());
 			}
-			updateMapAnnotation(sampleModel.getMap(),metaDataModel.getMapAnnotationSample());
 		}
 		if(expModel!=null){
 			System.out.println("# MetaDataModel::update(): experimenter");
@@ -1348,7 +1335,6 @@ public class MetaDataModel
 				expModel.update(metaDataModel.getChangesExperiment());
 				this.setChangesExperiment(metaDataModel.getChangesExperiment());
 			}
-			updateMapAnnotation(expModel.getMap(),metaDataModel.getMapAnnotationExperiment());
 		}
 
 	}
@@ -1365,80 +1351,44 @@ public class MetaDataModel
 		if(imgModel!=null){
 			System.out.println("# MetaDataModel::update(): image");
 			imgModel.update(metaDataModel.getChangesImage());
-			updateMapAnnotation(imgModel.getMap(),metaDataModel.getMapAnnotationImage());
 		}
 		if(imgEnvModel!=null){
 			System.out.println("# MetaDataModel::update(): imageEnv");
 			imgEnvModel.update(metaDataModel.getChangesImgEnv());
-			updateMapAnnotation(imgEnvModel.getMap(), metaDataModel.getMapAnnotationImgEnv());
 		}
 		if(channelModel!=null){
 			System.out.println("# MetaDataModel::update(): channel");
 			channelModel.update(metaDataModel.getChangesChannel()); 
-			for(int i=0; i<metaDataModel.getNumberOfChannels();i++){
-				updateMapAnnotation(channelModel.getMap(i),metaDataModel.getMapAnnotationChannel(i));
-			}
 		}
 		if(objModel!=null){
 			System.out.println("# MetaDataModel::update(): objective");
 			objModel.update(metaDataModel.getChangesObject()); 
-			updateMapAnnotation(objModel.getMap(),metaDataModel.getMapAnnotationObjective());
 		}
 		if(detectorModel!=null){
 			System.out.println("# MetaDataModel::update(): detector");
 			detectorModel.update(metaDataModel.getChangesDetector());
-			for(int i=0; i<metaDataModel.getNumberOfDetectors();i++)
-				updateMapAnnotation(detectorModel.getMap(i),metaDataModel.getMapAnnotationDetector(i));
 		}
 
 		if(lightSrcModel!=null){
 			System.out.println("# MetaDataModel::update(): lightSrc");
 			lightSrcModel.update(metaDataModel.getChangesLightSrc());
-			for(int i=0; i<metaDataModel.getNumberOfLightSrc();i++)
-				updateMapAnnotation(lightSrcModel.getMap(i),metaDataModel.getMapAnnotationLightSrc(i));
 		}
 		
 		if(lightPathModel!=null){
 			System.out.println("# MetaDataModel::update(): lightPath");
 			lightPathModel.update(metaDataModel.getChangesLightPath());
-			for(int i=0; i<metaDataModel.getNumberOfLightPath();i++)
-				updateMapAnnotation(lightPathModel.getMap(i),metaDataModel.getMapAnnotationLightPath(i));
 		}
 		
 		if(sampleModel!=null){
 			System.out.println("# MetaDataModel::update(): sample");
 			sampleModel.update(metaDataModel.getChangesSample());
-			updateMapAnnotation(sampleModel.getMap(),metaDataModel.getMapAnnotationSample());
 		}
 		if(expModel!=null){
 			System.out.println("# MetaDataModel::update(): experimenter");
 			expModel.update(metaDataModel.getChangesExperiment());
-			updateMapAnnotation(expModel.getMap(),metaDataModel.getMapAnnotationExperiment());
 		}
 		
 	}
-
-
-	
-	
-
-
-	private void updateMapAnnotation(HashMap<String, String> map, HashMap<String, String> map2) {
-		if(map2!=null){
-			if(map==null){
-				map=new HashMap<String,String>();
-			}
-			
-			for (Iterator i = map2.entrySet().iterator(); i.hasNext(); ) {
-				Map.Entry next = (Map.Entry)i.next();
-				map.put((String)next.getKey(),(String) next.getValue());
-			}
-		}
-	}
-
-
-
-
 
 	/**
 	 * Clear list of changes if status=false
@@ -1677,11 +1627,16 @@ public class MetaDataModel
 
 
 
-	public void setMapAnnotationDetector(HashMap<String, String> mapValuesOfChanges, int index) 
+	public void setMapAnnotationDetector(HashMap<String, String> mapValuesOfChanges, int index, boolean clone) 
 	{
 		if(detectorModel==null)
 			detectorModel=new DetectorModel();
-		detectorModel.setMap(mapValuesOfChanges, index);
+		if(mapValuesOfChanges!=null){
+			if(clone)
+				detectorModel.setMap((HashMap<String, String>) mapValuesOfChanges.clone(),index);
+			else
+				detectorModel.setMap(mapValuesOfChanges,index);
+		}
 	}
 	
 
@@ -1694,22 +1649,32 @@ public class MetaDataModel
 
 
 
-	public void setMapAnnotationLightPath(HashMap<String, String> mapValuesOfChanges, int index) 
+	public void setMapAnnotationLightPath(HashMap<String, String> mapValuesOfChanges, int index, boolean clone) 
 	{
 		if(lightPathModel==null)
 			lightPathModel=new LightPathModel();
-		lightPathModel.setMap(mapValuesOfChanges, index);
+		if(mapValuesOfChanges!=null){
+			if(clone)
+				lightPathModel.setMap((HashMap<String, String>) mapValuesOfChanges.clone(),index);
+			else
+				lightPathModel.setMap(mapValuesOfChanges,index);
+		}
 	}
 	
 	
 	
 
 
-	public void setMapAnnotationLightSrc(HashMap<String, String> mapValuesOfChanges, int index) 
+	public void setMapAnnotationLightSrc(HashMap<String, String> mapValuesOfChanges, int index, boolean clone) 
 	{
 		if(lightSrcModel==null)
 			lightSrcModel=new LightSourceModel();
-		lightSrcModel.setMap(mapValuesOfChanges, index);
+		if(mapValuesOfChanges!=null){
+			if(clone)
+				lightSrcModel.setMap((HashMap<String, String>) mapValuesOfChanges.clone(),index);
+			else
+				lightSrcModel.setMap(mapValuesOfChanges,index);
+		}
 	}
 
 
@@ -1732,10 +1697,15 @@ public class MetaDataModel
 
 
 
-	public void setMapAnnotationChannel(HashMap<String, String> mapValuesOfChanges, int index) {
+	public void setMapAnnotationChannel(HashMap<String, String> mapValuesOfChanges, int index, boolean clone) {
 		if(channelModel==null)
 			channelModel=new ChannelModel();
-		channelModel.setMap(mapValuesOfChanges, index);
+		if(mapValuesOfChanges!=null){
+			if(clone)
+				channelModel.setMap((HashMap<String, String>) mapValuesOfChanges.clone(),index);
+			else
+				channelModel.setMap(mapValuesOfChanges,index);
+		}
 	}
 
 
@@ -1748,10 +1718,15 @@ public class MetaDataModel
 
 
 
-	public void setMapAnnotationObjective(HashMap<String, String> mapValuesOfChanges) {
+	public void setMapAnnotationObjective(HashMap<String, String> mapValuesOfChanges, boolean clone) {
 		if(objModel==null)
 			objModel=new ObjectiveModel();
-		objModel.setMap(mapValuesOfChanges);
+		if(mapValuesOfChanges!=null){
+			if(clone)
+				objModel.setMap((HashMap<String, String>) mapValuesOfChanges.clone());
+			else
+				objModel.setMap(mapValuesOfChanges);
+		}
 	}
 
 
@@ -1764,10 +1739,15 @@ public class MetaDataModel
 
 
 
-	public void setMapAnnotationSample(HashMap<String, String> mapValuesOfChanges) {
+	public void setMapAnnotationSample(HashMap<String, String> mapValuesOfChanges, boolean clone) {
 		if(sampleModel==null)
 			sampleModel=new SampleModel();
-		sampleModel.setMap(mapValuesOfChanges);
+		if(mapValuesOfChanges!=null){
+			if(clone)
+				sampleModel.setMap((HashMap<String, String>) mapValuesOfChanges.clone());
+			else
+				sampleModel.setMap(mapValuesOfChanges);
+		}
 	}
 
 
@@ -1780,10 +1760,16 @@ public class MetaDataModel
 
 
 
-	public void setMapAnnotationExperiment(HashMap<String, String> mapValuesOfChanges) {
+	public void setMapAnnotationExperiment(HashMap<String, String> mapValuesOfChanges, boolean clone) {
 		if(expModel==null)
 			expModel=new ExperimentModel();
-		expModel.setMap(mapValuesOfChanges);
+		if(mapValuesOfChanges!=null){
+			if(clone)
+				expModel.setMap((HashMap<String, String>) mapValuesOfChanges.clone());
+			else
+				expModel.setMap(mapValuesOfChanges);
+		}
+		
 	}
 
 
@@ -1796,10 +1782,16 @@ public class MetaDataModel
 
 
 
-	public void setMapAnnotationImage(HashMap<String, String> mapValuesOfChanges) {
+	public void setMapAnnotationImage(HashMap<String, String> mapValuesOfChanges, boolean clone) {
 		if(imgModel==null)
 			imgModel=new ImageModel();
-		imgModel.setMap(mapValuesOfChanges);
+		
+		if(mapValuesOfChanges!=null){
+			if(clone)
+				imgModel.setMap((HashMap<String, String>) mapValuesOfChanges.clone());
+			else
+				imgModel.setMap(mapValuesOfChanges);
+		}
 	}
 	
 	public HashMap<String, String> getMapAnnotationImgEnv() {
@@ -1808,10 +1800,16 @@ public class MetaDataModel
 		return imgEnvModel.getMap();
 	}
 
-	public void setMapAnnotationImgEnv(HashMap<String, String> mapValuesOfChanges) {
+	public void setMapAnnotationImgEnv(HashMap<String, String> mapValuesOfChanges, boolean clone) {
 		if(imgEnvModel==null)
 			imgEnvModel=new ImageEnvModel();
+		
+		if(mapValuesOfChanges!=null){
+			if(clone)
+				imgEnvModel.setMap((HashMap<String, String>) mapValuesOfChanges.clone());
+			else
 		imgEnvModel.setMap(mapValuesOfChanges);
+		}
 	}
 
 	
@@ -1832,38 +1830,26 @@ public class MetaDataModel
 						id="["+channelModel.getChannel(i).getName()+"]:";
 					}
 				}
-				if(detectorModel!=null){
-					values=hashMapToValueList(detectorModel.getMap(i), values,id+"[Detector]:");
-				}
-				if(channelModel!=null){
-					values=hashMapToValueList(channelModel.getMap(i), values,id);
-				}
-				if(lightPathModel!=null){
-					values=hashMapToValueList(lightPathModel.getMap(i), values,id+"[LightPath]:");
-				}
-				if(lightSrcModel!=null){
-					values=hashMapToValueList(lightSrcModel.getMap(i), values,id);
-				}
+				values=hashMapToValueList(getMapAnnotationDetector(i), values,id+"[Detector]:");
+				values=hashMapToValueList(getMapAnnotationChannel(i), values,id);
+				values=hashMapToValueList(getMapAnnotationLightPath(i), values,id+"[LightPath]:");
+				values=hashMapToValueList(getMapAnnotationLightSrc(i), values,id+"[LightSrc]:");
 			}
 		}else{// no channel available, don't link to any channel
 			String id="";
-			if(detectorModel!=null){
-				for(int i=0;i<getNumberOfDetectors();i++)
-					values=hashMapToValueList(detectorModel.getMap(i), values,id+"[Detector]:");
-			}
-			if(lightPathModel!=null){
-				for(int i=0;i<getNumberOfLightPath();i++)
-					values=hashMapToValueList(lightPathModel.getMap(i), values,id+"[LightPath]:");
-			}
-			if(lightSrcModel!=null){
-				for(int i=0;i<getNumberOfLightSrc();i++)
-					values=hashMapToValueList(lightSrcModel.getMap(i), values,id);
-			}
+			
+			for(int i=0;i<getNumberOfDetectors();i++)
+				values=hashMapToValueList(getMapAnnotationDetector(i), values,id+"[Detector]:");
+
+			for(int i=0;i<getNumberOfLightPath();i++)
+				values=hashMapToValueList(getMapAnnotationLightPath(i), values,id+"[LightPath]:");
+			for(int i=0;i<getNumberOfLightSrc();i++)
+				values=hashMapToValueList(getMapAnnotationLightSrc(i), values,id);
 		}
 		
-		if(objModel!=null) values=hashMapToValueList(objModel.getMap(), values,"[Objective]:");
-		if(sampleModel!=null) values=hashMapToValueList(sampleModel.getMap(), values,"[Sample]:");
-		if(expModel!=null) values=hashMapToValueList(expModel.getMap(), values,"[Experiment]:");
+		values=hashMapToValueList(getMapAnnotationObjective(), values,"[Objective]:");
+		values=hashMapToValueList(getMapAnnotationSample(), values,"[Sample]:");
+		values=hashMapToValueList(getMapAnnotationExperiment(), values,"[Experiment]:");
 		if(imgModel!=null){
 			String id="";
 			String name=imgModel.getImage().getName();
@@ -1873,9 +1859,9 @@ public class MetaDataModel
 				id="["+imgModel.getImage().getID()+"]:";
 			}else
 				id="[Image]:";
-			values=hashMapToValueList(imgModel.getMap(), values,id);
+			values=hashMapToValueList(getMapAnnotationImage(), values,id);
 		}
-		if(imgEnvModel!=null)values=hashMapToValueList(imgEnvModel.getMap(),values,"[ImageEnv]:");
+		values=hashMapToValueList(getMapAnnotationImgEnv(),values,"[ImageEnv]:");
 		
 		return new MapAnnotationData(ma);
 	}

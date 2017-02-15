@@ -796,7 +796,7 @@ public class DetectorViewer extends ModuleViewer{
 		if(inputAt(amplGain)) map.put(id+TagNames.AMPLGAIN,amplGain.getTagValue());
 		
 		// settings
-		id=id+"[Settings]:";
+//		id=id+"[Settings]:";
 		if(inputAt(gain))map.put(id+TagNames.GAIN,gain.getTagValue());
 		if(inputAt(voltage))map.put(id+TagNames.VOLTAGE,voltage.getTagValue()+" "+voltage.getTagUnit().getSymbol());
 		if(inputAt(offset))map.put(id+TagNames.OFFSET,offset.getTagValue());

@@ -749,7 +749,7 @@ public class ObjectiveViewer extends ModuleViewer
 		if(inputAt(correction))map.put(id+TagNames.CORRECTION,correction.getTagValue());
 		if(inputAt(workDist))map.put(id+TagNames.WORKDIST,workDist.getTagValue()+" "+workDist.getTagUnit().getSymbol());
 		
-		id=id+"[Settings]:";
+//		id=id+"[Settings]:";
 		//settings
 		if(inputAt(iris))map.put(id+"Iris",iris.getTagValue());
 		if(inputAt(corCollar))map.put(id+TagNames.CORCOLLAR,corCollar.getTagValue());

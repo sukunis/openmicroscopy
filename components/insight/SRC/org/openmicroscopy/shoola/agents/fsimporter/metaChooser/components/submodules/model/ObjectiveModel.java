@@ -197,28 +197,12 @@ public class ObjectiveModel
 		map=newMap;
 	}
 	
-//	public List<Objective> getList()
-//	{
-//		return availableElem;
-//	}
-//	public void addToList(List<Objective> list)
-//	{
-//		if(list==null || list.size()==0)
-//			return;
-//
-//		if(availableElem==null){
-//			availableElem=new ArrayList<Objective>();
-//		}
-//		for(int i=0; i<list.size(); i++){
-//			availableElem.add(list.get(i));
-//		}
-//		System.out.println("# ObjectiveModel::addToList() - "+availableElem.size());
-//	}
-//	public void clearList() 
-//	{
-//		availableElem=null;
-//	}
 
+	/**
+	 * Inherit data from parent node
+	 * @param changesObjective
+	 * @throws Exception
+	 */
 	public void update(List<TagData> changesObjective) throws Exception 
 	{
 		if(changesObjective==null){
@@ -228,6 +212,11 @@ public class ObjectiveModel
 		
 		for(TagData t: changesObjective){
 			setTag(t.getTagName(),t.getTagValue(),t.getTagUnit());
+			//update map
+			if(t.getTagUnit()!=null)
+				map.put(t.getTagName(), t.getTagValue()+" "+t.getTagUnit().getSymbol());
+			else
+				map.put(t.getTagName(), t.getTagValue());
 		}
 	}
 

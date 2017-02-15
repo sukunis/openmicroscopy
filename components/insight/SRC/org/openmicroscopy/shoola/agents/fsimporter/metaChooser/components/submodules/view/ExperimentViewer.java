@@ -457,10 +457,10 @@ public class ExperimentViewer extends ModuleViewer{
 			map=new HashMap<String, String>();
 		
 		String id="";
-		if(inputAt(projectPartner)) map.put(id+"Project Partner",projectPartner.getTagValue());
-		if(inputAt(type)) map.put(id+"Type",type.getTagValue());
-		if(inputAt(description)) map.put(id+"Desc",description.getTagValue());
-		if(inputAt(expName))map.put(id+"Experimenter Name",expName.getTagValue());
+		if(inputAt(projectPartner)) map.put(id+projectPartner.getTagName(),projectPartner.getTagValue());
+		if(inputAt(type)) map.put(id+type.getTagName(),type.getTagValue());
+		if(inputAt(description)) map.put(id+description.getTagName(),description.getTagValue());
+		if(inputAt(expName))map.put(id+expName.getTagName(),expName.getTagValue());
 	
 		
 		return map;

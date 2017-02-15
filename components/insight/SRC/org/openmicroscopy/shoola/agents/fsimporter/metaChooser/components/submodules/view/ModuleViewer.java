@@ -125,7 +125,7 @@ public abstract class ModuleViewer extends JPanel
 		return new PercentFraction(Float.valueOf(c));
 	}
 	
-	protected Boolean parseToBoolean(String val) 
+	public static Boolean parseToBoolean(String val) 
 	{
 		if(val==null || val.equals("")){
 			return null;

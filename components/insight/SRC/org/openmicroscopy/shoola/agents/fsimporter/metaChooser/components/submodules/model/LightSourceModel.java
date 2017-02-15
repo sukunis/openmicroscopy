@@ -24,6 +24,11 @@ import ome.xml.model.enums.Pulse;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.LightSourceSubViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.LightSourceViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MetaDataMapAnnotation;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
@@ -396,33 +401,7 @@ public class LightSourceModel
 		}
 	}
 	
-//	/**
-//	 * Copy elements from given list to local list
-//	 * @param list
-//	 */
-//	public void addToList(List<LightSource> list)
-//	{
-//		if(list==null || list.size()==0)
-//			return;
-//		
-//		if(availableElem==null){
-//
-//			availableElem=new ArrayList<LightSource>();
-//		}
-//		for(int i=0; i<list.size(); i++){
-//			availableElem.add(list.get(i));
-//		}
-//
-//	}
-//
-//	public void clearList() {
-//		availableElem=null;
-//	}
-//	
-//	public List<LightSource> getList()
-//	{
-//		return availableElem;
-//	}
+
 	
 	
 	public int getNumberOfLightSrc()
@@ -448,17 +427,26 @@ public class LightSourceModel
 		if(changesLightSrc==null){
 			System.out.println("\t no changes for lightSource");
 			return;
+		}else{
+			System.out.println("\t changes LightSrc: "+changesLightSrc.size());
 		}
 		int index=0;
 		for(List<TagData> list :changesLightSrc){
 			if(list!=null && element.size()>index 
 					&& element.get(index)!=null){
+				
 				LightSource lightSrc=element.get(index);
 				LightSourceSettings sett=settings.get(index);
-				if(lightSrc.getClass().getSimpleName().equals(list.get(list.size()-1))){
-					//				TODO: switch(lightSrcclass)
+				String thisElemClass=lightSrc.getClass().getSimpleName();
+				String listElemClass=list.get(list.size()-1).getTagValue();
+				
+				if(thisElemClass.equals(listElemClass)){
 					for(TagData t: list){
 						updateTag(lightSrc,sett,t.getTagName(),t.getTagValue(),t.getTagUnit());
+						if(t.getTagUnit()!=null)
+							maps.get(index).put(t.getTagName(), t.getTagValue()+" "+t.getTagUnit().getSymbol());
+						else
+							maps.get(index).put(t.getTagName(), t.getTagValue());
 					}
 				}
 			}
@@ -470,13 +458,184 @@ public class LightSourceModel
 	private void updateTag(LightSource lightSrc, LightSourceSettings sett,
 			String tagName, String tagValue, Unit tagUnit) throws Exception 
 	{
-//		if(tagValue.equals(""))
-//			return;
-//		
-//		switch (tagName) 
-//		{
+		switch(lightSrc.getClass().getSimpleName())
+		{
+		case LASER: updateLaserData((Laser) lightSrc,tagName,tagValue,tagUnit);break;
+		case ARC:updateArcData((Arc) lightSrc,tagName,tagValue,tagUnit);break;
+		case FILAMENT: updateFilamentData((Filament) lightSrc,tagName,tagValue,tagUnit);break;
+		case GENERIC_EXCITATION: updateGESData((GenericExcitationSource) lightSrc,tagName,tagValue,tagUnit);break;
+		case LIGHT_EMITTING_DIODE: updateLEDData((LightEmittingDiode) lightSrc,tagName,tagValue,tagUnit);break;
+		default: break;
+		}
+		
+		switch(tagName){
+		case TagNames.SET_WAVELENGTH:
+			sett.setWavelength(ModuleViewer.parseToLength(tagValue, tagUnit, true));
+			break;
+		case TagNames.ATTENUATION:
+			sett.setAttenuation(LightSourceViewer.parseAttenuation(tagValue));
+			break;
+//		case "SourceType":
+//			switch(tagValue){
+//			case LASER: updateLaserData((Laser) lightSrc,tagName,tagValue,tagUnit);break;
+//			case ARC:updateArcData((Arc) lightSrc,tagName,tagValue,tagUnit);break;
+//			case FILAMENT: updateFilamentData((Filament) lightSrc,tagName,tagValue,tagUnit);break;
+//			case GENERIC_EXCITATION: updateGESData((GenericExcitationSource) lightSrc,tagName,tagValue,tagUnit);break;
+//			case LIGHT_EMITTING_DIODE: updateLEDData((LightEmittingDiode) lightSrc,tagName,tagValue,tagUnit);break;
+//			default: break;
+//			}
+		default:break;
+		}
 	}
 	
+	private void updateLEDData(LightEmittingDiode lightSrc, String tagName, String tagValue, Unit tagUnit) {
+		switch(tagName){
+		case TagNames.MODEL:
+			lightSrc.setModel(tagValue);
+			break;
+		case TagNames.MANUFAC:
+			lightSrc.setManufacturer(tagValue);
+			break;
+		default:
+			System.out.println("[UPDATE] unknown tag: "+tagName );break;
+		}		
+	}
+
+	private void updateGESData(GenericExcitationSource lightSrc, String tagName, String tagValue, Unit tagUnit) {
+		switch(tagName){
+		case TagNames.MODEL:
+			lightSrc.setModel(tagValue);
+			break;
+		case TagNames.MANUFAC:
+			lightSrc.setManufacturer(tagValue);
+			break;
+		case TagNames.POWER:
+			try {
+				lightSrc.setPower(LightSourceSubViewer.parsePower(tagValue,tagUnit));
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			break;
+		default:
+			System.out.println("[UPDATE] unknown tag: "+tagName );break;
+		}		
+	}
+
+	private void updateFilamentData(Filament lightSrc, String tagName, String tagValue, Unit tagUnit) {
+		switch(tagName){
+		case TagNames.MODEL:
+			lightSrc.setModel(tagValue);
+			break;
+		case TagNames.MANUFAC:
+			lightSrc.setManufacturer(tagValue);
+			break;
+		case TagNames.F_TYPE:
+				lightSrc.setType(LightSourceSubViewer.parseFilamentType(tagValue));
+			break;
+		case TagNames.POWER:
+			try {
+				lightSrc.setPower(LightSourceSubViewer.parsePower(tagValue,tagUnit));
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			break;
+		default:
+			System.out.println("[UPDATE] unknown tag: "+tagName );break;
+		}		
+	}
+
+	private void updateArcData(Arc lightSrc, String tagName, String tagValue, Unit tagUnit) {
+		switch(tagName){
+		case TagNames.MODEL:
+			lightSrc.setModel(tagValue);
+			break;
+		case TagNames.MANUFAC:
+			lightSrc.setManufacturer(tagValue);
+			break;
+		case TagNames.A_TYPE:
+				lightSrc.setType(LightSourceSubViewer.parseArcType(tagValue));
+			break;
+		case TagNames.POWER:
+			try {
+				lightSrc.setPower(LightSourceSubViewer.parsePower(tagValue,tagUnit));
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			break;
+		default:
+			System.out.println("[UPDATE] unknown tag: "+tagName );break;
+		}
+		
+	}
+
+	private void updateLaserData(Laser lightSrc, String tagName, String tagValue, Unit tagUnit) {
+		
+		switch(tagName){
+		case TagNames.MODEL:
+			lightSrc.setModel(tagValue);
+			break;
+		case TagNames.MANUFAC:
+			lightSrc.setManufacturer(tagValue);
+			break;
+		case TagNames.L_TYPE:
+				lightSrc.setType(LightSourceSubViewer.parseLaserType(tagValue));
+			break;
+		case TagNames.POWER:
+			try {
+				lightSrc.setPower(LightSourceSubViewer.parsePower(tagValue,tagUnit));
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			break;
+		case TagNames.MEDIUM:
+			lightSrc.setLaserMedium(LightSourceSubViewer.parseMedium(tagValue));
+			break;
+		case TagNames.FREQMUL:
+			try {
+				lightSrc.setFrequencyMultiplication(ModuleViewer.parseToPositiveInt(tagValue));
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			break;
+		case TagNames.TUNABLE:
+			lightSrc.setTuneable(ModuleViewer.parseToBoolean(tagValue));
+			break;
+		case TagNames.PULSE:
+			lightSrc.setPulse(LightSourceSubViewer.parsePulse(tagValue));
+			break;
+		case TagNames.POCKELCELL:
+			lightSrc.setPockelCell(ModuleViewer.parseToBoolean(tagValue));
+			break;
+		case TagNames.REPRATE:
+			try {
+				lightSrc.setRepetitionRate(LightSourceSubViewer.parseFrequency(tagValue,tagUnit));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+		case TagNames.PUMP:
+			//TODO
+			break;
+		case TagNames.WAVELENGTH:
+			try {
+				lightSrc.setWavelength(ModuleViewer.parseToLength(tagValue, tagUnit, true));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+		default:
+			System.out.println("[UPDATE] unknown tag: "+tagName );break;
+		}
+		
+	}
+
 	public void printValues()
 	{
 		for(int i=0; i<element.size();i++){

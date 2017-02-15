@@ -247,33 +247,7 @@ public class DetectorModel
 		maps.set(i, map);
 	}
 	
-//	/**
-//	 * Copy elements from given list to local list
-//	 * @param list
-//	 */
-//	public void addToList(List<Detector> list)
-//	{
-//		if(list==null || list.size()==0)
-//			return;
-//		
-//		if(availableElem==null){
-//			availableElem=new ArrayList<Detector>();
-//		}
-//		for(int i=0; i<list.size(); i++){
-//			availableElem.add(list.get(i));
-//		}
-//
-//	}
-//	
-//	public void clearList() 
-//	{
-//		availableElem=null;
-//	}
-//	
-//	public List<Detector> getList()
-//	{
-//		return availableElem;
-//	}
+
 
 	public int getNumberOfElements() {
 		return element.size();
@@ -304,6 +278,10 @@ public class DetectorModel
 				DetectorSettings sett=settings.get(index);
 				for(TagData t: list){
 					updateTag(detector,sett,t.getTagName(),t.getTagValue(),t.getTagUnit());
+					if(t.getTagUnit()!=null)
+						maps.get(index).put(t.getTagName(), t.getTagValue()+" "+t.getTagUnit().getSymbol());
+					else
+						maps.get(index).put(t.getTagName(), t.getTagValue());
 				}
 			}
 			index++;

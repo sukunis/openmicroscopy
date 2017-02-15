@@ -138,8 +138,13 @@ public class FNode extends DefaultMutableTreeNode
 	{
 		if(view==null)
 			return;
-
-		modelObj = view.getSavedModelObject();
+		try{
+			view.saveModel();
+		}catch(Exception e){
+			System.out.println("# FNode::saveModel(): Can't save model for this node");
+			e.printStackTrace();
+		}
+		modelObj = view.getModelObject();
 	}
 
 	/**
