@@ -443,10 +443,11 @@ public class LightSourceModel
 				if(thisElemClass.equals(listElemClass)){
 					for(TagData t: list){
 						updateTag(lightSrc,sett,t.getTagName(),t.getTagValue(),t.getTagUnit());
+						String id="["+listElemClass+"]:";
 						if(t.getTagUnit()!=null)
-							maps.get(index).put(t.getTagName(), t.getTagValue()+" "+t.getTagUnit().getSymbol());
+							maps.get(index).put(id+t.getTagName(), t.getTagValue()+" "+t.getTagUnit().getSymbol());
 						else
-							maps.get(index).put(t.getTagName(), t.getTagValue());
+							maps.get(index).put(id+t.getTagName(), t.getTagValue());
 					}
 				}
 			}

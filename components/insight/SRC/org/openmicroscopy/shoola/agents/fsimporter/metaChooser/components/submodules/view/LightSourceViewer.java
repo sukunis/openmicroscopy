@@ -463,7 +463,7 @@ public class LightSourceViewer extends ModuleViewer{
 		
 		
 //		id=id+"[Settings]:";
-		if(inputAt(waveLengthSett)) map.put(id+TagNames.WAVELENGTH,waveLengthSett.getTagValue()+" "+waveLengthSett.getTagUnit().getSymbol());
+		if(inputAt(waveLengthSett)) map.put(id+TagNames.SET_WAVELENGTH,waveLengthSett.getTagValue()+" "+waveLengthSett.getTagUnit().getSymbol());
 		if(inputAt(attenuation)) map.put(id+TagNames.ATTENUATION,attenuation.getTagValue());
 		
 		
