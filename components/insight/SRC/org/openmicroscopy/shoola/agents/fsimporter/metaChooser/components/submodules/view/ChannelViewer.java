@@ -399,7 +399,6 @@ private void setNDFilter(Double value, boolean prop)
 public void saveData() 
 {
 	
-	System.out.println("# ChannelViewer::saveData()");
 	if(data==null)
 		data=new ChannelModel();
 	
