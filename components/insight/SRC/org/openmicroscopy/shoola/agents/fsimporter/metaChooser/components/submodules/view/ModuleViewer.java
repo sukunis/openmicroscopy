@@ -12,6 +12,7 @@ import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,9 +52,9 @@ public abstract class ModuleViewer extends JPanel
 	protected JPanel globalPane;
 	
 	protected List<TagData> tagList;
+	/** true if choose an element from editor, false if element was saved or nothing selected*/
 	protected boolean dataChanged;
 	protected boolean inputEvent;
-	
 	
 	public abstract void saveData();
 	protected abstract void initTag(TagConfiguration t); 
@@ -70,6 +71,32 @@ public abstract class ModuleViewer extends JPanel
 	
 	public final static String ERROR_PREVALUE="Invalid predefined value: ";
 	
+	
+	// Attention: wrong input( at saveData() use catch case) will not be save
+	public void afterSavingData() {
+		resetInputEvent();
+		if(tagList!=null){
+			for(TagData t: tagList){
+				if(t!=null) t.dataSaved(true);
+			}
+		}
+	}
+	
+	public boolean allDataWasStored()
+	{
+		boolean result=true;
+		if(tagList!=null){
+			for(TagData t:tagList){
+				if(t!=null){
+//					System.out.println("\t was Tag stored: "+t.getTagName()+" -- "+t.isDataSaved());
+					boolean val=t!=null ? t.isDataSaved() :true;
+					result= result && val;
+				}
+			}
+		}
+		return result;
+	}
+	
 	public boolean inputEvent()
 	{
 		return inputEvent;
@@ -82,19 +109,52 @@ public abstract class ModuleViewer extends JPanel
 	
 	protected boolean inputAt(TagData tag)
 	{
-		if(tag != null && tag.valueChanged()){
+		if(tag != null && tag.valueHasChanged()){
 			return true;
 		}
 		return false;
 	}
 	
+	/**
+	 * Return true if some value of tagList had changed
+	 * @return
+	 */
 	public boolean hasDataToSave() 
 	{
 		boolean result=false;
 		if(tagList!=null){
 			for(int i=0; i<tagList.size();i++){
-				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
+				boolean val=tagList.get(i)!=null ? tagList.get(i).valueHasChanged() : false;
+//				if(tagList.get(i)!=null)
+//					System.out.println("\t changes : "+tagList.get(i).getTagName()+" : "+val+","+dataChanged);
 				result= result || val || dataChanged;
+			}
+		}
+		return (result);
+	}
+	
+	public boolean hasDataToSave2(HashMap<String,String> map)
+	{
+		boolean result=false;
+		System.out.println("#ModuleViewer::hasDataToSave2()");
+		if(tagList!=null){
+			if(map!=null){
+				for(int i=0; i<tagList.size();i++){
+					if(tagList.get(i)!=null){
+						String name=tagList.get(i).getTagName();
+						String value=tagList.get(i).getTagValue();
+						boolean val=tagList.get(i).valueHasChanged();
+						if(map.containsKey(name) && 
+								(map.get(name).equals(value))){
+							val=false;
+							System.out.println("\tStill saved: "+tagList.get(i).getTagName()+" = "+tagList.get(i).getTagValue()+" ,( "+dataChanged+")");
+						}
+						result= result || val || dataChanged;
+					}
+				}
+				return result;
+			}else{
+				return hasDataToSave();
 			}
 		}
 		return (result);
@@ -403,7 +463,7 @@ public abstract class ModuleViewer extends JPanel
 			}
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				tag.dataSaved(false);
+				tag.dataHasChanged(true);
 				inputKeyPressed();
 			}
 			

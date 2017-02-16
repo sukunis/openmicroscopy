@@ -342,7 +342,7 @@ public class FilterCompUI extends LightPathElem
 		boolean result=false;
 		if(tagList!=null){
 			for(int i=0; i<tagList.size();i++){
-				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
+				boolean val=tagList.get(i)!=null ? tagList.get(i).valueHasChanged() : false;
 				result= result || val;
 			}
 		}

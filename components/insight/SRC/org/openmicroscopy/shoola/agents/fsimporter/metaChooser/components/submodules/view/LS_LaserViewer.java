@@ -126,7 +126,7 @@ tagList=new ArrayList<TagData>();
 //		System.out.println("\t... lightSrc dataChanged = "+dataChanged);
 		if(tagList!=null){
 			for(int i=0; i<tagList.size();i++){
-				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
+				boolean val=tagList.get(i)!=null ? tagList.get(i).valueHasChanged() : false;
 //				System.out.println("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
 			}
 		}

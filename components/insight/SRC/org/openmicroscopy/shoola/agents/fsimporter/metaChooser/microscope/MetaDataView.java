@@ -519,9 +519,23 @@ public class MetaDataView extends JPanel
 		return fileDataLoaded;
 	}
 
+	public boolean allDataWasStored()
+	{
+		if(seriesData){
+			boolean result=false;
+			for(Component comp:cardPane.getComponents()){
+				result=result && ((MetaDataUI) comp).allDataWasStored();
+			}
+			return result;
+		}else{
+			if(singleView!=null){
+				return singleView.allDataWasStored(); 
+			}
+		}
+		return true;
+	}
 	
-	
-	public boolean hasUserInput()
+	public boolean hasDataToSave()
 	{
 		if(seriesData){
 			boolean result=false;
@@ -534,6 +548,22 @@ public class MetaDataView extends JPanel
 			if(singleView!=null){
 				return singleView.hasDataToSave(); 
 //				return singleView.userInput();
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasUserInput()
+	{
+		if(seriesData){
+			boolean result=false;
+			for(Component comp:cardPane.getComponents()){
+							result=result ||((MetaDataUI) comp).userInput();
+			}
+			return result;
+		}else{
+			if(singleView!=null){
+							return singleView.userInput();
 			}
 		}
 		return false;

@@ -93,6 +93,7 @@ public class ImageEnvViewer extends ModuleViewer{
 
 		// set data
 		setGUIData();
+		dataChanged=false;
 	}
 
 	/**
@@ -152,9 +153,9 @@ public class ImageEnvViewer extends ModuleViewer{
 	
 	protected void setPredefinedTag(TagConfiguration t) 
 	{
-		if(t.getValue()==null)
+		if(t.getValue()==null || t.getValue().equals(""))
 			return;
-		
+		System.out.println("# ImgEnvViewer::setPredata()");
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
@@ -165,7 +166,7 @@ public class ImageEnvViewer extends ModuleViewer{
 			try{
 				Temperature v=parseTemperature(t.getValue(), t.getUnit());
 				setTemperature(v, prop);
-				temperature.dataSaved(false);
+				temperature.dataHasChanged(true);
 			}catch(Exception e){
 				String unitError=t.getUnitSymbol();
 				if(t.getUnit()==null){
@@ -183,7 +184,7 @@ public class ImageEnvViewer extends ModuleViewer{
 			try{
 				Pressure p=parsePressure(t.getValue(), t.getUnit());
 				setAirPressure(p, prop);
-				airPressure.dataSaved(false);
+				airPressure.dataHasChanged(true);
 			}catch(Exception e){
 				airPressure.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnit()+"]");
 			}
@@ -194,7 +195,7 @@ public class ImageEnvViewer extends ModuleViewer{
 				return;
 			try{
 				setHumidity(parseToPercentFraction(t.getValue()), prop);
-				humidity.dataSaved(false);
+				humidity.dataHasChanged(true);
 			}catch(Exception e){
 				humidity.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -205,7 +206,7 @@ public class ImageEnvViewer extends ModuleViewer{
 			try{
 				PercentFraction p= parseToPercentFraction(t.getValue());
 				setCo2Percent(p, prop);
-				co2Percent.dataSaved(false);
+				co2Percent.dataHasChanged(true);
 			}catch(Exception e){
 				co2Percent.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -222,8 +223,10 @@ public class ImageEnvViewer extends ModuleViewer{
 	{
 		if(data==null)
 			return;
+		
 		ImagingEnvironment env=data.getImgEnv();
 		if(env!=null){
+			System.out.println("# ImgEnvViewer::setGUIData()");
 			try {if(temperature!=null) setTemperature(env.getTemperature(), REQUIRED);	} 
 			catch (NullPointerException e) {}
 			try {if(airPressure!=null) setAirPressure(env.getAirPressure(), REQUIRED);	} 
@@ -305,14 +308,14 @@ public class ImageEnvViewer extends ModuleViewer{
 		try{
 			env.setTemperature(temperature.getTagValue().equals("") ?
 					null : new Temperature(Double.valueOf(temperature.getTagValue()), temperature.getTagUnit()));
-			temperature.dataSaved(true);
+//			temperature.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV temperature input");
 		}
 		try{
 			env.setAirPressure(airPressure.getTagValue().equals("") ? 
 					null : new Pressure(Double.valueOf(airPressure.getTagValue()),airPressure.getTagUnit()));
-			airPressure.dataSaved(true);
+//			airPressure.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV air pressure input");
 		}
@@ -329,7 +332,7 @@ public class ImageEnvViewer extends ModuleViewer{
 //				}
 //			}
 			env.setHumidity(parseToPercentFraction(val));
-			humidity.dataSaved(true);
+//			humidity.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV humidity input");
 		}
@@ -345,12 +348,14 @@ public class ImageEnvViewer extends ModuleViewer{
 //				}
 //			}
 			env.setCO2Percent(parseToPercentFraction(val));
-			co2Percent.dataSaved(true);
+//			co2Percent.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV co2 percent input");
 		}
 		
-		data.addData(env, true);
+//		data.addData(env, true);
+		
+		dataChanged=false;
 	}
 	public List<TagData> getChangedTags() {
 		List<TagData> list = new ArrayList<TagData>();

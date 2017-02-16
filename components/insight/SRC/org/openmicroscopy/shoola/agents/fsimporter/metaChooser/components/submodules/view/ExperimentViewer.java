@@ -193,13 +193,13 @@ public class ExperimentViewer extends ModuleViewer{
 			if(et==null)
 				type.setTagInfo(ERROR_PREVALUE+t.getValue());
 			setType(et, prop);
-			type.dataSaved(false);
+			type.dataHasChanged(true);
 			break;
 		case TagNames.DESC:
 			if(description!=null && !description.getTagValue().equals(""))
 				return;
 			setDescription(t.getValue(), prop);
-			description.dataSaved(false);
+			description.dataHasChanged(true);
 			break;
 			//Set by system
 		case TagNames.GROUP:
@@ -222,7 +222,7 @@ public class ExperimentViewer extends ModuleViewer{
 			if(projectPartner!=null && !projectPartner.getTagValue().equals(""))
 				return;
 			setProjectPartner(t.getValue(), prop);
-			projectPartner.dataSaved(false);
+			projectPartner.dataHasChanged(true);
 			break;
 		default:
 			LOGGER.warn("[CONF] unknown tag: "+name );break;
@@ -384,37 +384,31 @@ public class ExperimentViewer extends ModuleViewer{
 		//TODO input checker
 		try{
 			data.getExperiment().setDescription(description.getTagValue());
-			description.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read EXPERIMENT description input");
 		}
 		try{
 			data.getExperiment().setType(parseExperimentType(type.getTagValue()));
-			type.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read EXPERIMENT type input");
 		}
 		try{
 			data.setProjectPartner(projectPartner.getTagValue());
-			projectPartner.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read EXPERIMENT project partner input");
 		}
 		try{
 			data.setProjectName(projectName.getTagValue());
-			projectName.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read EXPERIMENT project name input");
 		}
 		try{
 			data.setGroupName(group.getTagValue());
-			group.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read EXPERIMENT group input");
 		}
 		try{
 			data.setExperimenter(parseExperimenter(expName.getTagValue()));
-			expName.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read EXPERIMENT experimenter input");
 		}

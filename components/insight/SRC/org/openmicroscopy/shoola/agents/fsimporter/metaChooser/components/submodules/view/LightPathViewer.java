@@ -39,7 +39,6 @@ public class LightPathViewer extends ModuleViewer{
 
 	private LightPathModel data;
 	private LightPathTableSmall lightPathTable;
-	private boolean useEditor;
 
 	private int index;
 
@@ -146,7 +145,6 @@ public class LightPathViewer extends ModuleViewer{
 				saveData();
 				LightPathEditor creator = new LightPathEditor(new JFrame(),"Edit LightPath",
 						availableElems,data.getLightPath(index));
-				useEditor=true;
 				List<Object> newList=creator.getLightPathList(); 
 				lightPathDataChanged= creator.hasDataChanged();
 				if(newList!=null && !newList.isEmpty()){
@@ -237,7 +235,6 @@ public class LightPathViewer extends ModuleViewer{
 	@Override
 	public void saveData()  
 	{
-		System.out.println("# LightPathViewer::saveData()");
 		List<Object> lightPathList=lightPathTable.getLightPathList();
 
 		if(data==null)
@@ -249,6 +246,7 @@ public class LightPathViewer extends ModuleViewer{
 			e.printStackTrace();
 		}
 		dataChanged=false;
+		lightPathDataChanged=false;
 	}
 
 

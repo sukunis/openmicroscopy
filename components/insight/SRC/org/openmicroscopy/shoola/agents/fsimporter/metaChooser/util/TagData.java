@@ -136,9 +136,12 @@ public class TagData
 	private boolean prop;
 	private int type;
 	private boolean visible;
+	// flag for value has changed of user
 	private boolean valChanged;
+	//flag for data was saved after changing or not
+	private boolean valSaved;
+	
 	private String name;
-	private Boolean markedToStore;
 	private String tagInfo;
 	
 	private KeyListener fieldKeyListener;
@@ -157,8 +160,8 @@ public class TagData
 		type=orig.type;
 		visible=orig.visible;
 		valChanged=orig.valChanged;
+		valSaved=orig.valSaved;
 		name=orig.name;
-		markedToStore=orig.markedToStore;
 		tagInfo=orig.tagInfo;
 		fieldKeyListener=orig.fieldKeyListener;
 		fieldActionListener=orig.fieldActionListener;
@@ -177,9 +180,9 @@ public class TagData
 		if(val==null)
 			val=new String[1];
 		initListener();
-		this.markedToStore=false;
 		this.type=type;
 		this.name=name;
+		valSaved=true;
 		label = new JLabel(name+":");
 		tagInfo="";
 		int size=val!=null ? val.length : 1;
@@ -205,9 +208,9 @@ public class TagData
 			val=new String[1];
 		initListener();
 		this.unit=unit;
-		this.markedToStore=false;
 		this.type=type;
 		this.name=name;
+		valSaved=true;
 		label = new JLabel(name+" ["+unit.getSymbol()+"]:");
 		tagInfo="";
 		int size=val!=null ? val.length : 1;
@@ -236,9 +239,9 @@ public class TagData
 	public TagData(String name, List<Experimenter> expList, boolean prop, int type)
 	{
 		initListener();
-		this.markedToStore=false;
 		this.type=type;
 		this.name=name;
+		valSaved=true;
 		label = new JLabel(name+":");
 		tagInfo="";
 		
@@ -274,9 +277,9 @@ public class TagData
 	public TagData(String name, String val, boolean prop,int type, String[] defaultVal) 
 	{
 		initListener();
-		this.markedToStore=false;
 		this.type=type;
 		this.name=name;
+		valSaved=true;
 		label = new JLabel(name+":");
 		tagInfo="";
 		switch (type) {
@@ -412,6 +415,7 @@ public class TagData
 			public void keyReleased(KeyEvent e) {
 //				System.out.println("Field key released action");
 				valChanged=true;	
+				valSaved=false;
 				if(inputField instanceof JTextField){
 					if(inputField.getForeground()==Color.gray ){
 						if(	!((JTextField) inputField).getText().equals(datePattern)){
@@ -432,6 +436,7 @@ public class TagData
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				valChanged=true;
+				valSaved=false;
 				if(inputField.getBorder().equals(errorBorder) && actionListenerActiv){
 					setTagInfo("");
 				}
@@ -720,6 +725,7 @@ public class TagData
 		setTagValue(val,index);
 		setTagProp(property);
 		valChanged=false;
+		
 		activateActionListener(true);
 	}
 
@@ -731,11 +737,15 @@ public class TagData
 		setTagValue(val);
 		setTagProp(property);
 		valChanged=false;
+		
 		activateActionListener(true);
 	}
 
 	private void setTagValue(String val, int index)
 	{
+		if(val!=null && !val.equals(""))
+			valSaved=false;
+		
 		activateActionListener(false);
 		switch (type) {
 		case ARRAYFIELDS:
@@ -776,6 +786,7 @@ public class TagData
 			val="";
 			inputField.setBackground(noInfo);
 		}else{
+			valSaved=false;
 			inputField.setBackground(fillInfo);
 		}
 		switch (type) {
@@ -784,6 +795,9 @@ public class TagData
 			break;
 		case COMBOBOX:
 			setValComboBox(val);
+			if(val==null || val.equals("")){
+				valSaved=true;
+			}
 			break;
 		case TEXTPANE:
 			setValTextPane(val);
@@ -805,6 +819,7 @@ public class TagData
 		}
 		setTagStatus( val.equals("") ? EMPTY : (status==EMPTY ? SET : OVERWRITE));
 		valChanged=false;
+		
 		activateActionListener(true);
 	}
 	
@@ -1026,26 +1041,26 @@ public class TagData
 			status=INACTIVE;
 	}
 
-	public void setMarkedToStore(boolean b)
-	{
-		markedToStore=b;
-	}
+	
 
-	public boolean isMarkedToStore()
-	{
-		return markedToStore;
-	}
-
-	public boolean valueChanged()
+	public boolean valueHasChanged()
 	{
 		if(type==LIST)
 			return ((ExperimenterBox)inputField).valueChanged();
 		
 		return valChanged;
 	}
-	
+	public boolean isDataSaved(){
+		return valSaved;
+	}
 	public void dataSaved(boolean b){
-		valChanged=!b;
+		valSaved=b;
+	}
+	
+	public void dataHasChanged(boolean b){
+		valChanged=b;
+		if(b)
+			valSaved=false;
 	}
 
 	public boolean isVisible() {

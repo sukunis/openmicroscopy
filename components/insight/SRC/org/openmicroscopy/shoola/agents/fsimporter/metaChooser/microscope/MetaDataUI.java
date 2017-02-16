@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -118,7 +119,6 @@ public class MetaDataUI extends JPanel
 	private JTabbedPane imagePane;//tabbed pane with one element
 	private JTabbedPane samplePane;
 	
-	protected JDialog imgEnvDialog;
 	protected JDialog planeDialog;
 	
 	private JButton loadBtn;
@@ -933,10 +933,20 @@ public class MetaDataUI extends JPanel
 			experimentPane=new JTabbedPane();
 			ModuleConfiguration expModul=customSett.getExpConf();
 			experimentUI=new ExperimentViewer(model.getExperimentModel(), expModul,showPreValues);
-			experimentPane.add("Experiment",experimentUI);
+			
+			JPanel all=new JPanel();
+			all.setLayout(new BoxLayout(all,BoxLayout.Y_AXIS));
+			ModuleConfiguration imgEnvModul=customSett.getImgEnvConf();
+			imgEnvViewer=new ImageEnvViewer(model.getImgEnvModel(), imgEnvModul,showPreValues);
+			
+			all.add(experimentUI);
+			all.add(imgEnvViewer);
+			experimentPane.add("Experiment",all);
 			addToPlaceholder(experimentPane,expModul.getPosition(), expModul.getWidth());
 		}
 	}
+	
+	
 	
 	private void showImageData() throws Exception
 	{
@@ -948,14 +958,13 @@ public class MetaDataUI extends JPanel
 			JComponent img=imagePane;
 
 			//TODO position and width from file
-			if(initPlanesUI || initImageEnvUI){
+			if(initPlanesUI ){
 				////			JScrollPane spImage =new GBScrollPane(imageUI);
 				img=new JPanel();
 				GridBagLayout myGBL=new GridBagLayout();
 				img.setLayout(myGBL);
 				addComponent(img,myGBL,imagePane,0,0,1,3,1.0,1.0,GridBagConstraints.BOTH);
-				if(initImageEnvUI)
-					addComponent(img,myGBL,initImgEnvironmentBtn(),0,3,1,1,1.0,0,GridBagConstraints.HORIZONTAL);
+				
 				if(initPlanesUI)
 					addComponent(img,myGBL,initPlaneBtn(),0,4,1,1,1.0,0,GridBagConstraints.HORIZONTAL);
 			}
@@ -1436,30 +1445,7 @@ public class MetaDataUI extends JPanel
 		return btnPlanePos;
 	}
 
-	/**
-	 * @return
-	 */
-	protected JButton initImgEnvironmentBtn() 
-	{
-		JButton btnImgEnv=new JButton("Imaging Environment");
-		btnImgEnv.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// create new Dialog with dummy pane
-				if(imgEnvDialog==null){
-					if(model.getImgEnvModel()!=null){ 
-						imgEnvDialog=createImgEnvDialog(model.getImgEnvModel(), "Imaging Environment",350,150);	
-					}else{
-						LOGGER.warn("[DATA] IMAGE ENVIRONMENT not available");
-					}
-				}
-				imgEnvDialog.setVisible(true);
-//				JDialog diag=createDialog(imgEnvUI);
-//				diag.setVisible(true);
-			}
-		});
-		return btnImgEnv;
-	}
+	
 	
 	
 	protected JDialog createPlaneDialog(JComponent p,String title, int width, int height)
@@ -1489,20 +1475,7 @@ public class MetaDataUI extends JPanel
 		d.setResizable(false);
 		return d;
 	}
-	protected JDialog createImgEnvDialog(ImageEnvModel p,String title, int width, int height)
-	{
-		JDialog d=new JDialog();
-		d.setTitle(title);
-		d.setSize(width,height);
-		d.setModal(true);
-		d.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		imgEnvViewer=new ImageEnvViewer(p, customSett.getImgEnvConf(),showPreValues);
-//		centerOnParent(d, true);
-		d.add(imgEnvViewer);
-		d.pack();
-//		d.setVisible(true);
-		return d;
-	}
+
 
 	/**
 	 * Notice user gui input
@@ -1580,6 +1553,60 @@ public class MetaDataUI extends JPanel
 		return result;
 	}
 	
+	
+	/**
+	 * True if all data of viewer was stored
+	 * @return
+	 */
+	public boolean allDataWasStored()
+	{
+		boolean result=true;
+		if(initImageUI && imageUI!=null){ 
+			result=result && imageUI.allDataWasStored();
+			System.out.println("\t ... Image data stored - "+imageUI.allDataWasStored());
+		}
+		if(initExperimentUI && experimentUI!=null){
+			result=result && experimentUI.allDataWasStored();
+			System.out.println("\t ... experiment data stored - "+experimentUI.allDataWasStored());
+		}
+		if(initObjectiveUI && objectiveUI!=null){
+			result=result && objectiveUI.allDataWasStored();
+			System.out.println("\t ... objective data stored - "+objectiveUI.allDataWasStored());
+		}
+		if(initSampleUI && sampleUI!=null){
+			result=result && sampleUI.allDataWasStored();
+			System.out.println("\t ... sample data stored - "+sampleUI.allDataWasStored());
+		}
+		if(initImageEnvUI && imgEnvViewer!=null){
+			result=result && imgEnvViewer.allDataWasStored();
+			System.out.println("\t ... imgEnv data stored - "+imgEnvViewer.allDataWasStored());
+		}
+		if(initDetectorUI && detectorViewer!=null){
+			result=result && detectorViewer.allDataWasStored();
+			System.out.println("\t ... detector data stored - "+detectorViewer.allDataWasStored());
+		}
+		if(initLightPathUI && lightPathViewer!=null){
+			result=result && !lightPathViewer.inputEvent();
+			System.out.println("\t ... LightPath data stored - "+(!lightPathViewer.inputEvent()));
+		}
+		if(initLightSrcUI && lightSrcViewer!=null){
+			result=result && lightSrcViewer.allDataWasStored();
+			System.out.println("\t ... LightSrc data stored - "+lightSrcViewer.allDataWasStored());
+		}
+		
+		if(initChannelUI  && model.getNumberOfChannels()>0){
+			if(channelTab!=null){
+				for(int i=0; i< channelTab.getTabCount(); i++){
+					if(channelTab.getTabComponentAt(i)!=null){
+						result=result && ((ChannelViewer) channelTab.getTabComponentAt(i)).allDataWasStored();
+						System.out.println("\t ... Channel data stored - "+((ChannelViewer) channelTab.getTabComponentAt(i)).allDataWasStored());
+					}
+				}
+			}
+		}
+		return result;
+	}
+	
 	/** notice all added data (input and predefinition values)
 	 * @return
 	 */
@@ -1600,7 +1627,7 @@ public class MetaDataUI extends JPanel
 		if(initObjectiveUI && objectiveUI!=null){
 			result=result || objectiveUI.hasDataToSave()|| model.getChangesObject()!=null;
 			System.out.println("\t ... Objective : changed data - "+
-			(objectiveUI.hasDataToSave()|| model.getChangesObject()!=null));
+			objectiveUI.hasDataToSave()+","+( model.getChangesObject()!=null));
 		}
 		if(initSampleUI && sampleUI!=null){
 			result = result || sampleUI.hasDataToSave()|| model.getChangesSample()!=null;
@@ -1685,53 +1712,57 @@ public class MetaDataUI extends JPanel
 		String chName=null;
 		
 		System.out.println("# MetaDataUI::save()");
-		if(imageUI!=null && imageUI.hasDataToSave()){
-			List<TagData> list=imageUI.getChangedTags();
-			model.setMapAnnotationImage(imageUI.getMapValuesOfChanges(model.getMapAnnotationImage()), false); 
-			printList("Image",list);
-			imageUI.saveData();
-			model.setChangesImage(list);
-			imageUI.resetInputEvent();
-//			firePropertyChange(CHANGE_IMGDATA, null, list);
+		if(imageUI!=null){
+			if( imageUI.hasDataToSave()){
+				List<TagData> list=imageUI.getChangedTags();
+				model.setMapAnnotationImage(imageUI.getMapValuesOfChanges(model.getMapAnnotationImage()), false); 
+				printList("Image",list);
+				imageUI.saveData();
+				model.setChangesImage(list);
+				imageUI.afterSavingData();
+			}
 		}
-		if(experimentUI!=null && experimentUI.hasDataToSave()){
+		if(experimentUI!=null){
+			if( experimentUI.hasDataToSave()){
 			List<TagData> list=experimentUI.getChangedTags();
 //			model.setMapAnnotationExperiment(wrapListToMap(list,model.getMapAnnotationExperiment(),"Experiment"));
 			model.setMapAnnotationExperiment(experimentUI.getMapValuesOfChanges(model.getMapAnnotationExperiment()), false); 
 			printList("Experiment",list);
 			experimentUI.saveData();
 			model.setChangesExperiment(list);
-			experimentUI.resetInputEvent();
-//			firePropertyChange(CHANGE_EXPDATA,null,list);
+			experimentUI.afterSavingData();
+			}
 		}
-		if(sampleUI!=null && sampleUI.hasDataToSave()){
+		if(sampleUI!=null ){
+			if( sampleUI.hasDataToSave()){
 			List<TagData> list=sampleUI.getChangedTags();
 //			model.setMapAnnotationSample(wrapListToMap(list,model.getMapAnnotationSample(),"Sample"));
 			model.setMapAnnotationSample(sampleUI.getMapValuesOfChanges(model.getMapAnnotationSample()), false); 
 			printList("Sample",list);
 			sampleUI.saveData();
 			model.setChangesSample(list);
-			sampleUI.resetInputEvent();
-//			firePropertyChange(CHANGE_SAMPLEDATA, null, list);
+			sampleUI.afterSavingData();
+			}
 		}
-		if(objectiveUI!=null && objectiveUI.hasDataToSave()){
+		if(objectiveUI!=null){
+			if( objectiveUI.hasDataToSave()){
 			List<TagData> list=objectiveUI.getChangedTags();
 			printList("Objective",list);
 			objectiveUI.saveData();
 			model.setChangesObject(list);
 			model.setMapAnnotationObjective(objectiveUI.getMapValuesOfChanges(model.getMapAnnotationObjective()), false);
-			objectiveUI.resetInputEvent();
-//			firePropertyChange(CHANGE_OBJDATA, null, list);
+			objectiveUI.afterSavingData();
+			}
 		}
-		if(imgEnvViewer!=null && imgEnvViewer.hasDataToSave()){
+		if(imgEnvViewer!=null){
+			if( imgEnvViewer.hasDataToSave()){
 			List<TagData> list=imgEnvViewer.getChangedTags();
 			model.setMapAnnotationImgEnv(imgEnvViewer.getMapValuesOfChanges(model.getMapAnnotationImgEnv()), false);
 			printList("ImgEnv",list);
 			imgEnvViewer.saveData();
 			model.setChangesImageEnv(list);
-			imgEnvViewer.resetInputEvent();
-//			TODO
-//			model.setMapAnnotationChannel(chViewer.getMapValuesOfChanges(model.getMapAnnotationChannel())); 
+			imgEnvViewer.afterSavingData();
+			}
 		}
 		
 
@@ -1749,7 +1780,8 @@ public class MetaDataUI extends JPanel
 				chViewer.saveData();
 				model.setChangesChannel(list, chViewer.getIndex());
 				model.setMapAnnotationChannel(chViewer.getMapValuesOfChanges(model.getMapAnnotationChannel(chViewer.getIndex())),chViewer.getIndex(), false);
-				chViewer.resetInputEvent();
+//				chViewer.resetInputEvent();
+				chViewer.afterSavingData();
 			}
 		}
 		// save selected component, other saved by deselect the channel
@@ -1762,7 +1794,8 @@ public class MetaDataUI extends JPanel
 			detectorViewer.saveData();
 			model.setChangesDetector(list,thisIndex);
 			model.setMapAnnotationDetector(detectorViewer.getMapValuesOfChanges(map,chName),thisIndex, false);
-			detectorViewer.resetInputEvent();
+//			detectorViewer.resetInputEvent();
+			detectorViewer.afterSavingData();
 		}
 		if(lightPathViewer!=null && lightPathViewer.hasDataToSave()){
 			int index=lightPathViewer.getIndex();
@@ -1770,7 +1803,8 @@ public class MetaDataUI extends JPanel
 			try {
 				model.setChangesLightPath(model.getLightPath(index),lightPathViewer.getIndex());
 				model.setMapAnnotationLightPath(lightPathViewer.getMapValuesOfChanges(model.getMapAnnotationLightPath(lightPathViewer.getIndex()),chName),lightPathViewer.getIndex(), false);
-				lightPathViewer.resetInputEvent();
+//				lightPathViewer.resetInputEvent();
+				lightPathViewer.afterSavingData();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1782,7 +1816,8 @@ public class MetaDataUI extends JPanel
 			lightSrcViewer.saveData();
 			model.setChangesLightSrc(list,lightSrcViewer.getIndex());
 			model.setMapAnnotationLightSrc(lightSrcViewer.getMapValuesOfChanges(model.getMapAnnotationLightSrc(lightSrcViewer.getIndex()),chName),lightSrcViewer.getIndex(), false); 
-			lightSrcViewer.resetInputEvent();
+//			lightSrcViewer.resetInputEvent();
+			lightSrcViewer.afterSavingData();
 		}
 		
 		detectorInput=false;
@@ -1959,29 +1994,56 @@ public class MetaDataUI extends JPanel
 			return false;
 		
 		boolean result=false;
-		if(imageUI!=null)
+		if(imageUI!=null){
 			result=result || imageUI.predefinitionValAreLoaded();
+			System.out.println("-- Image : predata loaded - "+imageUI.predefinitionValAreLoaded());
+		}
 		
-		if(imgEnvViewer!=null)
+		if(imgEnvViewer!=null){
 			result=result|| imgEnvViewer.predefinitionValAreLoaded();
-		
-		if(objectiveUI!=null)
+			System.out.println("-- ImgEnv : predata loaded - "+imgEnvViewer.predefinitionValAreLoaded());
+		}
+		if(objectiveUI!=null){
 			result=result|| objectiveUI.predefinitionValAreLoaded();
-		
-		if(detectorViewer!=null)
+			System.out.println("-- Objective : predata loaded - "+objectiveUI.predefinitionValAreLoaded());
+		}
+		if(detectorViewer!=null){
 			result=result|| detectorViewer.predefinitionValAreLoaded();
-		
-		if(lightSrcViewer!=null)
+			System.out.println("-- Detector : predata loaded - "+detectorViewer.predefinitionValAreLoaded());
+		}
+		if(lightSrcViewer!=null){
 			result=result|| lightSrcViewer.predefinitionValAreLoaded();
-		
-		if(lightPathViewer!=null)
+			System.out.println("-- LightSrc : predata loaded - "+lightSrcViewer.predefinitionValAreLoaded());
+		}
+		if(lightPathViewer!=null){
 			result=result|| lightPathViewer.predefinitionValAreLoaded();
-		
-		if(sampleUI!=null)
+			System.out.println("-- LightPath : predata loaded - "+lightPathViewer.predefinitionValAreLoaded());
+		}
+		if(sampleUI!=null){
 			result=result|| sampleUI.predefinitionValAreLoaded();
-		
-		if(experimentUI!=null)
+			System.out.println("-- Sample : predata loaded - "+sampleUI.predefinitionValAreLoaded());
+		}
+		if(experimentUI!=null){
 			result=result|| experimentUI.predefinitionValAreLoaded();
+			System.out.println("-- Experiment : predata loaded - "+experimentUI.predefinitionValAreLoaded());
+		}
+		if(initChannelUI  && model.getNumberOfChannels()>0){
+			if(channelTab!=null){
+				for(int i=0; i< channelTab.getTabCount(); i++){
+					if(channelTab.getTabComponentAt(i)!=null){
+						result=result || ((ChannelViewer) channelTab.getTabComponentAt(i)).predefinitionValAreLoaded();
+						System.out.println("-- Image : predata loaded - "+((ChannelViewer) channelTab.getTabComponentAt(i)).predefinitionValAreLoaded());
+					}
+				}
+			}
+		}else{
+			if(initChannelUI && channelTab!=null && channelTab.getTabCount()>0){
+				if(channelTab.getTabComponentAt(0)!=null){
+					result=result || ((ChannelViewer) channelTab.getTabComponentAt(0)).predefinitionValAreLoaded();
+					System.out.println("-- Image : predata loaded - "+((ChannelViewer) channelTab.getTabComponentAt(0)).predefinitionValAreLoaded());
+				}
+			}
+		}
 		//TODO channel
 		return result;
 	}

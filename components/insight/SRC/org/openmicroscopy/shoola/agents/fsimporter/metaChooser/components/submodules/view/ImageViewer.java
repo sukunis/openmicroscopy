@@ -426,21 +426,17 @@ For example in a video stream.
 
 		try{
 			image.setName(name.getTagValue());
-			name.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE name input");
 		}
 		try{
-			System.out.println("# ImageViewer::saveData():: description = "+desc.getTagValue()); 
 			image.setDescription(desc.getTagValue());
-			desc.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE description input");
 		}
 		try{
 			image.setAcquisitionDate(acqTime.getTagValue().equals("") ? 
 					null : Timestamp.valueOf(acqTime.getTagValue()));
-			acqTime.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE acquisition date input");
 		}
@@ -450,20 +446,17 @@ For example in a video stream.
 
 			image.getPixels().setSizeY(dimXY.getTagValue(1).equals("") ?
 					null : PositiveInteger.valueOf(dimXY.getTagValue(1)));
-			dimXY.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE dimension x,y input");
 		}
 		try{
 			image.getPixels().setType(parseToPixelType(pixelType.getTagValue()));
-			pixelType.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE pixel type input");
 		}
 		try{
 			image.getPixels().setPhysicalSizeX(parseToLength(pixelSize.getTagValue(0),pixelSize.getTagUnit(), true));
 			image.getPixels().setPhysicalSizeY(parseToLength(pixelSize.getTagValue(1),pixelSize.getTagUnit(), true));
-			pixelSize.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE pixel size input");
 		}
@@ -475,14 +468,12 @@ For example in a video stream.
 					null : PositiveInteger.valueOf(dimZTC.getTagValue(1)));
 			image.getPixels().setSizeC(dimZTC.getTagValue(2).equals("")?
 					null : PositiveInteger.valueOf(dimZTC.getTagValue(2)));
-			dimZTC.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE dimension z,t,c input");
 		}
 		try{
 			image.getPixels().setTimeIncrement(timeIncrement.getTagValue().equals("")?
 					null : new Time(Double.valueOf(timeIncrement.getTagValue()),timeIncrement.getTagUnit()));
-			timeIncrement.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE time increment input");
 		}
@@ -497,28 +488,28 @@ For example in a video stream.
 			image.getStageLabel().setY(parseToLength(stagePos.getTagValue(1),stagePos.getTagUnit(), false));
 			//set name neccessary to parse to ome
 			image.getStageLabel().setName("of "+stagePos.getTagValue(0)+","+stagePos.getTagValue(1));
-			stagePos.dataSaved(true);
 		} catch (Exception e) {
 			LOGGER.error("[DATA] can't read IMAGE stage position input");
 		}
 
-//		data.printValues();
 	}
+
+	
 
 	public List<TagData> getChangedTags()
 	{
 		List<TagData> list = new ArrayList<TagData>();
-		if(name.valueChanged()) list.add(name);
-		if(desc.valueChanged()) list.add(desc);
-		if(acqTime.valueChanged()) list.add(acqTime);
-		if(dimXY.valueChanged()) list.add(dimXY);
-		if(pixelType.valueChanged()) list.add(pixelType);
-		if(pixelSize.valueChanged()) list.add(pixelSize);
-		if(dimZTC.valueChanged()) list.add(dimZTC);
-		if(stepSize.valueChanged()) list.add(stepSize);
-		if(timeIncrement.valueChanged()) list.add(timeIncrement);
-		if(stagePos.valueChanged()) list.add(stagePos);
-		if(wellNr.valueChanged()) list.add(wellNr);
+		if(name.valueHasChanged()) list.add(name);
+		if(desc.valueHasChanged()) list.add(desc);
+		if(acqTime.valueHasChanged()) list.add(acqTime);
+		if(dimXY.valueHasChanged()) list.add(dimXY);
+		if(pixelType.valueHasChanged()) list.add(pixelType);
+		if(pixelSize.valueHasChanged()) list.add(pixelSize);
+		if(dimZTC.valueHasChanged()) list.add(dimZTC);
+		if(stepSize.valueHasChanged()) list.add(stepSize);
+		if(timeIncrement.valueHasChanged()) list.add(timeIncrement);
+		if(stagePos.valueHasChanged()) list.add(stagePos);
+		if(wellNr.valueHasChanged()) list.add(wellNr);
 		
 		return list;
 	}
@@ -538,20 +529,20 @@ For example in a video stream.
 		
 		String id="";
 		
-		if(name.valueChanged()) map.put(id+name.getTagName(),name.getTagValue());
-		if(desc.valueChanged()) map.put(id+desc.getTagName(),desc.getTagValue());
-		if(acqTime.valueChanged()) map.put(id+acqTime.getTagName(),acqTime.getTagValue());
-		if(dimXY.valueChanged()) map.put(id+dimXY.getTagName(),dimXY.getTagValue());
-		if(pixelType.valueChanged()) map.put(id+pixelType.getTagName(),pixelType.getTagValue());
-		if(pixelSize.valueChanged()) map.put(id+pixelSize.getTagName(),pixelSize.getTagValue()+" "+
+		if(name.valueHasChanged()) map.put(id+name.getTagName(),name.getTagValue());
+		if(desc.valueHasChanged()) map.put(id+desc.getTagName(),desc.getTagValue());
+		if(acqTime.valueHasChanged()) map.put(id+acqTime.getTagName(),acqTime.getTagValue());
+		if(dimXY.valueHasChanged()) map.put(id+dimXY.getTagName(),dimXY.getTagValue());
+		if(pixelType.valueHasChanged()) map.put(id+pixelType.getTagName(),pixelType.getTagValue());
+		if(pixelSize.valueHasChanged()) map.put(id+pixelSize.getTagName(),pixelSize.getTagValue()+" "+
 					pixelSize.getTagUnit().getSymbol());
-		if(dimZTC.valueChanged()) map.put(id+dimZTC.getTagName(),dimZTC.getTagValue());
-		if(stepSize.valueChanged()) map.put(id+stepSize.getTagName(),stepSize.getTagValue());
-		if(timeIncrement.valueChanged()) map.put(id+timeIncrement.getTagName(),timeIncrement.getTagValue()+" "+
+		if(dimZTC.valueHasChanged()) map.put(id+dimZTC.getTagName(),dimZTC.getTagValue());
+		if(stepSize.valueHasChanged()) map.put(id+stepSize.getTagName(),stepSize.getTagValue());
+		if(timeIncrement.valueHasChanged()) map.put(id+timeIncrement.getTagName(),timeIncrement.getTagValue()+" "+
 					timeIncrement.getTagUnit().getSymbol());
-		if(stagePos.valueChanged()) map.put(id+stagePos.getTagName(),stagePos.getTagValue()+" "+
+		if(stagePos.valueHasChanged()) map.put(id+stagePos.getTagName(),stagePos.getTagValue()+" "+
 					stagePos.getTagUnit().getSymbol());
-		if(wellNr.valueChanged()) map.put(id+wellNr.getTagName(),wellNr.getTagValue());
+		if(wellNr.valueHasChanged()) map.put(id+wellNr.getTagName(),wellNr.getTagValue());
 		
 		return map;
 }

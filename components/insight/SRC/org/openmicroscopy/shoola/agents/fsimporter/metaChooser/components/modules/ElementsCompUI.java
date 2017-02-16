@@ -189,16 +189,16 @@ public abstract class ElementsCompUI extends JPanel
 
 
 
-	public void isUpToDate(boolean b) 
-	{
-		if(tagList!=null){
-			for(int i=0; i<tagList.size();i++){
-				if(tagList.get(i)!=null)
-					tagList.get(i).dataSaved(b);
-			}
-		}
-		dataChanged=!b;
-	}
+//	public void isUpToDate(boolean b) 
+//	{
+//		if(tagList!=null){
+//			for(int i=0; i<tagList.size();i++){
+//				if(tagList.get(i)!=null)
+//					tagList.get(i).dataSaved(b);
+//			}
+//		}
+//		dataChanged=!b;
+//	}
 
 	
 

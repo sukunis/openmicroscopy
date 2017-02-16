@@ -206,56 +206,56 @@ protected void setPredefinedTag(TagConfiguration t)
 		if(preparationDate!=null && !preparationDate.getTagValue().equals(""))
 			return;
 		setPreparationDate(t.getValue(), prop);
-		preparationDate.dataSaved(false);
+		preparationDate.dataHasChanged(true);
 		break;
 	case TagNames.PREPDESC:
 		if(preparationDescription!=null && !preparationDescription.getTagValue().equals(""))
 			return;
 		setPreparationDescription(t.getValue(), prop);
-		preparationDescription.dataSaved(false);
+		preparationDescription.dataHasChanged(true);
 		break;
 	case TagNames.RAWCODE:
 		if(rawMaterialCode!=null && !rawMaterialCode.getTagValue().equals(""))
 			return;
 		setRawMaterialCode(t.getValue(), prop); 
-		rawMaterialCode.dataSaved(false);
+		rawMaterialCode.dataHasChanged(true);
 		break;
 	case TagNames.RAWDESC:
 		if(rawMaterialDesc!=null && !rawMaterialDesc.getTagValue().equals(""))
 			return;
 		System.out.println("Raw desc = "+t.getValue());
 		setRawMaterialDesc(t.getValue(), prop);
-		rawMaterialDesc.dataSaved(false);
+		rawMaterialDesc.dataHasChanged(true);
 		break;
 	case TagNames.GRIDBOXNR:
 		if(gridBoxNumber!=null && !gridBoxNumber.getTagValue().equals(""))
 			return;
 		setGridBoxNumber(t.getValue(), prop);
-		gridBoxNumber.dataSaved(false);
+		gridBoxNumber.dataHasChanged(true);
 		break;
 	case TagNames.GRIDBOXTYPE:
 		if(gridBoxType!=null && !gridBoxType.getTagValue().equals(""))
 			return;
 		setGridType(t.getValue(), prop);
-		gridBoxType.dataSaved(false);
+		gridBoxType.dataHasChanged(true);
 		break;
 	case TagNames.EXPGRID:
 		if(expGrid!=null && !expGrid.getTagValue().equals(""))
 			return;
 		setExpGridNumber(parseExpGrid(t.getValue()), prop);
-		expGrid.dataSaved(false);
+		expGrid.dataHasChanged(true);
 		break;
 	case TagNames.EXPOBJNR:
 		if(expObjectNr!=null && !expObjectNr.getTagValue().equals(""))
 			return;
 		setExpObjectNr(t.getValue(), prop);
-		expObjectNr.dataSaved(false);
+		expObjectNr.dataHasChanged(true);
 		break;
 	case TagNames.EXPOBJTYPE: 
 		if(expObjectType!=null && !expObjectType.getTagValue().equals(""))
 			return;
 		setExpObjectType(t.getValue(), prop);
-		expObjectType.dataSaved(false);
+		expObjectType.dataHasChanged(true);
 		break;
 	default:
 		LOGGER.warn("[CONF] unknown tag: "+name );break;
@@ -427,7 +427,6 @@ private void setExpObjectType(String value, boolean prop)
 @Override
 public void saveData() 
 {
-	System.out.println("# SampleViewer::saveData()");
 	if(data==null)
 		data=new SampleModel();
 
@@ -440,11 +439,9 @@ public void saveData()
 	//TODO input checker
 	try{sample.setPrepDate(preparationDate.getTagValue().equals("")? 
 			null : Timestamp.valueOf(preparationDate.getTagValue()));
-	preparationDate.dataSaved(true);
 	}catch(Exception e){}
 	try{
 		sample.setPrepDescription(preparationDescription.getTagValue());
-		preparationDescription.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE preparation description input");
 	}
@@ -452,8 +449,6 @@ public void saveData()
 		String g1=gridBoxNumber!=null ? gridBoxNumber.getTagValue() : null;
 		String g2=gridBoxType!=null ? gridBoxType.getTagValue(): null;
 		sample.setGridBoxData(g1, g2);
-		gridBoxNumber.dataSaved(true);
-		gridBoxType.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE grid box data input");
 		e.printStackTrace();
@@ -466,20 +461,17 @@ public void saveData()
 	observedSample.setSampleID(MetadataTools.createLSID("ObservedSample", 0));
 	try{
 		observedSample.setObjectNumber(expObjectNr!=null ? expObjectNr.getTagValue(): null);
-		expObjectNr.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE observed sample object nr input");
 	}
 	try{
 		observedSample.setObjectType(expObjectType!=null ? expObjectType.getTagValue():null);
-		expObjectType.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE observed sample object type input");
 	}
 	try{
 		observedSample.setGridNumberX(expGrid!=null ? expGrid.getTagValue(0):null);
 		observedSample.setGridNumberY(expGrid!=null ?expGrid.getTagValue(1):null);
-		expGrid.dataSaved(true);
 		
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE observed sample grid number x/y input");
@@ -488,13 +480,11 @@ public void saveData()
 	
 	try{
 		sample.setRawMaterialDesc(rawMaterialDesc!=null ? rawMaterialDesc.getTagValue():null); 
-		rawMaterialDesc.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE raw material description input");
 	}
 	try{
 		sample.setRawMaterialCode(rawMaterialCode!=null ? rawMaterialCode.getTagValue():null); 
-		rawMaterialCode.dataSaved(true);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE raw material code input");
 	}

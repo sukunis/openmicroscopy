@@ -306,13 +306,13 @@ public class DetectorViewer extends ModuleViewer{
 			if(model!=null && !model.getTagValue().equals(""))
 				return;
 			setModel(t.getValue(),OPTIONAL);
-			model.dataSaved(false);
+			model.dataHasChanged(true);
 			break;
 		case TagNames.MANUFAC: 
 			if(manufact!=null && !manufact.getTagValue().equals(""))
 				return;
 			setManufact(t.getValue(), OPTIONAL);
-			manufact.dataSaved(false);
+			manufact.dataHasChanged(true);
 			break;
 		case TagNames.D_TYPE:
 			if(type!=null && !type.getTagValue().equals("")){
@@ -323,14 +323,14 @@ public class DetectorViewer extends ModuleViewer{
 			if(d==null)
 				type.setTagInfo(ERROR_PREVALUE+t.getValue());
 			setType(d,OPTIONAL);
-			type.dataSaved(false);
+			type.dataHasChanged(true);
 			break;
 		case TagNames.ZOOM:
 			if(zoom!=null && !zoom.getTagValue().equals(""))
 				return;
 			try{
 			setZoom(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
-			zoom.dataSaved(false);
+			zoom.dataHasChanged(true);
 			}catch(NumberFormatException e){
 				zoom.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -340,7 +340,7 @@ public class DetectorViewer extends ModuleViewer{
 				return;
 			try{
 			setAmplGain(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
-			amplGain.dataSaved(false);
+			amplGain.dataHasChanged(true);
 			}catch(NumberFormatException e){
 				amplGain.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -350,7 +350,7 @@ public class DetectorViewer extends ModuleViewer{
 				return;
 			try{
 			setGain(ModuleViewer.parseToDouble(t.getValue()),OPTIONAL);
-			gain.dataSaved(false);
+			gain.dataHasChanged(true);
 			}catch(NumberFormatException e){
 				gain.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -360,7 +360,7 @@ public class DetectorViewer extends ModuleViewer{
 				return;
 			try{
 			setVoltage(parseElectricPotential(t.getValue(),t.getUnit()), OPTIONAL);
-			voltage.dataSaved(false);
+			voltage.dataHasChanged(true);
 			}catch(Exception e){
 				voltage.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnit()+"]");
 			}
@@ -370,7 +370,7 @@ public class DetectorViewer extends ModuleViewer{
 				return;
 			try{
 			setOffset(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
-			offset.dataSaved(false);
+			offset.dataHasChanged(true);
 			}catch(NumberFormatException e){
 				offset.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -380,7 +380,7 @@ public class DetectorViewer extends ModuleViewer{
 				return;
 			try{
 			setConfocalZoom(ModuleViewer.parseToDouble(t.getValue()), prop);
-			confocalZoom.dataSaved(false);
+			confocalZoom.dataHasChanged(true);
 			}catch(NumberFormatException e){
 				confocalZoom.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -390,7 +390,7 @@ public class DetectorViewer extends ModuleViewer{
 				return;
 			try {
 				setBinning(parseBinning(t.getValue()), prop);
-				binning.dataSaved(false);
+				binning.dataHasChanged(true);
 			} catch (EnumerationException e) {
 				binning.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -400,7 +400,7 @@ public class DetectorViewer extends ModuleViewer{
 				return;
 			//TODO
 			setSubarray(t.getValue(), prop);
-			subarray.dataSaved(false);
+			subarray.dataHasChanged(true);
 			break;
 		default: LOGGER.warn("[CONF] unknown tag: "+name );break;
 		}
@@ -811,7 +811,7 @@ public class DetectorViewer extends ModuleViewer{
 	{
 		return index;
 	}
-	
+
 	
 	
 }

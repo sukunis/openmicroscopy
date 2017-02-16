@@ -275,7 +275,7 @@ public class LightSourceViewer extends ModuleViewer{
 				return;
 			try {
 				setWavelength(parseToLength(t.getValue(),t.getUnit(), true), prop);
-				waveLengthSett.dataSaved(false);
+				waveLengthSett.dataHasChanged(true);
 			} catch (Exception e) {
 				waveLengthSett.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnitSymbol()+"]");
 			}
@@ -285,7 +285,7 @@ public class LightSourceViewer extends ModuleViewer{
 				return;
 			try{
 			setAttenuation(parseAttenuation(t.getValue()), prop);
-			attenuation.dataSaved(false);
+			attenuation.dataHasChanged(true);
 			}catch(Exception e){
 				attenuation.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -418,13 +418,42 @@ public class LightSourceViewer extends ModuleViewer{
 		boolean result=false;
 		if(tagList!=null){
 			for(int i=0; i<tagList.size();i++){
-				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
+				boolean val=tagList.get(i)!=null ? tagList.get(i).valueHasChanged() : false;
 				result= result || dataChanged || 
 						val || ((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).hasDataToSave();
 			}
 		}
 		return (result);
 	}
+	
+	@Override
+	public boolean allDataWasStored()
+	{
+		boolean result=true;
+		if(tagList!=null){
+			for(TagData t:tagList){
+				if(t!=null){
+					boolean val=t!=null ? t.isDataSaved() :true;
+					result= result && val;
+				}
+			}
+		}
+		result=result  &&((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).allDataWasStored();
+		return result;
+	}
+	
+	// Attention: wrong input( at saveData() use catch case) will not be save
+	@Override
+		public void afterSavingData() {
+			resetInputEvent();
+			if(tagList!=null){
+				for(TagData t: tagList){
+					if(t!=null) t.dataSaved(true);
+				}
+			}
+			((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).resetInputEvent();
+			((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).afterSavingData();
+		}
 	
 	public List<TagData> getChangedTags() {
 		List<TagData> result=new ArrayList<TagData>();

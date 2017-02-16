@@ -74,7 +74,7 @@ public class PlaneCompUI extends ElementsCompUI
 		boolean result=false;
 		if(tagList!=null){
 			for(int i=0; i<tagList.size();i++) 
-				result= result || tagList.get(i).valueChanged();
+				result= result || tagList.get(i).valueHasChanged();
 		}
 		return result;
 	}

@@ -1067,16 +1067,24 @@ private boolean disableTreeListener;
     		
     		// changes available?
     		boolean saveToAll =false;
-    		if(node.getView()!=null && node.getView().hasUserInput()){
-    			String text="There are unsaved changes for "+node.getAbsolutePath()+"!\n "
-    					+ "Do you like to save this changes?";
-    			if(!node.isLeaf()){
-    				text="There are unsaved changes for current directory!\n "
-    						+ "Do you like to save this changes for the directory and for all child objects?";
-    			}
-    			saveToAll =true;
-    			if(showSaveDialog){
-    				saveToAll=showSaveInputDialog(text);
+    		
+    		if(node.getView()!=null){
+    			if(node.getView().allDataWasStored() ){
+    				System.out.println("DATA FOR THIS VIEW STORED: TRUE");
+    			}else if(node.getView().hasDataToSave()){
+    				System.out.println("DATA FOR THIS VIEW STORED: FALSE");
+
+
+    				String text="There are unsaved changes for "+node.getAbsolutePath()+"!\n "
+    						+ "Do you like to save this changes?";
+    				if(!node.isLeaf()){
+    					text="There are unsaved changes for current directory!\n "
+    							+ "Do you like to save this changes for the directory and for all child objects?";
+    				}
+    				saveToAll =true;
+    				if(showSaveDialog){
+    					saveToAll=showSaveInputDialog(text);
+    				}
     			}
     		}
 
@@ -1084,6 +1092,12 @@ private boolean disableTreeListener;
     			node.saveModel();
     			if(!node.isLeaf())
     				updateChildsOfDirectory(node, null);
+    			else{
+    				if(node.hasModelObject()){
+    					System.out.println("\t clear list for "+node.getAbsolutePath());
+    					node.getModelObject().clearListOfModifications();
+    				}
+    			}
     		}
     	}
     }
@@ -1684,7 +1698,8 @@ private boolean disableTreeListener;
 //					saveAllDataButton.doClick();
 //			}
 //		}
-		saveInputToModel((FNode)fileTree.getLastSelectedPathComponent(), true);
+			FNode node=(FNode)fileTree.getLastSelectedPathComponent();
+		saveInputToModel(node, true);
 		
 		saveMapAnnotations();
 	}
