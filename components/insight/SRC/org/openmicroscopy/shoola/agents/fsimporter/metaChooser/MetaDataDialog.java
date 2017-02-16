@@ -637,7 +637,9 @@ private boolean disableTreeListener;
      */
     private JPanel buildToolBarRight() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        bar.add(Box.createHorizontalGlue());
+//        bar.add(Box.createHorizontalGlue());
+        bar.add(resetFileDataButton);
+        bar.add(Box.createHorizontalStrut(5));
         bar.add(cancelImportButton);
         bar.add(Box.createHorizontalStrut(5));
         bar.add(importButton);
@@ -671,15 +673,15 @@ private boolean disableTreeListener;
         
         JPanel barM = buildFilterViewBar();
         
-        JPanel barR = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        //reset
-        barR.add(resetFileDataButton);
-        barR.add(Box.createHorizontalStrut(2));
+//        JPanel barR = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+//        //reset
+//        barR.add(resetFileDataButton);
+//        barR.add(Box.createHorizontalStrut(2));
         //save
-        barR.add(saveDataButton);
-        barR.add(Box.createHorizontalStrut(2));
-        //save all
-        barR.add(saveAllDataButton);
+//        barR.add(saveDataButton);
+//        barR.add(Box.createHorizontalStrut(2));
+//        //save all
+//        barR.add(saveAllDataButton);
         
         
         
@@ -687,7 +689,7 @@ private boolean disableTreeListener;
         
 //        bar.add(barL);
         bar.add(barM);
-        bar.add(barR);
+//        bar.add(barR);
         bar.add(barRR);
         return bar;
     }
