@@ -329,6 +329,15 @@ public class ImportableObject
 		this.mapAnnots=maps;
 	}
 	
+	public void printMapAnnotationList()
+	{
+		if(mapAnnots!=null){
+			System.out.println("MAP-ANNOTATION_LIST");
+			MapAnnotationObject.printMapAnnotations(mapAnnots);
+		}else
+			System.out.println("MAP-ANNOTATION_LIST : 0");
+	}
+	
 	/**
 	 * Sets the depth used scanning a folder.
 	 * 
@@ -461,6 +470,11 @@ public class ImportableObject
 	{
 		return mapAnnots.get(fileName);
 		
+	}
+	
+	public Map<String,MapAnnotationObject> getMap()
+	{
+		return mapAnnots;
 	}
 	
 	/**
