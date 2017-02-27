@@ -40,7 +40,7 @@ private TagData preparationDate;
 private TagData preparationDescription;
 
 private TagData gridBoxNumber;
-private TagData gridBoxType;
+//private TagData gridBoxType;
 
 private TagData expGrid;
 private TagData expObjectNr;
@@ -71,7 +71,7 @@ private void initTagList()
 	tagList.add(preparationDate);
 	tagList.add(preparationDescription);
 	tagList.add(gridBoxNumber);
-	tagList.add(gridBoxType);
+//	tagList.add(gridBoxType);
 	tagList.add(expGrid);
 	tagList.add(expObjectNr);
 	tagList.add(expObjectType);
@@ -97,7 +97,7 @@ private void buildGUI()
 	addTagToGUI(preparationDate,labels,comp);
 	addTagToGUI(preparationDescription,labels,comp);
 	addTagToGUI(gridBoxNumber,labels,comp);
-	addTagToGUI(gridBoxType,labels,comp);
+//	addTagToGUI(gridBoxType,labels,comp);
 	
 	addVSpaceToGui(10,labels,comp);
 	
@@ -172,10 +172,10 @@ protected void initTag(TagConfiguration t)
 		setGridBoxNumber(null, prop);
 		gridBoxNumber.setVisible(true);
 		break;
-	case TagNames.GRIDBOXTYPE:// no pre value possible
-		setGridType(null, prop);
-		gridBoxType.setVisible(true);
-		break;
+//	case TagNames.GRIDBOXTYPE:// no pre value possible
+//		setGridType(null, prop);
+//		gridBoxType.setVisible(true);
+//		break;
 	case TagNames.EXPGRID:// no pre value possible
 		setExpGridNumber(new String[2], prop);
 		expGrid.setVisible(true);
@@ -233,12 +233,12 @@ protected void setPredefinedTag(TagConfiguration t)
 		setGridBoxNumber(t.getValue(), prop);
 		gridBoxNumber.dataHasChanged(true);
 		break;
-	case TagNames.GRIDBOXTYPE:
-		if(gridBoxType!=null && !gridBoxType.getTagValue().equals(""))
-			return;
-		setGridType(t.getValue(), prop);
-		gridBoxType.dataHasChanged(true);
-		break;
+//	case TagNames.GRIDBOXTYPE:
+//		if(gridBoxType!=null && !gridBoxType.getTagValue().equals(""))
+//			return;
+//		setGridType(t.getValue(), prop);
+//		gridBoxType.dataHasChanged(true);
+//		break;
 	case TagNames.EXPGRID:
 		if(expGrid!=null && !expGrid.getTagValue().equals(""))
 			return;
@@ -305,8 +305,8 @@ private void setGUIData()
 		try{ setGridBoxNumber(sample.getGridBox().getNr(), REQUIRED);}
 		catch(NullPointerException e){}
 
-		try{ setGridType(sample.getGridBox().getType(), REQUIRED);}
-		catch(NullPointerException e){}
+//		try{ setGridType(sample.getGridBox().getType(), REQUIRED);}
+//		catch(NullPointerException e){}
 
 		try{
 			String[] n={sample.getObservedSample().getGridNumberX(),
@@ -387,13 +387,13 @@ private void setGridBoxNumber(String string, boolean prop)
 	}
 }
 
-private void setGridType(String value, boolean prop)
-{
-	if(gridBoxType == null) 
-		gridBoxType = new TagData(TagNames.GRIDBOXTYPE,value,prop,TagData.TEXTAREA);
-	else 
-		gridBoxType.setTagValue(value,prop);	
-}
+//private void setGridType(String value, boolean prop)
+//{
+//	if(gridBoxType == null) 
+//		gridBoxType = new TagData(TagNames.GRIDBOXTYPE,value,prop,TagData.TEXTAREA);
+//	else 
+//		gridBoxType.setTagValue(value,prop);	
+//}
 
 private void setExpGridNumber(String[] value, boolean prop)
 {
@@ -415,8 +415,10 @@ private void setExpObjectNr(String value, boolean prop)
 
 private void setExpObjectType(String value, boolean prop)
 {
-	if(expObjectType == null) 
+	if(expObjectType == null) {
 		expObjectType = new TagData(TagNames.EXPOBJTYPE,value,prop,TagData.TEXTAREA);
+		expObjectType.setTextAreaRow(2);
+	}
 	else 
 		expObjectType.setTagValue(value,prop);	
 }
@@ -447,8 +449,8 @@ public void saveData()
 	}
 	try{
 		String g1=gridBoxNumber!=null ? gridBoxNumber.getTagValue() : null;
-		String g2=gridBoxType!=null ? gridBoxType.getTagValue(): null;
-		sample.setGridBoxData(g1, g2);
+//		String g2=gridBoxType!=null ? gridBoxType.getTagValue(): null;
+		sample.setGridBoxData(g1, null);
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read SAMPLE grid box data input");
 		e.printStackTrace();
@@ -503,7 +505,7 @@ public List<TagData> getChangedTags() {
 	if(inputAt(expObjectNr)) list.add(expObjectNr);
 	if(inputAt(expObjectType)) list.add(expObjectType);
 	if(inputAt(gridBoxNumber)) list.add(gridBoxNumber);
-	if(inputAt(gridBoxType)) list.add(gridBoxType);
+//	if(inputAt(gridBoxType)) list.add(gridBoxType);
 	return list;
 }
 
@@ -523,7 +525,7 @@ public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map)
 	if(inputAt(expObjectNr))map.put(id+expObjectNr.getTagName(),expObjectNr.getTagValue());
 	if(inputAt(expObjectType))map.put(id+expObjectType.getTagName(),expObjectType.getTagValue());
 	if(inputAt(gridBoxNumber))map.put(id+gridBoxNumber.getTagName(),gridBoxNumber.getTagValue());
-	if(inputAt(gridBoxType))map.put(id+gridBoxType.getTagName(),gridBoxType.getTagValue());
+//	if(inputAt(gridBoxType))map.put(id+gridBoxType.getTagName(),gridBoxType.getTagValue());
 	
 	return map;
 }
