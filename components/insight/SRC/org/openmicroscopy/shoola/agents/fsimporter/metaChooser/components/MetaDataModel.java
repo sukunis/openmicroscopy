@@ -1822,18 +1822,20 @@ public class MetaDataModel
 		
 		if(getNumberOfChannels()>0){
 			for(int i=0; i<getNumberOfChannels();i++){
-				String id="";
+				String id="[Channel]:";
+				String id2="";
 				if(channelModel!=null){
 					if(channelModel.getChannel(i).getName()==null || channelModel.getChannel(i).getName().equals("")){
-						id="[Channel "+String.valueOf(i)+"]:";
+						id2="[Channel "+String.valueOf(i)+"]:";
 					}else{
-						id="["+channelModel.getChannel(i).getName()+"]:";
+						id2="["+channelModel.getChannel(i).getName()+"]:";
 					}
 				}
-				values=hashMapToValueList(getMapAnnotationDetector(i), values,id+"[Detector]:");
-				values=hashMapToValueList(getMapAnnotationChannel(i), values,id);
-				values=hashMapToValueList(getMapAnnotationLightPath(i), values,id+"[LightPath]:");
-				values=hashMapToValueList(getMapAnnotationLightSrc(i), values,id+"[LightSrc]:");
+				values=hashMapToValueList(getMapAnnotationChannel(i), values,id+id2);
+				
+				values=hashMapToValueList(getMapAnnotationDetector(i), values,id2+"[Detector]:");
+				values=hashMapToValueList(getMapAnnotationLightPath(i), values,id2+"[LightPath]:");
+				values=hashMapToValueList(getMapAnnotationLightSrc(i), values,id2+"[LightSrc]:");
 			}
 		}else{// no channel available, don't link to any channel
 			String id="";
@@ -1853,16 +1855,18 @@ public class MetaDataModel
 		if(imgModel!=null){
 			String id="";
 			String name=imgModel.getImage().getName();
+			id="[Image]:";
 			if(name!=null && !name.equals(""))
-				id="["+name+"]:";
+				id+="["+name+"]:";
 			else if(imgModel.getImage().getID()!=null && !imgModel.getImage().getID().equals("")){
-				id="["+imgModel.getImage().getID()+"]:";
-			}else
-				id="[Image]:";
+				id+="["+imgModel.getImage().getID()+"]:";
+			}
 			values=hashMapToValueList(getMapAnnotationImage(), values,id);
 		}
 		values=hashMapToValueList(getMapAnnotationImgEnv(),values,"[ImageEnv]:");
-		
+		MapAnnotationData result= new MapAnnotationData(ma);
+		result.setDescription("Metadata UOS.importer");
+		result.setNameSpace("Metadata UOS.importer");
 		return new MapAnnotationData(ma);
 	}
 	
