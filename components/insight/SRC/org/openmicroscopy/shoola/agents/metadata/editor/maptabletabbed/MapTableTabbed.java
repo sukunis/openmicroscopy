@@ -129,13 +129,15 @@ public class MapTableTabbed extends JTabbedPane
 		
 		JPanel tablePanelImage = new JPanel();
 		tablePanelImage.setLayout(new BoxLayout(tablePanelImage, BoxLayout.PAGE_AXIS));
-		if(imageMapData!=null)
+		if(imageMapData!=null && !imageMapTable.isEmpty())
 			tablePanelImage.add(getPaneTable(imageMapTable,"Image"));
-		if(objectiveMapData!=null)
+		if(objectiveMapData!=null && !objectiveMapTable.isEmpty())
 			tablePanelImage.add(getPaneTable(objectiveMapTable,"Objective"));
-		if(imageEnvMapData!=null)
+		if(imageEnvMapData!=null && !imageEnvMapTable.isEmpty())
 			tablePanelImage.add(getPaneTable(imageEnvMapTable,"Image Env"));
-		addTab("Image", tablePanelImage);
+		
+		if(tablePanelImage.getComponentCount()>0)
+			addTab("Image", tablePanelImage);
 		
 //		GridBagConstraints c2 = new GridBagConstraints();
 //		c2.anchor = GridBagConstraints.NORTHWEST;
@@ -166,17 +168,21 @@ public class MapTableTabbed extends JTabbedPane
 //		}
 		JPanel tablePanelChannel = new JPanel();
 		tablePanelChannel.setLayout(new BoxLayout(tablePanelChannel, BoxLayout.PAGE_AXIS));
-		if(channelMapData!=null)
+		if(channelMapData!=null && !channelMapTable.isEmpty())
 			tablePanelChannel.add(getPaneTable(channelMapTable,"Channel"));
-		if(detectorMapData!=null)
+		if(detectorMapData!=null && !detectorMapTable.isEmpty())
 			tablePanelChannel.add(getPaneTable(detectorMapTable,"Detector"));
-		if(lightPathMapData!=null)
+		if(lightPathMapData!=null && !lightPathMapTable.isEmpty())
 			tablePanelChannel.add(getPaneTable(lightPathMapTable,"LightPath"));
-		if(lightSrcMapData!=null)
+		if(lightSrcMapData!=null && !lightSrcMapTable.isEmpty())
 			tablePanelChannel.add(getPaneTable(lightSrcMapTable,"LightSrc"));
-		addTab("Channel",tablePanelChannel);
-		addTab("Sample",sampleMapTable);
-		addTab("Experiment",experimentMapTable);
+		
+		if(tablePanelChannel.getComponentCount()>0)
+			addTab("Channel",tablePanelChannel);
+		if(sampleMapData!= null && !sampleMapTable.isEmpty())
+			addTab("Sample",sampleMapTable);
+		if(experimentMapData!=null && !experimentMapTable.isEmpty())
+			addTab("Experiment",experimentMapTable);
 	}
 	
 	private JPanel getPaneTable(MapTable m,String name)
