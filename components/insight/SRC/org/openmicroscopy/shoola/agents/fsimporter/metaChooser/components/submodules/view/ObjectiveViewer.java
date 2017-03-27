@@ -33,6 +33,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Mod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -72,7 +73,7 @@ public class ObjectiveViewer extends ModuleViewer
 	public ObjectiveViewer(ObjectiveModel objModel,ModuleConfiguration conf,boolean showPreValues,
 			List<Objective> availableElems)
 	{
-		System.out.println("# ObjectiveViewer::newInstance("+(objModel!=null?"model":"null")+")");
+		MonitorAndDebug.printConsole("# ObjectiveViewer::newInstance("+(objModel!=null?"model":"null")+")");
 		this.data=objModel;
 		this.availableElems=availableElems;
 		initComponents(conf);
@@ -179,12 +180,12 @@ public class ObjectiveViewer extends ModuleViewer
 				Objective selectedObj=creator.getObjective();  
 				if(selectedObj!=null ){
 					inputKeyPressed();
-					System.out.println("ObjectiveViewer::Choose - addData()");
+					MonitorAndDebug.printConsole("ObjectiveViewer::Choose - addData()");
 					try {
 						data.addData(selectedObj, true);
 					} catch (Exception e1) {
 						LOGGER.warn("Can't set data of selected objective! "+e1);
-						System.out.println("Can't set data of selected objective! "+e1);
+						MonitorAndDebug.printConsole("Can't set data of selected objective! "+e1);
 					}
 					setGUIData();
 					dataChanged=true;

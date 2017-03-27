@@ -31,6 +31,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Tag
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MetaDataMapAnnotation;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 
@@ -102,7 +103,7 @@ public class LightSourceModel
 				expandList(maps.size(),i,new GenericExcitationSource());break;
 			case LightSourceModel.LIGHT_EMITTING_DIODE:
 				expandList(maps.size(),i,new LightEmittingDiode());	break;
-				default:System.out.println(" #LightSrcModel::setMap():\n\t...unknown type");break;
+				default:LOGGER.warn(" #LightSrcModel::setMap():\n\t...unknown type");break;
 			}
 		}
 			maps.set(i, map);
@@ -122,17 +123,17 @@ public class LightSourceModel
 			case FILAMENT: expandList(element.size(),i,new Filament());break;
 			case GENERIC_EXCITATION:expandList(element.size(),i,new GenericExcitationSource());break;
 			case LIGHT_EMITTING_DIODE: expandList(element.size(),i,new LightEmittingDiode());break;
-			default: System.out.println("\t...unknown type");break;
+			default: LOGGER.warn("\t...unknown type: "+newElem.getClass().getSimpleName());break;
 			}
 			
 		}
 	
 		if(overwrite || (newElem.getClass()!= element.get(i).getClass())){
-			System.out.println("# LightSrc::replaceData() at "+i+": "+newElem.getClass().getSimpleName());
+			MonitorAndDebug.printConsole("# LightSrc::replaceData() at "+i+": "+newElem.getClass().getSimpleName());
 			replaceData(newElem,i);
 			LOGGER.info("[DATA] -- replace LightSource data");
 		}else{
-			System.out.println("# LightSrc::completeData() at "+i+": "+newElem.getClass().getSimpleName());
+			MonitorAndDebug.printConsole("# LightSrc::completeData() at "+i+": "+newElem.getClass().getSimpleName());
 			completeData(newElem,i);
 			LOGGER.info("[DATA] -- complete LightSource data");
 		}
@@ -425,10 +426,10 @@ public class LightSourceModel
 	public void update(List<List<TagData>> changesLightSrc) throws Exception 
 	{
 		if(changesLightSrc==null){
-			System.out.println("\t no changes for lightSource");
+			MonitorAndDebug.printConsole("\t no changes for lightSource");
 			return;
 		}else{
-			System.out.println("\t changes LightSrc: "+changesLightSrc.size());
+			MonitorAndDebug.printConsole("\t changes LightSrc: "+changesLightSrc.size());
 		}
 		int index=0;
 		for(List<TagData> list :changesLightSrc){
@@ -498,7 +499,7 @@ public class LightSourceModel
 			lightSrc.setManufacturer(tagValue);
 			break;
 		default:
-			System.out.println("[UPDATE] unknown tag: "+tagName );break;
+			LOGGER.warn("[UPDATE] unknown tag: "+tagName );break;
 		}		
 	}
 
@@ -519,7 +520,7 @@ public class LightSourceModel
 			}
 			break;
 		default:
-			System.out.println("[UPDATE] unknown tag: "+tagName );break;
+			LOGGER.warn("[UPDATE] unknown tag: "+tagName );break;
 		}		
 	}
 
@@ -543,7 +544,7 @@ public class LightSourceModel
 			}
 			break;
 		default:
-			System.out.println("[UPDATE] unknown tag: "+tagName );break;
+			LOGGER.warn("[UPDATE] unknown tag: "+tagName );break;
 		}		
 	}
 
@@ -567,7 +568,7 @@ public class LightSourceModel
 			}
 			break;
 		default:
-			System.out.println("[UPDATE] unknown tag: "+tagName );break;
+			LOGGER.warn("[UPDATE] unknown tag: "+tagName );break;
 		}
 		
 	}
@@ -632,7 +633,7 @@ public class LightSourceModel
 			}
 			break;
 		default:
-			System.out.println("[UPDATE] unknown tag: "+tagName );break;
+			LOGGER.warn("[UPDATE] unknown tag: "+tagName );break;
 		}
 		
 	}
@@ -642,11 +643,11 @@ public class LightSourceModel
 		for(int i=0; i<element.size();i++){
 			LightSource d= element.get(i);
 			if(d!=null){
-				System.out.println("\t"+d.getClass().getSimpleName()+" : "+i);
-				System.out.println("\t...lightSrc model model = "+(d.getModel()!=null ? d.getModel(): ""));
-//				System.out.println("\t...lightSrc model pulse = "+(((Laser) d).getPulse()!=null ? ((Laser) d).getPulse().getValue(): ""));
-				System.out.println("\t...lightSrc model power = "+(d.getPower()!=null ? d.getPower(): ""));
-				System.out.println("\t...lightSrc model tunable = "+(((Laser) d).getTuneable()!=null ? ((Laser) d).getTuneable(): ""));
+				MonitorAndDebug.printConsole("\t"+d.getClass().getSimpleName()+" : "+i);
+				MonitorAndDebug.printConsole("\t...lightSrc model model = "+(d.getModel()!=null ? d.getModel(): ""));
+//				MonitorAndDebug.printConsole("\t...lightSrc model pulse = "+(((Laser) d).getPulse()!=null ? ((Laser) d).getPulse().getValue(): ""));
+				MonitorAndDebug.printConsole("\t...lightSrc model power = "+(d.getPower()!=null ? d.getPower(): ""));
+				MonitorAndDebug.printConsole("\t...lightSrc model tunable = "+(((Laser) d).getTuneable()!=null ? ((Laser) d).getTuneable(): ""));
 			}
 		}
 	}

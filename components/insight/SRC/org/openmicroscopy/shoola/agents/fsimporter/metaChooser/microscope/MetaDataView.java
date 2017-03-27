@@ -30,6 +30,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -114,7 +115,7 @@ public class MetaDataView extends JPanel
 		
 		parentPanel.setCursor(cursor);
 		if(data==null || !showFileData){ 
-			System.out.println("\t...no file data loaded");
+			MonitorAndDebug.printConsole("\t...no file data loaded");
 			fileDataLoaded=false;
 			seriesData=false;
 			singleView=new MetaDataUI(parentPanel,false, showPreValues); 
@@ -266,7 +267,7 @@ public class MetaDataView extends JPanel
 	 */
 	private void loadParentData(MetaDataModel parentData,MetaDataUI pane) 
 	{
-		System.out.println("# MetaDataView::loadParentData()...");
+		MonitorAndDebug.printConsole("# MetaDataView::loadParentData()...");
 	
 		if(parentData!=null){
 			try {
@@ -276,14 +277,14 @@ public class MetaDataView extends JPanel
 			} catch (Exception e) {
 				parentDataLoaded=false;
 				LOGGER.warn("[DATA] -- Can't add metadata from parent model");
-				System.out.println("... end loadParentData()");
+				MonitorAndDebug.printConsole("... end loadParentData()");
 				e.printStackTrace();
 				return;
 			}
 		}else{
 			LOGGER.info("[DATA]--- No parent data available ");
 		}
-		System.out.println("... end loadParentData()");
+		MonitorAndDebug.printConsole("... end loadParentData()");
 	}
 	
 
@@ -393,7 +394,7 @@ public class MetaDataView extends JPanel
 			if(seriesData){
 				updateGlobalSeriesData();
 				LOGGER.info("[SAVE] -- save input for series data: "+srcFile.getAbsolutePath());
-				System.out.println("Save series data");
+				MonitorAndDebug.printConsole("Save series data");
 				for(Component comp:cardPane.getComponents()){
 					((MetaDataUI) comp).save();
 				}

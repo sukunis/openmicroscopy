@@ -14,6 +14,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -179,7 +180,7 @@ public class DetectorModel
 	 */
 	private void completeData(DetectorSettings newElem,int index) throws Exception
 	{
-		System.out.println("# DetectorModel::completeData()");
+		MonitorAndDebug.printConsole("# DetectorModel::completeData()");
 		if(settings.size()<=index){
 			expandList(settings.size(),index);
 		}
@@ -267,7 +268,7 @@ public class DetectorModel
 	public void update(List<List<TagData>> changesDetector) throws Exception 
 	{
 		if(changesDetector==null){
-			System.out.println("\t no changes for detector");
+			MonitorAndDebug.printConsole("\t no changes for detector");
 			return;
 		}
 		int index=0;
@@ -356,10 +357,10 @@ public class DetectorModel
 		for(int i=0; i<element.size();i++){
 			Detector d= element.get(i);
 			if(d!=null){
-				System.out.println("\tDetector : "+i);
-				System.out.println("\t...detector model model = "+(d.getModel()!=null ? d.getModel(): ""));
-				System.out.println("\t...detector model type = "+(d.getType()!=null ? d.getType().getValue(): ""));
-				System.out.println("\t...detector model zoom = "+(d.getZoom()!=null ? d.getZoom(): ""));
+				MonitorAndDebug.printConsole("\tDetector : "+i);
+				MonitorAndDebug.printConsole("\t...detector model model = "+(d.getModel()!=null ? d.getModel(): ""));
+				MonitorAndDebug.printConsole("\t...detector model type = "+(d.getType()!=null ? d.getType().getValue(): ""));
+				MonitorAndDebug.printConsole("\t...detector model zoom = "+(d.getZoom()!=null ? d.getZoom(): ""));
 			}
 		}
 	}

@@ -7,6 +7,8 @@ import java.util.List;
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
 import ome.xml.model.LightPath;
+
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 
@@ -222,7 +224,7 @@ public class LightPathModel
 	public void update(List<LightPath> changesLightPath) 
 	{
 		if(changesLightPath==null){
-			System.out.println("\t no changes for lightPath");
+			MonitorAndDebug.printConsole("\t no changes for lightPath");
 			return;
 		}
 		int index=0;

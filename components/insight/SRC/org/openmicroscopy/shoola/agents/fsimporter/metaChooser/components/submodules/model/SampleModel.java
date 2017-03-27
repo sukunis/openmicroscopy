@@ -12,6 +12,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.SampleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 
@@ -67,7 +68,7 @@ public class SampleModel
 
 	private void replaceData(Sample s)
 	{
-		System.out.println("# SampleModel::replaceData()");
+		MonitorAndDebug.printConsole("# SampleModel::replaceData()");
 		if(s!=null){
 			element=new Sample(s);
 		}
@@ -75,7 +76,7 @@ public class SampleModel
 
 	private void completeData(Sample s) throws Exception
 	{
-		System.out.println("# SampleModel::completeData()");
+		MonitorAndDebug.printConsole("# SampleModel::completeData()");
 		//copy input fields
 		Sample copyIn=null;
 		if(element!=null){
@@ -109,7 +110,7 @@ public class SampleModel
 				ost=os.getObjectType();
 				osNr=os.getObjectNumber();
 			}
-			System.out.println("\t...grid(x,y)= "+osgx+", "+osgy);
+			MonitorAndDebug.printConsole("\t...grid(x,y)= "+osgx+", "+osgy);
 
 			if(pdesc!=null && !pdesc.equals("")) element.setPrepDescription(pdesc);
 			if(pdate!=null) element.setPrepDate(pdate);
@@ -122,7 +123,7 @@ public class SampleModel
 			if(ost!=null && !ost.equals("")) element.getObservedSample().setObjectType(ost);
 			if(osNr!=null && !osNr.equals("")) element.getObservedSample().setObjectNumber(osNr);
 			
-			System.out.println("\t...grid(x,y)= "+element.getObservedSample().getGridNumberX()
+			MonitorAndDebug.printConsole("\t...grid(x,y)= "+element.getObservedSample().getGridNumberX()
 					+", "+element.getObservedSample().getGridNumberY());
 		}
 	}
@@ -134,7 +135,7 @@ public class SampleModel
 	{
 		
 		if(changesSample==null){
-			System.out.println("\t no changes for sample");
+			MonitorAndDebug.printConsole("\t no changes for sample");
 			return;
 		}
 		for(TagData t: changesSample){
@@ -147,7 +148,7 @@ public class SampleModel
 	}
 	private void setTag(String name,String val,Unit unit)
 	{
-		System.out.println("\t...update "+name+" : "+val);
+		MonitorAndDebug.printConsole("\t...update "+name+" : "+val);
 		switch (name) {
 		case TagNames.PREPDATE:// no pre value possible
 			element.setPrepDate(val.equals("")? 

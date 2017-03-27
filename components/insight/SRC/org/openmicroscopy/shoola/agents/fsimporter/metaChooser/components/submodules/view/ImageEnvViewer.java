@@ -23,6 +23,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Mod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -53,7 +54,7 @@ public class ImageEnvViewer extends ModuleViewer{
 	 */
 	public ImageEnvViewer(ImageEnvModel model,ModuleConfiguration conf,boolean showPreValues)
 	{
-		System.out.println("# ImageEnvViewer::new Instance()");
+		MonitorAndDebug.printConsole("# ImageEnvViewer::new Instance()");
 		this.data=model;
 		initComponents(conf);
 		initTagList();
@@ -155,7 +156,7 @@ public class ImageEnvViewer extends ModuleViewer{
 	{
 		if(t.getValue()==null || t.getValue().equals(""))
 			return;
-		System.out.println("# ImgEnvViewer::setPredata()");
+		MonitorAndDebug.printConsole("# ImgEnvViewer::setPredata()");
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
@@ -226,7 +227,7 @@ public class ImageEnvViewer extends ModuleViewer{
 		
 		ImagingEnvironment env=data.getImgEnv();
 		if(env!=null){
-			System.out.println("# ImgEnvViewer::setGUIData()");
+			MonitorAndDebug.printConsole("# ImgEnvViewer::setGUIData()");
 			try {if(temperature!=null) setTemperature(env.getTemperature(), REQUIRED);	} 
 			catch (NullPointerException e) {}
 			try {if(airPressure!=null) setAirPressure(env.getAirPressure(), REQUIRED);	} 

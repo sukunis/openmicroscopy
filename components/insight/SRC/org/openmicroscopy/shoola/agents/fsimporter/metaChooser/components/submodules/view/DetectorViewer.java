@@ -38,6 +38,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotatio
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MetaDataMapAnnotation;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 
@@ -87,7 +88,7 @@ public class DetectorViewer extends ModuleViewer{
 	public DetectorViewer(DetectorModel model,ModuleConfiguration conf,int index,
 			boolean showPreValues,List<Detector> availableElems)
 	{
-		System.out.println("# DetectorViewer::newInstance("+(model!=null?"model":"null")+") "+index);
+		MonitorAndDebug.printConsole("# DetectorViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		
 //		model.printValues();
 		
@@ -298,7 +299,7 @@ public class DetectorViewer extends ModuleViewer{
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
 		
-//		System.out.println("# DetectorViewer::setPredefinedTag(): "+name);
+//		MonitorAndDebug.printConsole("# DetectorViewer::setPredefinedTag(): "+name);
 		
 		Boolean prop=t.getProperty();
 		switch (name) {
@@ -476,7 +477,7 @@ public class DetectorViewer extends ModuleViewer{
 			resetAttributesForType();
 			return;
 		}
-		System.out.println("# DetectorType::activateAttributesFotType():type= "+type.getValue());
+		MonitorAndDebug.printConsole("# DetectorType::activateAttributesFotType():type= "+type.getValue());
 		if(type == DetectorType.PMT){
 			offset.setEnable(false);
 			binning.setEnable(false);

@@ -11,6 +11,7 @@ import ome.xml.model.LightEmittingDiode;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 
 /**
  * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
@@ -81,7 +82,7 @@ public class LS_LEDViewer extends LightSourceSubViewer
 		try{
 			lightSrc=(LightEmittingDiode) data.getLightSource(index);
 		}catch(ClassCastException e){
-			System.out.println("\tATTENTION...overwrite lightSrc with another type of lightSrc.");
+			LOGGER.warn("\tATTENTION...overwrite lightSrc with another type of lightSrc.");
 			String oldClass=data.getLightSource(index).getClass().getSimpleName();
 			try{
 				data.addData(new LightEmittingDiode(), true, index);
@@ -90,7 +91,7 @@ public class LS_LEDViewer extends LightSourceSubViewer
 				e.printStackTrace();
 			}
 			lightSrc=(LightEmittingDiode) data.getLightSource(index);
-			System.out.println("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
+			MonitorAndDebug.printConsole("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
 		}
 		
 		try{

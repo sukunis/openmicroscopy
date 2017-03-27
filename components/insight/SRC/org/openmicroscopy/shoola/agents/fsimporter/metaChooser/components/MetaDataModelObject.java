@@ -3,6 +3,8 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
+
 /**
  * Model for a image could be a single model or (for series data) a list of models
  * @author Kunis
@@ -60,13 +62,13 @@ public class MetaDataModelObject
 		
 		boolean res=false;
 		if(list==null || list.isEmpty()){
-			System.out.println("# MetaDataModel::hasBeenModified(): false");
+			MonitorAndDebug.printConsole("# MetaDataModel::hasBeenModified(): false");
 			return res;
 		}
 		for(MetaDataModel m: list){
 			res= res || m.noticUserInput();
 		}
-		System.out.println("# MetaDataModel::hasBeenModified(): "+res);
+		MonitorAndDebug.printConsole("# MetaDataModel::hasBeenModified(): "+res);
 		return res;
 	}
 

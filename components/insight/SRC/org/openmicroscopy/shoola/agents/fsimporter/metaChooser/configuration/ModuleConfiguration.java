@@ -12,6 +12,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util.LightPathElement;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -204,12 +205,12 @@ public class ModuleConfiguration
 	{
 		NodeList clazzList=node.getChildNodes();
 		if(clazzList!=null && clazzList.getLength()>0){
-			System.out.println("LightPath has childs: "+clazzList.getLength());
+			MonitorAndDebug.printConsole("LightPath has childs: "+clazzList.getLength());
 			for(int i=0;i<clazzList.getLength();i++){	
 				if(clazzList.item(i).getNodeType() == Node.ELEMENT_NODE){
 					List<TagConfiguration> list=new ArrayList<TagConfiguration>();
 					String clazz=clazzList.item(i).getNodeName();
-					System.out.println("\tLightPath has childs: "+clazz);
+					MonitorAndDebug.printConsole("\tLightPath has childs: "+clazz);
 					NodeList tagList=clazzList.item(i).getChildNodes();
 					if(tagList!=null && tagList.getLength()>0){
 						for(int j=0; j<tagList.getLength(); j++){
@@ -300,16 +301,16 @@ public class ModuleConfiguration
 	public void printConfig()
 	{
 		for(int i=0; i<tagConfList.size();i++){
-			System.out.println(tagConfList.get(i).getName()+" = "+tagConfList.get(i).getValue()+" "+tagConfList.get(i).getUnitSymbol());
+			MonitorAndDebug.printConsole(tagConfList.get(i).getName()+" = "+tagConfList.get(i).getValue()+" "+tagConfList.get(i).getUnitSymbol());
 		}
 		for(int i=0; i<settingsTagConfList.size();i++){
-			System.out.println(settingsTagConfList.get(i).getName()+" = "+settingsTagConfList.get(i).getValue()+" "+settingsTagConfList.get(i).getUnitSymbol());
+			MonitorAndDebug.printConsole(settingsTagConfList.get(i).getName()+" = "+settingsTagConfList.get(i).getValue()+" "+settingsTagConfList.get(i).getUnitSymbol());
 		}
 	}
 
 	public List<LightPathElement> getElementList() 
 	{
-		System.out.println("# ModulConfiguration::getElementList(): "+(elementList==null? "null":elementList.size()));
+		MonitorAndDebug.printConsole("# ModulConfiguration::getElementList(): "+(elementList==null? "null":elementList.size()));
 		return elementList;
 	}
 

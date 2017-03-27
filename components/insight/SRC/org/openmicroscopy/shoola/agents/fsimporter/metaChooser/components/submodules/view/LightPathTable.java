@@ -17,6 +17,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.FilterCompUI;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 import ome.xml.model.Dichroic;
@@ -42,7 +43,7 @@ public class LightPathTable extends JTable
 		removeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				removeSelectionFromTable();
-				System.out.println("# LightPathTable:: \n dataChanged=true");
+				MonitorAndDebug.printConsole("# LightPathTable:: \n dataChanged=true");
 				dataChanged=true;
 			}
 		});
@@ -50,7 +51,7 @@ public class LightPathTable extends JTable
 		mvUpItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				moveRowUp();
-				System.out.println("# LightPathTable:: \n dataChanged=true");
+				MonitorAndDebug.printConsole("# LightPathTable:: \n dataChanged=true");
 				dataChanged=true;
 			}
 		});
@@ -59,7 +60,7 @@ public class LightPathTable extends JTable
 		mvDownItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				moveRowDown();
-				System.out.println("# LightPathTable:: \n dataChanged=true");
+				MonitorAndDebug.printConsole("# LightPathTable:: \n dataChanged=true");
 				dataChanged=true;
 			}
 		});

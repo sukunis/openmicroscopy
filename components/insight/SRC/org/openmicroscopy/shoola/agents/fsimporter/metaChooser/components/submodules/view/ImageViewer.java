@@ -29,6 +29,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Mod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -64,7 +65,7 @@ public class ImageViewer extends ModuleViewer{
 	 */
 	public ImageViewer(ImageModel model,ModuleConfiguration conf)
 	{
-		System.out.println("# ImageViewer::newInstance("+(model!=null?"model":"null")+")");
+		MonitorAndDebug.printConsole("# ImageViewer::newInstance("+(model!=null?"model":"null")+")");
 		this.data=model;
 		
 //		model.printValues();

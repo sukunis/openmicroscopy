@@ -7,6 +7,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ObjectiveViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 import ome.units.quantity.Length;
@@ -206,7 +207,7 @@ public class ObjectiveModel
 	public void update(List<TagData> changesObjective) throws Exception 
 	{
 		if(changesObjective==null){
-			System.out.println("\t no changes for objective");
+			MonitorAndDebug.printConsole("\t no changes for objective");
 			return;
 		}
 		

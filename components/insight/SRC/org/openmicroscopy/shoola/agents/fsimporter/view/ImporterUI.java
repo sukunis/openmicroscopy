@@ -813,10 +813,12 @@ class ImporterUI extends TopWindow
 
 	public void setMapAnnotation(MapAnnotationObject o)
 	{
-		if(o!=null){
+		if(o==null || (o!=null && o.getMapAnnotationList().isEmpty()))
+			LOGGER.info("Empty mapAnnotation");
+//		else{
 //			System.out.println("\t # ImporterUI::setMapAnnotation() for "+o.getFileName());
-			o.printObject();
-		}
+//			o.printObject();
+//		}
 		chooser.setMapAnnotation(o.getFileName(), o);
 	}
 	

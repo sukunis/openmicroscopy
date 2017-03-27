@@ -43,6 +43,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.SampleModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 //see also ome.xml.model.OME
@@ -158,7 +159,7 @@ public class MetaDataModel
 	
 	public void resetData()
 	{
-		System.out.println("#MetaDataModel::resetData()");
+		MonitorAndDebug.printConsole("#MetaDataModel::resetData()");
 		expModel=null;
 		sampleModel=null;
 		objModel=null;
@@ -299,7 +300,7 @@ public class MetaDataModel
 	
 	public void addData(Sample s, boolean overwrite) 
 	{
-		System.out.println("# MetaDataModel::addData() - Sample ");
+		MonitorAndDebug.printConsole("# MetaDataModel::addData() - Sample ");
 		if(sampleModel==null)
 			sampleModel=new SampleModel();
 		
@@ -318,7 +319,7 @@ public class MetaDataModel
 	
 	public void addData(ExperimentModel e, boolean overwrite) throws Exception 
 	{
-		System.out.println("# MetaDataModel::addData() - Experiment ");	
+		MonitorAndDebug.printConsole("# MetaDataModel::addData() - Experiment ");	
 		if(expModel==null)
 			expModel=new ExperimentModel();
 		
@@ -331,9 +332,9 @@ public class MetaDataModel
 					
 //			if(expModel.getGroupName()==null || expModel.getGroupName().equals("")){
 //					expModel.setGroupName(e.getGroupName());
-//					System.out.println("\t...group name = "+e.getGroupName());
+//					MonitorAndDebug.printConsole("\t...group name = "+e.getGroupName());
 //			}else{
-//				System.out.println("\t...group name doesn't set");
+//				MonitorAndDebug.printConsole("\t...group name doesn't set");
 //			}
 //			if(expModel.getProjectName()==null || expModel.getProjectName().equals(""))
 //				expModel.setProjectName(e.getProjectName());
@@ -348,7 +349,7 @@ public class MetaDataModel
 	 */
 	public void setExtendedData(ExperimentModel expCont) 
 	{
-		System.out.println("# MetaDataModel::setExtendedData - Experiment");
+		MonitorAndDebug.printConsole("# MetaDataModel::setExtendedData - Experiment");
 		if(expModel==null)
 			expModel=new ExperimentModel();
 		
@@ -371,7 +372,7 @@ public class MetaDataModel
 	
 	public void addData(Image i,boolean overwrite)
 	{
-		System.out.println("# MetaDataModel::addData - Image");
+		MonitorAndDebug.printConsole("# MetaDataModel::addData - Image");
 		if(imgModel==null)
 			imgModel=new ImageModel();
 		imgModel.addData(i, overwrite);
@@ -400,7 +401,7 @@ public class MetaDataModel
 	
 	public void addData(Channel c,boolean overwrite,int index)
 	{
-		System.out.println("# MetaDataModel::addData - Channel "+index);
+		MonitorAndDebug.printConsole("# MetaDataModel::addData - Channel "+index);
 		if(channelModel==null)
 			channelModel=new ChannelModel();
 		
@@ -436,7 +437,7 @@ public class MetaDataModel
 	 -------------------------------------------------------*/
 	public void addData(Detector d, boolean overwrite, int index) throws Exception 
 	{
-		System.out.println("# MetaDataModel::addData - Detector "+index);
+		MonitorAndDebug.printConsole("# MetaDataModel::addData - Detector "+index);
 		if(detectorModel==null)
 			detectorModel=new DetectorModel();
 		detectorModel.addData(d, overwrite,index);
@@ -446,7 +447,7 @@ public class MetaDataModel
 
 	public void addData(DetectorSettings ds, boolean overwrite, int index) throws Exception 
 	{
-		System.out.println("# MetaDataModel::addData - DetectorSettings "+index);
+		MonitorAndDebug.printConsole("# MetaDataModel::addData - DetectorSettings "+index);
 		if(detectorModel==null)
 			detectorModel=new DetectorModel();
 		detectorModel.addData(ds, overwrite,index);
@@ -559,7 +560,7 @@ public class MetaDataModel
 	 *--------------------------------------------*/
 	public void addData(LightPath lp, boolean overwrite, int i) throws Exception 
 	{
-		System.out.println("# MetaDataModel::addData - LightPath "+i);
+		MonitorAndDebug.printConsole("# MetaDataModel::addData - LightPath "+i);
 		if(lightPathModel==null)
 			lightPathModel=new LightPathModel();
 		
@@ -598,7 +599,7 @@ public class MetaDataModel
 	 *--------------------------------------------*/
 	public void addData(LightSource l, boolean overwrite, int i) throws Exception 
 	{
-		System.out.println("# MetaDataModel::addData - LightSource "+i);
+		MonitorAndDebug.printConsole("# MetaDataModel::addData - LightSource "+i);
 		if(lightSrcModel==null)
 			lightSrcModel=new LightSourceModel();
 		
@@ -762,7 +763,7 @@ public class MetaDataModel
 	
 	public void addData(Objective o,boolean overwrite) throws Exception
 	{
-		System.out.println("# MetaDataModel::addData() - Objective");
+		MonitorAndDebug.printConsole("# MetaDataModel::addData() - Objective");
 		if(objModel==null)
 			objModel=new ObjectiveModel();
 		
@@ -771,7 +772,7 @@ public class MetaDataModel
 
 	public void addData(ObjectiveSettings os, boolean overwrite) throws Exception 
 	{
-		System.out.println("# MetaDataModel::addData() - ObjectiveSettings");
+		MonitorAndDebug.printConsole("# MetaDataModel::addData() - ObjectiveSettings");
 		if(objModel==null)
 			objModel=new ObjectiveModel();
 		objModel.addData(os, overwrite);		
@@ -999,7 +1000,7 @@ public class MetaDataModel
 		int listIndex=-1;
 		for(int i=0; i<dichroicList.size(); i++){
 			if(dichroicList.get(i).getID().equals(f.getID())){
-//				System.out.println("identifyDich "+f.getID()+"("+chIdx+", "+linkedChannelForDichroic.get(i)+")");
+//				MonitorAndDebug.printConsole("identifyDich "+f.getID()+"("+chIdx+", "+linkedChannelForDichroic.get(i)+")");
 				return i;
 //				if(linkedChannelForDichroic.get(i)==chIdx){
 //					return i;
@@ -1015,9 +1016,9 @@ public class MetaDataModel
 	private void printFilter(String s,Filter f)
 	{
 		try{
-		System.out.println(s+" Filter "+f.getID()!=null ? f.getID() : "");
-		System.out.println("Model "+f.getModel()!=null ? f.getModel() : "");
-		System.out.println("Type "+f.getType()!=null ? f.getType().toString() : "");
+		MonitorAndDebug.printConsole(s+" Filter "+f.getID()!=null ? f.getID() : "");
+		MonitorAndDebug.printConsole("Model "+f.getModel()!=null ? f.getModel() : "");
+		MonitorAndDebug.printConsole("Type "+f.getType()!=null ? f.getType().toString() : "");
 		}catch(Exception e){}
 	}
 	
@@ -1163,7 +1164,7 @@ public class MetaDataModel
 		
 		if(imageOME==null){
 			//update all modules
-			System.out.println("# MetaDataModel::updateData() -- DIR");
+			MonitorAndDebug.printConsole("# MetaDataModel::updateData() -- DIR");
 			// adapt number of channels, detectors, lightPath and LightSrc
 			
 			//channels
@@ -1251,7 +1252,7 @@ public class MetaDataModel
 			
 			updateDir(metaDataModel,0);
 		}else{
-			System.out.println("# MetaDataModel::updateData() -- FILE");
+			MonitorAndDebug.printConsole("# MetaDataModel::updateData() -- FILE");
 //			if(getNumberOfChannels()>1){
 //				
 //			}else{
@@ -1271,35 +1272,35 @@ public class MetaDataModel
 	private void updateDir(MetaDataModel metaDataModel,int index) throws Exception
 	{
 		if(imgModel!=null){
-			System.out.println("# MetaDataModel::update(): image");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): image");
 			if(metaDataModel.getChangesImage()!=null){
 				imgModel.update(metaDataModel.getChangesImage());
 				this.setChangesImage(new ArrayList<>(metaDataModel.getChangesImage()));
 			}
 		}
 		if(imgEnvModel!=null){
-			System.out.println("# MetaDataModel::update(): imageEnv");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): imageEnv");
 			if(metaDataModel.getChangesImgEnv()!=null){
 				imgEnvModel.update(metaDataModel.getChangesImgEnv());
 				this.setChangesImageEnv(new ArrayList<>(metaDataModel.getChangesImgEnv()));
 			}
 		}
 		if(channelModel!=null){
-			System.out.println("# MetaDataModel::update(): channel");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): channel");
 			if(metaDataModel.getChangesChannel()!=null){
 				channelModel.update(metaDataModel.getChangesChannel()); 
 				this.setChangesChannel(metaDataModel.getChangesChannel());
 			}
 		}
 		if(objModel!=null){
-			System.out.println("# MetaDataModel::update(): objective");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): objective");
 			if(metaDataModel.getChangesObject()!=null){
 				objModel.update(metaDataModel.getChangesObject()); 
 				this.setChangesObject(metaDataModel.getChangesObject());
 			}
 		}
 		if(detectorModel!=null){
-			System.out.println("# MetaDataModel::update(): detector");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): detector");
 			if(metaDataModel.getChangesDetector()!=null){
 				detectorModel.update(metaDataModel.getChangesDetector());
 				this.setChangesDetector(metaDataModel.getChangesDetector());
@@ -1307,7 +1308,7 @@ public class MetaDataModel
 		}
 
 		if(lightSrcModel!=null){
-			System.out.println("# MetaDataModel::update(): lightSrc");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): lightSrc");
 			if(metaDataModel.getChangesLightSrc()!=null){
 				lightSrcModel.update(metaDataModel.getChangesLightSrc());
 				this.setChangesLightSrc(metaDataModel.getChangesLightSrc());
@@ -1315,7 +1316,7 @@ public class MetaDataModel
 		}
 
 		if(lightPathModel!=null){
-			System.out.println("# MetaDataModel::update(): lightPath");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): lightPath");
 			if(metaDataModel.getChangesLightPath()!=null){
 				lightPathModel.update(metaDataModel.getChangesLightPath());
 				this.setChangesLightPath(metaDataModel.getChangesLightPath());
@@ -1323,14 +1324,14 @@ public class MetaDataModel
 		}
 
 		if(sampleModel!=null){
-			System.out.println("# MetaDataModel::update(): sample");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): sample");
 			if(metaDataModel.getChangesSample()!=null){
 				sampleModel.update(metaDataModel.getChangesSample());
 				this.setChangesSample(metaDataModel.getChangesSample());
 			}
 		}
 		if(expModel!=null){
-			System.out.println("# MetaDataModel::update(): experimenter");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): experimenter");
 			if(metaDataModel.getChangesExperiment()!=null){
 				expModel.update(metaDataModel.getChangesExperiment());
 				this.setChangesExperiment(metaDataModel.getChangesExperiment());
@@ -1349,42 +1350,42 @@ public class MetaDataModel
 	private void updateFile(MetaDataModel metaDataModel,int index) throws Exception
 	{
 		if(imgModel!=null){
-			System.out.println("# MetaDataModel::update(): image");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): image");
 			imgModel.update(metaDataModel.getChangesImage());
 		}
 		if(imgEnvModel!=null){
-			System.out.println("# MetaDataModel::update(): imageEnv");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): imageEnv");
 			imgEnvModel.update(metaDataModel.getChangesImgEnv());
 		}
 		if(channelModel!=null){
-			System.out.println("# MetaDataModel::update(): channel");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): channel");
 			channelModel.update(metaDataModel.getChangesChannel()); 
 		}
 		if(objModel!=null){
-			System.out.println("# MetaDataModel::update(): objective");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): objective");
 			objModel.update(metaDataModel.getChangesObject()); 
 		}
 		if(detectorModel!=null){
-			System.out.println("# MetaDataModel::update(): detector");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): detector");
 			detectorModel.update(metaDataModel.getChangesDetector());
 		}
 
 		if(lightSrcModel!=null){
-			System.out.println("# MetaDataModel::update(): lightSrc");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): lightSrc");
 			lightSrcModel.update(metaDataModel.getChangesLightSrc());
 		}
 		
 		if(lightPathModel!=null){
-			System.out.println("# MetaDataModel::update(): lightPath");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): lightPath");
 			lightPathModel.update(metaDataModel.getChangesLightPath());
 		}
 		
 		if(sampleModel!=null){
-			System.out.println("# MetaDataModel::update(): sample");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): sample");
 			sampleModel.update(metaDataModel.getChangesSample());
 		}
 		if(expModel!=null){
-			System.out.println("# MetaDataModel::update(): experimenter");
+			MonitorAndDebug.printConsole("# MetaDataModel::update(): experimenter");
 			expModel.update(metaDataModel.getChangesExperiment());
 		}
 		
@@ -1424,16 +1425,16 @@ public class MetaDataModel
 				|| (changesSample!=null && !changesSample.isEmpty())
 				|| (changesExperiment!=null && !changesExperiment.isEmpty());
 		
-//		System.out.println("\t...Changes Image: "+(changesImg!=null && !changesImg.isEmpty()));
-//		System.out.println("\t...Changes Objective: "+(changesObj!=null && !changesObj.isEmpty()));
-//		System.out.println("\t...Changes Detector: "+(changesDetector!=null && !changesDetector.isEmpty()));
-//		System.out.println("\t...Changes LightSrc: "+(changesLightSrc!=null && !changesLightSrc.isEmpty()));
-//		System.out.println("\t...Changes LightPath: "+(changesLightPath!=null && !changesLightPath.isEmpty()));
-//		System.out.println("\t...Changes Channel: "+(changesChannel!=null && !changesChannel.isEmpty()));
-//		System.out.println("\t...Changes Sample: "+(changesSample!=null && !changesSample.isEmpty()));
-//		System.out.println("\t...Changes Experiment: "+(changesExperiment!=null && !changesExperiment.isEmpty()));
-//		System.out.println("\t...Changes ImgEnv: "+(changesImgEnv!=null && !changesImgEnv.isEmpty()));
-		System.out.println("# MetaDataModel::noticeUserInput(): "+res);
+//		MonitorAndDebug.printConsole("\t...Changes Image: "+(changesImg!=null && !changesImg.isEmpty()));
+//		MonitorAndDebug.printConsole("\t...Changes Objective: "+(changesObj!=null && !changesObj.isEmpty()));
+//		MonitorAndDebug.printConsole("\t...Changes Detector: "+(changesDetector!=null && !changesDetector.isEmpty()));
+//		MonitorAndDebug.printConsole("\t...Changes LightSrc: "+(changesLightSrc!=null && !changesLightSrc.isEmpty()));
+//		MonitorAndDebug.printConsole("\t...Changes LightPath: "+(changesLightPath!=null && !changesLightPath.isEmpty()));
+//		MonitorAndDebug.printConsole("\t...Changes Channel: "+(changesChannel!=null && !changesChannel.isEmpty()));
+//		MonitorAndDebug.printConsole("\t...Changes Sample: "+(changesSample!=null && !changesSample.isEmpty()));
+//		MonitorAndDebug.printConsole("\t...Changes Experiment: "+(changesExperiment!=null && !changesExperiment.isEmpty()));
+//		MonitorAndDebug.printConsole("\t...Changes ImgEnv: "+(changesImgEnv!=null && !changesImgEnv.isEmpty()));
+		MonitorAndDebug.printConsole("# MetaDataModel::noticeUserInput(): "+res);
 		return res;
 	}
 

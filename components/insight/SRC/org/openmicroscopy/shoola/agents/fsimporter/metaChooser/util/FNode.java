@@ -8,6 +8,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 
 public class FNode extends DefaultMutableTreeNode
 {
@@ -134,14 +135,14 @@ public class FNode extends DefaultMutableTreeNode
 	/**
 	 * Save model if view exists.
 	 */
-	public void saveModel() 
+	public void saveModel() throws Exception
 	{
 		if(view==null)
 			return;
 		try{
 			view.saveModel();
 		}catch(Exception e){
-			System.out.println("# FNode::saveModel(): Can't save model for this node");
+			
 			e.printStackTrace();
 		}
 		modelObj = view.getModelObject();
@@ -173,13 +174,13 @@ public class FNode extends DefaultMutableTreeNode
 	
 	public void printMaps()
 	{
-		System.out.println("FNODE :: "+getAbsolutePath());
+		MonitorAndDebug.printConsole("FNODE :: "+getAbsolutePath());
 		if(view!=null){
-			System.out.println("\t View Map:");
+			MonitorAndDebug.printConsole("\t View Map:");
 			view.getMapAnnotation().printObject();
 		}
 		if(mapAnnot!=null){
-			System.out.println("\t Intern Map:");	
+			MonitorAndDebug.printConsole("\t Intern Map:");	
 			mapAnnot.printObject();
 		}
 	}

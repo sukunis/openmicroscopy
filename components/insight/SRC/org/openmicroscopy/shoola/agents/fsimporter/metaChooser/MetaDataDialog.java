@@ -81,6 +81,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotatio
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
 import org.openmicroscopy.shoola.env.data.model.FileObject;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.openmicroscopy.shoola.util.ui.ClosableTabbedPaneComponent;
 import org.openmicroscopy.shoola.util.ui.UIUtilities;
 import org.slf4j.LoggerFactory;
@@ -774,7 +775,7 @@ private boolean disableTreeListener;
     private void loadAndShowFilteredDataForSelection(FNode node,
     		boolean parentVisible,boolean fileVisible,boolean predefinedVisible)
     {
-    	System.out.println("#MetaDataDialog::loadAndShowFilteredDataForSelection(): "
+    	MonitorAndDebug.printConsole("#MetaDataDialog::loadAndShowFilteredDataForSelection(): "
     			+ "parent="+parentVisible+", file="+fileVisible+", predefined="+predefinedVisible);
     	String file=null;
     	if(node==null || (file=getSelectedFilePath(node))==null)
@@ -850,7 +851,7 @@ private boolean disableTreeListener;
     					parentModel, view, true, true && enabledPredefinedData);
     		
     			boolean pLoad=loadParentDataAtUpdate || view.parentDataAreLoaded();
-    			System.out.println("# MetaDataView::setParentDataLoaded(): "+pLoad+" - of node "+node.getAbsolutePath());
+    			MonitorAndDebug.printConsole("# MetaDataView::setParentDataLoaded(): "+pLoad+" - of node "+node.getAbsolutePath());
     			view.setParentDataLoaded(pLoad);
     	}else{
     		try{
@@ -934,7 +935,7 @@ private boolean disableTreeListener;
 	{
 		lastSelectionType=FILE;
 	
-		System.out.println("# MetaDataDialog::loadAndShowDataForFile() : showFileData = "+showFileData+
+		MonitorAndDebug.printConsole("# MetaDataDialog::loadAndShowDataForFile() : showFileData = "+showFileData+
 				", showPreVal = "+showPreValues+", enablePreVal= "+enabledPredefinedData);
 		
 		String hasParentModel=parentModel==null ? "null" : "available";
@@ -963,7 +964,7 @@ private boolean disableTreeListener;
 	{
 		lastSelectionType=DIR;
 		
-		System.out.println("# MetaDataDialog::loadAndShowDataForDir() : "+
+		MonitorAndDebug.printConsole("# MetaDataDialog::loadAndShowDataForDir() : "+
 				", showPreVal = "+showPreValues+", enablePreVal= "+enabledPredefinedData);
 		
 		MetaDataModel currentDirModel=null;
@@ -998,7 +999,7 @@ private boolean disableTreeListener;
 	public void deselectNodeAction(FNode node) {
 		
 		if(node!=null){
-			System.out.println("# MetaDataDialog::deselectNodeAction("+node.getAbsolutePath()+")");
+			MonitorAndDebug.printConsole("# MetaDataDialog::deselectNodeAction("+node.getAbsolutePath()+")");
 			LOGGER.debug("MetaDataDialog::Deselect node action for "+node.getAbsolutePath());
 		
 			//save input
@@ -1006,7 +1007,7 @@ private boolean disableTreeListener;
         	
         	lastNode=node;
         	
-        	System.out.println("...# MetaDataDialog::deselectNodeAction("+node.getAbsolutePath()+")");
+        	MonitorAndDebug.printConsole("...# MetaDataDialog::deselectNodeAction("+node.getAbsolutePath()+")");
         }
 	}
     
@@ -1020,13 +1021,13 @@ private boolean disableTreeListener;
     	 if(panel.getComponentCount()>0){
              Component c=panel.getComponent(0);
              if(c instanceof MetaDataView){
-            	 System.out.println("SET VIEW :"+panel.getComponentCount());
+            	 MonitorAndDebug.printConsole("SET VIEW :"+panel.getComponentCount());
             	 return (MetaDataView) c;
              }else{
-            	 System.out.println("NO VIEW AVAILABLE :"+panel.getComponentCount());
+            	 MonitorAndDebug.printConsole("NO VIEW AVAILABLE :");
              }
     	 }else{
-    		 System.out.println("NO VIEW AVAILABLE :"+panel.getComponentCount());
+    		 MonitorAndDebug.printConsole("NO VIEW AVAILABLE :");
     	 }
     	 return null;
     }
@@ -1038,7 +1039,7 @@ private boolean disableTreeListener;
      */
 //    private MetaDataView loadData(FNode node,FNode parentNode)
 //    {
-//    	System.out.println("# MetaDataDialog::loadData(): "+node.getAbsolutePath());
+//    	MonitorAndDebug.printConsole("# MetaDataDialog::loadData(): "+node.getAbsolutePath());
 //        //import user data
 //        ImportUserData importData = getImportData();
 //        
@@ -1052,7 +1053,7 @@ private boolean disableTreeListener;
 //        } catch (Exception e) {
 //            return null;
 //        }
-//        System.out.println("...# MetaDataDialog::loadData(): "+node.getAbsolutePath());
+//        MonitorAndDebug.printConsole("...# MetaDataDialog::loadData(): "+node.getAbsolutePath());
 //        return dataView;
 //    }
 
@@ -1062,19 +1063,19 @@ private boolean disableTreeListener;
     private void saveInputToModel(FNode node,boolean showSaveDialog) 
     {
     	if(node!=null){
-    		System.out.println("# MetaDataDialog::saveInputToModel():"+node.getAbsolutePath());
+    		MonitorAndDebug.printConsole("# MetaDataDialog::saveInputToModel():"+node.getAbsolutePath());
     		//save view to node object
     		node.setView(getMetaDataView(metaPanel));
-//    		System.out.println("# MetaDataDialog::saveInputToModel(): GUI INPUT: "+node.getView().hasUserInput());
+//    		MonitorAndDebug.printConsole("# MetaDataDialog::saveInputToModel(): GUI INPUT: "+node.getView().hasUserInput());
     		
     		// changes available?
     		boolean saveToAll =false;
     		
     		if(node.getView()!=null){
     			if(node.getView().allDataWasStored() ){
-    				System.out.println("DATA FOR THIS VIEW STORED: TRUE");
+    				MonitorAndDebug.printConsole("DATA FOR THIS VIEW STORED: TRUE");
     			}else if(node.getView().hasDataToSave()){
-    				System.out.println("DATA FOR THIS VIEW STORED: FALSE");
+    				MonitorAndDebug.printConsole("DATA FOR THIS VIEW STORED: FALSE");
 
 
     				String text="There are unsaved changes for "+node.getAbsolutePath()+"!\n "
@@ -1091,12 +1092,16 @@ private boolean disableTreeListener;
     		}
 
     		if(saveToAll){
+    			try{
     			node.saveModel();
+    			}catch (Exception e){
+    				LOGGER.warn("Can't save model for this node: "+node.getAbsolutePath());
+    			}
     			if(!node.isLeaf())
     				updateChildsOfDirectory(node, null);
     			else{
     				if(node.hasModelObject()){
-    					System.out.println("\t clear list for "+node.getAbsolutePath());
+    					MonitorAndDebug.printConsole("\t clear list for "+node.getAbsolutePath());
     					node.getModelObject().clearListOfModifications();
     				}
     			}
@@ -1111,18 +1116,18 @@ private boolean disableTreeListener;
      */
     private void updateChildsOfDirectory(FNode node,MetaDataModelObject modelToInherit) 
     {
-    	System.out.println("# MetaDataDialog::updateChildsOfDirectories of "+node.getAbsolutePath());
+    	MonitorAndDebug.printConsole("# MetaDataDialog::updateChildsOfDirectories of "+node.getAbsolutePath());
     	LOGGER.debug("Update childs of "+node.getAbsolutePath());
     	
     	int numChilds=node.getChildCount();
     	MetaDataModelObject nodeModel=null;
     	
     	if(node.hasModelObject()){
-    		System.out.println("\t Use own model");
+    		MonitorAndDebug.printConsole("\t Use own model");
     		nodeModel=node.getModelObject();
     	}
     	else if(modelToInherit!=null){
-    		System.out.println("\t Use parent model");
+    		MonitorAndDebug.printConsole("\t Use parent model");
     		nodeModel=modelToInherit;
     	}else
     		return;
@@ -1131,7 +1136,7 @@ private boolean disableTreeListener;
     		FNode child = (FNode) node.getChildAt(i);
 
     		if(child.hasModelObject() ){
-    			System.out.println("\t ...update existing model/view of "+child.getAbsolutePath());
+    			MonitorAndDebug.printConsole("\t ...update existing model/view of "+child.getAbsolutePath());
     			LOGGER.debug("Update "+child.getAbsolutePath());
     			try {
     				child.getModelObject().updateData(nodeModel);
@@ -1147,7 +1152,7 @@ private boolean disableTreeListener;
     				updateChildsOfDirectory(child,null);
     			}
     		}else{
-    			System.out.println("\t ...don't update view of "+child.getAbsolutePath());
+    			MonitorAndDebug.printConsole("\t ...don't update view of "+child.getAbsolutePath());
     			//for all subdirectories updateChilds
     			if(!child.isLeaf()){
     				updateChildsOfDirectory(child,nodeModel);
@@ -1155,7 +1160,7 @@ private boolean disableTreeListener;
     		}
     	}//for
     	if(node.hasModelObject()){
-    		System.out.println("# MetaDataDialog::updateChildsOfDirectory(): clear list for "+node.getAbsolutePath());
+    		MonitorAndDebug.printConsole("# MetaDataDialog::updateChildsOfDirectory(): clear list for "+node.getAbsolutePath());
     		node.getModelObject().clearListOfModifications();
     	}
 	}
@@ -1352,10 +1357,10 @@ private boolean disableTreeListener;
         if(files==null || files.size()==0){
         	LOGGER.info("No data select");
         	// TODO: changes should be save
-        	System.out.println("# MetaDataDialog::resfreshFileView(): Filelist is null -> IMPORT ?");
+        	MonitorAndDebug.printConsole("# MetaDataDialog::resfreshFileView(): Filelist is null -> IMPORT ?");
 //        	disableTreeListener=true;
         }else
-        	System.out.println("# MetaDataDialog::refreshFileView(): list= "+files.size());
+        	MonitorAndDebug.printConsole("# MetaDataDialog::refreshFileView(): list= "+files.size());
         
         metaPanel.removeAll();
         createNodes(files);
@@ -1425,7 +1430,7 @@ private boolean disableTreeListener;
 //            break;
         case CMD_SAVE:
             LOGGER.info("[GUI-ACTION] -- save");
-            System.out.println("\n+++ EVENT: SAVE ++++\n");
+            MonitorAndDebug.printConsole("\n+++ EVENT: SAVE ++++\n");
             String fileName=getSelectedFilePath((FNode)fileTree.getLastSelectedPathComponent());
             if(fileName!=null){
                 String srcFile=fileName.equals("") ? "" : fileName;
@@ -1442,14 +1447,14 @@ private boolean disableTreeListener;
             break;
         case CMD_SAVEALL:
             LOGGER.info("[GUI-ACTION] -- save all");
-            System.out.println("\n+++ EVENT: SAVE ALL ++++\n");
+            MonitorAndDebug.printConsole("\n+++ EVENT: SAVE ALL ++++\n");
             //only for directory
             FNode parentNode = (FNode)fileTree.getLastSelectedPathComponent();
         	saveInputToModel(parentNode,false);
             break;
         case CMD_RESET:
         	LOGGER.info("[GUI-ACTION] -- reset");
-        	System.out.println("\n +++ EVENT RESET INPUT +++\n");
+        	MonitorAndDebug.printConsole("\n +++ EVENT RESET INPUT +++\n");
         	FNode selection=(FNode)fileTree.getLastSelectedPathComponent();
         	//TODO: profile default data eliminate
         	//file
@@ -1479,7 +1484,7 @@ private boolean disableTreeListener;
         case CMD_PROFILE:
         	//TODO: reload all available views
             LOGGER.info("[GUI-ACTION] -- CUSTUMIZE... ----");
-            System.out.println("[GUI-ACTION] -- CUSTUMIZE... ----");
+            MonitorAndDebug.printConsole("[GUI-ACTION] -- CUSTUMIZE... ----");
             UOSProfileEditorUI profileWriter=new UOSProfileEditorUI(customSettings, enabledPredefinedData);
             profileWriter.setVisible(true);
             customSettings=profileWriter.getProperties();
@@ -1531,11 +1536,11 @@ private boolean disableTreeListener;
     		}
 
     		String action=lastSelectedNode==null?"\n+++ INIT TREE +++":"\n+++ EVENT TREE DESELECT "+lastSelectedNode.getAbsolutePath()+"+++\n";
-    		System.out.println(action);
+    		MonitorAndDebug.printConsole(action);
     		deselectNodeAction(lastSelectedNode);
 
     		action=selectedNode==null?"":"\n+++ EVENT TREE SELECT "+selectedNode.getAbsolutePath()+"+++\n";
-    		System.out.println(action);
+    		MonitorAndDebug.printConsole(action);
     		selectNodeAction(selectedNode);
     	}
     }
@@ -1547,7 +1552,7 @@ private boolean disableTreeListener;
     private void selectNodeAction(FNode selectedNode) 
    {
 	   if(selectedNode!=null ){
-		   System.out.println("\n# MetaDataDialog::selectNodeAction("+selectedNode.getAbsolutePath()+")");
+		   MonitorAndDebug.printConsole("\n# MetaDataDialog::selectNodeAction("+selectedNode.getAbsolutePath()+")");
 		   seriesList.setModel(new DefaultListModel());
 //		   selectedNode.printMaps();
 		   LOGGER.debug("Select node action for "+selectedNode.getAbsolutePath());
@@ -1589,7 +1594,7 @@ private boolean disableTreeListener;
  @Override
     public void treeCollapsed(TreeExpansionEvent arg0) 
     {
-//		System.out.println("[DEBUG] tree collapsed");
+//		MonitorAndDebug.printConsole("[DEBUG] tree collapsed");
         
     }
 
@@ -1597,7 +1602,7 @@ private boolean disableTreeListener;
     @Override
     public void treeExpanded(TreeExpansionEvent arg0) 
     {
-//		System.out.println("[DEBUG] tree expand"+	
+//		MonitorAndDebug.printConsole("[DEBUG] tree expand"+	
 //		fileTree.getLastSelectedPathComponent());
     }
 
@@ -1634,7 +1639,7 @@ private boolean disableTreeListener;
 //				enabledPredefinedData=false;
 //			}
 //		}
-		System.out.println("\n+++EVENT : SET FILTER FOR VIEW +++\n");
+		MonitorAndDebug.printConsole("\n+++EVENT : SET FILTER FOR VIEW +++\n");
 		if(!disableItemListener)
 			showFilteredData(showDirData.isSelected(),showFileData.isSelected(),
 					showCustomData.isSelected());
@@ -1646,7 +1651,7 @@ private boolean disableTreeListener;
 	private void showFilteredData(boolean dirData, boolean fileData,
 			boolean customData) 
 	{
-		System.out.println("# MetaDataDialog::showFilteredData(): "+dirData+", "+fileData+", "+customData+", enablePreVal= "+enabledPredefinedData);
+		MonitorAndDebug.printConsole("# MetaDataDialog::showFilteredData(): "+dirData+", "+fileData+", "+customData+", enablePreVal= "+enabledPredefinedData);
 		
 		loadAndShowFilteredDataForSelection((FNode)fileTree.getLastSelectedPathComponent(),
 				dirData,fileData,customData);
@@ -1677,7 +1682,7 @@ private boolean disableTreeListener;
 //		MetaDataView view=getMetaDataView(metaPanel);
 //		
 //		if(view!=null && view.hasUserInput()){
-			System.out.println("\n+++ EVENT: IMPORT SAVE CHANGES ++++\n");
+			MonitorAndDebug.printConsole("\n+++ EVENT: IMPORT SAVE CHANGES ++++\n");
 //
 //			String defaultText="Save changes?\n";
 //
@@ -1722,15 +1727,15 @@ private boolean disableTreeListener;
 			
 			// no view exists and no changes input for node
         	if(maps==null && parentMap!=null){
-        		System.out.println("\t"+node.getAbsolutePath()+"\t use parent mapAnnotation");
+        		MonitorAndDebug.printConsole("\t"+node.getAbsolutePath()+"\t use parent mapAnnotation");
         		maps=new MapAnnotationObject(parentMap);
         		maps.setFileName(node.getAbsolutePath());
         	}
         	if(maps!=null){
         		firePropertyChange(ImportDialog.ADD_MAP_ANNOTATION,null,maps);
-        		System.out.println("\t"+maps.getMapAnnotationList());
+        		MonitorAndDebug.printConsole("\t"+maps.getMapAnnotationList());
         	}else{
-        		System.out.println("\t"+node.getAbsolutePath()+"\t mapAnnotation is null");
+        		MonitorAndDebug.printConsole("\t"+node.getAbsolutePath()+"\t mapAnnotation is null");
         	}
 		}else{
 			Enumeration children =node.children();
@@ -1740,7 +1745,7 @@ private boolean disableTreeListener;
     			
     			// no view exists and no changes input for node
             	if(maps==null && parentMap!=null){
-            		System.out.println("\t"+subNode.getAbsolutePath()+"\t use parent mapAnnotation");
+            		MonitorAndDebug.printConsole("\t"+subNode.getAbsolutePath()+"\t use parent mapAnnotation");
             		maps=new MapAnnotationObject(parentMap);
             	}
     			saveMapAnnotationOfSubDir(subNode, maps);

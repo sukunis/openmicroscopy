@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 import ome.units.quantity.Pressure;
@@ -103,7 +104,7 @@ public class ImageEnvModel
 
 	public void update(List<TagData> changesImgEnv) {
 		if(changesImgEnv==null){
-			System.out.println("\t no changes for imgEnv");
+			MonitorAndDebug.printConsole("\t no changes for imgEnv");
 			return;
 		}
 		for(TagData t: changesImgEnv){
@@ -120,7 +121,7 @@ public class ImageEnvModel
 		if(val.equals(""))
 			return;
 		
-		System.out.println("\t...update "+name+" : "+val);
+		MonitorAndDebug.printConsole("\t...update "+name+" : "+val);
 		switch (name) {
 		case TagNames.TEMP:
 			element.setTemperature(val.equals("") ?

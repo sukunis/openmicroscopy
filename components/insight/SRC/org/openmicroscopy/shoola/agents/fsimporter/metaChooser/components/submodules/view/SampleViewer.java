@@ -21,6 +21,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Mod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -223,7 +224,7 @@ protected void setPredefinedTag(TagConfiguration t)
 	case TagNames.RAWDESC:
 		if(rawMaterialDesc!=null && !rawMaterialDesc.getTagValue().equals(""))
 			return;
-		System.out.println("Raw desc = "+t.getValue());
+		MonitorAndDebug.printConsole("Raw desc = "+t.getValue());
 		setRawMaterialDesc(t.getValue(), prop);
 		rawMaterialDesc.dataHasChanged(true);
 		break;

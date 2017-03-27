@@ -33,6 +33,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Mod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -335,7 +336,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			description.setVisible(true);
 			break;
 		default:
-			System.out.println("[CONF] unknown tag: "+name );break;
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
 		}
 	}
 	protected void setPredefinedTag(TagConfiguration t) 
@@ -346,7 +347,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
 		
-		System.out.println("# LightSourceSubViewer::setPredefinedTag(): "+name+" - "+classification);
+		MonitorAndDebug.printConsole("# LightSourceSubViewer::setPredefinedTag(): "+name+" - "+classification);
 		
 		Boolean prop=t.getProperty();
 		switch(name){
@@ -489,7 +490,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			description.dataHasChanged(true);
 			break;
 		default:
-			System.out.println("[CONF] unknown tag: "+name );break;
+			LOGGER.warn("[CONF] unknown tag: "+name );break;
 		}
 	}
 	

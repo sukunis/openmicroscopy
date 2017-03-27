@@ -36,6 +36,7 @@ import javax.swing.Box;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.FilterCompUI;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 import ome.xml.model.Dichroic;
@@ -141,7 +142,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 			public void actionPerformed(ActionEvent e) 
 			{
 				lightPathTable.appendElem(filterUI, "");
-				System.out.println("# LightPathEditor:: \n dataChanged=true");
+				MonitorAndDebug.printConsole("# LightPathEditor:: \n dataChanged=true");
 				dataChanged=true;
 			}
 		});
@@ -301,13 +302,13 @@ public class LightPathEditor extends JDialog implements ActionListener
 	    {
 	        public void actionPerformed(ActionEvent e)
 	        {
-	        	System.out.println("# LightPathEditor::changes Table \n dataChanged=true");
+	        	MonitorAndDebug.printConsole("# LightPathEditor::changes Table \n dataChanged=true");
 	        	dataChanged=true;
 //	            TableCellListener tcl = (TableCellListener)e.getSource();
-//	            System.out.println("Row   : " + tcl.getRow());
-//	            System.out.println("Column: " + tcl.getColumn());
-//	            System.out.println("Old   : " + tcl.getOldValue());
-//	            System.out.println("New   : " + tcl.getNewValue());
+//	            MonitorAndDebug.printConsole("Row   : " + tcl.getRow());
+//	            MonitorAndDebug.printConsole("Column: " + tcl.getColumn());
+//	            MonitorAndDebug.printConsole("Old   : " + tcl.getOldValue());
+//	            MonitorAndDebug.printConsole("New   : " + tcl.getNewValue());
 	        }
 	    };
 
@@ -418,9 +419,9 @@ public class LightPathEditor extends JDialog implements ActionListener
 		        JPopupMenu popupMenu = (JPopupMenu) menuItem.getParent(); 
 		        Component invoker = popupMenu.getInvoker();  
 		        // Print MenuItem index against the total number of items
-//		        System.out.println(popupMenu.getComponentZOrder(menuItem)+"/"+popupMenu.getComponentCount());
+//		        MonitorAndDebug.printConsole(popupMenu.getComponentZOrder(menuItem)+"/"+popupMenu.getComponentCount());
 		        lightPathTable.insertElemAtSelection(availableFilter.get(popupMenu.getComponentZOrder(menuItem)));
-		        System.out.println("# LightPathEditor:: \n dataChanged=true");
+		        MonitorAndDebug.printConsole("# LightPathEditor:: \n dataChanged=true");
 		        dataChanged=true;
 		    }catch(Exception ex){
 		        ex.printStackTrace();
@@ -503,7 +504,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 
 	public boolean hasDataChanged() {
 		boolean result=dataChanged || lightPathTable.hasDataChanged();
-		System.out.println("# LightPathEditor::hasDataChanged(): "+result+": "+dataChanged+", "+lightPathTable.hasDataChanged());
+		MonitorAndDebug.printConsole("# LightPathEditor::hasDataChanged(): "+result+": "+dataChanged+", "+lightPathTable.hasDataChanged());
 		return result;
 	}
 	

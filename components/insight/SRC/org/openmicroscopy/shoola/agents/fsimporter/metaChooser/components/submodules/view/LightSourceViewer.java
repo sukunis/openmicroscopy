@@ -38,6 +38,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Mod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -78,7 +79,7 @@ public class LightSourceViewer extends ModuleViewer{
 	public LightSourceViewer(LightSourceModel model,ModuleConfiguration conf,
 			int index,boolean showPreValues,List<LightSource> availableElems)
 	{
-		System.out.println("# LightSrcViewer::newInstance("+(model!=null?"model":"null")+") "+index);
+		MonitorAndDebug.printConsole("# LightSrcViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		
 //		model.printValues();
 		
@@ -311,7 +312,7 @@ public class LightSourceViewer extends ModuleViewer{
 		case LightSourceModel.FILAMENT: sourceType.setSelectedIndex(2);break;
 		case LightSourceModel.GENERIC_EXCITATION:sourceType.setSelectedIndex(3);break;
 		case LightSourceModel.LIGHT_EMITTING_DIODE: sourceType.setSelectedIndex(4);break;
-		default: System.out.println("\t...unknown type");break;
+		default: LOGGER.warn("[CONF] unknown type: "+data.getLightSource(index).getClass().getSimpleName() );break;
 		}
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).setGUIData();
 		setDataFromCode=false;
@@ -366,15 +367,15 @@ public class LightSourceViewer extends ModuleViewer{
 	@Override
 	public void saveData() 
 	{		
-//		System.out.println("\t... lightSrc dataChanged = "+dataChanged);
+//		MonitorAndDebug.printConsole("\t... lightSrc dataChanged = "+dataChanged);
 //		if(tagList!=null){
 //			for(int i=0; i<tagList.size();i++){
 //				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
-//				System.out.println("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
+//				MonitorAndDebug.printConsole("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
 //			}
 //		}
 		
-//		System.out.println("\t...save data for "+((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getClassification());
+//		MonitorAndDebug.printConsole("\t...save data for "+((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getClassification());
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).saveData();
 
 		// --- Settings --------------------

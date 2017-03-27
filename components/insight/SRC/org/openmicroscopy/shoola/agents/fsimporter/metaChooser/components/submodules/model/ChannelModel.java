@@ -15,6 +15,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 /**
  * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
@@ -193,7 +194,7 @@ public class ChannelModel
 	public void update(List<List<TagData>> changesChannel) throws Exception
 	{
 		if(changesChannel==null){
-			System.out.println("\t no changes for channel");
+			MonitorAndDebug.printConsole("\t no changes for channel");
 			return;
 		}
 		int index=0;

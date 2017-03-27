@@ -25,6 +25,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Mod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util.LightPathElement;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -56,7 +57,7 @@ public class LightPathViewer extends ModuleViewer{
 	public LightPathViewer(LightPathModel model,ModuleConfiguration conf,int index,
 			List<Object> availableElems)
 	{
-		System.out.println("# LightPathViewer::newInstance("+(model!=null?"model":"null")+") "+index);
+		MonitorAndDebug.printConsole("# LightPathViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		this.data=model;
 		this.index=index;
 		this.availableElems=availableElems;

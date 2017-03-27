@@ -33,6 +33,7 @@ import ome.xml.model.primitives.PositiveInteger;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 
 /**
  * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
@@ -88,7 +89,7 @@ public abstract class ModuleViewer extends JPanel
 		if(tagList!=null){
 			for(TagData t:tagList){
 				if(t!=null){
-//					System.out.println("\t was Tag stored: "+t.getTagName()+" -- "+t.isDataSaved());
+//					MonitorAndDebug.printConsole("\t was Tag stored: "+t.getTagName()+" -- "+t.isDataSaved());
 					boolean val=t!=null ? t.isDataSaved() :true;
 					result= result && val;
 				}
@@ -126,7 +127,7 @@ public abstract class ModuleViewer extends JPanel
 			for(int i=0; i<tagList.size();i++){
 				boolean val=tagList.get(i)!=null ? tagList.get(i).valueHasChanged() : false;
 //				if(tagList.get(i)!=null)
-//					System.out.println("\t changes : "+tagList.get(i).getTagName()+" : "+val+","+dataChanged);
+//					MonitorAndDebug.printConsole("\t changes : "+tagList.get(i).getTagName()+" : "+val+","+dataChanged);
 				result= result || val || dataChanged;
 			}
 		}
@@ -136,7 +137,7 @@ public abstract class ModuleViewer extends JPanel
 	public boolean hasDataToSave2(HashMap<String,String> map)
 	{
 		boolean result=false;
-		System.out.println("#ModuleViewer::hasDataToSave2()");
+		MonitorAndDebug.printConsole("#ModuleViewer::hasDataToSave2()");
 		if(tagList!=null){
 			if(map!=null){
 				for(int i=0; i<tagList.size();i++){
@@ -147,7 +148,7 @@ public abstract class ModuleViewer extends JPanel
 						if(map.containsKey(name) && 
 								(map.get(name).equals(value))){
 							val=false;
-							System.out.println("\tStill saved: "+tagList.get(i).getTagName()+" = "+tagList.get(i).getTagValue()+" ,( "+dataChanged+")");
+							MonitorAndDebug.printConsole("\tStill saved: "+tagList.get(i).getTagName()+" = "+tagList.get(i).getTagValue()+" ,( "+dataChanged+")");
 						}
 						result= result || val || dataChanged;
 					}
@@ -201,10 +202,10 @@ public abstract class ModuleViewer extends JPanel
 		PositiveInteger result=null;
 		Integer t=Integer.parseInt(c);
 //		if(t!=null && t>0){
-//			System.out.println("\t...parseToPositiveInt() "+t);
+//			MonitorAndDebug.printConsole("\t...parseToPositiveInt() "+t);
 			result=new PositiveInteger(t);
 //		}else{
-//			System.out.println("ERROR: parseToPositiveInt() "+c);
+//			MonitorAndDebug.printConsole("ERROR: parseToPositiveInt() "+c);
 //		}
 		return result;
 	}
@@ -288,7 +289,7 @@ public abstract class ModuleViewer extends JPanel
 				
 				@Override
 				public void keyTyped(KeyEvent e) {
-//					System.out.println("########## INPUT TYPE############### "+e.getSource().getClass().getName());
+//					MonitorAndDebug.printConsole("########## INPUT TYPE############### "+e.getSource().getClass().getName());
 					
 				}
 				
@@ -300,7 +301,7 @@ public abstract class ModuleViewer extends JPanel
 				
 				@Override
 				public void keyPressed(KeyEvent e) {
-//					System.out.println("########## INPUT PRESSED ############### "+e.getSource().getClass().getName());
+//					MonitorAndDebug.printConsole("########## INPUT PRESSED ############### "+e.getSource().getClass().getName());
 					
 				}
 			});

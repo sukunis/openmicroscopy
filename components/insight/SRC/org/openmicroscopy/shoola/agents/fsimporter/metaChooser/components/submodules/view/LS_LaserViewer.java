@@ -11,6 +11,7 @@ import ome.xml.model.Laser;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 
 /**
  * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
@@ -25,7 +26,7 @@ public class LS_LaserViewer extends LightSourceSubViewer
 	 */
 	public LS_LaserViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
-		System.out.println("# LS_LaserViewer::new Instance("+(model!=null?"model":"null")+") "+index);
+		MonitorAndDebug.printConsole("# LS_LaserViewer::new Instance("+(model!=null?"model":"null")+") "+index);
 		
 		classification=LightSourceModel.LASER;
 		this.data=model;
@@ -71,7 +72,7 @@ tagList=new ArrayList<TagData>();
 				e1.printStackTrace();
 			}
 		}
-		System.out.println("# LS_LaserViewer::setGUIData()");
+		MonitorAndDebug.printConsole("# LS_LaserViewer::setGUIData()");
 		
 		Laser lightSrc=(Laser) data.getLightSource(index);
 		
@@ -123,11 +124,11 @@ tagList=new ArrayList<TagData>();
 	public void saveData() 
 	{
 		
-//		System.out.println("\t... lightSrc dataChanged = "+dataChanged);
+//		MonitorAndDebug.printConsole("\t... lightSrc dataChanged = "+dataChanged);
 		if(tagList!=null){
 			for(int i=0; i<tagList.size();i++){
 				boolean val=tagList.get(i)!=null ? tagList.get(i).valueHasChanged() : false;
-//				System.out.println("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
+//				MonitorAndDebug.printConsole("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
 			}
 		}
 		
@@ -148,7 +149,7 @@ tagList=new ArrayList<TagData>();
 		try{
 			lightSrc=(Laser) data.getLightSource(index);
 		}catch(ClassCastException e){
-			System.out.println("\tATTENTION...overwrite lightSrc with another type of lightSrc.");
+			LOGGER.warn("\tATTENTION...overwrite lightSrc with another type of lightSrc.");
 			String oldClass=data.getLightSource(index).getClass().getSimpleName();
 			try{
 				data.addData(new Laser(), true, index);
@@ -157,7 +158,7 @@ tagList=new ArrayList<TagData>();
 				e.printStackTrace();
 			}
 			lightSrc=(Laser) data.getLightSource(index);
-			System.out.println("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
+			MonitorAndDebug.printConsole("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
 		}
 		
 		try{

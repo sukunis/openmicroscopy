@@ -25,6 +25,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Mod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -76,7 +77,7 @@ private String stagePosRef;
  */
 public ChannelViewer(ChannelModel model,ModuleConfiguration conf,int index)
 {
-	System.out.println("# ChannelViewer::newInstance("+(model!=null?"model":"null")+") "+index);
+	MonitorAndDebug.printConsole("# ChannelViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 	this.data=model;
 	this.index=index;
 	initComponents(conf);
@@ -479,7 +480,7 @@ public static Color parseColor(String c)
 {
 	if(c.equals(""))
 		return null;
-	System.out.println("# ChannelViewer::parseColor(): "+(new Color(Integer.valueOf(c, 16).intValue())).getValue());
+	MonitorAndDebug.printConsole("# ChannelViewer::parseColor(): "+(new Color(Integer.valueOf(c, 16).intValue())).getValue());
 	return new Color(Integer.valueOf(c, 16).intValue());//Integer.valueOf(c));
 }
 public static IlluminationType parseIllumType(String c) throws EnumerationException 

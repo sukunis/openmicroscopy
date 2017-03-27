@@ -9,6 +9,7 @@ import loci.formats.FormatException;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 import ome.units.unit.Unit;
@@ -330,7 +331,7 @@ public class ExperimentModel {
 	public void update(List<TagData> changesExperiment) throws Exception 
 	{
 		if(changesExperiment==null){
-			System.out.println("\t no changes for experiment");
+			MonitorAndDebug.printConsole("\t no changes for experiment");
 			return;
 		}
 		for(TagData t: changesExperiment){
@@ -343,7 +344,7 @@ public class ExperimentModel {
 	}
 	private void setTag(String name,String val,Unit unit) throws Exception
 	{
-		System.out.println("\t...update "+name+" : "+val);
+		MonitorAndDebug.printConsole("\t...update "+name+" : "+val);
 		switch (name) {
 		case TagNames.E_TYPE:
 			if(experiment==null)
@@ -408,12 +409,12 @@ public class ExperimentModel {
 
 	public void printValues()
 	{
-		System.out.println("\nExperiment Modul Values::");
+		MonitorAndDebug.printConsole("\nExperiment Modul Values::");
 		if(projectPartner!=null)
-			System.out.println("\t...Project Partner = "+projectPartner.getFirstName()+" "+projectPartner.getLastName());
+			MonitorAndDebug.printConsole("\t...Project Partner = "+projectPartner.getFirstName()+" "+projectPartner.getLastName());
 		if(experiment!=null){
-			System.out.println("\t...Type = "+experiment.getType());
-			System.out.println("\t...Desc = "+experiment.getDescription());
+			MonitorAndDebug.printConsole("\t...Type = "+experiment.getType());
+			MonitorAndDebug.printConsole("\t...Desc = "+experiment.getDescription());
 		}
 	}
 }

@@ -12,6 +12,7 @@ import ome.xml.model.enums.ArcType;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 
 /**
  * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
@@ -86,7 +87,7 @@ public class LS_ArcViewer extends LightSourceSubViewer
 		try{
 			lightSrc=(Arc) data.getLightSource(index);
 		}catch(ClassCastException e){
-			System.out.println("\tATTENTION...overwrite lightSrc with another type of lightSrc.");
+			LOGGER.warn("\tATTENTION...overwrite lightSrc with another type of lightSrc.");
 			String oldClass=data.getLightSource(index).getClass().getSimpleName();
 			try{
 				data.addData(new Arc(), true, index);
@@ -95,7 +96,7 @@ public class LS_ArcViewer extends LightSourceSubViewer
 				e.printStackTrace();
 			}
 			lightSrc=(Arc) data.getLightSource(index);
-			System.out.println("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
+			MonitorAndDebug.printConsole("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
 		}
 
 		try{

@@ -27,6 +27,7 @@ import ome.xml.model.primitives.Timestamp;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
+import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -84,14 +85,12 @@ public class ImageModel
 	private void replaceData(Image i)
 	{
 		if(i!=null){
-			System.out.println("# ImageModel::replaceData()");
 			element=copyImage(i);
 		}
 	}
 
 	private void completeData(Image i) throws Exception
 	{
-		System.out.println("# ImageModel::completeData()");
 		//copy input fields
 		Image copyIn=null;
 		if(element!=null){
@@ -149,7 +148,7 @@ public class ImageModel
 	public void update(List<TagData> changesImage) throws Exception 
 	{
 		if(changesImage==null){
-			System.out.println("\t no changes for image");
+			MonitorAndDebug.printConsole("\t no changes for image");
 			return;
 		}
 		for(TagData t: changesImage){
@@ -188,7 +187,7 @@ public class ImageModel
 		case TagNames.DIMXY:
 			String[] dimXY=parseArrayString(value,2);
 			if(dimXY==null || dimXY.length<2){
-				System.out.println("WARNING: ImageModel::updateTag(): can't parse dimXY");
+				LOGGER.warn("WARNING: ImageModel::updateTag(): can't parse dimXY");
 				return;
 			}
 			element.getPixels().setSizeX(PositiveInteger.valueOf(dimXY[0]));
@@ -200,7 +199,7 @@ public class ImageModel
 		case TagNames.PIXELSIZE:
 			String[] sizeXY=parseArrayString(value,2);
 			if(sizeXY==null || sizeXY.length<2){
-				System.out.println("WARNING: ImageModel::updateTag(): can't parse sizeXY");
+				LOGGER.warn("WARNING: ImageModel::updateTag(): can't parse sizeXY");
 				return;
 			}
 			element.getPixels().setPhysicalSizeX(ModuleViewer.parseToLength(sizeXY[0], tagUnit, true));
@@ -209,7 +208,7 @@ public class ImageModel
 		case TagNames.DIMZTC:
 			String[] dimZTC=parseArrayString(value,3);
 			if(dimZTC==null || dimZTC.length<3){
-				System.out.println("WARNING: ImageModel::updateTag(): can't parse dimZTC");
+				LOGGER.warn("WARNING:  ImageModel::updateTag(): can't parse dimZTC");
 				return;
 			}
 			element.getPixels().setSizeZ(PositiveInteger.valueOf(dimZTC[0]));
@@ -219,7 +218,7 @@ public class ImageModel
 		case TagNames.STAGELABEL:
 			String[] stagePos=parseArrayString(value,2);
 			if(stagePos==null || stagePos.length<2){
-				System.out.println("WARNING: ImageModel::updateTag(): can't parse stage pos");
+				LOGGER.warn("WARNING: ImageModel::updateTag(): can't parse stage pos");
 				return;
 			}
 			element.getStageLabel().setX(ModuleViewer.parseToLength(stagePos[0],tagUnit, false));
@@ -264,9 +263,9 @@ public class ImageModel
 	{
 
 		if(element!=null){
-			System.out.println("\t...image model pixel depth = "+(element.getPixels()!=null ? element.getPixels().getType(): ""));
-			System.out.println("\t...image model stageX = "+(element.getStageLabel()!=null ? element.getStageLabel().getX(): ""));
-			System.out.println("\t...image model stageY = "+(element.getStageLabel()!=null ? element.getStageLabel().getY(): ""));
+			MonitorAndDebug.printConsole("\t...image model pixel depth = "+(element.getPixels()!=null ? element.getPixels().getType(): ""));
+			MonitorAndDebug.printConsole("\t...image model stageX = "+(element.getStageLabel()!=null ? element.getStageLabel().getX(): ""));
+			MonitorAndDebug.printConsole("\t...image model stageY = "+(element.getStageLabel()!=null ? element.getStageLabel().getY(): ""));
 		}
 	}
 
