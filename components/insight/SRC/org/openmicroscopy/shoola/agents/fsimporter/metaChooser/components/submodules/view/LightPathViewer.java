@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
+import ome.xml.model.FilterSet;
 import ome.xml.model.LightPath;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.FilterType;
@@ -204,6 +205,7 @@ public class LightPathViewer extends ModuleViewer{
 			List<Filter> emList=lightPath.copyLinkedEmissionFilterList();
 			List<Filter> exList=lightPath.copyLinkedExcitationFilterList();
 
+			
 			if(exList!=null){
 				for(Filter f:exList){
 					lightPathTable.appendElem(f,EXITATION);
@@ -279,6 +281,7 @@ public class LightPathViewer extends ModuleViewer{
 	public void createLightPath(List<Object> list) throws Exception
 	{
 		if(list!=null && !list.isEmpty()){
+
 			LightPath newElement=new LightPath();
 			int linkType=1;
 			for(Object f : list)
@@ -298,7 +301,7 @@ public class LightPathViewer extends ModuleViewer{
 							newElement.linkEmissionFilter(MetaDataModel.convertDichroicToFilter((Dichroic)f));
 						}
 
-					}else{
+					}else if(f instanceof Filter){
 
 						String	type= ((Filter) f).getType()!=null ? ((Filter) f).getType().toString() : "";
 						//filters that comes before and dichroic are exitation filters by definition
@@ -314,8 +317,25 @@ public class LightPathViewer extends ModuleViewer{
 								newElement.linkEmissionFilter((Filter) f);
 							}
 						}
+					}else if(f instanceof FilterSet){
+						//Exitations
+						for(Filter subF:((FilterSet) f).copyLinkedExcitationFilterList()){
+							newElement.linkExcitationFilter(subF);
+						}
+						//Dichroic
+						if(primDNotExists){
+							newElement.linkDichroic(((FilterSet) f).getLinkedDichroic());
+						}else{
+							LOGGER.warn("primary Dichroic still exists! [LightPathViewer::createLightPath]");
+							newElement.linkEmissionFilter(MetaDataModel.convertDichroicToFilter(((FilterSet) f).getLinkedDichroic()));
+						}
+						//Emmisions
+						linkType=2;
+						for(Filter subF : ((FilterSet) f).copyLinkedEmissionFilterList()){
+							newElement.linkEmissionFilter(subF);
+						}
 					}
-				}
+				}//f!=null
 			}
 			data.addData(newElement, true, index);
 		}

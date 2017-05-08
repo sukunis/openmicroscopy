@@ -41,6 +41,7 @@ import ome.xml.model.Dichroic;
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
 import ome.xml.model.Filter;
+import ome.xml.model.FilterSet;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Instrument;
@@ -375,14 +376,14 @@ public class MetaDataUI extends JPanel
 					addLightSrcData(i,parentModel.getLightSourceData(i),parentModel.getLightSourceSettings(i),true);
 				}
 				for(int i=0; i<parentModel.getNumberOfLightPath();i++){
-					addLightPathData(i,parentModel.getLightPath(i),true);
+					addLightPathData(i,parentModel.getLightPath(i),parentModel.getFilterSet(i),true);
 				}
 				
 			}else{
 				//inheritance for file
 				for(int i=0; i<parentModel.getNumberOfChannels();i++){
 					addChannelData(i,parentModel.getChannelData(i),true);
-					addLightPathData(i,parentModel.getLightPath(i),true);
+					addLightPathData(i,parentModel.getLightPath(i),parentModel.getFilterSet(i),true);
 				}
 				for(int i=0; i<parentModel.getNumberOfDetectors();i++){
 					addDetectorData(i, parentModel.getDetector(i),parentModel.getDetectorSettings(i), true);
@@ -442,11 +443,14 @@ public class MetaDataUI extends JPanel
 			}
 	}
 	
-	private void addLightPathData(int i, LightPath lightPath, boolean b) throws Exception 
+	private void addLightPathData(int i, LightPath lightPath, FilterSet filterSet, boolean b) throws Exception 
 	{
 			if(lightPath!=null){
 				model.addData(lightPath, b,i);
 			}
+			if(filterSet!=null){
+				model.addData(filterSet, b,i);
+	}
 	}
 
 	private void addImageData(Image i,boolean overwrite)  
@@ -497,6 +501,7 @@ public class MetaDataUI extends JPanel
 					List<LightSource> lightSources=null;
 					List<Filter> filters=null;
 					List<Dichroic> dichroics=null;
+					List<FilterSet> filterSets=null;
 					List<Channel> channels=null;
 					List<Plane> planes=null;
 
@@ -512,10 +517,12 @@ public class MetaDataUI extends JPanel
 						lightSources=instrument.copyLightSourceList();
 						filters=instrument.copyFilterList();
 						dichroics=instrument.copyDichroicList();
+						filterSets=instrument.copyFilterSetList();
 						List<Filter> filterList=instrument.copyFilterList();
 						model.setFilterList(filterList);
 						List<Dichroic> dichroicList=instrument.copyDichroicList();
 						model.setDichroicList(dichroicList);
+						model.setFilterSetList(filterSets);
 					}
 					StructuredAnnotations annot=ome.getStructuredAnnotations();
 
@@ -542,6 +549,7 @@ public class MetaDataUI extends JPanel
 						model.addToObjList(objectives,true);
 						model.addToLightPathList_Filter(filters,true);
 						model.addToLightPathList_Dichroic(dichroics,true);
+						model.addToLightPathList_FilterSet(filterSets, true);
 					}
 				}else{
 					LOGGER.warn("[DATA] NO IMAGE object available");
@@ -1116,7 +1124,7 @@ public class MetaDataUI extends JPanel
 			MonitorAndDebug.printConsole("\t...Set visible Detector for Channel "+name);
 			detectorPane2.removeAll();
 			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),
-					index,showPreValues,model.getDetectorHardwareList(),parent);
+					index,showPreValues,model.getAvailableDetectorsImgData(),parent);
 			detectorPane2.add(control.createPropPane(detectorViewer, "Detector", "for "+ name));
 		}
 	}
@@ -1163,7 +1171,7 @@ public class MetaDataUI extends JPanel
 			detectorPane2=new JPanel(new CardLayout());
 			ModuleConfiguration detModul=customSett.getDetectorConf();
 			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),
-					index,showPreValues,model.getDetectorHardwareList(),parent);
+					index,showPreValues,model.getAvailableDetectorsImgData(),parent);
 			detectorPane2.add(control.createPropPane(detectorViewer, "Detector", "for "+ name));
 			addToPlaceholder(detectorPane2, detModul.getPosition(), detModul.getWidth());
 		}

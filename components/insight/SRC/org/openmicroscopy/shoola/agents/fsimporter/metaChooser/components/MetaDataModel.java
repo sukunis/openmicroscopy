@@ -12,6 +12,7 @@ import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
+import ome.xml.model.FilterSet;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Instrument;
@@ -131,6 +132,8 @@ public class MetaDataModel
 	private List<Objective> availableObjectives;
 	
 	private List<Object> availableLightPathElems;
+
+	private List<FilterSet> filterSetList;
 
 	/** Objects for MapAnnotation creation*/
 //	private HashMap<String, String> lightPathAnnotation;
@@ -567,6 +570,21 @@ public class MetaDataModel
 		lightPathModel.addData(lp, overwrite, i);
 	}
 
+	public FilterSet getFilterSet(int index) throws Exception
+	{
+		if(lightPathModel==null || getNumberOfLightPath()==0){
+			return null;
+		}
+		return lightPathModel.getFilterSet(index);
+	}
+
+	public void addData(FilterSet filterSet, boolean b, int i) {
+		if(lightPathModel==null)
+			lightPathModel=new LightPathModel();
+		
+		lightPathModel.addData(filterSet, b, i);
+	}
+
 
 	public LightPath getLightPath(int index) throws Exception
 	{
@@ -882,6 +900,9 @@ public class MetaDataModel
 	}
 	
 
+	public void setFilterSetList(List<FilterSet> list) {
+		filterSetList=list;
+	}
 	
 	/** TODO: if no primD exists convert first emF of type dichroic to primD
 	 *  Add elements of list to the list of filter and dichroics of this image.
@@ -1561,7 +1582,9 @@ public class MetaDataModel
 	
 
 	
-	public List<Detector> getDetectorHardwareList() {
+	
+	
+	public List<Detector> getAvailableDetectorsImgData(){
 		return availableDetectors;
 	}
 
@@ -1583,6 +1606,20 @@ public class MetaDataModel
 		return availableObjectives;
 	}
 
+	public void addToLightPathList_FilterSet(List<FilterSet> filterSets, boolean append)
+	{
+		if(filterSets==null || filterSets.size()==0)
+			return;
+
+		if(availableLightPathElems==null){
+			availableLightPathElems=new ArrayList<Object>();
+		}else if(!append)
+			availableLightPathElems.clear();
+
+		for(int i=0; i<filterSets.size(); i++){
+			availableLightPathElems.add(filterSets.get(i));
+		}	
+	}
 
 
 	public void addToLightPathList_Filter(List<Filter> filters, boolean append) {

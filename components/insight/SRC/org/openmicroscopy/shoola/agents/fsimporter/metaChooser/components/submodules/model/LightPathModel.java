@@ -6,6 +6,7 @@ import java.util.List;
 
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
+import ome.xml.model.FilterSet;
 import ome.xml.model.LightPath;
 
 import org.openmicroscopy.shoola.util.MonitorAndDebug;
@@ -28,15 +29,19 @@ public class LightPathModel
 
 	private List<HashMap<String,String>> maps;
 
+	private List<FilterSet> filtersets;
+
 	public LightPathModel()
 	{
 		element=new ArrayList<LightPath>();
+		filtersets = new ArrayList<FilterSet>();
 		maps=new ArrayList<HashMap<String,String>>();
 	}
 
 	public LightPathModel(LightPathModel orig)
 	{
 		element=orig.element;
+		filtersets=orig.filtersets;
 		availableElem=orig.availableElem;
 		maps=orig.maps;
 	}
@@ -56,6 +61,28 @@ public class LightPathModel
 			expandList(maps.size(),i);
 
 		maps.set(i, map);
+	}
+
+	public void addData(FilterSet filterSet, boolean overwrite, int i) 
+	{
+		if(overwrite){
+			replaceData(filterSet,i);
+			LOGGER.info("[DATA] -- replace FilterSet data");
+		}else{
+//			completeData("");
+			LOGGER.info("[DATA] -- can't complete FilterSet data");
+		}
+	}
+
+	private void replaceData(FilterSet filterSet, int i) 
+	{
+		if(filtersets.size()<=i){
+			expandList(filtersets.size(),i);
+		}
+		if(filterSet!=null){
+			filtersets.set(i, new FilterSet(filterSet));
+		}
+		
 	}
 
 	/**
@@ -199,6 +226,7 @@ public class LightPathModel
 	{
 		for(int i=size;i<index+1;i++){
 			element.add(new LightPath());
+			filtersets.add(null);
 			maps.add(new HashMap<String,String>());
 		}
 	}
@@ -267,6 +295,11 @@ public class LightPathModel
 		}
 	}
 
+	public FilterSet getFilterSet(int i) {
+		if(i>filtersets.size())
+			return null;
 	
+		return filtersets.get(i);
+	}
 
 }
