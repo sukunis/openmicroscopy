@@ -68,13 +68,17 @@ public class LightPathEditor extends JDialog implements ActionListener
 
 	private boolean dataChanged;
 	
+	private List<Object> hardwareFilterList;
 
+	private List<Object> imgDataFilterList;
 	
 	public LightPathEditor(JFrame parent,String title, List<Object> _availableFilter,
-			LightPath l)
+			LightPath l,List<Object> linkHardwareList)
 	{
 		super(parent,title);
-		this.availableFilter=_availableFilter;
+		this.imgDataFilterList=_availableFilter;
+		this.hardwareFilterList=linkHardwareList;
+		createList();
 		lightPath=l;
 		lightPathList=new ArrayList<Object>();
 		dataChanged=false;
@@ -83,6 +87,15 @@ public class LightPathEditor extends JDialog implements ActionListener
 		
 	}
 	
+	private void createList() {
+		availableFilter=new ArrayList<>();
+		if(hardwareFilterList!=null && hardwareFilterList.size()>0){
+			availableFilter.addAll(hardwareFilterList);
+		}
+		if(imgDataFilterList!=null && imgDataFilterList.size()>0){
+			availableFilter.addAll(imgDataFilterList);
+		}
+	}
 
 	
 	private void initGUI(JPanel panel)

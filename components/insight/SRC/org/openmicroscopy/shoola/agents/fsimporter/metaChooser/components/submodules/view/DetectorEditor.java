@@ -29,6 +29,8 @@ public class DetectorEditor extends JDialog implements ActionListener
     	    LoggerFactory.getLogger(DetectorEditor.class);
     
     private List<Detector> availableDetectors;
+    private List<Detector> imgDataDetectorList;
+    private List<Detector> hardwareDetectorList;
     private DetectorTable detectorTable;
     private Detector selectDetector;
     
@@ -38,16 +40,31 @@ public class DetectorEditor extends JDialog implements ActionListener
 		
 	}
 	
-	public DetectorEditor(JFrame parent, String title, List<Detector> availableDetectors)
+	public DetectorEditor(JFrame parent, String title, 
+			List<Detector> availableDetectors, List<Detector> linkHardwareList)
 	{
 		super(parent,title);
-		this.availableDetectors=availableDetectors;
+		this.imgDataDetectorList=availableDetectors;
+		this.hardwareDetectorList=linkHardwareList;
+		
+		createDetectorList();
+		
 		selectDetector=null;
 		initGUI();
 	}
 	
 	
 	
+	private void createDetectorList() {
+		availableDetectors=new ArrayList<>();
+		if(hardwareDetectorList!=null && hardwareDetectorList.size()>0){
+			availableDetectors.addAll(hardwareDetectorList);
+		}
+		if(imgDataDetectorList!=null && imgDataDetectorList.size()>0){
+			availableDetectors.addAll(imgDataDetectorList);
+		}
+	}
+
 	private void initGUI() 
 	{
 

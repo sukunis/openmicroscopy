@@ -34,20 +34,36 @@ public class ObjectiveEditor extends JDialog implements ActionListener
     private ObjectiveTable objectivTable;
     private Objective selectObjective;
     
+	private List<Objective> hardwareDetectorList;
+
+	private List<Objective> imgDataObjectives;
+    
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 	
-	public ObjectiveEditor(JFrame parent, String title, List<Objective> availableObjectives)
+	public ObjectiveEditor(JFrame parent, String title, 
+			List<Objective> availableObjectives,List<Objective> linkHardwareList)
 	{
 		super(parent,title);
-		this.availableObjectives=availableObjectives;
+		this.imgDataObjectives=availableObjectives;
+		this.hardwareDetectorList=linkHardwareList;
+		createList();
 		selectObjective=null;
 		initGUI();
 	}
 	
+	private void createList() {
+		availableObjectives=new ArrayList<>();
+		if(hardwareDetectorList!=null && hardwareDetectorList.size()>0){
+			availableObjectives.addAll(hardwareDetectorList);
+		}
+		if(imgDataObjectives!=null && imgDataObjectives.size()>0){
+			availableObjectives.addAll(imgDataObjectives);
+		}
+	}
 	
 	
 	private void initGUI() 

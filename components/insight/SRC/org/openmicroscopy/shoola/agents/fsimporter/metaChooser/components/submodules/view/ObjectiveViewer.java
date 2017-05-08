@@ -28,6 +28,7 @@ import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.Medium;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -66,16 +67,19 @@ public class ObjectiveViewer extends ModuleViewer
 	
 	private List<Objective> availableElems;
 	
+	private MetaDataDialog parent;
+	
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
 	public ObjectiveViewer(ObjectiveModel objModel,ModuleConfiguration conf,boolean showPreValues,
-			List<Objective> availableElems)
+			List<Objective> availableElems,MetaDataDialog parent)
 	{
 		MonitorAndDebug.printConsole("# ObjectiveViewer::newInstance("+(objModel!=null?"model":"null")+")");
 		this.data=objModel;
 		this.availableElems=availableElems;
+		this.parent =parent;
 		initComponents(conf);
 		initTagList();
 		buildGUI();
@@ -175,8 +179,12 @@ public class ObjectiveViewer extends ModuleViewer
 		editBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
+				List<Objective> linkHardwareList=null;
+				if(parent.getMicroscopeProperties()!=null){
+					linkHardwareList=parent.getMicroscopeProperties().getObjectiveList();
+				}
 				ObjectiveEditor creator = new ObjectiveEditor(new JFrame(),"Select Objective",
-						availableElems);
+						availableElems,linkHardwareList);
 				Objective selectedObj=creator.getObjective();  
 				if(selectedObj!=null ){
 					inputKeyPressed();

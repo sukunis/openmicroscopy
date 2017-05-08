@@ -19,6 +19,7 @@ import ome.xml.model.LightPath;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.FilterType;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightPathModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
@@ -50,17 +51,20 @@ public class LightPathViewer extends ModuleViewer{
 	private List<Object> availableElems;
 	private boolean lightPathDataChanged;
 
+	private MetaDataDialog parent;
+
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
 	public LightPathViewer(LightPathModel model,ModuleConfiguration conf,int index,
-			List<Object> availableElems)
+			List<Object> availableElems,MetaDataDialog parent)
 	{
 		MonitorAndDebug.printConsole("# LightPathViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		this.data=model;
 		this.index=index;
 		this.availableElems=availableElems;
+		this.parent=parent;
 		initComponents(conf);
 		buildGUI();
 		resetInputEvent();
@@ -144,8 +148,12 @@ public class LightPathViewer extends ModuleViewer{
 					data=new LightPathModel();
 				
 				saveData();
+				List<Object> linkHardwareList=null;
+				if(parent.getMicroscopeProperties()!=null){
+					linkHardwareList=parent.getMicroscopeProperties().getLightPathList();
+				}
 				LightPathEditor creator = new LightPathEditor(new JFrame(),"Edit LightPath",
-						availableElems,data.getLightPath(index));
+						availableElems,data.getLightPath(index),linkHardwareList);
 				List<Object> newList=creator.getLightPathList(); 
 				lightPathDataChanged= creator.hasDataChanged();
 				if(newList!=null && !newList.isEmpty()){

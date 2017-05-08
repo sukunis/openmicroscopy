@@ -33,6 +33,7 @@ import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.primitives.PercentFraction;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -71,13 +72,14 @@ public class LightSourceViewer extends ModuleViewer{
 	private boolean setDataFromCode;
 	
 	private List<LightSource> availableElems;
+	private MetaDataDialog parent;
 	
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
 	public LightSourceViewer(LightSourceModel model,ModuleConfiguration conf,
-			int index,boolean showPreValues,List<LightSource> availableElems)
+			int index,boolean showPreValues,List<LightSource> availableElems,MetaDataDialog parent)
 	{
 		MonitorAndDebug.printConsole("# LightSrcViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		
@@ -86,6 +88,7 @@ public class LightSourceViewer extends ModuleViewer{
 		this.index=index;
 		this.data=model;
 		this.availableElems=availableElems;
+		this.parent =parent;
 		
 		initComponents(conf,showPreValues);
 		
@@ -191,8 +194,13 @@ public class LightSourceViewer extends ModuleViewer{
 
 			public void actionPerformed(ActionEvent e) 
 			{
+				List<LightSource> linkHardwareList=null;
+				if(parent.getMicroscopeProperties()!=null){
+					linkHardwareList=parent.getMicroscopeProperties().getLightSourceList();
+				}
+				
 				LightSourceEditor editor = new LightSourceEditor(new JFrame(),
-						"Select From Available LightSource", availableElems); 
+						"Select From Available LightSource", availableElems,linkHardwareList); 
 				LightSource l=editor.getSelectedLightSource();
 				if(l!=null ){
 					inputKeyPressed();

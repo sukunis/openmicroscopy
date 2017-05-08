@@ -31,6 +31,7 @@ import omero.model.MapAnnotation;
 import omero.model.MapAnnotationI;
 import omero.model.NamedValue;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -81,12 +82,14 @@ public class DetectorViewer extends ModuleViewer{
 
 	private List<Detector> availableElems;
 
+	private MetaDataDialog parent;
+
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
 	public DetectorViewer(DetectorModel model,ModuleConfiguration conf,int index,
-			boolean showPreValues,List<Detector> availableElems)
+			boolean showPreValues,List<Detector> availableElemsImgData,MetaDataDialog parent)
 	{
 		MonitorAndDebug.printConsole("# DetectorViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		
@@ -94,7 +97,8 @@ public class DetectorViewer extends ModuleViewer{
 		
 		this.data=model;
 		this.index=index;
-		this.availableElems=availableElems;
+		this.availableElems=availableElemsImgData;
+		this.parent=parent;
 		
 		initComponents(conf);
 		initTagList();
@@ -199,8 +203,12 @@ public class DetectorViewer extends ModuleViewer{
 		editBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
+				List<Detector> linkHardwareList=null;
+				if(parent.getMicroscopeProperties()!=null){
+					linkHardwareList=parent.getMicroscopeProperties().getDetectorList();
+				}
 				DetectorEditor creator = new DetectorEditor(new JFrame(),"Choose Detector",
-						availableElems);
+						availableElems,linkHardwareList); 
 				Detector selected=creator.getDetector();  
 				if(selected!=null ){
 					inputKeyPressed();

@@ -25,6 +25,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -74,6 +75,8 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOS
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeProperties;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusLSMFV1000;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.FNode;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
@@ -150,6 +153,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private JCheckBox showCustomData;
     private boolean enabledPredefinedData;
 //    private JCheckBox showHardwareData;
+    private JComboBox<String> mics;
     
     /** Test text area*/
     public JTextArea textArea; 
@@ -221,9 +225,11 @@ private boolean disableTreeListener;
     private static final int CMD_VIEWFILE=10;
     private static final int CMD_VIEWDIR=11;
     private static final int CMD_LOADPREVAL=12;
+    private static final int CHOOSE_MIC=13;
 
 	public static final String CHANGE_CUSTOMSETT = "changesCustomSettings";
     
+    private MicroscopeProperties currentMic;
     
     
     
@@ -477,6 +483,9 @@ private boolean disableTreeListener;
         saveAllDataButton.addActionListener(this);
         saveAllDataButton.setEnabled(false);
      
+        mics=new JComboBox<String>(MicroscopeProperties.availableMics);
+        mics.setActionCommand(""+CHOOSE_MIC);
+        mics.addActionListener(this);
         
         
         initFilterViewBar();
@@ -683,14 +692,18 @@ private boolean disableTreeListener;
 //        barR.add(Box.createHorizontalStrut(2));
 //        //save all
 //        barR.add(saveAllDataButton);
-        
+        JPanel barR=new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        //mics
+        barR.add(new JLabel("Load Hardware Specification:"));
+        barR.add(Box.createHorizontalStrut(2));
+        barR.add(mics);
         
         
        JPanel barRR=buildToolBarRight();
         
 //        bar.add(barL);
         bar.add(barM);
-//        bar.add(barR);
+        bar.add(barR);
         bar.add(barRR);
         return bar;
     }
@@ -1428,6 +1441,12 @@ private boolean disableTreeListener;
 //            repaint();
 //            
 //            break;
+        case CHOOSE_MIC:
+        	System.out.println("--- LOAD "+MicroscopeProperties.availableMics[mics.getSelectedIndex()]+" HARDWARE SETTINGS ---");
+        	
+        	currentMic=MicroscopeProperties.getMicClass(MicroscopeProperties.availableMics[mics.getSelectedIndex()]);
+
+        	break;
         case CMD_SAVE:
             LOGGER.info("[GUI-ACTION] -- save");
             MonitorAndDebug.printConsole("\n+++ EVENT: SAVE ++++\n");
@@ -1766,5 +1785,9 @@ private boolean disableTreeListener;
 	}
     
 
+	public MicroscopeProperties getMicroscopeProperties()
+	{
+		return currentMic;
+	}
 
 }

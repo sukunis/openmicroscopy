@@ -166,6 +166,7 @@ public class MetaDataUI extends JPanel
 	private File file;
 	
 	private CustomViewProperties customSett;
+	private MetaDataDialog parent;
 	
 	 /** Logger for this class. */
 //    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
@@ -206,10 +207,11 @@ public class MetaDataUI extends JPanel
 	 * @param isdir =true if selected node is a directory, else false
 	 * @param showPreValues TODO
 	 */
-	public MetaDataUI(JPanel parent,boolean isdir, boolean showPreValues)
+	public MetaDataUI(MetaDataDialog parent,boolean isdir, boolean showPreValues)
 	{
 		MonitorAndDebug.printConsole("# MetaDataUI::new Instance : "+isdir+", "+showPreValues);
 		this.setBorder(BorderFactory.createEmptyBorder());
+		this.parent=parent;
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
 		
 		directoryPane=isdir;
@@ -229,7 +231,7 @@ public class MetaDataUI extends JPanel
 	 * @param model
 	 * @param showPreValues TODO
 	 */
-	public MetaDataUI(JPanel parent,boolean dir,MetaDataModel model, boolean showPreValues)
+	public MetaDataUI(MetaDataDialog parent,boolean dir,MetaDataModel model, boolean showPreValues)
 	{
 		MonitorAndDebug.printConsole("# MetaDataUI::new Instance : "+dir+", model,"+showPreValues);
 		this.setBorder(BorderFactory.createEmptyBorder());
@@ -983,7 +985,7 @@ public class MetaDataUI extends JPanel
 		if(initObjectiveUI){
 			objectivePane=new JPanel(new CardLayout());
 			ModuleConfiguration objModul=customSett.getObjConf();
-			objectiveUI=new ObjectiveViewer(model.getObjectiveModel(), objModul,showPreValues,model.getObjList());
+			objectiveUI=new ObjectiveViewer(model.getObjectiveModel(), objModul,showPreValues,model.getObjList(),parent);
 			
 			JPanel pane= control.createPropPane(objectiveUI, "Objective", "for image "+name);
 			objectivePane.add(pane,name);
@@ -1100,7 +1102,7 @@ public class MetaDataUI extends JPanel
 		}else{
 			lightPathPane.removeAll();
 			lightPathViewer=new LightPathViewer(model.getLightPathModel(),customSett.getLightPathConf(),
-					index,model.getHardwareList_LightPath());
+					index,model.getHardwareList_LightPath(),parent);
 			lightPathPane.add(control.createPropPane(lightPathViewer, "LightPath", "for "+name));
 		}
 	}
@@ -1114,7 +1116,7 @@ public class MetaDataUI extends JPanel
 			MonitorAndDebug.printConsole("\t...Set visible Detector for Channel "+name);
 			detectorPane2.removeAll();
 			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),
-					index,showPreValues,model.getDetectorHardwareList());
+					index,showPreValues,model.getDetectorHardwareList(),parent);
 			detectorPane2.add(control.createPropPane(detectorViewer, "Detector", "for "+ name));
 		}
 	}
@@ -1127,7 +1129,7 @@ public class MetaDataUI extends JPanel
 			lightSrcPane2.removeAll();
 			ModuleConfiguration lightSModul=customSett.getLightSrcConf();
 			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), lightSModul, 
-					index,showPreValues,model.getLightSrcHardwareList());
+					index,showPreValues,model.getLightSrcHardwareList(),parent);
 			lightSrcPane2.add(control.createPropPane(lightSrcViewer, "LightSource", "for "+name));
 		}
 	}
@@ -1138,7 +1140,7 @@ public class MetaDataUI extends JPanel
 			lightPathPane=new JPanel(new CardLayout());
 			ModuleConfiguration lightPModul=customSett.getLightPathConf();
 			lightPathViewer=new LightPathViewer(model.getLightPathModel(), customSett.getLightPathConf(),
-					index,model.getHardwareList_LightPath());
+					index,model.getHardwareList_LightPath(),parent);
 			lightPathPane.add(control.createPropPane(lightPathViewer, "LightPath", "for "+name));
 			addToPlaceholder(lightPathPane, lightPModul.getPosition(), lightPModul.getWidth());
 		}
@@ -1149,7 +1151,7 @@ public class MetaDataUI extends JPanel
 			lightSrcPane2=new JPanel(new CardLayout());
 			ModuleConfiguration lightSModul=customSett.getLightSrcConf();
 			lightSrcViewer=new LightSourceViewer(model.getLightSourceModel(), customSett.getLightSrcConf(),
-					index,showPreValues,model.getLightSrcHardwareList());
+					index,showPreValues,model.getLightSrcHardwareList(),parent);
 			lightSrcPane2.add(control.createPropPane(lightSrcViewer, "LightSource", "for "+name));
 			addToPlaceholder(lightSrcPane2, lightSModul.getPosition(), lightSModul.getWidth());
 		}
@@ -1161,7 +1163,7 @@ public class MetaDataUI extends JPanel
 			detectorPane2=new JPanel(new CardLayout());
 			ModuleConfiguration detModul=customSett.getDetectorConf();
 			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),
-					index,showPreValues,model.getDetectorHardwareList());
+					index,showPreValues,model.getDetectorHardwareList(),parent);
 			detectorPane2.add(control.createPropPane(detectorViewer, "Detector", "for "+ name));
 			addToPlaceholder(detectorPane2, detModul.getPosition(), detModul.getWidth());
 		}

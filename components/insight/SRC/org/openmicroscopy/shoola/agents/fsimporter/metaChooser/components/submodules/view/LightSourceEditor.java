@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -54,14 +55,29 @@ public class LightSourceEditor extends JDialog
 	
 	private JTable lightSrcTable;
 	
+	private List<LightSource> hardwareLightSrcList;
+
+	private List<LightSource> imgDataLightSrcList;
+	
 	public LightSourceEditor(JFrame parent,String title,
-			List<LightSource> _availableLightSrc)
+			List<LightSource> _availableLightSrc,List<LightSource> linkHardwareList)
 	{
 		super(parent,title);
-		availableLightSrc=_availableLightSrc;
-		
+		this.imgDataLightSrcList=_availableLightSrc;
+		this.hardwareLightSrcList=linkHardwareList;
+		createList();
 		JPanel panel=createGUIEditor();
 		initGUI(panel);
+	}
+
+	private void createList() {
+		availableLightSrc=new ArrayList<>();
+		if(hardwareLightSrcList!=null && hardwareLightSrcList.size()>0){
+			availableLightSrc.addAll(hardwareLightSrcList);
+		}
+		if(imgDataLightSrcList!=null && imgDataLightSrcList.size()>0){
+			availableLightSrc.addAll(imgDataLightSrcList);
+		}
 	}
 
 	private void initGUI(JPanel panel) 

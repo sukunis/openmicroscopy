@@ -25,6 +25,7 @@ import ome.xml.meta.IMetadata;
 import ome.xml.model.OME;
 import omero.gateway.model.MapAnnotationData;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
@@ -95,7 +96,7 @@ public class MetaDataView extends JPanel
      * @param showPreValues TODO
      */
 	public MetaDataView(String fName,ImportUserData importData,
-			MetaDataModel parentData, JPanel parentPanel, boolean showFileData, boolean showPreValues) throws Exception
+			MetaDataModel parentData, MetaDataDialog parentPanel, boolean showFileData, boolean showPreValues) throws Exception
 	{
 		super(new BorderLayout());
 		this.setBorder(BorderFactory.createEmptyBorder());
@@ -226,7 +227,7 @@ public class MetaDataView extends JPanel
 	 */
 	public MetaDataView(String name, 
 			ImportUserData importData, MetaDataModel parentData, MetaDataModel dirData,
-			JPanel parent, boolean showPreValues)
+			MetaDataDialog parent, boolean showPreValues)
 	{
 		super(new BorderLayout());
 		LOGGER.info("[GUI] -- select directory");
