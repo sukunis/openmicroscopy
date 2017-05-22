@@ -62,7 +62,7 @@ public abstract class ModuleViewer extends JPanel
 	/** handle predefinitions as user input (dataSaved(false)->valChange==true)*/
 	protected abstract void setPredefinedTag(TagConfiguration t);
 	
-	private static String pattern_double = "\\s|[0-9]+.*[0-9]*";//"\\d*+\\.\\d{1,}";
+	private static String pattern_double = "^[\\+\\-]{0,1}[0-9]+[\\.\\,]{1}[0-9]+$";//"[+-]|[0-9]+.*[0-9]*";//"\\s|[0-9]+.*[0-9]*";//"\\d*+\\.\\d{1,}";
 	private static String pattern_posDouble="\\s|[1-9]+.*[0-9]*";
 	
 //	private static String pattern_number="\d";
