@@ -383,7 +383,7 @@ public class LightSourceViewer extends ModuleViewer{
 		String val= (value != null) ? String.valueOf(value.getNumberValue()):"";
 		if(attenuation == null) {
 			attenuation = new TagData(TagNames.ATTENUATION,val,prop,TagData.TEXTFIELD);
-			attenuation.addDocumentListener(createDocumentListenerPercentFraction(attenuation,"Invalid input. Use float between 0.0 and 1.0!"));
+			attenuation.addDocumentListener(createDocumentListenerPercentFraction(attenuation,"Invalid input. Use percent fraction as dezimal between 0.0 and 1.0!"));
 		}else 
 			attenuation.setTagValue(val,prop);
 	}

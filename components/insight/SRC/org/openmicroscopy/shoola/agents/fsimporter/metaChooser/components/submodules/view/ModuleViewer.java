@@ -68,7 +68,8 @@ public abstract class ModuleViewer extends JPanel
 //	private static String pattern_number="\d";
 	/* http://stackoverflow.com/questions/6400955/how-to-get-1-100-using-regex
 	 * match 0 oder 0.0-0.99 oder 1 oder 1.0*/
-	private static String pattern_percentFraction="[0]{1}.[0-9]{1,2}|1|1.0|0";
+//	private static String pattern_percentFraction="[0]{1}.[0-9]{1,2}|1|1.0|0";
+	private static String pattern_percentFraction="[0]{1}.*[0-9]*|1|1.0|0";
 	
 	public final static String ERROR_PREVALUE="Invalid predefined value: ";
 	
