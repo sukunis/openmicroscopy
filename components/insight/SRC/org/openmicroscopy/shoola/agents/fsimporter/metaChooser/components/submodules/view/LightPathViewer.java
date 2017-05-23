@@ -378,7 +378,7 @@ public class LightPathViewer extends ModuleViewer{
 		
 		Dichroic d= lp.getLinkedDichroic();
 		if(d!=null){
-			map.put("["+d.getID()+"]:["+i+"]:", d.getModel());
+			map.put("[Dichroic]:["+i+"]:", d.getModel());
 			i++;
 		}
 		

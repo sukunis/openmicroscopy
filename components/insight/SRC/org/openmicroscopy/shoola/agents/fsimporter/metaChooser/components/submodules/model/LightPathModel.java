@@ -276,7 +276,7 @@ public class LightPathModel
 			
 			Dichroic d= lp.getLinkedDichroic();
 			if(d!=null){
-				maps.get(index).put("["+d.getID()+"]:["+i+"]:", d.getModel());
+				maps.get(index).put("[Dichroic]:["+i+"]:", d.getModel());
 				i++;
 			}
 			
