@@ -197,6 +197,7 @@ public class ObjectiveViewer extends ModuleViewer
 					}
 					setGUIData();
 					dataChanged=true;
+					noticeEditorInput();
 					revalidate();
 					repaint();
 				}		
@@ -212,7 +213,20 @@ public class ObjectiveViewer extends ModuleViewer
 		initTags(settList);
 	}
 
-	
+	/** set for all tag fields from editor that not empty or null the valueHasChanged Flag
+	 * tag fields are: model, manufactur, nominal Magn, cal magn, lens na,immersion,correction, workingDist
+	 * */
+	private void noticeEditorInput() 
+	{
+		 model.dataHasChanged(true);
+		 manufact.dataHasChanged(true);
+		nomMagn.dataHasChanged(true);
+		 calMagn.dataHasChanged(true);
+		 lensNA.dataHasChanged(true);
+		 immersion.dataHasChanged(true);
+		 correction.dataHasChanged(true);
+		 workDist.dataHasChanged(true);
+	}
 
 	/**
 	 * Init given tag and mark it as visible.

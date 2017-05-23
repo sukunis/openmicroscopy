@@ -229,6 +229,13 @@ tagList=new ArrayList<TagData>();
 		}
 	}
 
-	
+	@Override
+	protected void noticeEditorInput()
+	{
+		model.dataHasChanged(true);
+		waveLength.dataHasChanged(true);
+		power.dataHasChanged(true);
+		repRate.dataHasChanged(true);
+	}
 
 }

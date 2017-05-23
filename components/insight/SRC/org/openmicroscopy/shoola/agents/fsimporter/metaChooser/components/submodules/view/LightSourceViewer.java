@@ -204,18 +204,22 @@ public class LightSourceViewer extends ModuleViewer{
 				LightSource l=editor.getSelectedLightSource();
 				if(l!=null ){
 					inputKeyPressed();
-					dataChanged=true;
+//					dataChanged=true;
 					try {
+						System.out.println("Replace LightSource");
 						data.addData(l, true,index);
 					} catch (Exception e1) {
 						LOGGER.warn("Can't set data of selected lightSrc! "+e1);
 					}
 					setGUIData();
 					dataChanged=true;
+					noticeEditorInput();
 					revalidate();
 					repaint();
 				}		
 			}
+
+			
 		});
 		add(box,BorderLayout.NORTH);
 		add(editBtn,BorderLayout.SOUTH);
@@ -230,7 +234,19 @@ public class LightSourceViewer extends ModuleViewer{
 		initTags(conf.getSettingList());
 	}
 
-	
+	/** set for all tag fields from editor that not empty or null the valueHasChanged Flag
+	 * tag fields are:   
+	 * Laser: model,wavelength,power,repRate
+	 * Arc:model,power
+	 * LED:model
+	 * Filament:model,power
+	 * GES:model,power
+	 * */
+	private void noticeEditorInput()
+	{
+		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).noticeEditorInput();
+		
+	}
 
 	/**
 	 * Show tags for selected lightSrc element. Doesn't save previously define values.

@@ -106,5 +106,11 @@ public class LS_LEDViewer extends LightSourceSubViewer
 		}
 
 	}
+	
+	@Override
+	protected void noticeEditorInput()
+	{
+		model.dataHasChanged(true);
+	}
 
 }

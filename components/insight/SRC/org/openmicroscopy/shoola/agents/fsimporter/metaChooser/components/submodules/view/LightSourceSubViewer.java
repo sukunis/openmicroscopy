@@ -70,6 +70,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 	
 	abstract protected void initTagList();
 	abstract protected void setGUIData();
+	abstract protected void noticeEditorInput();
 	abstract protected void addTags(List<JLabel> labels, List<JComponent> comp);
 	
 	protected void initComponents(ModuleConfiguration conf)

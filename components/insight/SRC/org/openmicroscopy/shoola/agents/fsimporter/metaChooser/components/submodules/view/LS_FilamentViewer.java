@@ -126,4 +126,10 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 		}
 	}
 
+	@Override
+	protected void noticeEditorInput()
+	{
+		model.dataHasChanged(true);
+		power.dataHasChanged(true);
+	}
 }

@@ -125,5 +125,12 @@ public class LS_ArcViewer extends LightSourceSubViewer
 	}
 	
 	
+	@Override
+	protected void noticeEditorInput()
+	{
+		model.dataHasChanged(true);
+		power.dataHasChanged(true);
+	}
+	
 
 }

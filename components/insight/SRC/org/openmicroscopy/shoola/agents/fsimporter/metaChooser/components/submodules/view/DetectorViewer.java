@@ -219,6 +219,7 @@ public class DetectorViewer extends ModuleViewer{
 					}
 					setGUIData();
 					dataChanged=true;
+					noticeEditorInput();
 					revalidate();
 					repaint();
 				}
@@ -235,6 +236,19 @@ public class DetectorViewer extends ModuleViewer{
 	}
 
 
+	/** set for all tag fields from editor that not empty or null the valueHasChanged Flag
+	 * tag fields are: model, manufactur, type, zoom, amplification gain, gain, voltage
+	 * */
+	private void noticeEditorInput() 
+	{
+	 model.dataHasChanged(true);
+		 manufact.dataHasChanged(true);
+		 type.dataHasChanged(true);
+		 zoom.dataHasChanged(true);
+		 amplGain.dataHasChanged(true);
+		 gain.dataHasChanged(true);
+		voltage.dataHasChanged(true);
+	}
 
 	/**
 	 * Init given tag and mark it as visible.

@@ -230,15 +230,14 @@ public class LightPathEditor extends JDialog implements ActionListener
 						//TODO append elems
 						for(Filter f: ((FilterSet) selectedObj).copyLinkedExcitationFilterList()){
 							lightPathTable.appendElem(f, "Exitation");
-					}
+						}
 						lightPathTable.appendElem(((FilterSet) selectedObj).getLinkedDichroic(),"Dichroic");
 						for(Filter f: ((FilterSet) selectedObj).copyLinkedEmissionFilterList()){
 							lightPathTable.appendElem(f, "Emission");
 						}
 					}
-					
-					
-				}
+				}//for
+				dataChanged=true;
 			}
 			
 		});

@@ -117,5 +117,12 @@ public class LS_GESViewer extends LightSourceSubViewer
 		//				null : );
 
 	}
+	
+	@Override
+	protected void noticeEditorInput()
+	{
+		model.dataHasChanged(true);
+		power.dataHasChanged(true);
+	}
 
 }
