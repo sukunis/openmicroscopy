@@ -1017,6 +1017,8 @@ private boolean disableTreeListener;
 		
 			//save input
         	saveInputToModel(node,true);
+        	//reset series list
+        	((DefaultListModel) seriesList.getModel()).removeAllElements();
         	
         	lastNode=node;
         	
@@ -1694,6 +1696,10 @@ private boolean disableTreeListener;
 	}
 
 
+    /**
+     * Save all input of editor as mapannotation for import
+     * @param text
+     */
 	public void saveChanges(String text) 
 	{
 //		//TODO check if some unsaved changes in current view
@@ -1726,7 +1732,6 @@ private boolean disableTreeListener;
 //		}
 			FNode node=(FNode)fileTree.getLastSelectedPathComponent();
 		saveInputToModel(node, true);
-		
 		saveMapAnnotations();
 	}
 	
