@@ -62,6 +62,7 @@ public abstract class ModuleViewer extends JPanel
 	/** handle predefinitions as user input (dataSaved(false)->valChange==true)*/
 	protected abstract void setPredefinedTag(TagConfiguration t);
 	
+	private static String pattern_letters="[a-zA-Z]";
 	private static String pattern_double = "^[\\+\\-]{0,1}[0-9]+[\\.\\,]{1}[0-9]+$";//"[+-]|[0-9]+.*[0-9]*";//"\\s|[0-9]+.*[0-9]*";//"\\d*+\\.\\d{1,}";
 	private static String pattern_posDouble="\\s|[1-9]+.*[0-9]*";
 	
@@ -377,16 +378,46 @@ public abstract class ModuleViewer extends JPanel
 			return predefinitionValLoaded;
 		}
 		
-		protected void validateInput(TagData tag,String error,String pattern) 
+		protected Double validateInput(TagData tag,String error) 
 		{
+			return validateInput(tag,error,null);
+		}
+		
+		protected Double validateInput(TagData tag,String error,String pattern) 
+		{
+			
 			String text = tag.getTagValue();
-			Pattern r= Pattern.compile(pattern);
-			Matcher m= r.matcher(text);
-			if(m.matches()){
-				tag.setTagInfo("");
-			}else{
-				tag.setTagInfo(error);
+			System.out.println("ValidateInput for : "+text);
+//			Pattern r= Pattern.compile(pattern);
+//			Matcher m= r.matcher(text);
+//			if(m.matches()){
+//				tag.setTagInfo("");
+//			}else{
+//				tag.setTagInfo(error);
+//			}
+			String errorString="";
+			tag.setTagInfo("");
+			try{
+				System.out.println("ValidateInput ok1");
+				return Double.parseDouble(text);
+				
+			}catch(NumberFormatException e){
+				// The string value might be either 99.99 or 99,99, depending on Locale.
+		        // We can deal with this safely, by forcing to be a point for the decimal separator, and then using Double.valueOf ...
+		        //http://stackoverflow.com/questions/4323599/best-way-to-parsedouble-with-comma-as-decimal-separator
+		        String text2 = text.replaceAll(",",".");
+		        try {
+		        	System.out.println("ValidateInput ok2");
+		          return Double.parseDouble(text2);
+		        } catch (NumberFormatException e2)  {
+		            // This happens if we're trying (say) to parse a string that isn't a number, as though it were a number!
+		            // If this happens, it should only be due to application logic problems.
+		            // In this case, the safest thing to do is return 0, having first fired-off a log warning.
+		        	errorString=error;
+		        }
 			}
+			tag.setTagInfo(errorString);
+			return null;
 		}
 		
 		
@@ -419,13 +450,38 @@ public abstract class ModuleViewer extends JPanel
 			public void removeUpdate(DocumentEvent e) {}
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				if(!posVal)
-					validateInput(tag,error,pattern_double);
-				else
-					validateInput(tag,error,pattern_posDouble);
+				System.out.println("Insert update");
+				Double res=validateInput(tag,error);
+				System.out.println("Parse : "+res);
+				if(posVal){
+					if( res!=null && res <0){
+						System.out.println("ValidateInput not ok");
+						System.out.println("Result parseing: "+res);
+						tag.setTagInfo(error);
+					}else
+						System.out.println("ValidateInput ok3");
+				}
+				
+//				if(!posVal){
+//					validateInput(tag,error,pattern_double);
+//				}else{
+//					validateInput(tag,error,pattern_posDouble);
+//				}
 			}
 			@Override
-			public void changedUpdate(DocumentEvent e) {}
+			public void changedUpdate(DocumentEvent e) {
+				System.out.println("Change update");
+				Double res=validateInput(tag,error);
+				System.out.println("Parse : "+res);
+				if(posVal){
+					if( res!=null && res <0){
+						System.out.println("ValidateInput not ok");
+						System.out.println("Result parseing: "+res);
+						tag.setTagInfo(error);
+					}else
+						System.out.println("ValidateInput ok3");
+				}
+			}
 		}
 		
 		
@@ -447,13 +503,31 @@ public abstract class ModuleViewer extends JPanel
 				this.error=error;
 			}
 			@Override
-			public void removeUpdate(DocumentEvent e) {}
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				validateInput(tag,error,pattern_percentFraction);
+			public void removeUpdate(DocumentEvent e) {
+				
 			}
 			@Override
-			public void changedUpdate(DocumentEvent e) {}
+			public void insertUpdate(DocumentEvent e) {
+				Double res=validateInput(tag,error);
+				System.out.println("Parse : "+res);
+				if(res!=null && (res <0 || res >1)){
+					System.out.println("ValidateInput not ok");
+					System.out.println("ListenerPercentFraction: res= "+res);
+					tag.setTagInfo(error);
+				}else
+					System.out.println("ValidateInput ok3");
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				Double res=validateInput(tag,error);
+				System.out.println("Parse : "+res);
+				if(res!=null && (res <0 || res >1)){
+					System.out.println("ValidateInput not ok");
+					System.out.println("ListenerPercentFraction: res= "+res);
+					tag.setTagInfo(error);
+				}else
+					System.out.println("ValidateInput ok3");
+			}
 		}
 		
 		class TagActionListener implements ActionListener
