@@ -1,6 +1,9 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -80,6 +83,22 @@ public abstract class MicroscopeProperties
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * 
+	 * @param microscope name
+	 * @return index of given microscope in array availableMics
+	 */
+	public static int getMicIndex(String microscope) {
+//		int result=-1;
+		return Arrays.asList(availableMics).indexOf(microscope);
+//		for(int index=0; index>availableMics.length; index++){
+//			if(availableMics[index].equals(microscope)){
+//				return index;
+//			}
+//		}
+//		return result;
 	}
 	
 	/**
@@ -179,6 +198,8 @@ public abstract class MicroscopeProperties
 		channelConf.setTag(TagNames.PINHOLESIZE,null,TagNames.PINHOLESIZE_UNIT.getSymbol(),true);
 		return channelConf;
 	}
+
+	
 	
 	
 	

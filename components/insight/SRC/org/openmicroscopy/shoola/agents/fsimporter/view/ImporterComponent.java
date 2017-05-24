@@ -44,6 +44,7 @@ import org.openmicroscopy.shoola.agents.treeviewer.view.TreeViewer;
 import org.openmicroscopy.shoola.agents.util.ViewerSorter;
 import org.openmicroscopy.shoola.agents.util.browser.TreeImageDisplay;
 import org.openmicroscopy.shoola.agents.util.browser.TreeViewerTranslator;
+import org.openmicroscopy.shoola.env.LookupNames;
 import org.openmicroscopy.shoola.env.config.Registry;
 import org.openmicroscopy.shoola.env.data.events.ExitApplication;
 import org.openmicroscopy.shoola.env.data.events.LogOff;
@@ -350,11 +351,14 @@ class ImporterComponent
         }
         chooser.setSelectedGroup(getSelectedGroup());
         
+        String microscopeName = (String) ImporterAgent.getRegistry().lookup(LookupNames.MICROSCOPE_WORKSTATION);
+        System.out.println("#ImporterControl::activate(): microscope: "+microscopeName);
+        
         //Metadata biology
         if(metaDataChooser==null){
         	metaDataChooser = new MetaDataDialog(view,model.getSupportedFormats(),type, 
         			controller.getAction(ImporterControl.CANCEL_BUTTON),this,
-        			chooser.getImportButton(),chooser.getCancelImportButton()); 
+        			chooser.getImportButton(),chooser.getCancelImportButton(), microscopeName); 
         	metaDataChooser.addPropertyChangeListener(controller);
         	view.addMDComponent(metaDataChooser);
         }else{
