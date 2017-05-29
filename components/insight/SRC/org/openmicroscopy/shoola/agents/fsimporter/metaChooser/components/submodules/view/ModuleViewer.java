@@ -387,18 +387,12 @@ public abstract class ModuleViewer extends JPanel
 		{
 			
 			String text = tag.getTagValue();
-			System.out.println("ValidateInput for : "+text);
-//			Pattern r= Pattern.compile(pattern);
-//			Matcher m= r.matcher(text);
-//			if(m.matches()){
-//				tag.setTagInfo("");
-//			}else{
-//				tag.setTagInfo(error);
-//			}
+			if(text.equals(""))
+				return null;
+			
 			String errorString="";
 			tag.setTagInfo("");
 			try{
-				System.out.println("ValidateInput ok1");
 				return Double.parseDouble(text);
 				
 			}catch(NumberFormatException e){
@@ -407,7 +401,6 @@ public abstract class ModuleViewer extends JPanel
 		        //http://stackoverflow.com/questions/4323599/best-way-to-parsedouble-with-comma-as-decimal-separator
 		        String text2 = text.replaceAll(",",".");
 		        try {
-		        	System.out.println("ValidateInput ok2");
 		          return Double.parseDouble(text2);
 		        } catch (NumberFormatException e2)  {
 		            // This happens if we're trying (say) to parse a string that isn't a number, as though it were a number!
@@ -447,39 +440,26 @@ public abstract class ModuleViewer extends JPanel
 				this.posVal=positiveVal;
 			}
 			@Override
-			public void removeUpdate(DocumentEvent e) {}
+			public void removeUpdate(DocumentEvent e) {
+				validate();
+			}
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				System.out.println("Insert update");
-				Double res=validateInput(tag,error);
-				System.out.println("Parse : "+res);
-				if(posVal){
-					if( res!=null && res <0){
-						System.out.println("ValidateInput not ok");
-						System.out.println("Result parseing: "+res);
-						tag.setTagInfo(error);
-					}else
-						System.out.println("ValidateInput ok3");
-				}
-				
-//				if(!posVal){
-//					validateInput(tag,error,pattern_double);
-//				}else{
-//					validateInput(tag,error,pattern_posDouble);
-//				}
+				validate();
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				System.out.println("Change update");
+				validate();
+			}
+			
+			private void validate(){
+				tag.setTagInfo("");
+				
 				Double res=validateInput(tag,error);
-				System.out.println("Parse : "+res);
 				if(posVal){
 					if( res!=null && res <0){
-						System.out.println("ValidateInput not ok");
-						System.out.println("Result parseing: "+res);
 						tag.setTagInfo(error);
-					}else
-						System.out.println("ValidateInput ok3");
+					}
 				}
 			}
 		}
@@ -504,29 +484,25 @@ public abstract class ModuleViewer extends JPanel
 			}
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				
+				validate();
 			}
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				Double res=validateInput(tag,error);
-				System.out.println("Parse : "+res);
-				if(res!=null && (res <0 || res >1)){
-					System.out.println("ValidateInput not ok");
-					System.out.println("ListenerPercentFraction: res= "+res);
-					tag.setTagInfo(error);
-				}else
-					System.out.println("ValidateInput ok3");
+				validate();
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {
+				validate();
+			}
+			
+			private void validate()
+			{
+				tag.setTagInfo("");
 				Double res=validateInput(tag,error);
 				System.out.println("Parse : "+res);
 				if(res!=null && (res <0 || res >1)){
-					System.out.println("ValidateInput not ok");
-					System.out.println("ListenerPercentFraction: res= "+res);
 					tag.setTagInfo(error);
-				}else
-					System.out.println("ValidateInput ok3");
+				}
 			}
 		}
 		
