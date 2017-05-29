@@ -499,7 +499,6 @@ public abstract class ModuleViewer extends JPanel
 			{
 				tag.setTagInfo("");
 				Double res=validateInput(tag,error);
-				System.out.println("Parse : "+res);
 				if(res!=null && (res <0 || res >1)){
 					tag.setTagInfo(error);
 				}
