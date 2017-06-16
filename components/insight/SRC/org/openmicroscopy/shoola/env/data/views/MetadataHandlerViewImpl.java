@@ -46,6 +46,7 @@ import org.openmicroscopy.shoola.env.data.views.calls.StructuredAnnotationSaver;
 import org.openmicroscopy.shoola.env.data.views.calls.TabularDataLoader;
 import org.openmicroscopy.shoola.env.data.views.calls.ThumbnailLoader;
 import org.openmicroscopy.shoola.env.event.AgentEventListener;
+import org.openmicroscopy.shoola.env.ui.ArchivedLoader;
 import org.openmicroscopy.shoola.util.ui.MessengerDetails;
 
 import omero.gateway.model.AnnotationData;
@@ -244,7 +245,7 @@ class MetadataHandlerViewImpl
 			AgentEventListener observer)
 	{
 		BatchCallTree cmd = new ArchivedImageLoader(ctx, imageIDs, path,
-		        override, zip, keepOriginalPaths);
+		        override, zip, keepOriginalPaths,observer);
 		return cmd.exec(observer);
 	}
 

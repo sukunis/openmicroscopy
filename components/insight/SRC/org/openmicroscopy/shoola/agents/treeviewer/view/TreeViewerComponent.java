@@ -109,6 +109,7 @@ import org.openmicroscopy.shoola.env.data.model.DeletableObject;
 import org.openmicroscopy.shoola.env.data.model.DeleteActivityParam;
 import org.openmicroscopy.shoola.env.data.model.DownloadActivityParam;
 import org.openmicroscopy.shoola.env.data.model.DownloadArchivedActivityParam;
+import org.openmicroscopy.shoola.env.data.model.DownloadProjectActivityParam;
 import org.openmicroscopy.shoola.env.data.model.ImageCheckerResult;
 import org.openmicroscopy.shoola.env.data.model.OpenActivityParam;
 import org.openmicroscopy.shoola.env.data.model.ScriptObject;
@@ -122,6 +123,7 @@ import omero.gateway.model.SearchResultCollection;
 import org.openmicroscopy.shoola.env.event.EventBus;
 import org.openmicroscopy.shoola.env.rnd.RndProxyDef;
 import org.openmicroscopy.shoola.env.ui.ActivityComponent;
+import org.openmicroscopy.shoola.env.ui.DownloadProjectActivity;
 import org.openmicroscopy.shoola.env.ui.UserNotifier;
 import org.openmicroscopy.shoola.util.PojosUtil;
 import org.openmicroscopy.shoola.util.ui.MessageBox;
@@ -169,7 +171,7 @@ class TreeViewerComponent
  	extends AbstractComponent
  	implements TreeViewer
 {
-    
+  
     /** Warning message shown when the rendering settings are to be reset */
     public static final String RENDERINGSETTINGS_WARNING = "This will change the "
             + "rendering settings of all images\nin the dataset/plate and cannot be undone.\n"
@@ -189,6 +191,7 @@ class TreeViewerComponent
 	
 	/** The dialog displaying the selected script.*/
 	private ScriptingDialog     scriptDialog;
+
 
 	/**
 	 * Moves the object.
@@ -2957,7 +2960,9 @@ class TreeViewerComponent
 			db.activate();
 		}
 		model.setDataViewer(db);
+		
 	}
+
 
 	/**
 	 * Implemented as specified by the {@link TreeViewer} interface.
@@ -3417,7 +3422,7 @@ class TreeViewerComponent
 		ActionCmd actionCmd = null;
 		Object uo = node.getUserObject();
 		if (uo instanceof ProjectData) {
-			model.browseProject(node);
+			model.browseProject(node, null);
 		} else if (uo instanceof DatasetData) {
 			if (browser != null)
 				browser.loadExperimenterData(BrowserFactory.getDataOwner(node), 
@@ -4951,19 +4956,44 @@ class TreeViewerComponent
 
    public RndProxyDef getSelectedViewedBy()
    {
-       MetadataViewer viewer = model.getMetadataViewer();
-       if (viewer == null) return null;
-       Object ho = viewer.getRefObject();
-       ImageData img = null;
-       if (ho instanceof ImageData) {
-           img = (ImageData) ho;
-       } else if (ho instanceof WellSampleData) {
-           img = ((WellSampleData) ho).getImage();
-       }
-       if (img == null) return null;
-       Renderer rnd = viewer.getRenderer();
-       if (rnd == null) return null;
-       return rnd.getSelectedDef();
+	   MetadataViewer viewer = model.getMetadataViewer();
+	   if (viewer == null) return null;
+	   Object ho = viewer.getRefObject();
+	   ImageData img = null;
+	   if (ho instanceof ImageData) {
+		   img = (ImageData) ho;
+	   } else if (ho instanceof WellSampleData) {
+		   img = ((WellSampleData) ho).getImage();
+	   }
+	   if (img == null) return null;
+	   Renderer rnd = viewer.getRenderer();
+	   if (rnd == null) return null;
+	   return rnd.getSelectedDef();
    }
+
    
+
+
+   /**
+    * Call {@link DownloadProjectActivity} to download given image collection of dataset.
+    * @param subfolder The path to download the content into.
+    * @param imageColl image collection for one dataset
+    * @param numImages number of images (not mandatory == imageColl.size -> seriesData)
+    */
+   public void downloadImageCollection(String subfolder, List<ImageData> imageColl,int numImages) {
+	   if (imageColl.size() > 0) {
+		   UserNotifier un = MetadataViewerAgent.getRegistry()
+				   .getUserNotifier();
+		   IconManager icons = IconManager.getInstance();
+		   Icon icon = icons.getIcon(IconManager.DOWNLOAD_22);
+		   SecurityContext ctx = getSecurityContext();
+
+		   DownloadProjectActivityParam p = new DownloadProjectActivityParam(new File(subfolder), imageColl,numImages, icon);
+		   p.setOverride(true);
+		   p.setZip(false);
+		   p.setKeepOriginalPaths(true);
+		   un.notifyActivity(ctx, p);
+	   }
+   }
+
 }

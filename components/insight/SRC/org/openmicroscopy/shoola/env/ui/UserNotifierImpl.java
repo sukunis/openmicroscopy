@@ -42,6 +42,7 @@ import org.openmicroscopy.shoola.env.data.model.DownloadActivityParam;
 import org.openmicroscopy.shoola.env.data.model.DownloadAndLaunchActivityParam;
 import org.openmicroscopy.shoola.env.data.model.DownloadAndZipParam;
 import org.openmicroscopy.shoola.env.data.model.DownloadArchivedActivityParam;
+import org.openmicroscopy.shoola.env.data.model.DownloadProjectActivityParam;
 import org.openmicroscopy.shoola.env.data.model.ExportActivityParam;
 import org.openmicroscopy.shoola.env.data.model.FigureActivityParam;
 import org.openmicroscopy.shoola.env.data.model.MovieActivityParam;
@@ -369,6 +370,8 @@ public class UserNotifierImpl implements UserNotifier, PropertyChangeListener {
 		boolean register = true;
 		boolean uiRegister = true;
 		boolean startActivity = true;
+		
+		
 		if (activity instanceof MovieActivityParam) {
 			MovieActivityParam p = (MovieActivityParam) activity;
 			comp = new MovieActivity(this, manager.getRegistry(), ctx, p);
@@ -406,6 +409,9 @@ public class UserNotifierImpl implements UserNotifier, PropertyChangeListener {
 			DownloadArchivedActivityParam p = (DownloadArchivedActivityParam) activity;
 			comp = new DownloadArchivedActivity(this, manager.getRegistry(),
 					ctx, p);
+		}else if(activity instanceof DownloadProjectActivityParam){
+			DownloadProjectActivityParam p = (DownloadProjectActivityParam) activity;
+			comp=new DownloadProjectActivity(this, manager.getRegistry(), ctx, p);
 		} else if (activity instanceof DeleteActivityParam) {
 			DeleteActivityParam p = (DeleteActivityParam) activity;
 			comp = new DeleteActivity(this, manager.getRegistry(), p);

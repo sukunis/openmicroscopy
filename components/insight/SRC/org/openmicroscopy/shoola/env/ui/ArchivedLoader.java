@@ -22,7 +22,10 @@ package org.openmicroscopy.shoola.env.ui;
 
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +35,8 @@ import org.apache.commons.io.FileUtils;
 
 import org.openmicroscopy.shoola.env.config.Registry;
 import omero.gateway.SecurityContext;
+
+import org.openmicroscopy.shoola.env.data.events.DSCallFeedbackEvent;
 import org.openmicroscopy.shoola.env.data.views.CallHandle;
 import omero.gateway.model.ImageData;
 
@@ -48,7 +53,9 @@ import omero.gateway.model.ImageData;
 public class ArchivedLoader 
 	extends UserNotifierLoader
 {
-
+	private DateFormat df = new SimpleDateFormat("hh:mm ss.SSS");
+	private long startTime;
+	
     /** Handle to the asynchronous call so that we can cancel it. */
     private CallHandle handle;
 
@@ -69,6 +76,7 @@ public class ArchivedLoader
     
     /** Flag for preserving the original folder structure */
     private boolean keepOriginalPaths = true;
+    
     
     /**
      * Notifies that an error occurred.
@@ -107,6 +115,7 @@ public class ArchivedLoader
 		this.override = override;
 		this.zip = zip;
 		this.keepOriginalPaths = keepOriginalPaths;
+		
 	}
 
 	/**
@@ -118,7 +127,8 @@ public class ArchivedLoader
 	    List<Long> imageIds = new ArrayList<Long>(images.size());
 	    for(ImageData d : images)
 	        imageIds.add(d.getId());
-	    
+	   
+	    startTime=System.currentTimeMillis();
 	    handle = mhView.loadArchivedImage(ctx, imageIds, file,
 	            override, zip, keepOriginalPaths, this);
 	}
@@ -177,6 +187,16 @@ public class ArchivedLoader
                 }
             }
         }
+        long endTime=System.currentTimeMillis();
+        registry.getLogger().info(this, "Download "+file.getName()+" in (ms) : "+(endTime-startTime));
     }
-
+    
+    /**
+     * Send progress of data download to {@link ActivityComponent}.
+     * @param progress number of downloaded data
+     */
+    public void update(int progress) {
+    	activity.update(progress);
+    }
+   
 }

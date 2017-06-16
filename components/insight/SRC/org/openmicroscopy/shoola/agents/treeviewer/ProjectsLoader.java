@@ -21,14 +21,22 @@
 package org.openmicroscopy.shoola.agents.treeviewer;
 
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.openmicroscopy.shoola.agents.metadata.MetadataViewerAgent;
 import org.openmicroscopy.shoola.agents.treeviewer.view.TreeViewer;
 import org.openmicroscopy.shoola.agents.util.browser.TreeImageDisplay;
 import omero.gateway.SecurityContext;
 import org.openmicroscopy.shoola.env.data.views.CallHandle;
+import org.openmicroscopy.shoola.env.ui.UserNotifier;
+
+import omero.gateway.model.DataObject;
+import omero.gateway.model.DatasetData;
+import omero.gateway.model.ImageData;
 import omero.gateway.model.ProjectData;
 
 /** 
@@ -56,6 +64,9 @@ public class ProjectsLoader
     /** The user's identifier. */
     private long 				userID;
     
+    /** Destination directory for download project data. */
+    private String downloadPath;
+    
     /**
      * Creates a new instance.
      * 
@@ -64,15 +75,17 @@ public class ProjectsLoader
      * @param node   The node hosting the project to browse.
      *               Mustn't be <code>null</code>.
      * @param userID The user's identifier.
+     * @param downloadPath destination where the data should be stored.
      */
     public ProjectsLoader(TreeViewer viewer, SecurityContext ctx, 
-    		TreeImageDisplay node, long userID)
+    		TreeImageDisplay node, long userID, String downloadPath)
 	{
 		super(viewer, ctx);
 		if (node == null)
 			throw new IllegalArgumentException("No node of reference.");
 		this.node = node;
 		this.userID = userID;
+		this.downloadPath=downloadPath;
 	}
 	
 	 /**
@@ -102,7 +115,65 @@ public class ProjectsLoader
     public void handleResult(Object result)
     {
         if (viewer.getState() == TreeViewer.DISCARDED) return;  //Async cancel.
-        viewer.browseHierarchyRoots(node, (Set) result);
+        // load data of project
+        if(downloadPath==null){
+        	viewer.browseHierarchyRoots(node, (Set) result);
+        }else{//download data of project
+        	for (Object o : (Set) result) {
+        		if (o instanceof ProjectData) {
+        			ProjectData proj = (ProjectData) o;
+        			String projPath = downloadPath + "/" + proj.getName();
+        			
+        			boolean success =true;
+        			if(!proj.getDatasets().isEmpty() && !(new File(projPath).exists()))
+        				success = (new File(projPath)).mkdir();
+        			if(success){
+        				for (DatasetData ds : proj.getDatasets()) {
+        					String path = projPath + "/" + ds.getName();
+        					downloadDataset(ds,path);
+        				}
+        			}else{
+        				UserNotifier un = MetadataViewerAgent.getRegistry().getUserNotifier();
+        				un.notifyError("Download Project Error", "Can't create directory for "+proj.getName());
+        			}
+        		}
+        	}
+        }
     }
+
+    /**
+     * Load and download image collection of given dataset.
+     * @param ds given dataset
+     * @param path download destination
+     */
+	private void downloadDataset(DatasetData ds, String path) 
+	{
+		List<ImageData> imageSets = new ArrayList<ImageData>();
+		List<Long> filesetIds = new ArrayList<Long>();
+		Iterator it=ds.getImages().iterator();
+		long id;
+		ImageData image;
+		while(it.hasNext()){
+			image=(ImageData) it.next();
+			 if (image.isArchived()) {
+				   id = image.getFilesetId();
+				   if (id < 0) imageSets.add(image);
+				   else if (!filesetIds.contains(id)) {
+					   imageSets.add(image);
+					   filesetIds.add(id);
+				   }
+			   }
+		}
+		if(!imageSets.isEmpty()){
+			// create dataset directory
+			File target =new File(path);
+			if(!target.exists())
+				target.mkdir();
+		}
+		
+		 viewer.downloadImageCollection(path,imageSets,ds.getImages().size());
+	}
+
+   
     
 }

@@ -144,6 +144,8 @@ public interface MetadataViewer
 	/** Bound property indicating to create a figure. */
 	public static final String	GENERATE_FIGURE_PROPERTY = "generateFigure";
 	
+	public static final String DOWNLOAD_PROJECT_PROPERTY = "downloadProject";
+	
 	/** Bound property indicating to close the renderer. */
 	public static final String	CLOSE_RENDERER_PROPERTY = "closeRenderer";
 	
@@ -199,6 +201,8 @@ public interface MetadataViewer
 	
 	/** Indicates to launch the analysis option. */
 	public static final int		SAVE_OPTION = 103;
+
+	
 	
 	/**
 	 * Starts the data loading process when the current state is {@link #NEW} 
@@ -719,4 +723,6 @@ public interface MetadataViewer
 	 * Reload the ROI count
 	 */
     void reloadROICount();
+
+	public void downloadProject(String path);
 }

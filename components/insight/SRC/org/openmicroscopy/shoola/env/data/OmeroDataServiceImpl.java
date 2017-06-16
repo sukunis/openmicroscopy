@@ -20,6 +20,7 @@
  */
 package org.openmicroscopy.shoola.env.data;
 
+import javax.swing.JLabel;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
