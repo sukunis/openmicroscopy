@@ -20,9 +20,7 @@
  */
 package org.openmicroscopy.shoola.agents.fsimporter.chooser;
 
-
 import ij.ImagePlus;
-
 import ij.WindowManager;
 import info.clearthought.layout.TableLayout;
 
@@ -84,6 +82,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.view.ImportLocationDetails;
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
 import org.openmicroscopy.shoola.agents.util.SelectionWizard;
+import org.openmicroscopy.shoola.agents.util.browser.DataNode;
 import org.openmicroscopy.shoola.agents.util.browser.TreeImageDisplay;
 import org.openmicroscopy.shoola.env.LookupNames;
 import org.openmicroscopy.shoola.env.config.Registry;
@@ -99,6 +98,7 @@ import org.openmicroscopy.shoola.util.ui.filechooser.GenericFileChooser;
 
 import omero.gateway.model.DataObject;
 import omero.gateway.model.DatasetData;
+import omero.gateway.model.ExperimenterData;
 import omero.gateway.model.GroupData;
 import omero.gateway.model.ProjectData;
 import omero.gateway.model.ScreenData;
@@ -136,10 +136,18 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 	/** Bound property indicating to import the selected files. */
 	public static final String IMPORT_PROPERTY = "import";
+	public static final String STARTIMPORT_PROPERTY = "startImport";
 
 	/** Bound property indicating to refresh the location. */
 	public static final String REFRESH_LOCATION_PROPERTY = "refreshLocation";
-
+	
+	/** Bound property indicating to add files to the queue-> refresh fileView MetaDataDialog. */
+	public static final String REFRESH_FILE_LIST = "refreshMetaList";
+	
+	/** Bound property indicating to add files to the queue by MetaDataDialog*/
+	public static final String ADD_AND_REFRESH_FILE_LIST="addAndRefreshMetaList";
+	
+	
 	// Command Ids
 	/** Action id indicating to import the selected files. */
 	private static final int CMD_IMPORT = 1;
@@ -382,6 +390,7 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		chooser.setSelectedFile(new File("."));
 		
 		table.addFiles(fileList, importSettings);
+		//firePropertyChange(REFRESH_FILE_LIST,null,table.getFilesToImport());
 		importButton.setEnabled(table.hasFilesToImport());
 	}
 
@@ -1650,10 +1659,12 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		
 		if (FileSelectionTable.ADD_PROPERTY.equals(name)) {
 			showLocationDialog();
+			firePropertyChange(REFRESH_FILE_LIST,null,table.getFilesToImport());
 		} else if (FileSelectionTable.REMOVE_PROPERTY.equals(name)) {
 			int n = handleFilesSelection(chooser.getSelectedFiles());
 			table.allowAddition(n > 0);
 			importButton.setEnabled(table.hasFilesToImport());
+			firePropertyChange(REFRESH_FILE_LIST,null,table.getFilesToImport());
 		} else if (JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(name)) {
 			int n = handleFilesSelection(chooser.getSelectedFiles());
 			table.allowAddition(n > 0);
@@ -1700,7 +1711,8 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 		switch (commandId) {
 			case CMD_IMPORT:
-				importFiles();
+//				importFiles();
+				firePropertyChange(STARTIMPORT_PROPERTY,false,true);
 				break;
 			case CMD_CLOSE:
 				firePropertyChange(CANCEL_SELECTION_PROPERTY,
@@ -1726,6 +1738,52 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 				firePropertyChange(REFRESH_LOCATION_PROPERTY, null, details);
 				break;
 		}
+	}
+
+	/**
+	 * 
+	 * @param object list: first element source, second new created ome for source
+	 * @return
+	 */
+	public List<ImportableFile> addAndRefreshMetaFileView(File[] files) 
+	{
+		if(files!=null){
+				table.addFile(files[0],files[1]);
+		}
+			
+		return table.getFilesToImport();
+	}
+	
+	/**
+	 * Copy the import settings chosen but the user.
+	 * 
+	 * @return The import settings selected by the user.
+	 */
+	private ImportLocationSettings copyImportLocationSettings(ImportableFile file)
+	{
+
+		GroupData group =file.getGroup();
+		ExperimenterData user = file.getUser();
+		switch(getType())
+		{
+		case Importer.PROJECT_TYPE:
+			
+			DataNode project = new DataNode(file.getParent());
+			DataNode dataset = new DataNode(file.getDataset());
+			return new ProjectImportLocationSettings(group, user,
+					project, dataset);
+		case Importer.SCREEN_TYPE:
+			//TODO: screen richtig gesetzt?
+			DataNode screen = new DataNode(file.getParent());
+			return new ScreenImportLocationSettings(group, user, screen);
+		}
+
+		return new NullImportSettings(group, user);
+	}
+	
+	public FileFilter getFileFilter()
+	{
+		return chooser!=null ? chooser.getFileFilter() : null;
 	}
 
 }
