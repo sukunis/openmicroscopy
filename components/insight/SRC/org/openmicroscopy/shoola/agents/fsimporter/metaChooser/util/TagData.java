@@ -349,6 +349,12 @@ public class TagData
 	{
 		inputField = new ScrollableTextPane();
 	}
+	
+	public void setTextAreaRow(int r)
+	{
+		if(inputField instanceof ScrollableTextPane)
+			((ScrollableTextPane) inputField).setTextAreaRows(r);
+	}
 
 	private void initCheckBox(String val)
 	{
@@ -1127,12 +1133,16 @@ public class TagData
 		public ScrollableTextPane()
 		{
 			area=new JTextArea();
-			area.setRows(2);
+			area.setRows(5);
 			area.setLineWrap(true);
 			area.setWrapStyleWord(true);
 			area.addKeyListener(fieldKeyListener);
 			setViewportView(area);
 			
+		}
+		public void setTextAreaRows(int r)
+		{
+			area.setRows(r);
 		}
 		
 		public void setText(String val)
