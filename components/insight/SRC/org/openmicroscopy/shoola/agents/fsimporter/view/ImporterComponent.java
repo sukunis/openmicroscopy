@@ -1,6 +1,6 @@
 /*
  *------------------------------------------------------------------------------
- *  Copyright (C) 2006-2016 University of Dundee. All rights reserved.
+ *  Copyright (C) 2006-2014 University of Dundee. All rights reserved.
  *
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -35,6 +36,8 @@ import org.openmicroscopy.shoola.agents.events.importer.ImportStatusEvent;
 import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportLocationSettings;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.util.FileImportComponent;
 import org.openmicroscopy.shoola.agents.fsimporter.util.ObjectToCreate;
 import org.openmicroscopy.shoola.agents.treeviewer.view.TreeViewer;
@@ -50,7 +53,9 @@ import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.env.data.model.ImportableObject;
 import org.openmicroscopy.shoola.env.data.model.ResultsObject;
 import org.openmicroscopy.shoola.env.data.model.ThumbnailData;
+
 import omero.gateway.SecurityContext;
+
 import org.openmicroscopy.shoola.env.event.EventBus;
 import org.openmicroscopy.shoola.env.ui.UserNotifier;
 import org.openmicroscopy.shoola.util.file.ImportErrorObject;
@@ -65,6 +70,8 @@ import omero.gateway.model.PixelsData;
 import omero.gateway.model.PlateData;
 import omero.gateway.model.ProjectData;
 import omero.gateway.model.ScreenData;
+
+
 
 /** 
  * Implements the {@link Importer} interface to provide the functionality
@@ -111,9 +118,17 @@ class ImporterComponent
 	
 	/** Reference to the chooser used to select the files to import. */
 	private ImportDialog	chooser;
+	
+	/** Reference to the metadata chooser used to specificate metadata for the files to import. */
+	private MetaDataDialog	metaDataChooser;
 
 	/** Flag indicating that the window has been marked to be closed.*/
 	private boolean 		markToclose;
+	
+	/** holds import information like group, project, importer, dataset**/
+	private ImportUserData importUserData;
+
+	private boolean metaDataCreated;
 	
 	/**
 	 * Posts event if required indicating the status of the import process.
@@ -183,6 +198,7 @@ class ImporterComponent
 	{
 		if (element == null) return;
 		view.setSelectedPane(element, true);
+		
 		model.fireImportData(element.getData(), element.getID());
 	}
 	
@@ -200,6 +216,7 @@ class ImporterComponent
 		controller = new ImporterControl(this);
 		view = new ImporterUI();
 		markToclose = false;
+		metaDataCreated=false;
 	}
 
 	/** Links up the MVC triad. */
@@ -318,6 +335,7 @@ class ImporterComponent
         if (model.getState() == DISCARDED) return;
         boolean reactivate = chooser != null;
         model.setImportFor(userId);
+        
         if (chooser == null) {
             chooser = new ImportDialog(view, model.getSupportedFormats(),
                     selectedContainer, objects, type,
@@ -331,6 +349,20 @@ class ImporterComponent
             view.selectChooser();
         }
         chooser.setSelectedGroup(getSelectedGroup());
+        
+        //Metadata biology
+        if(metaDataChooser==null){
+        	metaDataChooser = new MetaDataDialog(view,model.getSupportedFormats(),type, 
+        			controller.getAction(ImporterControl.CANCEL_BUTTON),this,
+        			chooser.getImportButton(),chooser.getCancelImportButton()); 
+        	metaDataChooser.addPropertyChangeListener(controller);
+        	view.addMDComponent(metaDataChooser);
+        }else{
+        	//metaDataChooser.reset();
+        	//metaDataChooser.requestFocusInWindow();
+//        	view.selectMetaDataChooser();
+        }
+        
         if (model.isMaster() || CollectionUtils.isEmpty(objects) || !reactivate)
             refreshContainers(new ImportLocationDetails(type));
         //load available disk space
@@ -703,6 +735,8 @@ class ImporterComponent
 	{
 		if (data == null)
 			throw new IllegalArgumentException("No object to create.");
+		
+	
 		model.fireDataCreation(data);
 		fireStateChange();
 	}
@@ -896,6 +930,7 @@ class ImporterComponent
 		if (element == null) return;
 		Object result = component.getImportResult();
 		Object formattedResult = element.uploadComplete(component, result);
+		
 		if (!controller.isMaster()) {
 			EventBus bus = ImporterAgent.getRegistry().getEventBus();
 			ImportStatusEvent e = new ImportStatusEvent(hasOnGoingImport(),
@@ -968,4 +1003,8 @@ class ImporterComponent
             }
         }
     }
+    
+   
+    
+   
 }

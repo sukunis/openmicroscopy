@@ -488,6 +488,8 @@ public interface OmeroImageService
 		ImportableFile importable , boolean close)
 		throws ImportException, DSAccessException, DSOutOfServiceException;
 	
+	
+
 	/**
 	 * Returns the collection of supported file formats.
 	 * 
