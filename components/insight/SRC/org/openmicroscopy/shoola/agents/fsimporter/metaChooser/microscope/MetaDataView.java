@@ -23,12 +23,14 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import ome.xml.meta.IMetadata;
 import ome.xml.model.OME;
+import omero.gateway.model.MapAnnotationData;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.SaveMetadata;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -569,5 +571,23 @@ public class MetaDataView extends JPanel
 
 	public void setParentDataLoaded(boolean b) {
 		parentDataLoaded=b;		
+	}
+
+	/** return mapAnnotationData for singleView and List<MapAnnotationData> for seriesData*/ 
+	public MapAnnotationObject getMapAnnotation() 
+	{
+		
+		if(seriesData){
+			List<MapAnnotationData> result=new ArrayList<>();
+			for(Component comp:cardPane.getComponents()){
+				result.add(((MetaDataUI) comp).getMapAnnotation());
+			}
+			return new MapAnnotationObject(srcFile.getAbsolutePath(),result);
+		}else{
+			if(singleView!=null){
+				return new MapAnnotationObject(srcFile.getAbsolutePath(),singleView.getMapAnnotation());
+			}
+		}
+		return null;
 	}
 }

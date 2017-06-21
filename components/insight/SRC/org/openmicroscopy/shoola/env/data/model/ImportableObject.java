@@ -41,12 +41,15 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import omero.gateway.SecurityContext;
+
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.util.CommonsLangUtils;
 import org.openmicroscopy.shoola.util.filter.file.TIFFFilter;
 import org.openmicroscopy.shoola.util.ui.UIUtilities;
 
 import omero.gateway.model.DataObject;
 import omero.gateway.model.DatasetData;
+import omero.gateway.model.MapAnnotationData;
 import omero.gateway.model.ProjectData;
 import omero.gateway.model.ScreenData;
 import omero.gateway.model.TagAnnotationData;
@@ -188,6 +191,9 @@ public class ImportableObject
 	/** The collection of tags. */
 	private Collection<TagAnnotationData> tags;
 	
+	/** The map annotation to each file for import*/
+	private Map<String,MapAnnotationObject> mapAnnots;
+	
 	/** The array containing pixels size.*/
 	private double[] pixelsSize;
 	
@@ -262,6 +268,7 @@ public class ImportableObject
 		loadThumbnail = true;
 		newObjects = new ArrayList<DataObject>();
 		projectDatasetMap = new HashMap<Long, List<DatasetData>>();
+		mapAnnots=new HashMap<String,MapAnnotationObject>();
 	}
 	
 	/**
@@ -309,6 +316,17 @@ public class ImportableObject
 	public void setTags(Collection<TagAnnotationData> tags)
 	{
 		this.tags = tags;
+	}
+	
+	/**
+	 * Sets the mapAnnotation for given file
+	 * 
+	 * @param fileName
+	 * @param annot
+	 */
+	public void setMapAnnotation(String fileName,MapAnnotationObject annot)
+	{
+		this.mapAnnots.put(fileName,annot);
 	}
 	
 	/**
@@ -439,6 +457,12 @@ public class ImportableObject
 	 */
 	public Collection<TagAnnotationData> getTags() { return tags; }
 	
+	public MapAnnotationObject getMapAnnotation(String fileName)
+	{
+		return mapAnnots.get(fileName);
+		
+	}
+	
 	/**
 	 * Returns <code>true</code> if new tags were created, <code>false</code>
 	 * otherwise.
@@ -457,17 +481,7 @@ public class ImportableObject
 		return false;
 	}
 	
-//	public boolean hasNewAnnotations()
-//	{
-//		if (annot == null || annot.size() == 0) return false;
-//		Iterator<FileAnnotationData> i = annot.iterator();
-//		AnnotationData annotation;
-//		while (i.hasNext()) {
-//			annotation = i.next();
-//			if (annotation.getId() <= 0) return true;
-//		}
-//		return false;
-//	}
+
 	
 	/**
 	 * Returns the nodes of reference.

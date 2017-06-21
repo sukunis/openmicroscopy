@@ -23,7 +23,12 @@ import javax.swing.border.TitledBorder;
 
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
+import ome.xml.model.Arc;
 import ome.xml.model.Detector;
+import ome.xml.model.Filament;
+import ome.xml.model.GenericExcitationSource;
+import ome.xml.model.Laser;
+import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.primitives.PercentFraction;
@@ -436,11 +441,24 @@ public class LightSourceViewer extends ModuleViewer{
 			map=new HashMap<String, String>();
 		
 		LightSource l=data.getLightSource(index);
-		String id=chName+":"+String.valueOf(sourceType.getSelectedIndex())+l.getID()+":";
+		
+		String kindOfLS="";
+		if(l instanceof Laser){
+			kindOfLS=LightSourceModel.LASER;
+		}else if(l instanceof Arc){
+			kindOfLS=LightSourceModel.ARC;
+		}else if(l instanceof Filament){
+			kindOfLS=LightSourceModel.FILAMENT;
+		}else if(l instanceof GenericExcitationSource){
+			kindOfLS=LightSourceModel.GENERIC_EXCITATION;
+		}else if(l instanceof LightEmittingDiode){
+			kindOfLS=LightSourceModel.LIGHT_EMITTING_DIODE;
+		}
+		String id="["+chName+"]:["+kindOfLS+"]:";
 		map=((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getMapValuesOfChanges(map,id);
 		
 		
-		id=id+"Settings:";
+		id=id+"[Settings]:";
 		if(inputAt(waveLengthSett)) map.put(id+TagNames.WAVELENGTH,waveLengthSett.getTagValue()+" "+waveLengthSett.getTagUnit().getSymbol());
 		if(inputAt(attenuation)) map.put(id+TagNames.ATTENUATION,attenuation.getTagValue());
 		

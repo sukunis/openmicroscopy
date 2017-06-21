@@ -1,6 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import loci.formats.FormatException;
@@ -41,6 +42,8 @@ public class ExperimentModel {
 	Experimenter experimenter;
 //	ExperimenterListModel experimenterListModel;
 //	List<Experimenter> expList;
+
+	private HashMap<String, String> map;
 	
 	
 	public ExperimentModel()
@@ -75,6 +78,17 @@ public class ExperimentModel {
 			setProjectPartner(projPartner);
 	}
 
+	
+	public HashMap<String,String> getMap()
+	{
+		return map;
+	}
+	
+	public void setMap(HashMap<String,String> newMap)
+	{
+		map=newMap;
+	}
+	
 	public Experiment getExperiment() {
 		return experiment;
 	}

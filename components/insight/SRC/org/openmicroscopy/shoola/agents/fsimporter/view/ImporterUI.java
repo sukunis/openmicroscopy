@@ -90,6 +90,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.ImporterAgent;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.GroupSelectionAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.util.FileImportComponent;
 import org.openmicroscopy.shoola.agents.imviewer.view.ImViewer;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
@@ -829,6 +830,11 @@ class ImporterUI extends TopWindow
 //		repaint();
 	}
 
+	public void setMapAnnotation(MapAnnotationObject o)
+	{
+		chooser.setMapAnnotation(o.getFileName(), o);
+	}
+	
 	public void addToMetaDataFileMap(File[] files) {
 		if(files==null || files.length<2){
 			return;

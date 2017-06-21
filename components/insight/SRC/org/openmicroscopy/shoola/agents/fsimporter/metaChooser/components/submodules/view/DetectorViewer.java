@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -34,6 +35,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MetaDataMapAnnotation;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.slf4j.LoggerFactory;
@@ -746,13 +748,19 @@ public class DetectorViewer extends ModuleViewer{
 		return list;
 	}
 	
+	/**
+	 * MetaDataEditor input will save as mapannotation
+	 * @param map
+	 * @param chName
+	 * @return
+	 */
 	public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map,String chName)
 	{
 		if(map==null)
 			map=new HashMap<String, String>();
 		
 		Detector d=data.getDetector(index);
-		String id=chName+":"+d.getID()+":";
+		String id="["+chName+"]:[Detector]:";
 		
 		if(inputAt(model)) map.put(id+TagNames.MODEL,model.getTagValue());
 		if(inputAt(manufact)) map.put(id+TagNames.MANUFAC,manufact.getTagValue());
@@ -761,7 +769,7 @@ public class DetectorViewer extends ModuleViewer{
 		if(inputAt(amplGain)) map.put(id+TagNames.AMPLGAIN,amplGain.getTagValue());
 		
 		// settings
-		id=id+"Settings:";
+		id=id+"[Settings]:";
 		if(inputAt(gain))map.put(id+TagNames.GAIN,gain.getTagValue());
 		if(inputAt(voltage))map.put(id+TagNames.VOLTAGE,voltage.getTagValue()+" "+voltage.getTagUnit().getSymbol());
 		if(inputAt(offset))map.put(id+TagNames.OFFSET,offset.getTagValue());

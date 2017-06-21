@@ -1,5 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
@@ -31,6 +32,8 @@ public class ObjectiveModel
 	
 	// settings
 	private ObjectiveSettings settings;
+	
+	private HashMap<String,String> map;
 	
 	// list of available objective (set by hardware definition)
 //	private List<Objective> availableElem;
@@ -182,6 +185,17 @@ public class ObjectiveModel
 			settings.setObjective(element);
 		
 		return settings;
+	}
+	
+	
+	public HashMap<String,String> getMap()
+	{
+		return map;
+	}
+	
+	public void setMap(HashMap<String,String> newMap)
+	{
+		map=newMap;
 	}
 	
 //	public List<Objective> getList()

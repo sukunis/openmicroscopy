@@ -62,6 +62,9 @@ import omero.model.Channel;
 import omero.model.Dataset;
 import omero.model.IObject;
 import omero.model.Image;
+import omero.model.MapAnnotation;
+import omero.model.MapAnnotationI;
+import omero.model.NamedValue;
 import omero.model.Pixels;
 import omero.model.Project;
 import omero.model.ProjectDatasetLink;
@@ -75,6 +78,7 @@ import omero.sys.Parameters;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.env.LookupNames;
 import org.openmicroscopy.shoola.env.config.Registry;
 import org.openmicroscopy.shoola.env.data.login.UserCredentials;
@@ -116,6 +120,7 @@ import omero.gateway.model.DatasetData;
 import omero.gateway.model.ExperimenterData;
 import omero.gateway.model.FileAnnotationData;
 import omero.gateway.model.ImageData;
+import omero.gateway.model.MapAnnotationData;
 import omero.gateway.model.PixelsData;
 import omero.gateway.model.ROIData;
 import omero.gateway.model.ScreenData;
@@ -235,6 +240,7 @@ class OmeroImageServiceImpl
 						else {
 							importIc = icContainers.get(0);
 							importIc.setCustomAnnotationList(list);
+							System.out.println("# OmeroImageServiceImpl::importFile(): importImageFile3");
 							label.setCallback(gateway.importImageFile(ctx,
 									object, ioContainer, importIc,
 									label, toClose, userName));
@@ -1015,6 +1021,11 @@ class OmeroImageServiceImpl
 				context.getLogger().error(this, msg);
 			}
 		}
+		
+		
+
+		
+		
 		IObject link;
 		//prepare the container.
 		List<String> candidates;
@@ -1157,6 +1168,9 @@ class OmeroImageServiceImpl
 					//Check after scanning
 					if (status.isMarkedAsCancel())
 						return Boolean.valueOf(false);
+					
+					System.out.println("# OmeroImageServiceImpl::importFile(): importImageFile1");
+					
 					return gateway.importImageFile(ctx, object, ioContainer,
 							importIc, status, close, userName);
 				} else {
@@ -1195,12 +1209,25 @@ class OmeroImageServiceImpl
 					return new ImportException(
 							ImportException.FILE_NOT_VALID_TEXT);
 				}
+				
+				//addMapAnnotations(file.getName(),customAnnotationList);
+				MapAnnotationObject maps=object.getMapAnnotation(file.getAbsolutePath());
+				
+				// for seriesData and single file
+				if(maps!=null){
+					for(MapAnnotationData m:maps.getMapAnnotationList()){
+						customAnnotationList.add((Annotation) m.asIObject());
+					}
+				}
+				
 				importIc = icContainers.get(0);
 				importIc.setCustomAnnotationList(customAnnotationList);
 				status.setUsedFiles(importIc.getUsedFiles());
 				//Check after scanning
 				if (status.isMarkedAsCancel())
 					return Boolean.valueOf(false);
+				
+				System.out.println("# OmeroImageServiceImpl::importFile(): importImageFile2");
 				return gateway.importImageFile(ctx, object, ioContainer,
 						importIc, status, close, userName);
 			}
@@ -1343,51 +1370,21 @@ class OmeroImageServiceImpl
 		return Boolean.valueOf(true);
 	}
 
+	private void addMapAnnotations(String string, List<Annotation> customAnnotationList) {
+		System.out.println("# OmeroImageServiceImpl::add MapAnnotation");
+		MapAnnotation ma = new MapAnnotationI();
+		List<NamedValue> values = new ArrayList<NamedValue>();
+		for (int i = 0; i < 3; i++)
+			values.add(new NamedValue(string + i, "value " + i));
+		ma.setMapValue(values);
+		
+		MapAnnotationData map=new MapAnnotationData(ma);
+		customAnnotationList.add((Annotation) map.asIObject());
+	}
+
 	
 
-//	private List<Annotation> saveFileAnnotation(ImportableObject object, String srcName, SecurityContext ctx,
-//			String userName, List<Annotation> customAnnotationList) 
-//	{
-//		// other annotations
-//		Map<String,FileAnnotationData> annots = object.getAnnotations();
-//		// all annots that are not still save to db (0 or 1 elements)
-//		List<IObject> l2;
-//		//Tags
-//		Map<Object, Object> parameters2 = new HashMap<Object, Object>();
-//		if (annots!=null && !annots.isEmpty()) {
-//			l2 = new ArrayList<IObject>();
-//			Map<String,FileAnnotationData> values = new HashMap<String, FileAnnotationData>(annots);
-//			if(annots.containsKey(srcName)){
-//				FileAnnotationData metaFile=annots.get(srcName);
-//				if (metaFile.getId() > 0) {
-//					values.put(srcName,metaFile);
-//					customAnnotationList.add((Annotation) metaFile.asIObject());
-//				} else l2.add(metaFile.asIObject());
-//			}
-//		
-//			//save the annot.
-//			try {
-//				if (l2.size() > 0) {
-//					System.out.println("# OmeroImageServiceImpl::saveFileAnnotation() : save annotation for "+srcName);
-//					l2 = gateway.saveAndReturnObject(ctx, l2, parameters2, userName);
-//				}
-//				
-//				Iterator<IObject> j = l2.iterator();
-//				Annotation a;
-//				while (j.hasNext()) {
-//					a = (Annotation) j.next();
-//					object.setAnnotation(srcName,new FileAnnotationData((FileAnnotation) a));
-//					customAnnotationList.add(a); 
-//				}
-//			} catch (Exception e) {
-//				LogMessage msg = new LogMessage();
-//				msg.print("Cannot create the annotation.");
-//				msg.print(e);
-//				context.getLogger().error(this, msg);
-//			}
-//		}
-//		return customAnnotationList;
-//	}
+
 	
 	/** 
 	 * Implemented as specified by {@link OmeroImageService}. 

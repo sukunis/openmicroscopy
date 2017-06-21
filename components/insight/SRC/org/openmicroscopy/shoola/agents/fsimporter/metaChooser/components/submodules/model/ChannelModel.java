@@ -1,6 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ome.units.quantity.Length;
@@ -26,15 +27,18 @@ public class ChannelModel
     	    LoggerFactory.getLogger(ChannelModel.class);
 	
 	private List<Channel> element;
+	private List<HashMap<String,String>> maps;
 	
 	public ChannelModel()
 	{
 		element=new ArrayList<Channel>();
+		maps=new ArrayList<HashMap<String,String>>();
 	}
 	
 	public ChannelModel(ChannelModel orig)
 	{
 		element=orig.element;
+		maps=orig.maps;
 	}
 	
 	public Channel getChannel(int index)
@@ -43,6 +47,21 @@ public class ChannelModel
 			return null;
 		
 		return element.get(index);
+	}
+	
+	public HashMap<String,String> getMap(int i)
+	{
+		if(i>=maps.size())
+			return null;
+		return maps.get(i);
+	}
+	
+	public void setMap(HashMap<String,String> map,int i)
+	{
+		
+		if(i>=maps.size())
+			expandList(maps.size(),i);
+		maps.set(i, map);
 	}
 	
 	public boolean addData(Channel c, boolean overwrite,int i) 
@@ -155,6 +174,7 @@ public class ChannelModel
 	{
 		for(int i=size;i<index+1;i++){
 			element.add(new Channel());
+			maps.add(new HashMap<String,String>());
 		}
 	}
 

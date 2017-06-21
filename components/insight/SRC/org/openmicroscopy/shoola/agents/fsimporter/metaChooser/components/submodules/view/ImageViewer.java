@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -354,7 +355,7 @@ public class ImageViewer extends ModuleViewer{
 		String symbol = unit==UNITS.REFERENCEFRAME ? "rf" : unit.getSymbol();
 		String[] val= {valX,valY};
 		if(stagePos == null){ 
-			stagePos = new TagData(TagNames.STAGELABEL+"["+symbol+"]",val,prop,TagData.ARRAYFIELDS);
+			stagePos = new TagData(TagNames.STAGELABEL,val,unit,prop,TagData.ARRAYFIELDS);
 		}else {
 			stagePos.setTagValue(valX,0,prop);
 			stagePos.setTagValue(valY,1,prop);
@@ -529,6 +530,36 @@ For example in a video stream.
 		return PixelType.fromString(pixelType.getTagValue());
 	}
 	
+	public HashMap<String, String> getMapValuesOfChanges(HashMap<String, String> map) 
+	{
+		if(map==null)
+			map=new HashMap<String, String>();
+		
+		String id="";
+		if(name.getTagValue()!=null && !name.getTagValue().equals(""))
+			id="["+name.getTagValue()+"]:";
+		else if(data.getImage().getID()!=null && !data.getImage().getID().equals("")){
+			id="["+data.getImage().getID()+"]:";
+		}else
+			id="[Image]:";
+		if(name.valueChanged()) map.put(id+name.getTagName(),name.getTagValue());
+		if(desc.valueChanged()) map.put(id+desc.getTagName(),desc.getTagValue());
+		if(acqTime.valueChanged()) map.put(id+acqTime.getTagName(),acqTime.getTagValue());
+		if(dimXY.valueChanged()) map.put(id+dimXY.getTagName(),dimXY.getTagValue());
+		if(pixelType.valueChanged()) map.put(id+pixelType.getTagName(),pixelType.getTagValue());
+		if(pixelSize.valueChanged()) map.put(id+pixelSize.getTagName(),pixelSize.getTagValue()+" "+
+					pixelSize.getTagUnit().getSymbol());
+		if(dimZTC.valueChanged()) map.put(id+dimZTC.getTagName(),dimZTC.getTagValue());
+		if(stepSize.valueChanged()) map.put(id+stepSize.getTagName(),stepSize.getTagValue());
+		if(timeIncrement.valueChanged()) map.put(id+timeIncrement.getTagName(),timeIncrement.getTagValue()+" "+
+					timeIncrement.getTagUnit().getSymbol());
+		if(stagePos.valueChanged()) map.put(id+stagePos.getTagName(),stagePos.getTagValue()+" "+
+					stagePos.getTagUnit().getSymbol());
+		if(wellNr.valueChanged()) map.put(id+wellNr.getTagName(),wellNr.getTagValue());
+		
+		return map;
+}
+
 }
 
 

@@ -1,5 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
+import java.util.HashMap;
 import java.util.List;
 
 import ome.units.unit.Unit;
@@ -25,6 +26,8 @@ public class SampleModel
 			LoggerFactory.getLogger(SampleModel.class);
 	
 	private Sample element;
+
+	private HashMap<String, String> map;
 	
 	public SampleModel()
 	{
@@ -35,6 +38,15 @@ public class SampleModel
 		element=orig.element;
 	}
 	
+	public HashMap<String,String> getMap()
+	{
+		return map;
+	}
+	
+	public void setMap(HashMap<String,String> newMap)
+	{
+		map=newMap;
+	}
 	
 	public boolean addData(Sample s, boolean overwrite)
 	{

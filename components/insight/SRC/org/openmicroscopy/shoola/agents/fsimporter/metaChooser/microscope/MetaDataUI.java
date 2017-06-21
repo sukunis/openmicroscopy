@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -52,6 +53,7 @@ import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
 import ome.xml.model.Plane;
 import ome.xml.model.StructuredAnnotations;
+import omero.gateway.model.MapAnnotationData;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataControl;
@@ -72,6 +74,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 //import org.slf4j.LoggerFactory;
 import org.slf4j.LoggerFactory;
@@ -1167,6 +1170,7 @@ public class MetaDataUI extends JPanel
 			List<TagData> list=lastSelection.getChangedTags();
 			lastSelection.saveData();
 			model.setChangesChannel(list, lastSelection.getIndex());
+			model.setMapAnnotationChannel(lastSelection.getMapValuesOfChanges(model.getMapAnnotationChannel(lastSelection.getIndex())),lastSelection.getIndex()); 
 		}
 		
 		channelTab.setSelectedIndex(chNr);
@@ -1178,11 +1182,14 @@ public class MetaDataUI extends JPanel
 		// update submodules
 		if(initLightSrcUI ){
 			boolean input=lightSrcViewer.hasDataToSave();
+			int elemIndex=lightSrcViewer.getIndex();
 			if(input){
 				lightSrcInput=true;
 				List<TagData> list=lightSrcViewer.getChangedTags();
 				lightSrcViewer.saveData();
-				model.setChangesDetector(list,detectorViewer.getIndex());
+				model.setChangesLightSrc(list,elemIndex);
+				model.setMapAnnotationLightSrc(
+						lightSrcViewer.getMapValuesOfChanges(model.getMapAnnotationLightSrc(elemIndex),lastSelection.getName()), elemIndex); 
 			}
 			// show referenced lightSrc + settings
 			setLightSrcVisible(chName, chNr);
@@ -1193,9 +1200,12 @@ public class MetaDataUI extends JPanel
 			boolean input=detectorViewer.hasDataToSave();
 			if(input){
 				detectorInput=true;
+				int elemIndex=detectorViewer.getIndex();
 				List<TagData> list=detectorViewer.getChangedTags();
+				HashMap<String,String> map=model.getMapAnnotationDetector(elemIndex);
 				detectorViewer.saveData();
-				model.setChangesDetector(list,detectorViewer.getIndex());
+				model.setChangesDetector(list,elemIndex);
+				model.setMapAnnotationDetector(detectorViewer.getMapValuesOfChanges(map,lastSelection.getName()),elemIndex);
 			}
 			// show referenced detector + settings
 			setDetectorVisible(chName, chNr);
@@ -1206,8 +1216,11 @@ public class MetaDataUI extends JPanel
 			boolean input=lightPathViewer.hasDataToSave();
 			if(input){
 				lightPathInput=true;
+				int index=lightPathViewer.getIndex();
 				try {
-					model.setChangesLightPath(model.getLightPath(lightPathViewer.getIndex()),lightPathViewer.getIndex());
+					model.setChangesLightPath(model.getLightPath(index),index);
+					model.setMapAnnotationLightPath(
+							lightPathViewer.getMapValuesOfChanges(model.getMapAnnotationLightPath(index),lastSelection.getName()),index);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -1538,26 +1551,36 @@ public class MetaDataUI extends JPanel
 
 	public void save() 
 	{
+		String chName=null;
+		
 		System.out.println("# MetaDataUI::save()");
 		if(imageUI!=null && imageUI.hasDataToSave()){
 			List<TagData> list=imageUI.getChangedTags();
+			model.setMapAnnotationImage(imageUI.getMapValuesOfChanges(model.getMapAnnotationImage())); 
 			printList("Image",list);
 			imageUI.saveData();
 			model.setChangesImage(list);
+			
 //			firePropertyChange(CHANGE_IMGDATA, null, list);
 		}
 		if(experimentUI!=null && experimentUI.hasDataToSave()){
 			List<TagData> list=experimentUI.getChangedTags();
+//			model.setMapAnnotationExperiment(wrapListToMap(list,model.getMapAnnotationExperiment(),"Experiment"));
+			model.setMapAnnotationExperiment(experimentUI.getMapValuesOfChanges(model.getMapAnnotationExperiment())); 
 			printList("Experiment",list);
 			experimentUI.saveData();
 			model.setChangesExperiment(list);
+			
 //			firePropertyChange(CHANGE_EXPDATA,null,list);
 		}
 		if(sampleUI!=null && sampleUI.hasDataToSave()){
 			List<TagData> list=sampleUI.getChangedTags();
+//			model.setMapAnnotationSample(wrapListToMap(list,model.getMapAnnotationSample(),"Sample"));
+			model.setMapAnnotationSample(sampleUI.getMapValuesOfChanges(model.getMapAnnotationSample())); 
 			printList("Sample",list);
 			sampleUI.saveData();
 			model.setChangesSample(list);
+			
 //			firePropertyChange(CHANGE_SAMPLEDATA, null, list);
 		}
 		if(objectiveUI!=null && objectiveUI.hasDataToSave()){
@@ -1565,13 +1588,17 @@ public class MetaDataUI extends JPanel
 			printList("Objective",list);
 			objectiveUI.saveData();
 			model.setChangesObject(list);
+			model.setMapAnnotationObjective(objectiveUI.getMapValuesOfChanges(model.getMapAnnotationObjective())); 
 //			firePropertyChange(CHANGE_OBJDATA, null, list);
 		}
 		if(imgEnvViewer!=null && imgEnvViewer.hasDataToSave()){
 			List<TagData> list=imgEnvViewer.getChangedTags();
+			model.setMapAnnotationImgEnv(imgEnvViewer.getMapValuesOfChanges(model.getMapAnnotationImgEnv()));
 			printList("ImgEnv",list);
 			imgEnvViewer.saveData();
 			model.setChangesImageEnv(list);
+//			TODO
+//			model.setMapAnnotationChannel(chViewer.getMapValuesOfChanges(model.getMapAnnotationChannel())); 
 		}
 		
 
@@ -1581,27 +1608,35 @@ public class MetaDataUI extends JPanel
 				channelTab.getSelectedComponent() instanceof ChannelViewer)
 		{
 			ChannelViewer chViewer=(ChannelViewer) channelTab.getSelectedComponent();
+			chName=chViewer.getName();
 			if(chViewer.hasDataToSave())
 			{
 				List<TagData> list=chViewer.getChangedTags();
 				printList("Channel "+chViewer.getIndex(),list);
 				chViewer.saveData();
 				model.setChangesChannel(list, chViewer.getIndex());
+				model.setMapAnnotationChannel(chViewer.getMapValuesOfChanges(model.getMapAnnotationChannel(chViewer.getIndex())),chViewer.getIndex()); 
 				System.out.println("\t...Save current Channel ");
 			}
 		}
 		// save selected component, other saved by deselect the channel
 		if(detectorViewer!=null && detectorViewer.hasDataToSave()){
+			int thisIndex=detectorViewer.getIndex();
+			System.out.println("-- SAVE detector data for channel "+chName+" : "+thisIndex);
 			List<TagData> list=detectorViewer.getChangedTags();
-			printList("Detector "+detectorViewer.getIndex(),list);
+			HashMap<String,String> map=model.getMapAnnotationDetector(thisIndex);
+			
+			printList("Detector "+thisIndex,list);
 			detectorViewer.saveData();
-			model.setChangesDetector(list,detectorViewer.getIndex());
+			model.setChangesDetector(list,thisIndex);
+			model.setMapAnnotationDetector(detectorViewer.getMapValuesOfChanges(map,chName),thisIndex); 
 		}
 		if(lightPathViewer!=null && lightPathViewer.hasDataToSave()){
 			int index=lightPathViewer.getIndex();
 			lightPathViewer.saveData();
 			try {
 				model.setChangesLightPath(model.getLightPath(index),lightPathViewer.getIndex());
+				model.setMapAnnotationLightPath(lightPathViewer.getMapValuesOfChanges(model.getMapAnnotationLightPath(lightPathViewer.getIndex()),chName),lightPathViewer.getIndex());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1612,6 +1647,7 @@ public class MetaDataUI extends JPanel
 			printList("LightSrc "+lightSrcViewer.getIndex(),list);
 			lightSrcViewer.saveData();
 			model.setChangesLightSrc(list,lightSrcViewer.getIndex());
+			model.setMapAnnotationLightSrc(lightSrcViewer.getMapValuesOfChanges(model.getMapAnnotationLightSrc(lightSrcViewer.getIndex()),chName),lightSrcViewer.getIndex()); 
 		}
 		
 		detectorInput=false;
@@ -1621,6 +1657,17 @@ public class MetaDataUI extends JPanel
 
 
 	
+	private HashMap<String, String> wrapListToMap(List<TagData> list, HashMap<String, String> map,
+			String id) 
+	{
+		if(map==null)
+			map=new HashMap<String, String>();
+		for(TagData t:list){
+			map.put(id+t.getTagName(), t.getTagValue());
+		}
+		return map;
+	}
+
 	private void printList(String string, List<TagData> list) 
 	{
 		System.out.println("\t Changes in "+string);
@@ -1830,6 +1877,13 @@ public class MetaDataUI extends JPanel
 		if(experimentUI!=null && experimentUI.predefinitionValAreLoaded()){
 			experimentUI.saveData();
 		}
+	}
+
+	public MapAnnotationData getMapAnnotation() 
+	{
+		MapAnnotationData ma=model.getAnnotation();
+		MapAnnotationObject.printMapAnnotation(ma);
+		return ma;
 	}
 	
 

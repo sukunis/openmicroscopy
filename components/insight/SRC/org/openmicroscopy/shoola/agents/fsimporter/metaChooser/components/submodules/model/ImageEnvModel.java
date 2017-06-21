@@ -1,5 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -23,6 +24,8 @@ public class ImageEnvModel
 	    	    LoggerFactory.getLogger(ImageEnvModel.class);
 	 
 	ImagingEnvironment element;
+
+	private HashMap<String, String> map;
 	
 	public ImageEnvModel()
 	{
@@ -32,6 +35,16 @@ public class ImageEnvModel
 	public ImageEnvModel(ImageEnvModel orig)
 	{
 		element=orig.element;
+	}
+	
+	public HashMap<String,String> getMap()
+	{
+		return map;
+	}
+	
+	public void setMap(HashMap<String,String> newMap)
+	{
+		map=newMap;
 	}
 	
 	public boolean addData(ImagingEnvironment img, boolean overwrite)
