@@ -5852,7 +5852,7 @@ class OMEROGateway
              config.targetId.set(container.getId().getValue());
              ic.setTarget(container);
         }
-
+        
         ic.setUserPixels(object.getPixelsSize());
         OMEROMetadataStoreClient omsc = null;
         OMEROWrapper reader = null;
@@ -6139,6 +6139,36 @@ class OMEROGateway
 		}
 		return Collections.EMPTY_LIST;
 	}
+	
+	ImageData saveImageLink(SecurityContext ctx,long metaID,long srcID)
+			throws DSOutOfServiceException, DSAccessException
+	{
+		try{
+			BrowseFacility bm = gw.getFacility(BrowseFacility.class);
+			ImageData img =bm.getImage(ctx, srcID);
+			String desc=img.getDescription();
+			if(desc==null)
+				desc="";
+			img.setDescription("MetaData Image ID: "+metaID+"; "+desc);
+			
+			DataManagerFacility dm=gw.getFacility(DataManagerFacility.class);
+			img=(ImageData) dm.saveAndReturnObject(ctx, img);
+			
+			img =bm.getImage(ctx, metaID);
+			desc=img.getDescription();
+			if(desc==null)
+				desc="";
+			img.setDescription("Source Image ID: "+srcID+"; "+desc);
+			
+			img=(ImageData) dm.saveAndReturnObject(ctx, img);
+			
+			return img;
+		}catch (Exception e) {
+			handleException(e, "Cannot Save the Link for image: "+srcID);
+		}
+		return null;
+	}
+	
 
 	/**
 	 * Loads the <code>FileAnnotationData</code>s for the passed image.

@@ -831,8 +831,8 @@ class ImporterUIElement
 				setClosable(isDone());
 			}
 		}
-	}
-
+		}
+	
 	/**
 	 * Returns <code>true</code> if the upload is finished, <code>false</code>
 	 * otherwise.
@@ -1220,4 +1220,4 @@ class ImporterUIElement
 		}
 	}
 
-}
+		}
