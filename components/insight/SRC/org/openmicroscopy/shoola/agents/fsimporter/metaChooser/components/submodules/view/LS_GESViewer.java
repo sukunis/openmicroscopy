@@ -52,7 +52,7 @@ public class LS_GESViewer extends LightSourceSubViewer
 		} catch (NullPointerException e) { }
 		try{ setPower(((GenericExcitationSource)lightSrc).getPower(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setMap(((GenericExcitationSource)lightSrc).getMap().getPairs(),REQUIRED);
+		try{ setMap(((GenericExcitationSource)lightSrc).getMap(),REQUIRED);
 		} catch (NullPointerException e) { }		
 	}
 

@@ -14,7 +14,6 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.model.MapAnnotation;
 import ome.xml.model.MapPair;
-import ome.xml.model.MapPairs;
 import ome.xml.model.primitives.Timestamp;
 import omero.gateway.model.MapAnnotationData;
 import omero.model.NamedValue;
@@ -112,8 +111,7 @@ public class Sample
 
 	public Sample(MapAnnotation annot) 
 	{
-		MapPairs mp=annot.getValue();
-		List<MapPair> listMP=mp.getPairs();
+		List<MapPair> listMP=annot.getValue();
 		switch (annot.getNamespace()) {
 		case OMEStore.NS_2016_06_07:
 			parseFromXMLMapAnnotation2016_06_07(listMP);

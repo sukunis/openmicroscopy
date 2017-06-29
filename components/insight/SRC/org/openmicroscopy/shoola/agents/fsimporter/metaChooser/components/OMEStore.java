@@ -24,7 +24,6 @@ import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.MapAnnotation;
 import ome.xml.model.MapPair;
-import ome.xml.model.MapPairs;
 import ome.xml.model.OME;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
@@ -185,7 +184,7 @@ public class OMEStore
 		addMapPair(cAnnot.valueList, ExperimentModel.EXPERIMENT_DESC_MAPLABEL,e.getDescription());
 		if(e.getType()!=null)
 			addMapPair(cAnnot.valueList,ExperimentModel.EXPERIMENT_TYPE_MAPLABEL,e.getType().getValue());
-		mapAnnot.setValue(new MapPairs(cAnnot.valueList));
+		mapAnnot.setValue(cAnnot.valueList);
 
 		cAnnot.save(mapAnnot);
 		ome.setStructuredAnnotations(cAnnot.annot);
@@ -241,7 +240,7 @@ public class OMEStore
 		}
 		
 		MapAnnotation mapAnnot=cAnnot.map;
-		mapAnnot.setValue(new MapPairs(cAnnot.valueList));
+		mapAnnot.setValue(cAnnot.valueList);
 
 		cAnnot.save(mapAnnot);
 		ome.setStructuredAnnotations(cAnnot.annot);
@@ -260,7 +259,7 @@ public class OMEStore
 		MapAnnotation mapAnnot=cAnnot.map;
 
 		addMapPair(cAnnot.valueList, ExperimentModel.PROJPARTNER_MAPLABEL,p.getLastName());
-		mapAnnot.setValue(new MapPairs(cAnnot.valueList));
+		mapAnnot.setValue(cAnnot.valueList);
 
 		cAnnot.save(mapAnnot);
 		
@@ -286,7 +285,7 @@ public class OMEStore
 		List<MapPair> valueList=new ArrayList<MapPair>();
 		if(index!=-1){
 			mapAnnot=annot.getMapAnnotation(index);
-			valueList.addAll(mapAnnot.getValue().getPairs());
+			valueList.addAll(mapAnnot.getValue());
 		}else{
 			mapAnnot=new MapAnnotation();
 		}

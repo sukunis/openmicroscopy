@@ -48,8 +48,8 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		l.setLaserMedium(LaserMedium.OTHER);
 		l.setTuneable(false);
 		l.setPockelCell(false);
-		l.setWavelength(new Length(405, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
-		l.setPower(new Power(50, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setWavelength(new Length(405, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		l.setPower(new Power(50, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -59,8 +59,8 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 //		l.setLaserMedium(LaserMedium.SOLIDSTATE);
 		l.setTuneable(false);
 		l.setPockelCell(false);
-		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
-		l.setPower(new Power(100, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		l.setPower(new Power(100, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		 l=new Laser();
@@ -70,8 +70,8 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		l.setLaserMedium(LaserMedium.OTHER);
 		l.setTuneable(false);
 		l.setPockelCell(false);
-		l.setWavelength(new Length(561, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
-		l.setPower(new Power(40, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setWavelength(new Length(561, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		l.setPower(new Power(40, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -81,15 +81,15 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		l.setLaserMedium(LaserMedium.OTHER);
 		l.setTuneable(false);
 		l.setPockelCell(false);
-		l.setWavelength(new Length(635, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
-		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setWavelength(new Length(635, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		Arc a=new Arc();
 		a.setModel("HXP 120 C");
 		a.setManufacturer("Zeiss");
 //		a.setType(ArcType.GAS);
-		a.setPower(new Power(120,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.W)));
+		a.setPower(new Power(120,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.WATT)));
 		list.add(a);
 		
 		LightEmittingDiode d=new LightEmittingDiode();
@@ -141,7 +141,7 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		o.setLensNA(1.4);
 		o.setImmersion(Immersion.OIL);
 		o.setCorrection(Correction.PLANAPO);
-		o.setWorkingDistance(new Length(0.13, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(0.13, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 		
 		o=new Objective();
@@ -152,7 +152,7 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		o.setLensNA(1.3);
 		o.setImmersion(Immersion.WATER); // and glycerin
 		o.setCorrection(Correction.PLANNEOFLUAR);
-		o.setWorkingDistance(new Length(0.17, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(0.17, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 		
 		o=new Objective();
@@ -163,7 +163,7 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		o.setLensNA(1.46);
 		o.setImmersion(Immersion.OIL); // and glycerin
 		o.setCorrection(Correction.PLANAPO);
-		o.setWorkingDistance(new Length(0.1, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(0.1, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 		
 		return list;

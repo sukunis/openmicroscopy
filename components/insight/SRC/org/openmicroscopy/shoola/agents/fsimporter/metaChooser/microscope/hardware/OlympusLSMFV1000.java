@@ -166,9 +166,9 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.SEMICONDUCTOR);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(405, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(405, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(50, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(50, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -176,9 +176,9 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.AR);
-		l.setWavelength(new Length(457, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(457, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -186,9 +186,9 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -196,9 +196,9 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.AR);
-		l.setWavelength(new Length(514, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(514, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -206,9 +206,9 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.SEMICONDUCTOR);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(559, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(559, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(15, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(15, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -216,9 +216,9 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.SEMICONDUCTOR);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(635, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(635, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(20, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(20, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -226,10 +226,10 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		l.setManufacturer("PicoQuant");
 		l.setType(LaserType.SEMICONDUCTOR);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(440, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(440, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.REPETITIVE);
-		l.setRepetitionRate(new Frequency(40, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MHZ)));
-		l.setPower(new Power(5.0, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setRepetitionRate(new Frequency(40, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MEGAHERTZ)));
+		l.setPower(new Power(5.0, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -237,10 +237,10 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		l.setManufacturer("PicoQuant");
 		l.setType(LaserType.SEMICONDUCTOR);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(485, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(485, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.REPETITIVE);
-		l.setRepetitionRate(new Frequency(40, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MHZ)));
-		l.setPower(new Power(2.0, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setRepetitionRate(new Frequency(40, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MEGAHERTZ)));
+		l.setPower(new Power(2.0, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -248,10 +248,10 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		l.setManufacturer("PicoQuant");
 		l.setType(LaserType.SEMICONDUCTOR);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(561, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(561, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.REPETITIVE);
-		l.setRepetitionRate(new Frequency(80, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MHZ)));
-		l.setPower(new Power(0.5, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setRepetitionRate(new Frequency(80, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MEGAHERTZ)));
+		l.setPower(new Power(0.5, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -259,24 +259,24 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		l.setManufacturer("PicoQuant");
 		l.setType(LaserType.SEMICONDUCTOR);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(635, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(635, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.REPETITIVE);
-		l.setRepetitionRate(new Frequency(80, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MHZ)));
-		l.setPower(new Power(2.5, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setRepetitionRate(new Frequency(80, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MEGAHERTZ)));
+		l.setPower(new Power(2.5, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		Arc a=new Arc();
 		a.setModel("U-LH100HG");
 		a.setManufacturer("Olympus");
 //		a.setType(ArcType.GAS);
-		a.setPower(new Power(100,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.W)));
+		a.setPower(new Power(100,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.WATT)));
 		list.add(a);
 		
 		Filament f=new Filament();
 		f.setModel("Halogen");
 		f.setManufacturer("Olympus");
 		f.setType(FilamentType.OTHER);
-		f.setPower(new Power(100,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.W)));
+		f.setPower(new Power(100,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.WATT)));
 		
 		
 		return list;
@@ -335,7 +335,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		o.setLensNA(0.75);
 		o.setImmersion(Immersion.AIR);
 		o.setCorrection(Correction.PLANAPO);
-		o.setWorkingDistance(new Length(600, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(600, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 
 		o=new Objective();
@@ -346,7 +346,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		o.setLensNA(0.6);
 		o.setImmersion(Immersion.AIR);
 		o.setCorrection(Correction.PLANFLUOR);
-		o.setWorkingDistance(new Length(4000, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(4000, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 
 		o=new Objective();
@@ -357,7 +357,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		o.setLensNA(1.2);
 		o.setImmersion(Immersion.WATER);
 		o.setCorrection(Correction.PLANAPO);
-		o.setWorkingDistance(new Length(280, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(280, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 		
 		o=new Objective();
@@ -368,7 +368,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		o.setLensNA(1.35);
 		o.setImmersion(Immersion.OIL);
 		o.setCorrection(Correction.PLANAPO);
-		o.setWorkingDistance(new Length(150, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(150, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 		
 		o=new Objective();
@@ -379,7 +379,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		o.setLensNA(1.40);
 		o.setImmersion(Immersion.OIL);
 		o.setCorrection(Correction.APO);
-		o.setWorkingDistance(new Length(100, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(100, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 
 		return list;

@@ -59,9 +59,9 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.AR);
-		l.setWavelength(new Length(458, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(458, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(5, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(5, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -69,9 +69,9 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.AR);
-		l.setWavelength(new Length(476, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(476, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(5, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(5, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -79,9 +79,9 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(20, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(20, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -89,9 +89,9 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.AR);
-		l.setWavelength(new Length(514, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(514, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(20, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(20, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -99,18 +99,18 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.HENE);
-		l.setWavelength(new Length(543, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(543, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(1, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(1, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		l=new Laser();
 		l.setModel("He-Ne 633 nm");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.HENE);
-		l.setWavelength(new Length(633, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(633, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
-		l.setPower(new Power(10, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(10, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
 		
 		
@@ -118,14 +118,14 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 		a.setModel("EL6000");
 		a.setManufacturer("Leica");
 //		a.setType(ArcType.GAS);
-		a.setPower(new Power(120,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.W)));
+		a.setPower(new Power(120,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.WATT)));
 		list.add(a);
 		
 		Filament f=new Filament();
 		f.setModel("Halogen");
 		f.setManufacturer("Leica");
 		f.setType(FilamentType.OTHER);
-		f.setPower(new Power(100,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.W)));
+		f.setPower(new Power(100,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.WATT)));
 		
 		
 		return list;
@@ -136,22 +136,22 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 		List<Object> list = new ArrayList<Object>();
 		
 		TransmittanceRange tR_340_380=new TransmittanceRange();
-		tR_340_380.setCutIn(new Length(340,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
-		tR_340_380.setCutOut(new Length(380,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		tR_340_380.setCutIn(new Length(340,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		tR_340_380.setCutOut(new Length(380,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		
 		TransmittanceRange tR_450_490=new TransmittanceRange();
-		tR_450_490.setCutIn(new Length(450,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
-		tR_450_490.setCutOut(new Length(490,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		tR_450_490.setCutIn(new Length(450,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		tR_450_490.setCutOut(new Length(490,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		
 		TransmittanceRange tR_515_560=new TransmittanceRange();
-		tR_515_560.setCutIn(new Length(515,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
-		tR_515_560.setCutOut(new Length(560,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		tR_515_560.setCutIn(new Length(515,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		tR_515_560.setCutOut(new Length(560,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		
 		TransmittanceRange tR_515=new TransmittanceRange();
-		tR_515.setCutIn(new Length(515,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		tR_515.setCutIn(new Length(515,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		
 		TransmittanceRange tR_590=new TransmittanceRange();
-		tR_590.setCutIn(new Length(590,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		tR_590.setCutIn(new Length(590,UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		
 		Filter ex1 = new Filter();
 		ex1.setModel("BP 340/380");
@@ -268,7 +268,7 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 		o.setLensNA(0.3);
 		o.setImmersion(Immersion.AIR);
 		o.setCorrection(Correction.OTHER);
-		o.setWorkingDistance(new Length(11000, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(11000, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 		
 		o=new Objective();
@@ -279,7 +279,7 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 		o.setLensNA(0.7);
 		o.setImmersion(Immersion.AIR);
 		o.setCorrection(Correction.PLANAPO);
-		o.setWorkingDistance(new Length(620, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(620, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 		
 		
@@ -291,7 +291,7 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 //		o.setLensNA(0.7-1.4);
 		o.setImmersion(Immersion.OIL);
 		o.setCorrection(Correction.PLANAPO);
-		o.setWorkingDistance(new Length(130, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(130, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		o.setIris(true);
 		list.add(o);
 		
@@ -304,7 +304,7 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 //		o.setLensNA(0.7-1.25);
 		o.setImmersion(Immersion.OIL);
 		o.setCorrection(Correction.PLANAPO);
-		o.setWorkingDistance(new Length(220, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(220, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		o.setIris(true);
 		list.add(o);
 		

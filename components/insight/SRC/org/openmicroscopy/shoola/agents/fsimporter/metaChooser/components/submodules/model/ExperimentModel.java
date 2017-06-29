@@ -17,7 +17,6 @@ import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
 import ome.xml.model.MapAnnotation;
 import ome.xml.model.MapPair;
-import ome.xml.model.MapPairs;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.ExperimentType;
 import ome.xml.model.enums.handlers.ExperimentTypeEnumHandler;
@@ -299,8 +298,7 @@ public class ExperimentModel {
 	
 	public String parseProjectPartner(MapAnnotation map) 
 	{
-		MapPairs mp=map.getValue();
-		List<MapPair> listMP=mp.getPairs();
+		List<MapPair> listMP=map.getValue();
 		String result=null;
 		switch (map.getNamespace()) {
 		case OMEStore.NS_2016_06_07:

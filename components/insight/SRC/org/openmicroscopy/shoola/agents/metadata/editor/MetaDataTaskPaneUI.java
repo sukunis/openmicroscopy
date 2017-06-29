@@ -265,4 +265,10 @@ ListSelectionListener
 
 	}
 
+	@Override
+	int getUnfilteredAnnotationCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
