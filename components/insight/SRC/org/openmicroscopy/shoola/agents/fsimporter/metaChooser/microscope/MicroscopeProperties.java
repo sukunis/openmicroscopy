@@ -12,10 +12,15 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardwa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusLSMFV1000;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.ZeissCellObserverSD;
 
+import ome.units.quantity.Length;
 import ome.xml.model.Detector;
 import ome.xml.model.Filter;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
+import ome.xml.model.TransmittanceRange;
+import ome.xml.model.enums.FilterType;
+import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 
 public abstract class MicroscopeProperties 
 {
@@ -200,7 +205,23 @@ public abstract class MicroscopeProperties
 	}
 
 	
+	protected Filter getFilter(String model,FilterType type,int transRangeIn,int transRangeOut,UnitsLength unit){
+		TransmittanceRange t=new TransmittanceRange();
+		if(transRangeIn!=-1){
+			t.setCutIn(new Length(transRangeIn, UnitsLengthEnumHandler.getBaseUnit(unit)));
+		}
+		if(transRangeOut!=-1){
+			t.setCutOut(new Length(transRangeOut, UnitsLengthEnumHandler.getBaseUnit(unit)));
+		}
 	
+		
+		Filter f= new Filter();
+		f.setModel(model);
+		f.setType(type);
+		f.setTransmittanceRange(t);
+		return f;
+		
+	}
 	
 	
 }
