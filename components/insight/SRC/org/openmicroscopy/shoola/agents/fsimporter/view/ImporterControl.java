@@ -1,4 +1,6 @@
 /*
+ * org.openmicroscopy.shoola.agents.fsimporter.view.ImporterControl 
+ *
  *------------------------------------------------------------------------------
  *  Copyright (C) 2006-2015 University of Dundee. All rights reserved.
  *
@@ -27,6 +29,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -57,14 +60,16 @@ import org.openmicroscopy.shoola.agents.fsimporter.actions.PersonalManagementAct
 import org.openmicroscopy.shoola.agents.fsimporter.actions.RetryImportAction;
 import org.openmicroscopy.shoola.agents.fsimporter.actions.SubmitFilesAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.util.FileImportComponent;
 import org.openmicroscopy.shoola.agents.fsimporter.util.ObjectToCreate;
 import org.openmicroscopy.shoola.agents.util.ViewerSorter;
 import org.openmicroscopy.shoola.agents.util.ui.JComboBoxImageObject;
 import org.openmicroscopy.shoola.env.LookupNames;
+import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.env.data.model.ImportableObject;
 import org.openmicroscopy.shoola.env.data.util.StatusLabel;
-import omero.log.Logger;
+
 import org.openmicroscopy.shoola.env.ui.UserNotifier;
 import org.openmicroscopy.shoola.util.file.ImportErrorObject;
 import org.openmicroscopy.shoola.util.ui.ClosableTabbedPane;
@@ -83,6 +88,9 @@ import omero.gateway.model.GroupData;
  * @author Donald MacDonald &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:donald@lifesci.dundee.ac.uk">donald@lifesci.dundee.ac.uk</a>
  * @version 3.0
+ * <small>
+ * (<b>Internal version:</b> $Revision: $Date: $)
+ * </small>
  * @since 3.0-Beta4
  */
 class ImporterControl
@@ -388,6 +396,9 @@ class ImporterControl
          */
         private void handlePropertyChangedEvent(PropertyChangeEvent evt) {
             String name = evt.getPropertyName();
+            if(ImportDialog.STARTIMPORT_PROPERTY.equals(name)){ 
+            	view.startImport();
+            }
             if (ImportDialog.IMPORT_PROPERTY.equals(name)) {
                 actionsMap.get(CANCEL_BUTTON).setEnabled(true);
                 model.importData((ImportableObject) evt.getNewValue());
@@ -419,9 +430,20 @@ class ImporterControl
                 checkDisableCancelAllButtons();
             } else if (StatusLabel.IMPORT_DONE_PROPERTY.equals(name)) {
                     model.onImportComplete((FileImportComponent) evt.getNewValue());
+                    view.deleteMapAnnotations();
             } else if (StatusLabel.UPLOAD_DONE_PROPERTY.equals(name)) {
                     model.onUploadComplete((FileImportComponent) evt.getNewValue());
-            }
+            } else if(ImportDialog.REFRESH_FILE_LIST.equals(name)){
+    			view.refreshMetaFileView((List<ImportableFile>) evt.getNewValue());
+    		} else if(ImportDialog.ADD_AND_REFRESH_FILE_LIST.equals(name)){
+//    			view.addAndRefreshMetaFileView( (File[]) evt.getNewValue());
+//    			view.addToMetaDataFileMap((File[])evt.getNewValue());
+//    			model.setMetaDataText(((File[])evt.getNewValue())!=null );
+    		} else if(ImportDialog.SHOW_METADATA_DIALOG.equals(name)){
+    			view.showMetaDataDialog();
+    		}else if(ImportDialog.ADD_MAP_ANNOTATION.equals(name)){
+    			view.setMapAnnotation((MapAnnotationObject) evt.getNewValue());
+    		}
         }
 
 	/** 
