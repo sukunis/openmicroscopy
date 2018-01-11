@@ -318,7 +318,11 @@ private boolean disableTreeListener;
         if(fileObj.isFolderAsContainer() && fileObj.getParent() instanceof ProjectData){
             Project p=new Project();//==import project
             p.setName(fileObj.getParent().asProject().getName().getValue());
-            p.setDescription(fileObj.getParent().asProject().getDescription().toString());
+            if(fileObj.getParent().asProject().getDescription()!=null){
+            	p.setDescription(fileObj.getParent().asProject().getDescription().toString());
+            }else{
+            	p.setDescription("");
+            }
             ome.addProject(p);
         }else{
             //screen import object
