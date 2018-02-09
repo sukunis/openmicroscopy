@@ -240,18 +240,18 @@ private boolean disableTreeListener;
      *            The owner of the dialog.
      * @param filters
      *            The list of filters.
-     * @param selectedContainer
-     *            The selected container if any.
-     * @param objects
-     *            The possible objects.
-     *            
      * @param type TODO: necessary?
      *            The type of dialog e.g. screen view.
      * @param importerAction
      *            The cancel-all-imports action.
+     * @param microscope TODO
+     * @param selectedContainer
+     *            The selected container if any.
+     * @param objects
+     *            The possible objects.
      */
     public MetaDataDialog(JFrame owner, FileFilter[] filters, int type,
-            ImporterAction importerAction, Importer importer,JButton importBtn,JButton cancelImportBtn)
+            ImporterAction importerAction, Importer importer,JButton importBtn,JButton cancelImportBtn, String microscope)
     {
         super(1, TITLE, TITLE);
         
@@ -262,7 +262,7 @@ private boolean disableTreeListener;
         addCancelImportButtonLink(cancelImportBtn);
         setClosable(false);
         setCloseVisible(false);
-        initComponents(filters, importerAction);
+        initComponents(filters, importerAction, null);
         buildGUI();
     }
     
@@ -438,7 +438,7 @@ private boolean disableTreeListener;
 
 
     private void initComponents(FileFilter[] filters,
-            ImporterAction importerAction)
+            ImporterAction importerAction, String microscope)
     {
         holdData=false;
         disableTreeListener=false;
@@ -490,7 +490,12 @@ private boolean disableTreeListener;
         mics=new JComboBox<String>(MicroscopeProperties.availableMics);
         mics.setActionCommand(""+CHOOSE_MIC);
         mics.addActionListener(this);
-        
+        System.out.println("#MetaDataDialog::initComponents(): set combobox: "+microscope);
+        int indexMic=MicroscopeProperties.getMicIndex(microscope);
+        if(indexMic!=-1){
+        	System.out.println("#MetaDataDialog::initComponents(): set combobox: "+indexMic);
+        	mics.setSelectedIndex(indexMic); 
+        }
         
         initFilterViewBar();
        
@@ -1797,6 +1802,11 @@ private boolean disableTreeListener;
 	public MicroscopeProperties getMicroscopeProperties()
 	{
 		return currentMic;
+	}
+	
+	public void setMicroscopeProperties(MicroscopeProperties m)
+	{
+		currentMic=m;
 	}
 
 }

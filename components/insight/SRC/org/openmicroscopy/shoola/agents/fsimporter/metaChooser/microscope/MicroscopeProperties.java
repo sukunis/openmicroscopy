@@ -1,27 +1,44 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.LeicaLSMSP5;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusLSMFV1000;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusTIRF3Line;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusTIRF4Line_SMT;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusTIRF4Line_STORM;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.ZeissCellObserverSD;
 
+import ome.units.quantity.Length;
 import ome.xml.model.Detector;
 import ome.xml.model.Filter;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
+import ome.xml.model.TransmittanceRange;
+import ome.xml.model.enums.FilterType;
+import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 
 public abstract class MicroscopeProperties 
 {
 	private final static String FLUOVIEW1000="Olympus LSM FV1000";
 	private final static String LEICASP5="Leica LSM SP5";
 	private final static String ZEISSSD="Zeiss Cell Observer SD";
+	private final static String TIRF3LINE="Olympus TIRF 3-Line";
+	private final static String TIRF4LINE_SMT="Olympus TIRF 4-LINE SMT";
+	private final static String TIRF4LINE_STORM="Olympus TIRF 4-LINE STORM";
+	private final static String ZEISSLSM="Zeiss LSM 510 META NLO";
+	private final static String DELTAVISION="DeltaVision Elite";
 	
 	
-	public static final String[] availableMics={"",FLUOVIEW1000,LEICASP5,ZEISSSD};
+	public static final String[] availableMics={"",FLUOVIEW1000,LEICASP5,ZEISSSD,TIRF3LINE,
+			TIRF4LINE_SMT,TIRF4LINE_STORM};
 	
 	protected ModuleConfiguration imageConfiguration;
 	protected ModuleConfiguration lightPathConfiguration;
@@ -77,9 +94,31 @@ public abstract class MicroscopeProperties
 			return new LeicaLSMSP5();
 		case ZEISSSD:
 			return new ZeissCellObserverSD();
-		}
+		case TIRF3LINE:
+			return new OlympusTIRF3Line();
+		case TIRF4LINE_SMT:
+			return new OlympusTIRF4Line_SMT();
+		case TIRF4LINE_STORM:
+			return new OlympusTIRF4Line_STORM();
+		}	
 		
 		return null;
+	}
+	
+	/**
+	 * 
+	 * @param microscope name
+	 * @return index of given microscope in array availableMics
+	 */
+	public static int getMicIndex(String microscope) {
+//		int result=-1;
+		return Arrays.asList(availableMics).indexOf(microscope);
+//		for(int index=0; index>availableMics.length; index++){
+//			if(availableMics[index].equals(microscope)){
+//				return index;
+//			}
+//		}
+//		return result;
 	}
 	
 	/**
@@ -179,7 +218,25 @@ public abstract class MicroscopeProperties
 		channelConf.setTag(TagNames.PINHOLESIZE,null,TagNames.PINHOLESIZE_UNIT.getSymbol(),true);
 		return channelConf;
 	}
+
 	
+	protected Filter getFilter(String model,FilterType type,int transRangeIn,int transRangeOut,UnitsLength unit){
+		TransmittanceRange t=new TransmittanceRange();
+		if(transRangeIn!=-1){
+			t.setCutIn(new Length(transRangeIn, UnitsLengthEnumHandler.getBaseUnit(unit)));
+		}
+		if(transRangeOut!=-1){
+			t.setCutOut(new Length(transRangeOut, UnitsLengthEnumHandler.getBaseUnit(unit)));
+		}
+	
+		
+		Filter f= new Filter();
+		f.setModel(model);
+		f.setType(type);
+		f.setTransmittanceRange(t);
+		return f;
+		
+	}
 	
 	
 }

@@ -173,6 +173,7 @@
     <entry name="/services/DEBUGGER/applicationNameComment">3</entry>
     <entry name="/services/DEBUGGER/postTimeout" type="integer">2000</entry>
     <entry name="/services/DEBUGGER/emailAddress">qa@openmicroscopy.org.uk</entry>
+<entry name="/services/ADMIN/microscope">Leica LSM SP5</entry>
   </services>
 
   <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
