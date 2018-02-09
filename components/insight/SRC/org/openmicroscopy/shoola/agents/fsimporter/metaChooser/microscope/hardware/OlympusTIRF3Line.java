@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 
+import ome.model.units.UNITS;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Power;
@@ -21,6 +22,7 @@ import ome.xml.model.Laser;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
 import ome.xml.model.TransmittanceRange;
+import ome.xml.model.enums.ArcType;
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.FilamentType;
@@ -36,7 +38,6 @@ import ome.xml.model.enums.handlers.UnitsFrequencyEnumHandler;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
 
-
 public class OlympusTIRF3Line extends MicroscopeProperties
 {
 	public OlympusTIRF3Line()
@@ -47,115 +48,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		lightPathObjects=this.getMicLightPathFilterList();
 	}
 	
-	/**
-	 * 
-	 */
-	protected ModuleConfiguration loadSampleConf(boolean active,GUIPlaceholder pos,String width)
-	{
-		ModuleConfiguration sampleConf=new ModuleConfiguration(active,pos,width);
-		sampleConf.setTag(TagNames.PREPDATE,null,null,true);
-		sampleConf.setTag(TagNames.PREPDESC,null,null,true);
-		sampleConf.setTag(TagNames.RAWCODE,null,null,true);
-		sampleConf.setTag(TagNames.RAWDESC,null,null,true);
-		sampleConf.setTag(TagNames.GRIDBOXNR,null,null,true);
-		sampleConf.setTag(TagNames.GRIDBOXTYPE,null,null,true);
-		sampleConf.setTag(TagNames.EXPGRID,null,null,true);
-		sampleConf.setTag(TagNames.EXPOBJNR,null,null,true);
-		sampleConf.setTag(TagNames.EXPOBJTYPE,null,null,true);
-		return sampleConf;
-	}
-
-	/**
-	 * 
-	 */
-	public ModuleConfiguration loadLightSrcConf(boolean active,GUIPlaceholder pos,String width) {
-		// laser module for lightSrc
-		ModuleConfiguration lightSrcConf=new ModuleConfiguration(active,pos,width);
-		lightSrcConf.setTag(TagNames.MODEL,null,null,true);
-		lightSrcConf.setTag(TagNames.MANUFAC,null,null,true);
-		lightSrcConf.setTag(TagNames.POWER,null,TagNames.POWER_UNIT.getSymbol(),true);
-		lightSrcConf.setTag(TagNames.L_TYPE,null,null,true);
-		lightSrcConf.setTag(TagNames.MEDIUM,null,null,true);
-		lightSrcConf.setTag(TagNames.FREQMUL,null,null,true);
-		lightSrcConf.setTag(TagNames.TUNABLE,null,null,true);
-		lightSrcConf.setTag(TagNames.PULSE,null,null,true);
-		lightSrcConf.setTag(TagNames.POCKELCELL,null,null,true);
-		lightSrcConf.setTag(TagNames.REPRATE,null,TagNames.REPRATE_UNIT_HZ.getSymbol(),true);
-		lightSrcConf.setTag(TagNames.PUMP,null,null,true);
-		lightSrcConf.setTag(TagNames.WAVELENGTH,null,TagNames.WAVELENGTH_UNIT.getSymbol(),true);
-		lightSrcConf.setSettingTag(TagNames.SET_WAVELENGTH,null,TagNames.WAVELENGTH_UNIT.getSymbol(),true);
-		lightSrcConf.setSettingTag(TagNames.ATTENUATION,null,null,true);
-		return lightSrcConf;
-	}
-
-	/**
-	 * 
-	 */
-	public ModuleConfiguration loadImageEnvConf(boolean active,GUIPlaceholder pos,String width) {
-		ModuleConfiguration imgEnvConf=new ModuleConfiguration(active,pos,width);
-		imgEnvConf.setTag(TagNames.TEMP,null,null,true);
-		imgEnvConf.setTag(TagNames.AIRPRESS,null,null,true);
-		imgEnvConf.setTag(TagNames.HUMIDITY,null,null,true);
-		imgEnvConf.setTag(TagNames.CO2,null,null,true);
-		return imgEnvConf;
-	}
-
-	/**
-	 * 
-	 */
-	public ModuleConfiguration loadExperimentConf(boolean active,GUIPlaceholder pos,String width) {
-		ModuleConfiguration expConf=new ModuleConfiguration(active,pos,width);
-		expConf.setTag(TagNames.E_TYPE,null,null,true);
-		expConf.setTag(TagNames.DESC,null,null,true);
-		expConf.setTag(TagNames.EXPNAME,null,null,true);
-		expConf.setTag(TagNames.PROJECTNAME,null,null,true);
-		expConf.setTag(TagNames.GROUP,null,null,true);
-		expConf.setTag(TagNames.PROJECTPARTNER,null,null,true);
-		return expConf;
-	}
-
-	/**
-	 * 
-	 */
-	public ModuleConfiguration loadDetectorConf(boolean active,GUIPlaceholder pos,String width) {
-		ModuleConfiguration detectorConf=new ModuleConfiguration(active,pos,width);
-		detectorConf.setTag(TagNames.MODEL,null,null,true);
-		detectorConf.setTag(TagNames.MANUFAC,null,null,true);
-		detectorConf.setTag(TagNames.D_TYPE,null,null,true);
-		detectorConf.setTag(TagNames.ZOOM,null,null,true);
-		detectorConf.setTag(TagNames.AMPLGAIN,null,null,true);
-		detectorConf.setSettingTag(TagNames.GAIN,null,null,true);
-		detectorConf.setSettingTag(TagNames.VOLTAGE,null,TagNames.VOLTAGE_UNIT.getSymbol(),true);
-		detectorConf.setSettingTag(TagNames.OFFSET,null,null,true);
-		detectorConf.setSettingTag(TagNames.CONFZOOM,null,null,true);
-		detectorConf.setSettingTag(TagNames.BINNING,null,null,true);
-		detectorConf.setSettingTag(TagNames.SUBARRAY,null,null,true);
-		return detectorConf;
-	}
-
-	/**
-	 * 
-	 */
-	public ModuleConfiguration loadObjectiveConf(boolean active,GUIPlaceholder pos,String width) {
-		ModuleConfiguration oConf=new ModuleConfiguration(active,pos,width);
-		oConf.setTag(TagNames.MODEL,null,null,true);
-		oConf.setTag(TagNames.MANUFAC,null,null,true);
-		oConf.setTag(TagNames.NOMMAGN,null,null,true);
-		oConf.setTag(TagNames.CALMAGN,null,null,true);
-		oConf.setTag(TagNames.LENSNA,null,null,true);
-		oConf.setTag(TagNames.IMMERSION,null,null,true);
-		oConf.setTag(TagNames.CORRECTION,null,null,true);
-		oConf.setTag(TagNames.WORKDIST,null,TagNames.WORKDIST_UNIT.getSymbol(),true);
-		
-		oConf.setSettingTag(TagNames.CORCOLLAR,null,null,true);
-		oConf.setSettingTag(TagNames.OBJ_MEDIUM,null,null,true);
-		oConf.setSettingTag(TagNames.REFINDEX,null,null,true);
-		return oConf;
-
-	}
-
-
-
+	
 	@Override
 	public List<LightSource> getMicLightSrcList() {
 		List<LightSource> list=new ArrayList<>();
@@ -167,7 +60,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.SOLIDSTATE);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(405, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		l.setWavelength(new Length(405, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
 		l.setPulse(Pulse.CW);
 		l.setPower(new Power(100, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
 		list.add(l);
@@ -177,7 +70,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.SEMICONDUCTOR);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
 		l.setPulse(Pulse.CW);
 		l.setPower(new Power(200, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
 		list.add(l);
@@ -187,7 +80,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.SOLIDSTATE);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(532, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		l.setWavelength(new Length(532, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
 		l.setPulse(Pulse.CW);
 		l.setPower(new Power(75, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
 		list.add(l);
@@ -197,17 +90,17 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 //		l.setManufacturer("");
 		l.setType(LaserType.SOLIDSTATE);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(561, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		l.setWavelength(new Length(561, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
 		l.setPulse(Pulse.CW);
 		l.setPower(new Power(200, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
 		list.add(l);
 		
 		l=new Laser();
-		l.setModel("Luxx 642-140,");
+		l.setModel("Luxx 642-140");
 //		l.setManufacturer("");
 		l.setType(LaserType.OTHER);
 		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(642, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
+		l.setWavelength(new Length(642, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
 		l.setPulse(Pulse.CW);
 		l.setPower(new Power(140, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
 		list.add(l);
@@ -233,10 +126,10 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		FilterSet fs1= new FilterSet();
 		fs1.setModel("Pos.1: green");
 		fs1.linkExcitationFilter(
-				getFilter("No Filter",FilterType.OTHER,488,-1,UnitsLength.NANOMETER));
+				getFilter("No Filter",FilterType.OTHER,488,-1,UnitsLength.NM));
 		fs1.linkDichroic(d1);
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 531/40",FilterType.BANDPASS,511,551,UnitsLength.NANOMETER));
+				getFilter("BrightLine HC 531/40",FilterType.BANDPASS,511,551,UnitsLength.NM));
 		list.add(fs1);
 		
 		Dichroic d2= new Dichroic();
@@ -245,10 +138,10 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		FilterSet fs2= new FilterSet();
 		fs2.setModel("Pos.2: dualcolor (green-yellow,red)");
 		fs2.linkExcitationFilter(
-				getFilter("HC 527/645",FilterType.BANDPASS,527,-1,UnitsLength.NANOMETER));
+				getFilter("HC 527/645",FilterType.BANDPASS,527,-1,UnitsLength.NM));
 		fs2.linkDichroic(d1);
 		fs2.linkEmissionFilter(
-				getFilter("Edge Basic 532 LP, zet635nf",FilterType.LONGPASS,532,-1,UnitsLength.NANOMETER));
+				getFilter("Edge Basic 532 LP, zet635nf",FilterType.LONGPASS,532,-1,UnitsLength.NM));
 		list.add(fs2);
 		
 		Dichroic d3= new Dichroic();
@@ -258,7 +151,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs3.setModel("Pos.3");
 		fs3.linkDichroic(d3);
 		fs3.linkEmissionFilter(
-				getFilter("ET 700/75M",FilterType.BANDPASS,662,738,UnitsLength.NANOMETER));
+				getFilter("ET 700/75M",FilterType.BANDPASS,662,738,UnitsLength.NM));
 		list.add(fs3);
 		
 		Dichroic d4= new Dichroic();
@@ -268,7 +161,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs4.setModel("Pos. 4: quadcolor imaging (blue, green, orange, red) ");
 		fs4.linkDichroic(d4);
 		fs4.linkEmissionFilter(
-				getFilter("BrightLine HC 446/523/600/677",FilterType.BANDPASS,446,-1,UnitsLength.NANOMETER));
+				getFilter("BrightLine HC 446/523/600/677",FilterType.BANDPASS,446,-1,UnitsLength.NM));
 		list.add(fs4);
 		
 		
@@ -278,7 +171,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs5.setModel("Pos. 5: dualcolor imaging (green, orange) plus photomanipulation with 405 nm  ");
 		fs5.linkDichroic(d5);
 		fs5.linkEmissionFilter(
-				getFilter("BrightLine HC 523/610",FilterType.BANDPASS,523,-1,UnitsLength.NANOMETER));
+				getFilter("BrightLine HC 523/610",FilterType.BANDPASS,523,-1,UnitsLength.NM));
 		list.add(fs5);
 		
 		Dichroic d6= new Dichroic();
@@ -287,7 +180,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs6.setModel("Pos. 6: orange ");
 		fs6.linkDichroic(d6);
 		fs6.linkEmissionFilter(
-				getFilter("BrightLine HC 607/36",FilterType.BANDPASS,589,625,UnitsLength.NANOMETER));
+				getFilter("BrightLine HC 607/36",FilterType.BANDPASS,589,625,UnitsLength.NM));
 		list.add(fs6);
 		
 		//DualView filter cubes:
@@ -297,9 +190,9 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs7.setModel("CFP/YFP");
 		fs7.linkDichroic(d7);
 		fs7.linkEmissionFilter(
-				getFilter("BrightLine HC 460/30",FilterType.BANDPASS,450,480,UnitsLength.NANOMETER));
+				getFilter("BrightLine HC 460/30",FilterType.BANDPASS,450,480,UnitsLength.NM));
 		fs7.linkEmissionFilter(
-				getFilter("HQ 535/30",FilterType.BANDPASS,520,550,UnitsLength.NANOMETER));
+				getFilter("HQ 535/30",FilterType.BANDPASS,520,550,UnitsLength.NM));
 		list.add(fs7);
 		
 		Dichroic d8= new Dichroic();
@@ -308,9 +201,9 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs8.setModel("green/orange");
 		fs8.linkDichroic(d8);
 		fs8.linkEmissionFilter(
-				getFilter("HQ 525/50",FilterType.BANDPASS,500,550,UnitsLength.NANOMETER));
+				getFilter("HQ 525/50",FilterType.BANDPASS,500,550,UnitsLength.NM));
 		fs8.linkEmissionFilter(
-				getFilter("BrightLine HC 620/52",FilterType.BANDPASS,594,646,UnitsLength.NANOMETER));
+				getFilter("BrightLine HC 620/52",FilterType.BANDPASS,594,646,UnitsLength.NM));
 		list.add(fs8);
 		
 		Dichroic d9= new Dichroic();
@@ -319,9 +212,9 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs9.setModel("orange/red");
 		fs9.linkDichroic(d9);
 		fs9.linkEmissionFilter(
-				getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NANOMETER));
+				getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NM));
 		fs9.linkEmissionFilter(
-				getFilter("HQ 690/70",FilterType.BANDPASS,655,725,UnitsLength.NANOMETER));
+				getFilter("HQ 690/70",FilterType.BANDPASS,655,725,UnitsLength.NM));
 		list.add(fs9);
 		
 		Dichroic d10= new Dichroic();
@@ -330,9 +223,9 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs10.setModel("fluorescence anisotropy imaging");
 		fs10.linkDichroic(d10);
 //		fs10.linkEmissionFilter(
-//				getFilter("Polarizer",FilterType.BANDPASS,...,...,UnitsLength.NANOMETER));
+//				getFilter("Polarizer",FilterType.BANDPASS,...,...,UnitsLength.NM));
 //		fs10.linkEmissionFilter(
-//				getFilter("Polarizer",FilterType.BANDPASS,...,...,UnitsLength.NANOMETER));
+//				getFilter("Polarizer",FilterType.BANDPASS,...,...,UnitsLength.NM));
 		list.add(fs10);
 		
 		
@@ -369,7 +262,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		//TODO:correction, wavelength? 
 		
 		Objective o=new Objective();
-		o.setModel("LUMPLFLN 40x,");
+		o.setModel("LUMPLFLN 40x");
 		o.setManufacturer("Olympus");
 		o.setNominalMagnification(40.0);
 		o.setCalibratedMagnification(40.0);
@@ -380,7 +273,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		list.add(o);
 
 		o=new Objective();
-		o.setModel("PLAPON 60x TIRF,");
+		o.setModel("PLAPON 60x TIRF");
 		o.setManufacturer("Olympus");
 		o.setNominalMagnification(60.0);
 		o.setCalibratedMagnification(60.0);
@@ -391,7 +284,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		list.add(o);
 
 		o=new Objective();
-		o.setModel("UAPON 150x TIRF,");
+		o.setModel("UAPON 150x TIRF");
 		o.setManufacturer("Olympus");
 		o.setNominalMagnification(150.0);
 		o.setCalibratedMagnification(150.0);
@@ -404,6 +297,42 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		
 
 		return list;
+	}
+	
+	@Override
+	public ModuleConfiguration loadSampleConf(boolean active, GUIPlaceholder pos, String width) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ModuleConfiguration loadLightSrcConf(boolean active, GUIPlaceholder pos, String width) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ModuleConfiguration loadImageEnvConf(boolean active, GUIPlaceholder pos, String width) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ModuleConfiguration loadExperimentConf(boolean active, GUIPlaceholder pos, String width) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ModuleConfiguration loadDetectorConf(boolean active, GUIPlaceholder pos, String width) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ModuleConfiguration loadObjectiveConf(boolean active, GUIPlaceholder pos, String width) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

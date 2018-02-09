@@ -10,6 +10,9 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Tag
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.LeicaLSMSP5;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusLSMFV1000;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusTIRF3Line;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusTIRF4Line_SMT;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusTIRF4Line_STORM;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.ZeissCellObserverSD;
 
 import ome.units.quantity.Length;
@@ -27,9 +30,15 @@ public abstract class MicroscopeProperties
 	private final static String FLUOVIEW1000="Olympus LSM FV1000";
 	private final static String LEICASP5="Leica LSM SP5";
 	private final static String ZEISSSD="Zeiss Cell Observer SD";
+	private final static String TIRF3LINE="Olympus TIRF 3-Line";
+	private final static String TIRF4LINE_SMT="Olympus TIRF 4-LINE SMT";
+	private final static String TIRF4LINE_STORM="Olympus TIRF 4-LINE STORM";
+	private final static String ZEISSLSM="Zeiss LSM 510 META NLO";
+	private final static String DELTAVISION="DeltaVision Elite";
 	
 	
-	public static final String[] availableMics={"",FLUOVIEW1000,LEICASP5,ZEISSSD};
+	public static final String[] availableMics={"",FLUOVIEW1000,LEICASP5,ZEISSSD,TIRF3LINE,
+			TIRF4LINE_SMT,TIRF4LINE_STORM};
 	
 	protected ModuleConfiguration imageConfiguration;
 	protected ModuleConfiguration lightPathConfiguration;
@@ -85,7 +94,13 @@ public abstract class MicroscopeProperties
 			return new LeicaLSMSP5();
 		case ZEISSSD:
 			return new ZeissCellObserverSD();
-		}
+		case TIRF3LINE:
+			return new OlympusTIRF3Line();
+		case TIRF4LINE_SMT:
+			return new OlympusTIRF4Line_SMT();
+		case TIRF4LINE_STORM:
+			return new OlympusTIRF4Line_STORM();
+		}	
 		
 		return null;
 	}
