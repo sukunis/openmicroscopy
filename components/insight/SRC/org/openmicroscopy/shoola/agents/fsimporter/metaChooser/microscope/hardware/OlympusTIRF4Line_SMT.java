@@ -13,6 +13,7 @@ import ome.units.quantity.Length;
 import ome.units.quantity.Power;
 import ome.xml.model.Detector;
 import ome.xml.model.Dichroic;
+import ome.xml.model.Filter;
 import ome.xml.model.FilterSet;
 import ome.xml.model.Laser;
 import ome.xml.model.LightSource;
@@ -96,78 +97,66 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 
 	@Override
 	public List<Object> getMicLightPathFilterList() {
-List<Object> list = new ArrayList<Object>();
+		List<Object> list = new ArrayList<Object>();
 		
 		// TODO:
 		//- cutIn, CutOut richtig?
 		//-polarizer?		
 		
+		//TIRF-Cube
 		Dichroic d1= new Dichroic();
 		d1.setModel("zt405/488/561/640rpc");
+		d1.setManufacturer("Chroma");
 		
 		FilterSet fs1= new FilterSet();
-		fs1.setModel("Pos.1: quadcolor(blue, green, orange, red)");
+		fs1.setModel("TIRF-Cube");
 		fs1.linkDichroic(d1);
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 446/523/500/677",FilterType.BANDPASS,446,677,UnitsLength.NM));
+				getFilter("BrightLine HC 446/523/500/677",FilterType.BANDPASS,446,677,UnitsLength.NM, "Semrock"));
 		list.add(fs1);
 		
 		
+		//DIC
+		Filter f= getFilter("DIC Cube:IX2-MDICT",FilterType.OTHER,-1,-1,null,"Olympus");
+		list.add(f);
 		
+		
+		//405 und DAPI
+		f=getFilter("BrightLine HC 445/45",FilterType.BANDPASS,423,468,UnitsLength.NM, "Semrock");
+		list.add(f);
+		
+		//488 und GFP
+		f=getFilter("BrightLine HC 525/50",FilterType.BANDPASS,500,550,UnitsLength.NM, "Semrock");
+		list.add(f);
+		
+		//561 und TMR
+		f=getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NM, "Semrock");
+		list.add(f);
+		
+		//642 und Cy5
+		f=getFilter("BrightLine HC 697/58",FilterType.BANDPASS,668,726,UnitsLength.NM, "Semrock");
+		list.add(f);
+		
+		
+		//405+488 (405+561, 405+561, 488+561, 488+561+642,...)
 		fs1= new FilterSet();
-		fs1.setModel("Pos.6: IX2-MDICT");
-		list.add(fs1);
-		
-		
-		
-		fs1= new FilterSet();
-		fs1.setModel("Emmision Filter Wheel: Pos.1: blue (DAPI,BFP)");		
-		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 444/45",FilterType.BANDPASS,423,468,UnitsLength.NM));
-		list.add(fs1);
-		
-		
-		fs1= new FilterSet();
-		fs1.setModel("Emmision Filter Wheel: Pos.2: green (GFP)");		
-		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 525/50",FilterType.BANDPASS,500,550,UnitsLength.NM));
-		list.add(fs1);
-		
-		
-		fs1= new FilterSet();
-		fs1.setModel("Emmision Filter Wheel: Pos.3: orange (TMR, mCherry)");
-		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NM));
-		list.add(fs1);
-		
-		fs1= new FilterSet();
-		fs1.setModel("Emmision Filter Wheel: Pos.4: red (Cy5,Atto655)");
-		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 697/58",FilterType.BANDPASS,668,726,UnitsLength.NM));
-		list.add(fs1);
-		
-		
-		
-		
-		
-		fs1= new FilterSet();
-		fs1.setModel("Cube :blue, green, yellow/orange, red");
+		fs1.setModel("QuadView Filter Cube");
 		//TODO
 		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter 480dcxr",FilterType.LONGPASS,480,-1,UnitsLength.NM));
+				getFilter("Beamsplitter 480dcxr",FilterType.LONGPASS,480,-1,UnitsLength.NM, "Chroma"));
 		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter 565dcxr",FilterType.LONGPASS,565,-1,UnitsLength.NM));
+				getFilter("Beamsplitter 565dcxr",FilterType.LONGPASS,565,-1,UnitsLength.NM, "Chroma"));
 		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter 640dcxr",FilterType.LONGPASS,640,-1,UnitsLength.NM));
+				getFilter("Beamsplitter 640dcxr",FilterType.LONGPASS,640,-1,UnitsLength.NM, "Chroma"));
 		
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 438/24 (blue:DAPI,BFP)",FilterType.BANDPASS,426,450,UnitsLength.NM));
+				getFilter("BrightLine HC 438/24 (blue:DAPI,BFP)",FilterType.BANDPASS,426,450,UnitsLength.NM, "Semrock"));
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 520/35 (green: GFP)",FilterType.BANDPASS,502,538,UnitsLength.NM));
+				getFilter("BrightLine HC 520/35 (green: GFP)",FilterType.BANDPASS,502,538,UnitsLength.NM, "Semrock"));
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 600/37 (orange: TMR,mCherry)",FilterType.BANDPASS,582,619,UnitsLength.NM));
+				getFilter("BrightLine HC 600/37 (orange: TMR,mCherry)",FilterType.BANDPASS,582,619,UnitsLength.NM,"Semrock"));
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 685/40 (red: Cy5,Atto 655)",FilterType.BANDPASS,665,705,UnitsLength.NM));
+				getFilter("BrightLine HC 685/40 (red: Cy5,Atto 655)",FilterType.BANDPASS,665,705,UnitsLength.NM,"Semrock"));
 		list.add(fs1);
 		
 		

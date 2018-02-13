@@ -313,7 +313,7 @@ public abstract class MicroscopeProperties
 	}
 
 	
-	protected Filter getFilter(String model,FilterType type,int transRangeIn,int transRangeOut,UnitsLength unit){
+	protected Filter getFilter(String model,FilterType type,int transRangeIn,int transRangeOut,UnitsLength unit, String manufac){
 		TransmittanceRange t=new TransmittanceRange();
 		if(transRangeIn!=-1){
 			t.setCutIn(new Length(transRangeIn, UnitsLengthEnumHandler.getBaseUnit(unit)));
@@ -325,6 +325,8 @@ public abstract class MicroscopeProperties
 		
 		Filter f= new Filter();
 		f.setModel(model);
+		if(manufac != null)
+			f.setManufacturer(manufac);
 		f.setType(type);
 		f.setTransmittanceRange(t);
 		return f;

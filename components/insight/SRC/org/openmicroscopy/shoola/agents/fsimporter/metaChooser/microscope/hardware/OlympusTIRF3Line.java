@@ -126,10 +126,10 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		FilterSet fs1= new FilterSet();
 		fs1.setModel("Pos.1: green");
 		fs1.linkExcitationFilter(
-				getFilter("No Filter",FilterType.OTHER,488,-1,UnitsLength.NM));
+				getFilter("No Filter",FilterType.OTHER,488,-1,UnitsLength.NM, null));
 		fs1.linkDichroic(d1);
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 531/40",FilterType.BANDPASS,511,551,UnitsLength.NM));
+				getFilter("BrightLine HC 531/40",FilterType.BANDPASS,511,551,UnitsLength.NM, null));
 		list.add(fs1);
 		
 		Dichroic d2= new Dichroic();
@@ -138,10 +138,10 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		FilterSet fs2= new FilterSet();
 		fs2.setModel("Pos.2: dualcolor (green-yellow,red)");
 		fs2.linkExcitationFilter(
-				getFilter("HC 527/645",FilterType.BANDPASS,527,-1,UnitsLength.NM));
+				getFilter("HC 527/645",FilterType.BANDPASS,527,-1,UnitsLength.NM, null));
 		fs2.linkDichroic(d1);
 		fs2.linkEmissionFilter(
-				getFilter("Edge Basic 532 LP, zet635nf",FilterType.LONGPASS,532,-1,UnitsLength.NM));
+				getFilter("Edge Basic 532 LP, zet635nf",FilterType.LONGPASS,532,-1,UnitsLength.NM, null));
 		list.add(fs2);
 		
 		Dichroic d3= new Dichroic();
@@ -151,7 +151,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs3.setModel("Pos.3");
 		fs3.linkDichroic(d3);
 		fs3.linkEmissionFilter(
-				getFilter("ET 700/75M",FilterType.BANDPASS,662,738,UnitsLength.NM));
+				getFilter("ET 700/75M",FilterType.BANDPASS,662,738,UnitsLength.NM, null));
 		list.add(fs3);
 		
 		Dichroic d4= new Dichroic();
@@ -161,7 +161,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs4.setModel("Pos. 4: quadcolor imaging (blue, green, orange, red) ");
 		fs4.linkDichroic(d4);
 		fs4.linkEmissionFilter(
-				getFilter("BrightLine HC 446/523/600/677",FilterType.BANDPASS,446,-1,UnitsLength.NM));
+				getFilter("BrightLine HC 446/523/600/677",FilterType.BANDPASS,446,-1,UnitsLength.NM, null));
 		list.add(fs4);
 		
 		
@@ -171,7 +171,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs5.setModel("Pos. 5: dualcolor imaging (green, orange) plus photomanipulation with 405 nm  ");
 		fs5.linkDichroic(d5);
 		fs5.linkEmissionFilter(
-				getFilter("BrightLine HC 523/610",FilterType.BANDPASS,523,-1,UnitsLength.NM));
+				getFilter("BrightLine HC 523/610",FilterType.BANDPASS,523,-1,UnitsLength.NM, null));
 		list.add(fs5);
 		
 		Dichroic d6= new Dichroic();
@@ -180,7 +180,7 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs6.setModel("Pos. 6: orange ");
 		fs6.linkDichroic(d6);
 		fs6.linkEmissionFilter(
-				getFilter("BrightLine HC 607/36",FilterType.BANDPASS,589,625,UnitsLength.NM));
+				getFilter("BrightLine HC 607/36",FilterType.BANDPASS,589,625,UnitsLength.NM, null));
 		list.add(fs6);
 		
 		//DualView filter cubes:
@@ -190,9 +190,9 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs7.setModel("CFP/YFP");
 		fs7.linkDichroic(d7);
 		fs7.linkEmissionFilter(
-				getFilter("BrightLine HC 460/30",FilterType.BANDPASS,450,480,UnitsLength.NM));
+				getFilter("BrightLine HC 460/30",FilterType.BANDPASS,450,480,UnitsLength.NM, null));
 		fs7.linkEmissionFilter(
-				getFilter("HQ 535/30",FilterType.BANDPASS,520,550,UnitsLength.NM));
+				getFilter("HQ 535/30",FilterType.BANDPASS,520,550,UnitsLength.NM, null));
 		list.add(fs7);
 		
 		Dichroic d8= new Dichroic();
@@ -201,9 +201,9 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs8.setModel("green/orange");
 		fs8.linkDichroic(d8);
 		fs8.linkEmissionFilter(
-				getFilter("HQ 525/50",FilterType.BANDPASS,500,550,UnitsLength.NM));
+				getFilter("HQ 525/50",FilterType.BANDPASS,500,550,UnitsLength.NM, null));
 		fs8.linkEmissionFilter(
-				getFilter("BrightLine HC 620/52",FilterType.BANDPASS,594,646,UnitsLength.NM));
+				getFilter("BrightLine HC 620/52",FilterType.BANDPASS,594,646,UnitsLength.NM, null));
 		list.add(fs8);
 		
 		Dichroic d9= new Dichroic();
@@ -212,9 +212,9 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		fs9.setModel("orange/red");
 		fs9.linkDichroic(d9);
 		fs9.linkEmissionFilter(
-				getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NM));
+				getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NM, null));
 		fs9.linkEmissionFilter(
-				getFilter("HQ 690/70",FilterType.BANDPASS,655,725,UnitsLength.NM));
+				getFilter("HQ 690/70",FilterType.BANDPASS,655,725,UnitsLength.NM, null));
 		list.add(fs9);
 		
 		Dichroic d10= new Dichroic();

@@ -139,7 +139,7 @@ List<Object> list = new ArrayList<Object>();
 //				getFilter("No Filter",FilterType.OTHER,488,-1,UnitsLength.NM));
 		fs1.linkDichroic(d1);
 		fs1.linkEmissionFilter(
-				getFilter("HQ 570/30",FilterType.BANDPASS,555,585,UnitsLength.NM));
+				getFilter("HQ 570/30",FilterType.BANDPASS,555,585,UnitsLength.NM, null));
 		list.add(fs1);
 		
 		
@@ -155,7 +155,7 @@ List<Object> list = new ArrayList<Object>();
 //				getFilter("No Filter",FilterType.OTHER,488,-1,UnitsLength.NM));
 		fs1.linkDichroic(d1);
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 440/521/607/694/809",FilterType.BANDPASS,440,809,UnitsLength.NM));
+				getFilter("BrightLine HC 440/521/607/694/809",FilterType.BANDPASS,440,809,UnitsLength.NM, null));
 		list.add(fs1);
 		
 		
@@ -167,10 +167,10 @@ List<Object> list = new ArrayList<Object>();
 		fs1.setModel("Pos.4: quadcolor (blue,green,yellow/orange,red)");
 		//TODO
 		fs1.linkExcitationFilter(
-				getFilter("BrightLine HC 390/482/563/640",FilterType.BANDPASS,390,640,UnitsLength.NM));
+				getFilter("BrightLine HC 390/482/563/640",FilterType.BANDPASS,390,640,UnitsLength.NM, null));
 		fs1.linkDichroic(d1);
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 446/523/500/677",FilterType.BANDPASS,446,677,UnitsLength.NM));
+				getFilter("BrightLine HC 446/523/500/677",FilterType.BANDPASS,446,677,UnitsLength.NM, null));
 		list.add(fs1);
 		
 		
@@ -182,10 +182,10 @@ List<Object> list = new ArrayList<Object>();
 		fs1.setModel("Pos.5: dualcolor (green, orange)");
 		//TODO
 		fs1.linkExcitationFilter(
-				getFilter("BrightLine HC 482/563",FilterType.BANDPASS,482,563,UnitsLength.NM));
+				getFilter("BrightLine HC 482/563",FilterType.BANDPASS,482,563,UnitsLength.NM, null));
 		fs1.linkDichroic(d1);
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 523/610",FilterType.BANDPASS,523,610,UnitsLength.NM));
+				getFilter("BrightLine HC 523/610",FilterType.BANDPASS,523,610,UnitsLength.NM, null));
 		list.add(fs1);
 		
 		
@@ -196,12 +196,12 @@ List<Object> list = new ArrayList<Object>();
 		fs1.setModel("Pos.6: Cy3 + Cy5");
 		//TODO
 		fs1.linkExcitationFilter(
-				getFilter("HC 527/645",FilterType.BANDPASS,527,645,UnitsLength.NM));
+				getFilter("HC 527/645",FilterType.BANDPASS,527,645,UnitsLength.NM, null));
 		fs1.linkDichroic(d1);
 		fs1.linkEmissionFilter(
-				getFilter("EdgeBasic LP 532",FilterType.LONGPASS,532,-1,UnitsLength.NM));
+				getFilter("EdgeBasic LP 532",FilterType.LONGPASS,532,-1,UnitsLength.NM, null));
 		fs1.linkEmissionFilter(
-				getFilter("ZET647NF",FilterType.OTHER,647,-1,UnitsLength.NM));
+				getFilter("ZET647NF",FilterType.OTHER,647,-1,UnitsLength.NM, null));
 		list.add(fs1);
 		
 		
@@ -210,20 +210,20 @@ List<Object> list = new ArrayList<Object>();
 		fs1.setModel("Cube 1:blue, green, yellow/orange, red");
 		//TODO
 		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter 480dcxr",FilterType.LONGPASS,480,-1,UnitsLength.NM));
+				getFilter("Beamsplitter 480dcxr",FilterType.LONGPASS,480,-1,UnitsLength.NM, null));
 		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter 565dcxr",FilterType.LONGPASS,565,-1,UnitsLength.NM));
+				getFilter("Beamsplitter 565dcxr",FilterType.LONGPASS,565,-1,UnitsLength.NM, null));
 		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter 640dcxr",FilterType.LONGPASS,640,-1,UnitsLength.NM));
+				getFilter("Beamsplitter 640dcxr",FilterType.LONGPASS,640,-1,UnitsLength.NM, null));
 		
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 438/24 (blue:DAPI,BFP)",FilterType.BANDPASS,426,450,UnitsLength.NM));
+				getFilter("BrightLine HC 438/24 (blue:DAPI,BFP)",FilterType.BANDPASS,426,450,UnitsLength.NM, null));
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 520/35 (green: GFP)",FilterType.BANDPASS,502,538,UnitsLength.NM));
+				getFilter("BrightLine HC 520/35 (green: GFP)",FilterType.BANDPASS,502,538,UnitsLength.NM, null));
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 600/37 (orange: TMR,mCherry)",FilterType.BANDPASS,582,619,UnitsLength.NM));
+				getFilter("BrightLine HC 600/37 (orange: TMR,mCherry)",FilterType.BANDPASS,582,619,UnitsLength.NM, null));
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 685/40 (red: Cy5,Atto 655)",FilterType.BANDPASS,665,705,UnitsLength.NM));
+				getFilter("BrightLine HC 685/40 (red: Cy5,Atto 655)",FilterType.BANDPASS,665,705,UnitsLength.NM, null));
 		list.add(fs1);
 		
 		
@@ -232,21 +232,21 @@ List<Object> list = new ArrayList<Object>();
 		fs1.setModel("Cube 2:green, green-orange, red, dark red");
 		//TODO
 		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter T565LPXR",FilterType.LONGPASS,565,-1,UnitsLength.NM));
+				getFilter("Beamsplitter T565LPXR",FilterType.LONGPASS,565,-1,UnitsLength.NM, null));
 		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter 630DCXR",FilterType.LONGPASS,630,-1,UnitsLength.NM));
+				getFilter("Beamsplitter 630DCXR",FilterType.LONGPASS,630,-1,UnitsLength.NM, null));
 		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter 735DCXR",FilterType.LONGPASS,735,-1,UnitsLength.NM));
+				getFilter("Beamsplitter 735DCXR",FilterType.LONGPASS,735,-1,UnitsLength.NM, null));
 		
 		
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 520/35 (green: GFP, Cy2)",FilterType.BANDPASS,502,538,UnitsLength.NM));
+				getFilter("BrightLine HC 520/35 (green: GFP, Cy2)",FilterType.BANDPASS,502,538,UnitsLength.NM, null));
 		fs1.linkEmissionFilter(
-				getFilter("ET 600/50 (green-orange: TMR,Cy3)",FilterType.BANDPASS,544,620,UnitsLength.NM));
+				getFilter("ET 600/50 (green-orange: TMR,Cy3)",FilterType.BANDPASS,544,620,UnitsLength.NM, null));
 		fs1.linkEmissionFilter(
-				getFilter("ET 685/50 (red: Cy5,Atto 655)",FilterType.BANDPASS,660,710,UnitsLength.NM));
+				getFilter("ET 685/50 (red: Cy5,Atto 655)",FilterType.BANDPASS,660,710,UnitsLength.NM, null));
 		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 809/81 (dark-red: Cy7)",FilterType.BANDPASS,769,850,UnitsLength.NM));
+				getFilter("BrightLine HC 809/81 (dark-red: Cy7)",FilterType.BANDPASS,769,850,UnitsLength.NM, null));
 		list.add(fs1);
 		
 		
