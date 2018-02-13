@@ -102,6 +102,8 @@ public class ImageEnvViewer extends ModuleViewer{
 	 */
 	private void initComponents(ModuleConfiguration conf) 
 	{
+		if(conf==null)
+			return;
 		setLayout(new BorderLayout(5,5));
 
 		gridbag = new GridBagLayout();
@@ -130,22 +132,23 @@ public class ImageEnvViewer extends ModuleViewer{
 	{
 		String name=t.getName();
 		Boolean prop=t.getProperty();
+		Boolean vis=t.isVisible();
 		switch (name) {
 		case TagNames.TEMP:
 			setTemperature(null, prop);
-			temperature.setVisible(true);
+			temperature.setVisible(vis);
 			break;
 		case TagNames.AIRPRESS:
 			setAirPressure(null, prop);
-			airPressure.setVisible(true);
+			airPressure.setVisible(vis);
 			break;
 		case TagNames.HUMIDITY:
 			setHumidity(null, prop);
-			humidity.setVisible(true);
+			humidity.setVisible(vis);
 			break;
 		case TagNames.CO2:
 			setCo2Percent(null, prop);
-			co2Percent.setVisible(true);
+			co2Percent.setVisible(vis);
 			break;
 		default:
 			LOGGER.warn("[CONF] unknown tag: "+name );break;

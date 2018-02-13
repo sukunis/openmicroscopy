@@ -72,7 +72,6 @@ public class MetaDataView extends JPanel
 
 	private boolean parentDataLoaded;
 	
-	private CustomViewProperties customSett;
     
     
     /**

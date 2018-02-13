@@ -299,40 +299,5 @@ public class OlympusTIRF3Line extends MicroscopeProperties
 		return list;
 	}
 	
-	@Override
-	public ModuleConfiguration loadSampleConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ModuleConfiguration loadLightSrcConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ModuleConfiguration loadImageEnvConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ModuleConfiguration loadExperimentConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ModuleConfiguration loadDetectorConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ModuleConfiguration loadObjectiveConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 }

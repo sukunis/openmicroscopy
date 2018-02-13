@@ -276,65 +276,71 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 	{
 		String name=t.getName();
 		Boolean prop=t.getProperty();
+		Boolean vis=t.isVisible();
 		switch(name){
 		case TagNames.MODEL:
 			setModel(null, prop);
-			model.setVisible(true);
+			model.setVisible(vis);
 			break;
 		case TagNames.MANUFAC:
 			setManufact(null, prop);
-			manufact.setVisible(true);
+			manufact.setVisible(vis);
 			break;
 		case TagNames.A_TYPE:
 		case TagNames.L_TYPE:
 		case TagNames.F_TYPE:
 			setType(null,prop);
-			type.setVisible(true);
+			type.setVisible(vis);
+			type.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.POWER:
 					setPower(null, prop);
-			power.setVisible(true);
+			power.setVisible(vis);
 			break;
 		case TagNames.MEDIUM:
 				setMedium(null, prop);
-			medium.setVisible(true);
+			medium.setVisible(vis);
+			medium.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.FREQMUL:
 				setFreqMultiplication(null, prop);
-			freqMul.setVisible(true);
+			freqMul.setVisible(vis);
 			break;
 		case TagNames.TUNABLE:
 				setTunable(null, prop);
-			tunable.setVisible(true);
+			tunable.setVisible(vis);
+			tunable.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.PULSE:
 				setPulse(null,prop);
-			pulse.setVisible(true);
+			pulse.setVisible(vis);
+			pulse.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.POCKELCELL:
 				setPocketCell(null, prop);
-			pockelCell.setVisible(true);
+			pockelCell.setVisible(vis);
+			pockelCell.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.REPRATE:
 				setRepititationRate(null, prop);
-			repRate.setVisible(true);
+			repRate.setVisible(vis);
 			break;
 		case TagNames.PUMP:
 				setPump(null, prop);
-			pump.setVisible(true);
+			pump.setVisible(vis);
 			break;
 		case TagNames.WAVELENGTH:
 				setWavelength(null, prop);
-			waveLength.setVisible(true);
+			waveLength.setVisible(vis);
 			break;
 		case TagNames.MAP:
 				setMap(null, prop);
-			map.setVisible(true);
+			map.setVisible(vis);
 			break;
 		case TagNames.DESC:
 			setDescription(null, prop);
 //			TODO: ((LightEmittingDiode)lightSrc).set
-			description.setVisible(true);
+			description.setVisible(vis);
 			break;
 		default:
 			LOGGER.warn("[CONF] unknown tag: "+name );break;

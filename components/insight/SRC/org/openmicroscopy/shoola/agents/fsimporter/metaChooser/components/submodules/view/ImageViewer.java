@@ -158,50 +158,51 @@ public class ImageViewer extends ModuleViewer{
 	{
 		String name=t.getName();
 		Boolean prop=t.getProperty();
+		Boolean vis=t.isVisible();
 		switch (name) {
 		case TagNames.IMG_NAME:
 			setName(null,prop);
-			this.name.setVisible(true);
+			this.name.setVisible(vis);
 			break;
 		case TagNames.IMG_DESC:
 			setDescription(null,prop);
-			this.desc.setVisible(true);
+			this.desc.setVisible(vis);
 		case TagNames.ACQTIME:
 			setAcqTime(null, prop);
-			acqTime.setVisible(true);
+			acqTime.setVisible(vis);
 			break;
 		case TagNames.DIMXY:
 			setDimXY(new String[2], prop);
-			dimXY.setVisible(true);
+			dimXY.setVisible(vis);
 			break;
 		case TagNames.PIXELTYPE:
 			setPixelType(null, prop);
-			pixelType.setVisible(true);
+			pixelType.setVisible(vis);
 			break;
 		case TagNames.PIXELSIZE:
 			setPixelSizeXY(null, null, prop);
-			pixelSize.setVisible(true);
+			pixelSize.setVisible(vis);
 			break;
 		case TagNames.DIMZTC:
 			setDimZTC(new String[3], prop);
-			dimZTC.setVisible(true);
+			dimZTC.setVisible(vis);
 			break;
 		case TagNames.STAGELABEL:
 		case TagNames.STAGEPOS:
 			setStagePos(null,null, prop);
-			stagePos.setVisible(true);
+			stagePos.setVisible(vis);
 			break;
 		case TagNames.STEPSIZE:
 			setStepSize(null, prop);
-			stepSize.setVisible(true);
+			stepSize.setVisible(vis);
 			break;
 		case TagNames.TIMEINC:
 			setTimeIncrement(null, prop);
-			timeIncrement.setVisible(true);
+			timeIncrement.setVisible(vis);
 			break;
 		case TagNames.WELLNR:
 			setWellNr(null, prop);
-			wellNr.setVisible(true);
+			wellNr.setVisible(vis);
 			break;
 		default:
 			LOGGER.warn("[CONF] unknown tag: "+name );break;

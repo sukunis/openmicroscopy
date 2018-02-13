@@ -56,9 +56,9 @@ private TagData excitWavelength;
 /** wavelength of emission for a particular channel*/
 private TagData emissionWavelength;
 /**type of microscopy performed */
-//private TagData acquisitionMode;
+//==private TagData acquisitionMode;
 private TagData imagingMode;
-private TagData illuminationMode;
+
 /** method to achieve contrast for this channel*/
 private TagData contrastMethod;
 /**specify the combined effect of any neutral density filter used*/
@@ -92,7 +92,6 @@ private void initTagList()
 	tagList.add(name);
 	tagList.add(color);
 	tagList.add(fluorophore);
-	tagList.add(illuminationMode);
 	tagList.add(illumType);
 	tagList.add(exposureTime);
 	tagList.add(excitWavelength);
@@ -121,8 +120,7 @@ private void buildGUI()
 	addTagToGUI(emissionWavelength,labels,comp);
 //	addTag(acquisitionMode);
 	addTagToGUI(imagingMode,labels,comp);
-	addTagToGUI(illuminationMode,labels,comp);
-	if(illuminationMode!=null)illuminationMode.setEnable(false);
+	
 	
 	addTagToGUI(contrastMethod,labels,comp);
 	addTagToGUI(ndFilter,labels,comp);
@@ -171,54 +169,55 @@ protected void initTag(TagConfiguration t)
 {
 	String name=t.getName();
 	Boolean prop=t.getProperty();
+	Boolean vis=t.isVisible();
 	switch (name) {
 	case TagNames.CH_NAME:
 			setName(null,prop);
-		this.name.setVisible(true);
+		this.name.setVisible(vis);
 		break;
 	case TagNames.COLOR:
 			setColor(null,prop);
-		color.setVisible(true);
+		color.setVisible(vis);
 		break;
 	case TagNames.FLUOROPHORE:
 			setFluorophore(null, prop);
-		fluorophore.setVisible(true);
+		fluorophore.setVisible(vis);
 		break;
 	case TagNames.ILLUMTYPE:
 			setIllumType(null, prop);
-		illumType.setVisible(true);
+		illumType.setVisible(vis);
+		illumType.setDefaultValues(t.getPossibleValues());
 		break;
 	case TagNames.EXPOSURETIME:
 			setExposureTime(null, prop);
-		exposureTime.setVisible(true);
+		exposureTime.setVisible(vis);
 		break;
 	case TagNames.EXCITWAVELENGTH:
 			setExcitWavelength(null, prop);
-		excitWavelength.setVisible(true);
+		excitWavelength.setVisible(vis);
 		break;
 	case TagNames.EMISSIONWAVELENGTH:
 			setEmissionWavelength(null, prop);
-		emissionWavelength.setVisible(true);
+		emissionWavelength.setVisible(vis);
 		break;
 	case TagNames.IMAGINGMODE:
 			setImagingMode(null, prop);
-		imagingMode.setVisible(true);
+		imagingMode.setVisible(vis);
+		imagingMode.setDefaultValues(t.getPossibleValues());
 		break;
-	case TagNames.ILLUMINATIONMODE:
-			setIlluminationMode(null, prop);
-		illuminationMode.setVisible(true);
-		break;
+	
 	case TagNames.CONTRASTMETHOD:
 			setContrastMethod(null, prop);
-		contrastMethod.setVisible(true);
+		contrastMethod.setVisible(vis);
+		contrastMethod.setDefaultValues(t.getPossibleValues());
 		break;
 	case TagNames.NDFILTER:
 			setNDFilter(null, prop);
-		ndFilter.setVisible(true);
+		ndFilter.setVisible(vis);
 		break;
 	case TagNames.PINHOLESIZE:
 			setPinholeSize(null,prop);
-		pinholeSize.setVisible(true);
+		pinholeSize.setVisible(vis);
 		break;
 	default:
 		LOGGER.warn("[CONF] unknown tag: "+name );break;
@@ -258,7 +257,6 @@ private void setGUIData()
 		try{ setEmissionWavelength(channel.getEmissionWavelength(), REQUIRED);
 		} catch (NullPointerException e) { }
 		try{ setImagingMode(channel.getAcquisitionMode(), REQUIRED);
-		setIlluminationMode(channel.getAcquisitionMode(), REQUIRED);
 		} catch (NullPointerException e) { }
 		try{ setContrastMethod(channel.getContrastMethod(), REQUIRED);
 		} catch (NullPointerException e) { }
@@ -369,14 +367,7 @@ private void setImagingMode(AcquisitionMode value, boolean prop)
 	else 
 		imagingMode.setTagValue(val,prop);
 }
-private void setIlluminationMode(AcquisitionMode value, boolean prop)
-{
-	String val= (value != null) ? String.valueOf(value):"";
-	if(illuminationMode == null) 
-		illuminationMode = new TagData(TagNames.ILLUMINATIONMODE,val,prop,TagData.COMBOBOX,getNames(AcquisitionMode.class));
-	else 
-		illuminationMode.setTagValue(val,prop);
-}
+
 private void setContrastMethod(ContrastMethod value, boolean prop)
 {
 	String val= (value != null) ? String.valueOf(value):"";
@@ -509,7 +500,7 @@ public List<TagData> getChangedTags()
 	if(inputAt(excitWavelength)) list.add(excitWavelength);
 	if(inputAt(emissionWavelength)) list.add(emissionWavelength);
 	if(inputAt(imagingMode)) list.add(imagingMode);
-	if(inputAt(illuminationMode)) list.add(illuminationMode);
+	
 	if(inputAt(contrastMethod)) list.add(contrastMethod);
 	if(inputAt(ndFilter)) list.add(ndFilter);
 	if(inputAt(pinholeSize)) list.add(pinholeSize);
@@ -535,7 +526,7 @@ public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map)
 	if(inputAt(emissionWavelength))map.put(id+TagNames.EMISSIONWAVELENGTH,emissionWavelength.getTagValue()+" "+
 			emissionWavelength.getTagUnit().getSymbol());
 	if(inputAt(imagingMode))map.put(id+TagNames.IMAGINGMODE,imagingMode.getTagValue());
-	if(inputAt(illuminationMode))map.put(id+TagNames.ILLUMINATIONMODE,illuminationMode.getTagValue());
+	
 	if(inputAt(contrastMethod))map.put(id+TagNames.CONTRASTMETHOD,contrastMethod.getTagValue());
 	if(inputAt(ndFilter))map.put(id+TagNames.NDFILTER,ndFilter.getTagValue());
 	if(inputAt(pinholeSize))map.put(id+TagNames.PINHOLESIZE,pinholeSize.getTagValue()+" "+

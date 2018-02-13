@@ -531,6 +531,8 @@ public class TagData
 
 	public void setDefaultValues(String[] list)
 	{
+		if(list==null)
+			return;
 		switch (type) {
 		case COMBOBOX:
 			DefaultComboBoxModel<String>model=(DefaultComboBoxModel<String>) ((JComboBox<String>) inputField).getModel();

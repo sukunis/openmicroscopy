@@ -100,8 +100,11 @@ public class TagNames
 		new PreTagData(CH_NAME,null, ""),new PreTagData(COLOR,null, ""),new PreTagData(FLUOROPHORE,null, ""),
 		new PreTagData(ILLUMTYPE,null, ""),new PreTagData(EXPOSURETIME,EXPOSURETIME_UNIT, ""),new PreTagData(EXCITWAVELENGTH,null, ""),
 		new PreTagData(EMISSIONWAVELENGTH,EXCITATIONWL_UNIT, ""),
-		new PreTagData(IMAGINGMODE,null, ""),new PreTagData(ILLUMINATIONMODE,null, ""),new PreTagData(CONTRASTMETHOD,null, ""),
+		new PreTagData(IMAGINGMODE,null, ""),new PreTagData(CONTRASTMETHOD,null, ""),
 		new PreTagData(NDFILTER,null, ""),new PreTagData(PINHOLESIZE,PINHOLESIZE_UNIT, "")};
+	
+	
+	
 	
 	//--------------------------
 	//	Detector
@@ -495,7 +498,6 @@ public class TagNames
 		case POCKELCELL:
 			values=BOOLEAN_COMBO;
 			break;
-		
 		default:
 			break;
 		}

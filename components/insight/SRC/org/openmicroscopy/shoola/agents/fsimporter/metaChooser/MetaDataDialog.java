@@ -262,7 +262,11 @@ private boolean disableTreeListener;
         addCancelImportButtonLink(cancelImportBtn);
         setClosable(false);
         setCloseVisible(false);
-        initComponents(filters, importerAction, null);
+        System.out.println("Microscope conf: "+microscope);
+        if(microscope==null || microscope.isEmpty())
+        	initComponents(filters, importerAction, null);
+        else
+        	initComponents(filters, importerAction, microscope);
         buildGUI();
     }
     
@@ -450,11 +454,11 @@ private boolean disableTreeListener;
 //        refreshFilesButton.addActionListener(this);
         
 
-        loadProfileButton=new JButton("Customize...");
-        loadProfileButton.setBackground(UIUtilities.BACKGROUND);
-        loadProfileButton.setToolTipText("Load/Save/Edit profile file to customize view.");
-        loadProfileButton.setActionCommand("" + CMD_PROFILE);
-        loadProfileButton.addActionListener(this);
+//        loadProfileButton=new JButton("Customize...");
+//        loadProfileButton.setBackground(UIUtilities.BACKGROUND);
+//        loadProfileButton.setToolTipText("Load/Save/Edit profile file to customize view.");
+//        loadProfileButton.setActionCommand("" + CMD_PROFILE);
+//        loadProfileButton.addActionListener(this);
 //	    loadProfileButton.setEnabled(false);
         
 
@@ -493,7 +497,6 @@ private boolean disableTreeListener;
         System.out.println("#MetaDataDialog::initComponents(): set combobox: "+microscope);
         int indexMic=MicroscopeProperties.getMicIndex(microscope);
         if(indexMic!=-1){
-        	System.out.println("#MetaDataDialog::initComponents(): set combobox: "+indexMic);
         	mics.setSelectedIndex(indexMic); 
         }
         
@@ -502,20 +505,25 @@ private boolean disableTreeListener;
         
         UOSProfileReader propReader=new UOSProfileReader(new File("profileUOSImporter.xml"));
 
-         hardwareDef=new UOSHardwareReader(new File("hardwareUOSImporter.xml"));
+        hardwareDef=new UOSHardwareReader(new File("hardwareUOSImporter.xml"));
 //	    dataView=new MicroscopeDataView(propReader.getViewProperties());
         customSettings=propReader.getViewProperties();
-        if(customSettings==null)
+        if(customSettings==null){
+        	System.out.println("Set config mic settings");
+        	currentMic=MicroscopeProperties.getMicClass(MicroscopeProperties.availableMics[mics.getSelectedIndex()]);
+        	customSettings=currentMic.getViewProperties();
+        }
+        if(customSettings==null){
+        	System.out.println("Set default settings");
             customSettings=propReader.getDefaultProperties();
-        
-        customSettings.setMicObjList(hardwareDef.getObjectives());
-        customSettings.setMicDetectorList(hardwareDef.getDetectors());
-        customSettings.setMicLightSrcList(hardwareDef.getLightSources());
-        customSettings.setMicLightPathFilterList(hardwareDef.getLightPathFilters());
+        }        
+//        customSettings.setMicObjList(hardwareDef.getObjectives());
+//        customSettings.setMicDetectorList(hardwareDef.getDetectors());
+//        customSettings.setMicLightSrcList(hardwareDef.getLightSources());
+//        customSettings.setMicLightPathFilterList(hardwareDef.getLightPathFilters());
         
         
         micName=customSettings.getMicName();
-//	    dataView=new MetaDataUI(customSettings);
         MetaDataView view=new MetaDataView();
         
         metaPanel=new JPanel(new BorderLayout());
@@ -1456,6 +1464,16 @@ private boolean disableTreeListener;
         	System.out.println("--- LOAD "+MicroscopeProperties.availableMics[mics.getSelectedIndex()]+" HARDWARE SETTINGS ---");
         	
         	currentMic=MicroscopeProperties.getMicClass(MicroscopeProperties.availableMics[mics.getSelectedIndex()]);
+        	// TODO: refresh view
+        	
+    	
+        	customSettings=currentMic.getViewProperties();
+ 			if(fileTree!=null){
+ 				deselectNodeAction((FNode)fileTree.getLastSelectedPathComponent());
+             
+ 				//TODO reload current view if changes
+ 				loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
+ 			}
 
         	break;
         case CMD_SAVE:
@@ -1511,21 +1529,21 @@ private boolean disableTreeListener;
         	repaint();
             
             break;
-        case CMD_PROFILE:
-        	//TODO: reload all available views
-            LOGGER.info("[GUI-ACTION] -- CUSTUMIZE... ----");
-            MonitorAndDebug.printConsole("[GUI-ACTION] -- CUSTUMIZE... ----");
-            UOSProfileEditorUI profileWriter=new UOSProfileEditorUI(customSettings, enabledPredefinedData);
-            profileWriter.setVisible(true);
-            customSettings=profileWriter.getProperties();
-			enabledPredefinedData =profileWriter.shouldPredefinedValLoaded();
-
-			deselectNodeAction((FNode)fileTree.getLastSelectedPathComponent());
-            
-            //TODO reload current view if changes
-            loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
-//            firePropertyChange(CHANGE_CUSTOMSETT, null, customSettings); MetaDataControl
-            break;
+//        case CMD_PROFILE:
+//        	//TODO: reload all available views
+//            LOGGER.info("[GUI-ACTION] -- CUSTUMIZE... ----");
+//            MonitorAndDebug.printConsole("[GUI-ACTION] -- CUSTUMIZE... ----");
+//            UOSProfileEditorUI profileWriter=new UOSProfileEditorUI(customSettings, enabledPredefinedData);
+//            profileWriter.setVisible(true);
+//            customSettings=profileWriter.getProperties();
+//			enabledPredefinedData =profileWriter.shouldPredefinedValLoaded();
+//
+//			deselectNodeAction((FNode)fileTree.getLastSelectedPathComponent());
+//            
+//            //TODO reload current view if changes
+//            loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
+////            firePropertyChange(CHANGE_CUSTOMSETT, null, customSettings); MetaDataControl
+//            break;
         case CMD_SPECIFICATION:
             LOGGER.info("[GUI-ACTION] -- load specification file");
             UOSHardwareEditor specEditor=new UOSHardwareEditor(hardwareDef);

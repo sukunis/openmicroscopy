@@ -214,6 +214,7 @@ public class MetaDataUI extends JPanel
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.parent=parent;
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
+		System.out.println("MetadataUI::init: customSettings for "+customSett.getMicName());
 		
 		directoryPane=isdir;
 		this.showPreValues=showPreValues;
@@ -237,7 +238,7 @@ public class MetaDataUI extends JPanel
 		MonitorAndDebug.printConsole("# MetaDataUI::new Instance : "+dir+", model,"+showPreValues);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
-		
+		System.out.println("MetadataUI::init: customSettings for "+customSett.getMicName());
 		directoryPane=dir;
 		this.showPreValues=showPreValues;
 		resetInitialisation();
@@ -947,11 +948,13 @@ public class MetaDataUI extends JPanel
 			
 			JPanel all=new JPanel();
 			all.setLayout(new BoxLayout(all,BoxLayout.Y_AXIS));
-			ModuleConfiguration imgEnvModul=customSett.getImgEnvConf();
-			imgEnvViewer=new ImageEnvViewer(model.getImgEnvModel(), imgEnvModul,showPreValues);
-			
 			all.add(experimentUI);
-			all.add(imgEnvViewer);
+			
+			ModuleConfiguration imgEnvModul=customSett.getImgEnvConf();
+			if(imgEnvModul!=null){
+				imgEnvViewer=new ImageEnvViewer(model.getImgEnvModel(), imgEnvModul,showPreValues);
+				all.add(imgEnvViewer);
+			}
 			experimentPane.add("Experiment",all);
 			addToPlaceholder(experimentPane,expModul.getPosition(), expModul.getWidth());
 		}

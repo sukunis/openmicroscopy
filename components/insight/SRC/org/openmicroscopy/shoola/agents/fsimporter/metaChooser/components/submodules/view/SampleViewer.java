@@ -152,26 +152,27 @@ protected void initTag(TagConfiguration t)
 {
 	String name=t.getName();
 	Boolean prop=t.getProperty();
+	Boolean vis=t.isVisible();
 	switch (name) {
 	case TagNames.PREPDATE:// no pre value possible
 		setPreparationDate((String)null, prop);
-		preparationDate.setVisible(true);
+		preparationDate.setVisible(vis);
 		break;
 	case TagNames.PREPDESC:// no pre value possible
 		setPreparationDescription(null, prop);
-		preparationDescription.setVisible(true);
+		preparationDescription.setVisible(vis);
 		break;
 	case TagNames.RAWCODE:// no pre value possible
 		setRawMaterialCode(null, prop); 
-		rawMaterialCode.setVisible(true);
+		rawMaterialCode.setVisible(vis);
 		break;
 	case TagNames.RAWDESC:// no pre value possible
 		setRawMaterialDesc(null, prop);
-		rawMaterialDesc.setVisible(true);
+		rawMaterialDesc.setVisible(vis);
 		break;
 	case TagNames.GRIDBOXNR:// no pre value possible
 		setGridBoxNumber(null, prop);
-		gridBoxNumber.setVisible(true);
+		gridBoxNumber.setVisible(vis);
 		break;
 //	case TagNames.GRIDBOXTYPE:// no pre value possible
 //		setGridType(null, prop);
@@ -179,15 +180,15 @@ protected void initTag(TagConfiguration t)
 //		break;
 	case TagNames.EXPGRID:// no pre value possible
 		setExpGridNumber(new String[2], prop);
-		expGrid.setVisible(true);
+		expGrid.setVisible(vis);
 		break;
 	case TagNames.EXPOBJNR:// no pre value possible
 		setExpObjectNr(null, prop);
-		expObjectNr.setVisible(true);
+		expObjectNr.setVisible(vis);
 		break;
 	case TagNames.EXPOBJTYPE: // no pre value possible
 		setExpObjectType(null, prop);
-		expObjectType.setVisible(true);
+		expObjectType.setVisible(vis);
 		break;
 	default:
 		LOGGER.warn("[CONF] unknown tag: "+name );break;

@@ -351,8 +351,9 @@ class ImporterComponent
         }
         chooser.setSelectedGroup(getSelectedGroup());
         
+        
         String microscopeName = (String) ImporterAgent.getRegistry().lookup(LookupNames.MICROSCOPE_WORKSTATION);
-        System.out.println("#ImporterControl::activate(): microscope: "+microscopeName);
+        
         
         //Metadata biology
         if(metaDataChooser==null){

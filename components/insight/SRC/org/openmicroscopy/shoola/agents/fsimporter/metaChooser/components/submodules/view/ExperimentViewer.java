@@ -145,33 +145,35 @@ public class ExperimentViewer extends ModuleViewer{
 	{
 		String name=t.getName();
 		Boolean prop=t.getProperty();
+		Boolean vis=t.isVisible();
 		switch (name) {
 		case TagNames.E_TYPE:
 
 			setType(null, prop);
-			type.setVisible(true);
+			type.setVisible(vis);
+			type.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.DESC:
 			setDescription(null, prop);
-			description.setVisible(true);
+			description.setVisible(vis);
 			break;
 			//Set by system
 		case TagNames.GROUP:
 			setGroupName(null, prop);
-			group.setVisible(true);
+			group.setVisible(vis);
 			break;
 		case TagNames.EXPNAME:
 			setName("", prop);
-			this.expName.setVisible(true);
+			this.expName.setVisible(vis);
 			break;
 			//set by system
 		case TagNames.PROJECTNAME:
 			setProjectName(null, prop);
-			projectName.setVisible(true);
+			projectName.setVisible(vis);
 			break;
 		case TagNames.PROJECTPARTNER:
 			setProjectPartner(null, prop);
-			projectPartner.setVisible(true);
+			projectPartner.setVisible(vis);
 			break;
 		default:
 			LOGGER.warn("[CONF] unknown tag: "+name );break;

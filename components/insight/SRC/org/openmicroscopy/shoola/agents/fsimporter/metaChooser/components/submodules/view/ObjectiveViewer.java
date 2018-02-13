@@ -236,50 +236,51 @@ public class ObjectiveViewer extends ModuleViewer
 	{
 		String name=t.getName();
 		Boolean prop=t.getProperty();
+		Boolean vis=t.isVisible();
 		switch (name) {
 		case TagNames.CORCOLLAR: 
 			setCorCollar(null, prop);
-			corCollar.setVisible(true);
+			corCollar.setVisible(vis);
 			break;
 		case TagNames.OBJ_MEDIUM: 
 			setMedium(null, prop);
-			medium.setVisible(true);
+			medium.setVisible(vis);
 			break;
 		case TagNames.REFINDEX:
 			setRefractIndex(null, prop);
-			refractIndex.setVisible(true);
+			refractIndex.setVisible(vis);
 			break;
 		case TagNames.MODEL:
 			setModel(null,prop);
-			model.setVisible(true);
+			model.setVisible(vis);
 			break;
 		case TagNames.MANUFAC:
 			setManufact(null,prop);
-			manufact.setVisible(true);
+			manufact.setVisible(vis);
 			break;
 		case TagNames.NOMMAGN:
 			setNomMagnification(null, prop);
-			nomMagn.setVisible(true);
+			nomMagn.setVisible(vis);
 			break;
 		case TagNames.CALMAGN:
 			setCalMagnification(null,prop);
-			calMagn.setVisible(true);
+			calMagn.setVisible(vis);
 			break;
 		case TagNames.LENSNA:
 			setLensNA(null,prop);
-			lensNA.setVisible(true);
+			lensNA.setVisible(vis);
 			break;
 		case TagNames.IMMERSION:
 			setImmersion(null, prop);
-			immersion.setVisible(true);
+			immersion.setVisible(vis);
 			break;
 		case TagNames.CORRECTION:
 			setCorrection(null, prop);
-			correction.setVisible(true);
+			correction.setVisible(vis);
 			break;
 		case TagNames.WORKDIST:
 			setWorkingDist(null,prop);
-			workDist.setVisible(true);
+			workDist.setVisible(vis);
 			break;
 		default:LOGGER.warn("[CONF] OBJECTIVE  unknown tag: "+name );break;
 		}

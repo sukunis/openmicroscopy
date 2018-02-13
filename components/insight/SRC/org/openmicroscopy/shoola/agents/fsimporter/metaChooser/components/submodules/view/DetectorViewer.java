@@ -259,51 +259,54 @@ public class DetectorViewer extends ModuleViewer{
 		
 		String name=t.getName();
 		Boolean prop=t.getProperty();
+		Boolean vis=t.isVisible();
 		switch (name) {
 		case TagNames.MODEL: 
 			setModel(null,OPTIONAL);
-			model.setVisible(true);
+			model.setVisible(vis);
 			break;
 		case TagNames.MANUFAC: 
 			setManufact(null, OPTIONAL);
-			manufact.setVisible(true);
+			manufact.setVisible(vis);
 			break;
 		case TagNames.D_TYPE:
 			setType(null,OPTIONAL);
-			type.setVisible(true);
+			type.setVisible(vis);
+			type.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.ZOOM:
 			setZoom(null, OPTIONAL);
-			zoom.setVisible(true);
+			zoom.setVisible(vis);
 			break;
 		case TagNames.AMPLGAIN:
 			setAmplGain(null, OPTIONAL);
-			amplGain.setVisible(true);
+			amplGain.setVisible(vis);
 			break;
 		case TagNames.GAIN:
 			setGain(null,OPTIONAL);
-			gain.setVisible(true);
+			gain.setVisible(vis);
 			break;
 		case TagNames.VOLTAGE:
 			setVoltage(null, OPTIONAL);
-			voltage.setVisible(true);
+			voltage.setVisible(vis);
 			break;
 		case TagNames.OFFSET:
 			setOffset(null, OPTIONAL);
-			offset.setVisible(true);
+			offset.setVisible(vis);
 			break;
 		case TagNames.CONFZOOM:
 			setConfocalZoom(null, prop);
-			confocalZoom.setVisible(true);
+			confocalZoom.setVisible(vis);
 			break;
 		case TagNames.BINNING:
 			setBinning(null, prop);
-			binning.setVisible(true);
+			binning.setVisible(vis);
+			binning.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.SUBARRAY:
 			//TODO
 			setSubarray(null, prop);
-			subarray.setVisible(true);
+			subarray.setVisible(vis);
 			break;
 		default: LOGGER.warn("[CONF] unknown tag: "+name );break;
 		}
@@ -523,11 +526,11 @@ public class DetectorViewer extends ModuleViewer{
 	
 	private void resetAttributesForType()
 	{
-		voltage.setEnable(true);
-		zoom.setEnable(true);
-		offset.setEnable(true);
-		gain.setEnable(true);
-		binning.setEnable(true);
+		if(voltage != null) voltage.setEnable(true);
+		if(zoom != null) zoom.setEnable(true);
+		if(offset != null) offset.setEnable(true);
+		if(gain != null) gain.setEnable(true);
+		if(binning != null) binning.setEnable(true);
 	}
 
 

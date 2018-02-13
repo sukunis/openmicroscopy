@@ -14,6 +14,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardwa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusTIRF4Line_SMT;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusTIRF4Line_STORM;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.ZeissCellObserverSD;
+import org.slf4j.LoggerFactory;
 
 import ome.units.quantity.Length;
 import ome.xml.model.Detector;
@@ -27,14 +28,14 @@ import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 
 public abstract class MicroscopeProperties 
 {
-	private final static String FLUOVIEW1000="Olympus LSM FV1000";
-	private final static String LEICASP5="Leica LSM SP5";
-	private final static String ZEISSSD="Zeiss Cell Observer SD";
-	private final static String TIRF3LINE="Olympus TIRF 3-Line";
-	private final static String TIRF4LINE_SMT="Olympus TIRF 4-LINE SMT";
-	private final static String TIRF4LINE_STORM="Olympus TIRF 4-LINE STORM";
-	private final static String ZEISSLSM="Zeiss LSM 510 META NLO";
-	private final static String DELTAVISION="DeltaVision Elite";
+	protected final static String FLUOVIEW1000="Olympus LSM FV1000";
+	protected final static String LEICASP5="Leica LSM SP5";
+	protected final static String ZEISSSD="Zeiss Cell Observer SD";
+	protected final static String TIRF3LINE="Olympus TIRF 3-Line";
+	protected final static String TIRF4LINE_SMT="Olympus TIRF 4-LINE SMT";
+	protected final static String TIRF4LINE_STORM="Olympus TIRF 4-LINE STORM";
+	protected final static String ZEISSLSM="Zeiss LSM 510 META NLO";
+	protected final static String DELTAVISION="DeltaVision Elite";
 	
 	
 	public static final String[] availableMics={"",FLUOVIEW1000,LEICASP5,ZEISSSD,TIRF3LINE,
@@ -54,6 +55,18 @@ public abstract class MicroscopeProperties
 	protected List<LightSource> lightSources;
 	protected List<Objective> objectives;
 	protected List<Object> lightPathObjects;
+	
+	protected CustomViewProperties view;
+	/** Logger for this class. */
+	protected static final org.slf4j.Logger LOGGER =
+	    	    LoggerFactory.getLogger(CustomViewProperties.class);
+	
+	public CustomViewProperties getViewProperties()
+	{
+		if(view==null)
+			initCustomView();
+		return view;
+	}
 	
 	public List<Detector> getDetectorList()
 	{
@@ -105,6 +118,11 @@ public abstract class MicroscopeProperties
 		return null;
 	}
 	
+	protected void initCustomView(){
+		view=new CustomViewProperties();
+		view.init();
+	}
+	
 	/**
 	 * 
 	 * @param microscope name
@@ -122,7 +140,7 @@ public abstract class MicroscopeProperties
 	}
 	
 	/**
-	 * No predefinitions possible
+	 * 
 	 * @param active
 	 * @param pos
 	 * @param width
@@ -131,17 +149,17 @@ public abstract class MicroscopeProperties
 	protected ModuleConfiguration loadImageConf(boolean active,GUIPlaceholder pos,String width)
 	{
 		ModuleConfiguration imageConf=new ModuleConfiguration(active, pos, width);
-		imageConf.setTag(TagNames.IMG_NAME,null,null,true);
-		imageConf.setTag(TagNames.IMG_DESC,null,null,true);
-		imageConf.setTag(TagNames.ACQTIME,null,null,true);
-		imageConf.setTag(TagNames.DIMXY,null,null,true);
-		imageConf.setTag(TagNames.PIXELTYPE,null,null,true);
-		imageConf.setTag(TagNames.PIXELSIZE,null,null,true);
-		imageConf.setTag(TagNames.DIMZTC,null,null,true);
-		imageConf.setTag(TagNames.STAGELABEL,null,null,true);
-		imageConf.setTag(TagNames.STEPSIZE,null,null,true);
-		imageConf.setTag(TagNames.TIMEINC,null,null,true);
-		imageConf.setTag(TagNames.WELLNR,null,null,true);
+		imageConf.setTag(TagNames.IMG_NAME,null,null,true, null, true);
+		imageConf.setTag(TagNames.IMG_DESC,null,null,true, null, true);
+		imageConf.setTag(TagNames.ACQTIME,null,null,true, null, true);
+		imageConf.setTag(TagNames.DIMXY,null,null,true, null, true);
+		imageConf.setTag(TagNames.PIXELTYPE,null,null,true, null, true);
+		imageConf.setTag(TagNames.PIXELSIZE,null,null,true, null, true);
+		imageConf.setTag(TagNames.DIMZTC,null,null,true, null, true);
+		imageConf.setTag(TagNames.STAGELABEL,null,null,true, null, true);
+		imageConf.setTag(TagNames.STEPSIZE,null,null,true, null, true);
+		imageConf.setTag(TagNames.TIMEINC,null,null,true, null, true);
+		imageConf.setTag(TagNames.WELLNR,null,null,true, null, true);
 		
 		return imageConf;
 	}
@@ -170,52 +188,127 @@ public abstract class MicroscopeProperties
 	/**
 	 * 
 	 */
-	protected abstract ModuleConfiguration loadSampleConf(boolean active,GUIPlaceholder pos,String width);
+	protected  ModuleConfiguration loadSampleConf(boolean active,GUIPlaceholder pos,String width){
+		ModuleConfiguration sampleConf=new ModuleConfiguration(active,pos,width);
+		sampleConf.setTag(TagNames.PREPDATE,null,null,true, null, true);
+		sampleConf.setTag(TagNames.PREPDESC,null,null,true, null, true);
+		sampleConf.setTag(TagNames.RAWCODE,null,null,true, null, true);
+		sampleConf.setTag(TagNames.RAWDESC,null,null,true, null, true);
+		sampleConf.setTag(TagNames.GRIDBOXNR,null,null,true, null, true);
+		sampleConf.setTag(TagNames.GRIDBOXTYPE,null,null,true, null, true);
+		sampleConf.setTag(TagNames.EXPGRID,null,null,true, null, true);
+		sampleConf.setTag(TagNames.EXPOBJNR,null,null,true, null, true);
+		sampleConf.setTag(TagNames.EXPOBJTYPE,null,null,true, null, true);
+		return sampleConf;
+	}
 	
 
 	/**
 	 * 
 	 */
-	protected abstract ModuleConfiguration loadLightSrcConf(boolean active,GUIPlaceholder pos,String width);
+	protected  ModuleConfiguration loadLightSrcConf(boolean active,GUIPlaceholder pos,String width){
+		// laser module for lightSrc
+		ModuleConfiguration lightSrcConf=new ModuleConfiguration(active,pos,width);
+		lightSrcConf.setTag(TagNames.MODEL,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.MANUFAC,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.POWER,null,TagNames.POWER_UNIT.getSymbol(),true, null, true);
+		lightSrcConf.setTag(TagNames.L_TYPE,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.MEDIUM,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.FREQMUL,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.TUNABLE,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.PULSE,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.POCKELCELL,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.REPRATE,null,TagNames.REPRATE_UNIT_HZ.getSymbol(),true, null, true);
+		lightSrcConf.setTag(TagNames.PUMP,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.WAVELENGTH,null,TagNames.WAVELENGTH_UNIT.getSymbol(),true, null, true);
+		lightSrcConf.setSettingTag(TagNames.SET_WAVELENGTH,null,TagNames.WAVELENGTH_UNIT.getSymbol(),true, null, true);
+		lightSrcConf.setSettingTag(TagNames.ATTENUATION,null,null,true, null, true);
+		return lightSrcConf;
+	}	
+
 		
 
 	/**
 	 * 
 	 */
-	protected abstract ModuleConfiguration loadImageEnvConf(boolean active,GUIPlaceholder pos,String width) ;
+	protected  ModuleConfiguration loadImageEnvConf(boolean active,GUIPlaceholder pos,String width){
+		ModuleConfiguration imgEnvConf=new ModuleConfiguration(active,pos,width);
+		imgEnvConf.setTag(TagNames.TEMP,null,null,true, null, true);
+		imgEnvConf.setTag(TagNames.AIRPRESS,null,null,true, null, true);
+		imgEnvConf.setTag(TagNames.HUMIDITY,null,null,true, null, true);
+		imgEnvConf.setTag(TagNames.CO2,null,null,true, null, true);
+		return imgEnvConf;
+	}
 
 	/**
 	 * 
 	 */
-	protected abstract ModuleConfiguration loadExperimentConf(boolean active,GUIPlaceholder pos,String width) ;
+	protected  ModuleConfiguration loadExperimentConf(boolean active,GUIPlaceholder pos,String width){
+		ModuleConfiguration expConf=new ModuleConfiguration(active,pos,width);
+		expConf.setTag(TagNames.E_TYPE,null,null,true, null, true);
+		expConf.setTag(TagNames.DESC,null,null,true, null, true);
+		expConf.setTag(TagNames.EXPNAME,null,null,true, null, true);
+		expConf.setTag(TagNames.PROJECTNAME,null,null,true, null, true);
+		expConf.setTag(TagNames.GROUP,null,null,true, null, true);
+		expConf.setTag(TagNames.PROJECTPARTNER,null,null,true, null, true);
+		return expConf;
+	}
 
 	/**
 	 * 
 	 */
-	protected abstract ModuleConfiguration loadDetectorConf(boolean active,GUIPlaceholder pos,String width);
+	protected  ModuleConfiguration loadDetectorConf(boolean active,GUIPlaceholder pos,String width){
+		ModuleConfiguration detectorConf=new ModuleConfiguration(active,pos,width);
+		detectorConf.setTag(TagNames.MODEL,null,null,true, null, true);
+		detectorConf.setTag(TagNames.MANUFAC,null,null,true, null, true);
+		detectorConf.setTag(TagNames.D_TYPE,null,null,true, null, true);
+		detectorConf.setTag(TagNames.ZOOM,null,null,true, null, true);
+		detectorConf.setTag(TagNames.AMPLGAIN,null,null,true, null, true);
+		detectorConf.setSettingTag(TagNames.GAIN,null,null,true, null, true);
+		detectorConf.setSettingTag(TagNames.VOLTAGE,null,TagNames.VOLTAGE_UNIT.getSymbol(),true, null, true);
+		detectorConf.setSettingTag(TagNames.OFFSET,null,null,true, null, true);
+		detectorConf.setSettingTag(TagNames.CONFZOOM,null,null,true, null, true);
+		detectorConf.setSettingTag(TagNames.BINNING,null,null,true, null, true);
+		detectorConf.setSettingTag(TagNames.SUBARRAY,null,null,true, null, true);
+		return detectorConf;
+	}
 
 	/**
 	 * 
 	 */
-	protected abstract ModuleConfiguration loadObjectiveConf(boolean active,GUIPlaceholder pos,String width) ;
+	protected  ModuleConfiguration loadObjectiveConf(boolean active,GUIPlaceholder pos,String width){
+		ModuleConfiguration oConf=new ModuleConfiguration(active,pos,width);
+		oConf.setTag(TagNames.MODEL,null,null,true, null, true);
+		oConf.setTag(TagNames.MANUFAC,null,null,true, null, true);
+		oConf.setTag(TagNames.NOMMAGN,null,null,true, null, true);
+		oConf.setTag(TagNames.CALMAGN,null,null,true, null, true);
+		oConf.setTag(TagNames.LENSNA,null,null,true, null, true);
+		oConf.setTag(TagNames.IMMERSION,null,null,true, null, true);
+		oConf.setTag(TagNames.CORRECTION,null,null,true, null, true);
+		oConf.setTag(TagNames.WORKDIST,null,TagNames.WORKDIST_UNIT.getSymbol(),true, null, true);
+		
+		oConf.setSettingTag(TagNames.CORCOLLAR,null,null,true, null, true);
+		oConf.setSettingTag(TagNames.OBJ_MEDIUM,null,null,true, null, true);
+		oConf.setSettingTag(TagNames.REFINDEX,null,null,true, null, true);
+		return oConf;
+	}
 
 	/**
 	 * No predefinitions possible
 	 */
 	protected ModuleConfiguration loadChannelConf(boolean active,GUIPlaceholder pos,String width) {
 		ModuleConfiguration channelConf=new ModuleConfiguration(active,pos,width);
-		channelConf.setTag(TagNames.CH_NAME,null,null,true);
-		channelConf.setTag(TagNames.COLOR,null,null,true);
-		channelConf.setTag(TagNames.FLUOROPHORE,null,null,true);
-		channelConf.setTag(TagNames.ILLUMTYPE,null,null,true);
-		channelConf.setTag(TagNames.EXPOSURETIME,null,TagNames.EMISSIONWL_UNIT.getSymbol(),true);
-		channelConf.setTag(TagNames.EXCITWAVELENGTH,null,TagNames.EXCITATIONWL_UNIT.getSymbol(),true);
-		channelConf.setTag(TagNames.EMISSIONWAVELENGTH,null,null,true);
-		channelConf.setTag(TagNames.IMAGINGMODE,null,null,true);
-		channelConf.setTag(TagNames.ILLUMINATIONMODE,null,null,true);
-		channelConf.setTag(TagNames.CONTRASTMETHOD,null,null,true);
-		channelConf.setTag(TagNames.NDFILTER,null,null,true);
-		channelConf.setTag(TagNames.PINHOLESIZE,null,TagNames.PINHOLESIZE_UNIT.getSymbol(),true);
+		channelConf.setTag(TagNames.CH_NAME,null,null,true, null, true);
+		channelConf.setTag(TagNames.COLOR,null,null,true, null, true);
+		channelConf.setTag(TagNames.FLUOROPHORE,null,null,true, null, true);
+		channelConf.setTag(TagNames.ILLUMTYPE,null,null,true, null, true);
+		channelConf.setTag(TagNames.EXPOSURETIME,null,TagNames.EMISSIONWL_UNIT.getSymbol(),true, null, true);
+		channelConf.setTag(TagNames.EXCITWAVELENGTH,null,TagNames.EXCITATIONWL_UNIT.getSymbol(),true, null, true);
+		channelConf.setTag(TagNames.EMISSIONWAVELENGTH,null,null,true, null, true);
+		channelConf.setTag(TagNames.IMAGINGMODE,null,null,true, null, true);
+		channelConf.setTag(TagNames.CONTRASTMETHOD,null,null,true, null, true);
+		channelConf.setTag(TagNames.NDFILTER,null,null,true, null, true);
+		channelConf.setTag(TagNames.PINHOLESIZE,null,TagNames.PINHOLESIZE_UNIT.getSymbol(),true, null, true);
 		return channelConf;
 	}
 
@@ -236,6 +329,34 @@ public abstract class MicroscopeProperties
 		f.setTransmittanceRange(t);
 		return f;
 		
+	}
+	
+	public ModuleConfiguration getImageConf(){
+		return loadImageConf(true, GUIPlaceholder.Pos_A, "1");
+	}
+	public ModuleConfiguration getChannelConf(){
+		return loadChannelConf(true, GUIPlaceholder.Pos_E, "1");
+	}
+	public ModuleConfiguration getObjectiveConf(){
+		return loadObjectiveConf(true, GUIPlaceholder.Pos_B, "1");
+	}
+	public ModuleConfiguration getDetectorConf(){
+		return loadDetectorConf(true, GUIPlaceholder.Pos_C, "1");
+	}
+	public ModuleConfiguration getExperimentConf(){
+		return loadExperimentConf(true, GUIPlaceholder.Pos_H, "1");
+	}
+	public ModuleConfiguration getImageEnvConf(){
+		return loadImageEnvConf(true, GUIPlaceholder.Pos_A, "1");
+	}
+	public ModuleConfiguration getLightSrcConf(){
+		return loadLightSrcConf(true, GUIPlaceholder.Pos_D, "1");
+	}
+	public ModuleConfiguration getSampleConf(){
+		return loadSampleConf(true, GUIPlaceholder.Pos_G, "1");
+	}
+	public ModuleConfiguration getLightPathConf(){
+		return loadLightPathConf(true, GUIPlaceholder.Pos_F, "1");
 	}
 	
 	

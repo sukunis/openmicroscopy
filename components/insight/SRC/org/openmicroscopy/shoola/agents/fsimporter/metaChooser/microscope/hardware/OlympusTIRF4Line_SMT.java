@@ -4,40 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 
-import ome.model.units.UNITS;
-import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Power;
-import ome.xml.model.Arc;
 import ome.xml.model.Detector;
 import ome.xml.model.Dichroic;
-import ome.xml.model.Filament;
-import ome.xml.model.Filter;
 import ome.xml.model.FilterSet;
 import ome.xml.model.Laser;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
-import ome.xml.model.TransmittanceRange;
-import ome.xml.model.enums.ArcType;
-import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
-import ome.xml.model.enums.FilamentType;
 import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.Immersion;
-import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
-import ome.xml.model.enums.Pulse;
-import ome.xml.model.enums.UnitsFrequency;
 import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.enums.UnitsPower;
-import ome.xml.model.enums.handlers.UnitsFrequencyEnumHandler;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
 
+
+/**
+ * SFB-Olympus-TIRF-4-LINE
+ * @author Kunis
+ *
+ */
 public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 	public OlympusTIRF4Line_SMT()
 	{
@@ -191,7 +185,7 @@ List<Object> list = new ArrayList<Object>();
 		Detector d=new Detector();
 		d.setModel("Hamamatsu ORCA-Flash4.0");
 		d.setManufacturer("Hamamatsu");
-		d.setType(DetectorType.CCD);
+		d.setType(DetectorType.CMOS);
 		list.add(d);
 		
 		
@@ -253,40 +247,86 @@ List<Object> list = new ArrayList<Object>();
 		return list;
 	}
 	
-	@Override
-	public ModuleConfiguration loadSampleConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	@Override
 	public ModuleConfiguration loadLightSrcConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
+		ModuleConfiguration lightSrcConf=new ModuleConfiguration(active,pos,width);
+		lightSrcConf.setTag(TagNames.MODEL,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.MANUFAC,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.POWER,null,TagNames.POWER_UNIT.getSymbol(),true, null, true);
+		lightSrcConf.setTag(TagNames.L_TYPE,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.MEDIUM,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.FREQMUL,null,null,true, null, false);
+		lightSrcConf.setTag(TagNames.TUNABLE,null,null,true, null, false);
+		lightSrcConf.setTag(TagNames.PULSE,null,null,true, null, false);
+		lightSrcConf.setTag(TagNames.POCKELCELL,null,null,true, null, false);
+		lightSrcConf.setTag(TagNames.REPRATE,null,TagNames.REPRATE_UNIT_HZ.getSymbol(),true, null, false);
+		lightSrcConf.setTag(TagNames.PUMP,null,null,true, null, false);
+		lightSrcConf.setTag(TagNames.WAVELENGTH,null,TagNames.WAVELENGTH_UNIT.getSymbol(),true, null, true);
+		lightSrcConf.setSettingTag(TagNames.SET_WAVELENGTH,null,TagNames.WAVELENGTH_UNIT.getSymbol(),true, null, false);
+		lightSrcConf.setSettingTag(TagNames.ATTENUATION,null,null,true, null, true);
+		return lightSrcConf;
 	}
 
-	@Override
-	public ModuleConfiguration loadImageEnvConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ModuleConfiguration loadExperimentConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public ModuleConfiguration loadDetectorConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
+		ModuleConfiguration detectorConf=new ModuleConfiguration(active,pos,width);
+		detectorConf.setTag(TagNames.MODEL,null,null,true, null, true);
+		detectorConf.setTag(TagNames.MANUFAC,null,null,true, null, true);
+		detectorConf.setTag(TagNames.D_TYPE,null,null,true, null, true);
+		detectorConf.setTag(TagNames.ZOOM,null,null,true, null, false);
+		detectorConf.setTag(TagNames.AMPLGAIN,null,null,true, null, false);
+		detectorConf.setSettingTag(TagNames.GAIN,null,null,true, null, false);
+		detectorConf.setSettingTag(TagNames.VOLTAGE,null,TagNames.VOLTAGE_UNIT.getSymbol(),true, null, false);
+		detectorConf.setSettingTag(TagNames.OFFSET,null,null,true, null, false);
+		detectorConf.setSettingTag(TagNames.CONFZOOM,null,null,true, null, false);
+		detectorConf.setSettingTag(TagNames.BINNING,null,null,true, null, true);
+		detectorConf.setSettingTag(TagNames.SUBARRAY,null,null,true, null, true);
+		return detectorConf;
 	}
 
+	
+	
 	@Override
-	public ModuleConfiguration loadObjectiveConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
+	protected ModuleConfiguration loadChannelConf(boolean active,GUIPlaceholder pos,String width) {
+		String[] ILLUMINATIONTYPE_TIRF4LINE_SMT={"Transmitted","Epifluorescence","TIR","HILO"};
+		String[] CONTRASTMETHOD={"Brightfield","DIC","Fluorescence"};
+		String[] IMAGINGMODE={"Widefield","TIRF","SingleMoleculeImaging","PALM","STORM","Other"};
+		
+		
+		ModuleConfiguration channelConf=new ModuleConfiguration(active,pos,width);
+		channelConf.setTag(TagNames.CH_NAME,null,null,true, null, true);
+		channelConf.setTag(TagNames.CONTRASTMETHOD,null,null,true, CONTRASTMETHOD, true);
+		channelConf.setTag(TagNames.FLUOROPHORE,null,null,true, null, true);
+		channelConf.setTag(TagNames.ILLUMTYPE,null,null,true, ILLUMINATIONTYPE_TIRF4LINE_SMT, true);
+		channelConf.setTag(TagNames.EXPOSURETIME,null,TagNames.EMISSIONWL_UNIT.getSymbol(),true, null, true);
+		channelConf.setTag(TagNames.EXCITWAVELENGTH,null,TagNames.EXCITATIONWL_UNIT.getSymbol(),true, null, true);
+		channelConf.setTag(TagNames.EMISSIONWAVELENGTH,null,null,true, null, true);
+		channelConf.setTag(TagNames.IMAGINGMODE,null,null,true, IMAGINGMODE, true);
+		channelConf.setTag(TagNames.NDFILTER,null,null,true, null, false);
+		channelConf.setTag(TagNames.PINHOLESIZE,null,TagNames.PINHOLESIZE_UNIT.getSymbol(),true, null, false);
+		
+		
+		
+		return channelConf;
+	}
+	
+	@Override
+	protected void initCustomView(){
+		view = new CustomViewProperties();
+		LOGGER.info("[VIEW_PROP] Load OlympusTIRF4Line_SMT view");
+		view.setMicName(TIRF4LINE_SMT);
+		view.setImageConf(getImageConf());
+    	
+		view.setObjConf(getObjectiveConf());
+		view.setDetectorConf(getDetectorConf());
+		view.setLightSrcConf(getLightSrcConf());
+		view.setChannelConf(getChannelConf());
+		view.setLightPathConf(getLightPathConf());
+		view.setSampleConf(getSampleConf());
+		view.setExperimenterConf(getExperimentConf());
 	}
 
 }
