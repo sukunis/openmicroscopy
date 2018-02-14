@@ -112,17 +112,16 @@ private void buildGUI()
 	List<JComponent> comp=new ArrayList<JComponent>();
 	addTagToGUI(name,labels,comp);
 	addTagToGUI(color,labels,comp);
+	addTagToGUI(contrastMethod,labels,comp);
 	addTagToGUI(fluorophore,labels,comp);
-	addTagToGUI(illumType,labels,comp);
-	addTagToGUI(exposureTime,labels,comp);
-	if(exposureTime!=null)exposureTime.setEnable(false);
 	addTagToGUI(excitWavelength,labels,comp);
 	addTagToGUI(emissionWavelength,labels,comp);
-//	addTag(acquisitionMode);
+	addTagToGUI(exposureTime,labels,comp);
+	if(exposureTime!=null)exposureTime.setEnable(false);
 	addTagToGUI(imagingMode,labels,comp);
+	addTagToGUI(illumType,labels,comp);
 	
 	
-	addTagToGUI(contrastMethod,labels,comp);
 	addTagToGUI(ndFilter,labels,comp);
 	addTagToGUI(pinholeSize,labels,comp);
 	

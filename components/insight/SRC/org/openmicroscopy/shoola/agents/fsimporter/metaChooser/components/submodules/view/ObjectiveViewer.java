@@ -118,8 +118,8 @@ public class ObjectiveViewer extends ModuleViewer
 		addTagToGUI(nomMagn,labels,comp);
 		addTagToGUI(calMagn,labels,comp);
 		addTagToGUI(lensNA,labels,comp);
-		addTagToGUI(immersion,labels,comp);
-		addTagToGUI(correction,labels,comp);
+		
+//		addTagToGUI(correction,labels,comp);
 		addTagToGUI(workDist,labels,comp);
 		
 		addLabelTextRows(labels, comp, gridbag, globalPane);
@@ -136,7 +136,8 @@ public class ObjectiveViewer extends ModuleViewer
 		JPanel settingsPane=new JPanel(gridbagSett);
 		addLabelToGUI(new JLabel("Settings:"),labelsSett,compSett);
 		addTagToGUI(corCollar,labelsSett,compSett);
-		addTagToGUI(medium,labelsSett,compSett);
+//		addTagToGUI(medium,labelsSett,compSett);
+		addTagToGUI(immersion,labels,comp);
 		addTagToGUI(refractIndex,labelsSett,compSett);
 		
 		addLabelTextRows(labelsSett, compSett, gridbag, settingsPane);
