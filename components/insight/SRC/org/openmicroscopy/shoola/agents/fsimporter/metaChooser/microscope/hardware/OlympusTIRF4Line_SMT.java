@@ -302,6 +302,33 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		return channelConf;
 	}
 	
+	
+	@Override
+	protected  ModuleConfiguration loadSampleConf(boolean active,GUIPlaceholder pos,String width){
+		ModuleConfiguration sampleConf=new ModuleConfiguration(active,pos,width);
+		sampleConf.setTag(TagNames.PREPDATE,null,null,true, null, true);
+		sampleConf.setTag(TagNames.PREPDESC,null,null,true, null, true);
+		sampleConf.setTag(TagNames.RAWCODE,null,null,true, null, false);
+		sampleConf.setTag(TagNames.RAWDESC,null,null,true, null, true);
+		sampleConf.setTag(TagNames.GRIDBOXNR,null,null,true, null, false);
+		sampleConf.setTag(TagNames.GRIDBOXTYPE,null,null,true, null, true);
+		sampleConf.setTag(TagNames.EXPGRID,null,null,true, null, false);
+		sampleConf.setTag(TagNames.EXPOBJNR,null,null,true, null, false);
+		sampleConf.setTag(TagNames.EXPOBJTYPE,null,null,true, null, false);
+		return sampleConf;
+	}
+	
+	@Override
+	protected  ModuleConfiguration loadImageEnvConf(boolean active,GUIPlaceholder pos,String width){
+		ModuleConfiguration imgEnvConf=new ModuleConfiguration(active,pos,width);
+		imgEnvConf.setTag(TagNames.TEMP,null,null,true, null, true);
+		imgEnvConf.setTag(TagNames.AIRPRESS,null,null,true, null, false);
+		imgEnvConf.setTag(TagNames.HUMIDITY,null,null,true, null, true);
+		imgEnvConf.setTag(TagNames.CO2,null,null,true, null, true);
+		return imgEnvConf;
+	}
+	
+	
 	@Override
 	protected void initCustomView(){
 		view = new CustomViewProperties();
@@ -316,6 +343,7 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		view.setLightPathConf(getLightPathConf());
 		view.setSampleConf(getSampleConf());
 		view.setExperimenterConf(getExperimentConf());
+		view.setImgEnvConf(getImageEnvConf());
 	}
 
 }
