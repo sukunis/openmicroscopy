@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import loci.formats.MetadataTools;
-import ome.xml.model.Channel;
+
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
@@ -42,6 +42,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.SampleModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.Channel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.openmicroscopy.shoola.util.MonitorAndDebug;
@@ -404,7 +405,7 @@ public class MetaDataModel
 	
 	public void addData(Channel c,boolean overwrite,int index)
 	{
-		MonitorAndDebug.printConsole("# MetaDataModel::addData - Channel "+index);
+		MonitorAndDebug.printConsole("# MetaDataModel::addData - Channel "+index+", overwrite= "+overwrite);
 		if(channelModel==null)
 			channelModel=new ChannelModel();
 		

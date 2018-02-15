@@ -269,7 +269,7 @@ public class ExperimentViewer extends ModuleViewer{
 	 * -----------------------------------------------------*/
 	private void setType(ExperimentType value, boolean prop)
 	{
-		String val= (value != null) ? value.getValue():"";
+		String val= (value != null) ? value.getValue():null;
 		if(type == null) 
 			type = new TagData(TagNames.E_TYPE,val,prop,TagData.COMBOBOX,getNames(ExperimentType.class));
 		else 

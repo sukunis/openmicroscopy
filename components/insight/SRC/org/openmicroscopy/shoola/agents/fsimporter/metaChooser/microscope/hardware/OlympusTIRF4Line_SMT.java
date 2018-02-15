@@ -16,6 +16,7 @@ import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
 import ome.xml.model.FilterSet;
 import ome.xml.model.Laser;
+import ome.xml.model.LightPath;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
 import ome.xml.model.enums.DetectorType;
@@ -34,8 +35,27 @@ import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
  *
  */
 public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
+	
+	//filter and dichroics , define here because of reusing object in mapr function
+	private Filter IX2_MDICT;
+	private Dichroic D_ZT_405_488_561_640RPC;
+	private Filter BRIGHTLINE_HC_466_523_500_677;
+	private Filter BRIGHTLINE_HC_445_45;
+	private Filter BRIGHTLINE_HC_525_50;
+	private Filter BRIGHTLINE_HC_600_37;
+	private Filter BRIGHTLINE_HC_697_58;
+
+	private Filter D_480DCXR;
+	private Filter D_565DCXR;
+	private Filter D_640DCXR;
+	private Filter BRIGHTLINE_HC_438_24;
+	private Filter BRIGHTLINE_HC_520_35;
+	private Filter BRIGHTLINE_HC_685_40;
+	
+	
 	public OlympusTIRF4Line_SMT()
 	{
+		initLightPathFilter();
 		detectors=this.getMicDetectorList();
 		objectives=this.getMicObjectiveList();
 		lightSources=this.getMicLightSrcList();
@@ -93,7 +113,37 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		return list;
 	}
 
-
+	private void initLightPathFilter(){
+		//TIRF-Cube
+		Dichroic d1= new Dichroic();
+		d1.setModel("zt405/488/561/640rpc");
+		d1.setManufacturer("Chroma");
+		D_ZT_405_488_561_640RPC=d1;
+		
+		BRIGHTLINE_HC_466_523_500_677=getFilter("BrightLine HC 446/523/500/677",FilterType.BANDPASS,446,677,UnitsLength.NM, "Semrock");
+				
+		IX2_MDICT= getFilter("DIC Cube:IX2-MDICT",FilterType.OTHER,-1,-1,null,"Olympus");
+		
+		
+		BRIGHTLINE_HC_445_45=getFilter("BrightLine HC 445/45",FilterType.BANDPASS,423,468,UnitsLength.NM, "Semrock");
+		
+		BRIGHTLINE_HC_525_50=getFilter("BrightLine HC 525/50",FilterType.BANDPASS,500,550,UnitsLength.NM, "Semrock");
+		
+		BRIGHTLINE_HC_600_37=getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NM, "Semrock");
+		
+		BRIGHTLINE_HC_697_58=getFilter("BrightLine HC 697/58",FilterType.BANDPASS,668,726,UnitsLength.NM, "Semrock");
+		
+		
+		D_480DCXR=getFilter("Beamsplitter 480dcxr",FilterType.LONGPASS,480,-1,UnitsLength.NM, "Chroma");
+		D_565DCXR=getFilter("Beamsplitter 565dcxr",FilterType.LONGPASS,565,-1,UnitsLength.NM, "Chroma");
+		D_640DCXR=getFilter("Beamsplitter 640dcxr",FilterType.LONGPASS,640,-1,UnitsLength.NM, "Chroma");
+		
+		BRIGHTLINE_HC_438_24=getFilter("BrightLine HC 438/24 (blue:DAPI,BFP)",FilterType.BANDPASS,426,450,UnitsLength.NM, "Semrock");
+		BRIGHTLINE_HC_520_35=getFilter("BrightLine HC 520/35 (green: GFP)",FilterType.BANDPASS,502,538,UnitsLength.NM, "Semrock");
+		BRIGHTLINE_HC_600_37=getFilter("BrightLine HC 600/37 (orange: TMR,mCherry)",FilterType.BANDPASS,582,619,UnitsLength.NM,"Semrock");
+		BRIGHTLINE_HC_685_40=getFilter("BrightLine HC 685/40 (red: Cy5,Atto 655)",FilterType.BANDPASS,665,705,UnitsLength.NM,"Semrock");
+		
+	}
 
 	@Override
 	public List<Object> getMicLightPathFilterList() {
@@ -104,59 +154,41 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		//-polarizer?		
 		
 		//TIRF-Cube
-		Dichroic d1= new Dichroic();
-		d1.setModel("zt405/488/561/640rpc");
-		d1.setManufacturer("Chroma");
-		
 		FilterSet fs1= new FilterSet();
 		fs1.setModel("TIRF-Cube");
-		fs1.linkDichroic(d1);
-		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 446/523/500/677",FilterType.BANDPASS,446,677,UnitsLength.NM, "Semrock"));
+		fs1.linkDichroic(D_ZT_405_488_561_640RPC);
+		fs1.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
 		list.add(fs1);
 		
 		
 		//DIC
-		Filter f= getFilter("DIC Cube:IX2-MDICT",FilterType.OTHER,-1,-1,null,"Olympus");
-		list.add(f);
-		
+		list.add(IX2_MDICT);
 		
 		//405 und DAPI
-		f=getFilter("BrightLine HC 445/45",FilterType.BANDPASS,423,468,UnitsLength.NM, "Semrock");
-		list.add(f);
+		list.add(BRIGHTLINE_HC_445_45);
 		
 		//488 und GFP
-		f=getFilter("BrightLine HC 525/50",FilterType.BANDPASS,500,550,UnitsLength.NM, "Semrock");
-		list.add(f);
+		list.add(BRIGHTLINE_HC_525_50);
 		
 		//561 und TMR
-		f=getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NM, "Semrock");
-		list.add(f);
+		list.add(BRIGHTLINE_HC_600_37);
 		
 		//642 und Cy5
-		f=getFilter("BrightLine HC 697/58",FilterType.BANDPASS,668,726,UnitsLength.NM, "Semrock");
-		list.add(f);
+		list.add(BRIGHTLINE_HC_697_58);
 		
 		
 		//405+488 (405+561, 405+561, 488+561, 488+561+642,...)
 		fs1= new FilterSet();
 		fs1.setModel("QuadView Filter Cube");
 		//TODO
-		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter 480dcxr",FilterType.LONGPASS,480,-1,UnitsLength.NM, "Chroma"));
-		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter 565dcxr",FilterType.LONGPASS,565,-1,UnitsLength.NM, "Chroma"));
-		fs1.linkExcitationFilter(
-				getFilter("Beamsplitter 640dcxr",FilterType.LONGPASS,640,-1,UnitsLength.NM, "Chroma"));
+		fs1.linkEmissionFilter(D_480DCXR);
+		fs1.linkEmissionFilter(D_565DCXR);
+		fs1.linkEmissionFilter(D_640DCXR);
 		
-		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 438/24 (blue:DAPI,BFP)",FilterType.BANDPASS,426,450,UnitsLength.NM, "Semrock"));
-		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 520/35 (green: GFP)",FilterType.BANDPASS,502,538,UnitsLength.NM, "Semrock"));
-		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 600/37 (orange: TMR,mCherry)",FilterType.BANDPASS,582,619,UnitsLength.NM,"Semrock"));
-		fs1.linkEmissionFilter(
-				getFilter("BrightLine HC 685/40 (red: Cy5,Atto 655)",FilterType.BANDPASS,665,705,UnitsLength.NM,"Semrock"));
+		fs1.linkEmissionFilter(BRIGHTLINE_HC_438_24);
+		fs1.linkEmissionFilter(BRIGHTLINE_HC_520_35);
+		fs1.linkEmissionFilter(BRIGHTLINE_HC_600_37);
+		fs1.linkEmissionFilter(BRIGHTLINE_HC_685_40);
 		list.add(fs1);
 		
 		
@@ -344,6 +376,64 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		view.setSampleConf(getSampleConf());
 		view.setExperimenterConf(getExperimentConf());
 		view.setImgEnvConf(getImageEnvConf());
+	}
+	
+	
+	// map key: channelname and return lightPath
+	@Override
+	public Object getMapr(String key){
+		LightPath lp=null;
+		switch(key){
+		case "DIC":
+			lp=new LightPath();
+			lp.linkEmissionFilter(IX2_MDICT);
+			break;
+		case "405":
+		case "DAPI":
+			lp=new LightPath();
+			lp.linkDichroic(D_ZT_405_488_561_640RPC);
+			lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+			lp.linkEmissionFilter(BRIGHTLINE_HC_445_45);
+			break;
+		case "488":
+		case "GFP":
+			lp=new LightPath();
+			lp.linkDichroic(D_ZT_405_488_561_640RPC);
+			lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+			lp.linkEmissionFilter(BRIGHTLINE_HC_525_50);
+			break;
+		case "561":
+		case "TMR":
+			lp=new LightPath();
+			lp.linkDichroic(D_ZT_405_488_561_640RPC);
+			lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+			lp.linkEmissionFilter(BRIGHTLINE_HC_600_37);
+			break;
+		case "642":
+		case "Cy5":
+			lp=new LightPath();
+			lp.linkDichroic(D_ZT_405_488_561_640RPC);
+			lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+			lp.linkEmissionFilter(BRIGHTLINE_HC_697_58);
+			break;
+		default:
+			//TODO: if + in channel name:... else return null
+			if(key.contains("+")){
+				lp=new LightPath();
+				lp.linkDichroic(D_ZT_405_488_561_640RPC);
+				lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+				lp.linkEmissionFilter(D_480DCXR);
+				lp.linkEmissionFilter(D_565DCXR);
+				lp.linkEmissionFilter(D_640DCXR);
+				lp.linkEmissionFilter(BRIGHTLINE_HC_438_24);
+				lp.linkEmissionFilter(BRIGHTLINE_HC_520_35);
+				lp.linkEmissionFilter(BRIGHTLINE_HC_600_37);
+				lp.linkEmissionFilter(BRIGHTLINE_HC_685_40);
+			}
+			break;
+		}
+		return lp;
+		
 	}
 
 }

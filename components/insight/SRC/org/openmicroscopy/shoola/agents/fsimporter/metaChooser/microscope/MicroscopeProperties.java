@@ -123,6 +123,10 @@ public abstract class MicroscopeProperties
 		view.init();
 	}
 	
+	public Object getMapr(String key){
+		return null;
+	}
+	
 	/**
 	 * 
 	 * @param microscope name

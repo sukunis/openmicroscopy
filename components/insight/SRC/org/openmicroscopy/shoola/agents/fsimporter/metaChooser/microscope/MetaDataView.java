@@ -210,6 +210,7 @@ public class MetaDataView extends JPanel
 	private void loadFileData(String fName, OME o, int j,
 			MetaDataUI metaUI) throws Exception 
 	{
+		LOGGER.info("[DATA] -- read file data "+fName);
 		metaUI.linkToFile(new File(fName));
 		metaUI.readData(o, j);
 	}
@@ -268,7 +269,7 @@ public class MetaDataView extends JPanel
 	private void loadParentData(MetaDataModel parentData,MetaDataUI pane) 
 	{
 		MonitorAndDebug.printConsole("# MetaDataView::loadParentData()...");
-	
+		LOGGER.info("[DATA] -- Load parent data");
 		if(parentData!=null){
 			try {
 				pane.addData(parentData);

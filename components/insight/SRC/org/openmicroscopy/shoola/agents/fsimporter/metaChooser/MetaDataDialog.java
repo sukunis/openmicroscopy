@@ -150,7 +150,6 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     
     private JCheckBox showFileData;
     private JCheckBox showDirData;
-    private JCheckBox showCustomData;
     private boolean enabledPredefinedData;
 //    private JCheckBox showHardwareData;
     private JComboBox<String> mics;
@@ -494,7 +493,6 @@ private boolean disableTreeListener;
         mics=new JComboBox<String>(MicroscopeProperties.availableMics);
         mics.setActionCommand(""+CHOOSE_MIC);
         mics.addActionListener(this);
-        System.out.println("#MetaDataDialog::initComponents(): set combobox: "+microscope);
         int indexMic=MicroscopeProperties.getMicIndex(microscope);
         if(indexMic!=-1){
         	mics.setSelectedIndex(indexMic); 
@@ -509,12 +507,10 @@ private boolean disableTreeListener;
 //	    dataView=new MicroscopeDataView(propReader.getViewProperties());
         customSettings=propReader.getViewProperties();
         if(customSettings==null){
-        	System.out.println("Set config mic settings");
         	currentMic=MicroscopeProperties.getMicClass(MicroscopeProperties.availableMics[mics.getSelectedIndex()]);
         	customSettings=currentMic.getViewProperties();
         }
         if(customSettings==null){
-        	System.out.println("Set default settings");
             customSettings=propReader.getDefaultProperties();
         }        
 //        customSettings.setMicObjList(hardwareDef.getObjectives());
@@ -586,12 +582,6 @@ private boolean disableTreeListener;
         showDirData.setToolTipText(tooltipText);
         showDirData.setEnabled(false);
          
-        tooltipText="<html>Show predefine data for selection:<br>"
-    			+ "Attention: pre data overwrites file data and will be overwrite by dir data.</html>";
-         showCustomData=new JCheckBox("Pre Data");
-         showCustomData.addItemListener(this);
-         showCustomData.setToolTipText(tooltipText);
-         showCustomData.setEnabled(false);
          
          enabledPredefinedData=true;
          
@@ -737,9 +727,6 @@ private boolean disableTreeListener;
         barM.add(showFileData);
         barM.add(Box.createHorizontalStrut(5));
         barM.add(showDirData);
-        barM.add(Box.createHorizontalStrut(5));
-        barM.add(showCustomData);
-//        showCustomData.setEnabled(false);
         barM.add(Box.createHorizontalStrut(10));
 		return barM;
 		
@@ -944,7 +931,6 @@ private boolean disableTreeListener;
 		disableItemListener=true;
 		showDirData.setSelected(view.parentDataAreLoaded());
 		showFileData.setSelected(view.fileDataAreLoaded());
-		showCustomData.setSelected(view.predefineDataLoaded());
 		disableItemListener=false;
 	}
 
@@ -1090,7 +1076,8 @@ private boolean disableTreeListener;
 //    }
 
     /**
-     * save data model of  node, if any user input available and update childs if node== directory
+     * save data model of  node, if any user input available and update all childs 
+     * that still have a model if node== directory
      */
     private void saveInputToModel(FNode node,boolean showSaveDialog) 
     {
@@ -1143,7 +1130,7 @@ private boolean disableTreeListener;
 
 
     /**
-     * GUI input : Update all child views of type directory with existing model with tags changes
+     * GUI input : Update all child views of type directory with EXISTING MODEL with tags changes
      * @param node
      */
     private void updateChildsOfDirectory(FNode node,MetaDataModelObject modelToInherit) 
@@ -1169,7 +1156,7 @@ private boolean disableTreeListener;
 
     		if(child.hasModelObject() ){
     			MonitorAndDebug.printConsole("\t ...update existing model/view of "+child.getAbsolutePath());
-    			LOGGER.debug("Update "+child.getAbsolutePath());
+    			LOGGER.debug("[DEBUG] Update "+child.getAbsolutePath());
     			try {
     				child.getModelObject().updateData(nodeModel);
     				if(child.getView()!=null){
@@ -1635,7 +1622,6 @@ private boolean disableTreeListener;
 	{
 		showFileData.setEnabled(true);
 		showDirData.setEnabled(true);
-		showCustomData.setEnabled(true);
 	}
 
 
@@ -1678,19 +1664,11 @@ private boolean disableTreeListener;
 	@Override
 	public void itemStateChanged(ItemEvent e) 
 	{
-//		Object source=e.getItemSelectable();
-//		if(source==showCustomData )
-//		{
-//			if(e.getStateChange() == ItemEvent.SELECTED){
-//				enabledPredefinedData=true;
-//			}else{
-//				enabledPredefinedData=false;
-//			}
-//		}
+
 		MonitorAndDebug.printConsole("\n+++EVENT : SET FILTER FOR VIEW +++\n");
 		if(!disableItemListener)
 			showFilteredData(showDirData.isSelected(),showFileData.isSelected(),
-					showCustomData.isSelected());
+					false);
 		
 
 	}

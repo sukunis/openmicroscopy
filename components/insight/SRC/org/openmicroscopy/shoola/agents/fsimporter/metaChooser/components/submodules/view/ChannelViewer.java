@@ -13,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
-import ome.xml.model.Channel;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.ContrastMethod;
 import ome.xml.model.enums.EnumerationException;
@@ -21,6 +20,7 @@ import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.Color;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ChannelModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.Channel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
@@ -246,7 +246,7 @@ private void setGUIData()
 		} catch (NullPointerException e) { }
 		try{ setFluorophore(channel.getFluor(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setIllumType(channel.getIlluminationType(), REQUIRED);
+		try{ setIllumType(channel.getIlluminationTypeAsString(), REQUIRED);
 		} catch (NullPointerException e) { }
 		//TODO exposure time
 		try{ setExposureTime(null, REQUIRED);
@@ -255,7 +255,7 @@ private void setGUIData()
 		} catch (NullPointerException e) { }
 		try{ setEmissionWavelength(channel.getEmissionWavelength(), REQUIRED);
 		} catch (NullPointerException e) { }
-		try{ setImagingMode(channel.getAcquisitionMode(), REQUIRED);
+		try{ setImagingMode(channel.getAcquisitionModeAsString(), REQUIRED);
 		} catch (NullPointerException e) { }
 		try{ setContrastMethod(channel.getContrastMethod(), REQUIRED);
 		} catch (NullPointerException e) { }
@@ -305,7 +305,7 @@ private void setFluorophore(String value, boolean prop)
 	else 
 		fluorophore.setTagValue(value,prop);
 }
-private void setIllumType(IlluminationType value, boolean prop)
+private void setIllumType(String value, boolean prop)
 {
 	String val= (value != null) ? String.valueOf(value):"";
 	if(illumType == null) 
@@ -358,13 +358,12 @@ private void setPinholeSize(Length value, boolean prop)
 //	else 
 //		acquisitionMode.setTagValue(val,prop);
 //}
-private void setImagingMode(AcquisitionMode value, boolean prop)
+private void setImagingMode(String value, boolean prop)
 {
-	String val= (value != null) ? String.valueOf(value):"";
 	if(imagingMode == null) 
-		imagingMode = new TagData(TagNames.IMAGINGMODE,val,prop,TagData.COMBOBOX,getNames(AcquisitionMode.class));
+		imagingMode = new TagData(TagNames.IMAGINGMODE,value,prop,TagData.COMBOBOX,getNames(AcquisitionMode.class));
 	else 
-		imagingMode.setTagValue(val,prop);
+		imagingMode.setTagValue(value,prop);
 }
 
 private void setContrastMethod(ContrastMethod value, boolean prop)
@@ -390,12 +389,12 @@ private void setNDFilter(Double value, boolean prop)
 public void saveData() 
 {
 	
-	if(data==null)
+	if(data==null){
 		data=new ChannelModel();
-	
-	if(data.getChannel(index)==null)
+	}
+	if(data.getChannel(index)==null){
 		data.addData(new Channel(), true, index);
-	
+	}
 	Channel channel=data.getChannel(index);
 	
 		
@@ -416,7 +415,8 @@ public void saveData()
 		LOGGER.error("[DATA] can't read CHANNEL fluorophore input");
 	}
 	try{
-		channel.setIlluminationType(parseIllumType(illumType.getTagValue()));
+		channel.setIlluminationType(illumType.getTagValue());
+
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read CHANNEL illumination type input");
 	}
@@ -432,7 +432,7 @@ public void saveData()
 		LOGGER.error("[DATA] can't read CHANNEL emission wavelength input");
 	}
 	try{
-		channel.setAcquisitionMode(parseAcqMode(imagingMode.getTagValue()));
+		channel.setAcquisitionMode(imagingMode.getTagValue());
 	}catch(Exception e){
 		LOGGER.error("[DATA] can't read CHANNEL acquisition mode input");
 	}
@@ -473,20 +473,22 @@ public static Color parseColor(String c)
 	MonitorAndDebug.printConsole("# ChannelViewer::parseColor(): "+(new Color(Integer.valueOf(c, 16).intValue())).getValue());
 	return new Color(Integer.valueOf(c, 16).intValue());//Integer.valueOf(c));
 }
-public static IlluminationType parseIllumType(String c) throws EnumerationException 
-{
-	if(c.equals(""))
-		return null;
-	
-	return IlluminationType.fromString(c);
-}
+//public static IlluminationType parseIllumType(String c) throws EnumerationException 
+//{
+//	if(c.equals(""))
+//		return null;
+//	
+//	return IlluminationType.fromString(c);
+//}
 
-private AcquisitionMode parseAcqMode(String c) throws EnumerationException {
-	if(c.equals(""))
-		return null;
-	
-	return AcquisitionMode.fromString(c);
-}
+//private AcquisitionMode parseAcqMode(String c) throws EnumerationException {
+//	if(c.equals(""))
+//		return null;
+//	
+//	
+//	
+//	return AcquisitionMode.fromString(c);
+//}
 
 public List<TagData> getChangedTags() 
 {

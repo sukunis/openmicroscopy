@@ -14,8 +14,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -34,7 +36,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import ome.xml.model.Annotation;
-import ome.xml.model.Channel;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
@@ -64,6 +65,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMESto
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.Channel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ChannelViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ExperimentViewer;
@@ -214,7 +216,6 @@ public class MetaDataUI extends JPanel
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.parent=parent;
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
-		System.out.println("MetadataUI::init: customSettings for "+customSett.getMicName());
 		
 		directoryPane=isdir;
 		this.showPreValues=showPreValues;
@@ -238,7 +239,6 @@ public class MetaDataUI extends JPanel
 		MonitorAndDebug.printConsole("# MetaDataUI::new Instance : "+dir+", model,"+showPreValues);
 		this.setBorder(BorderFactory.createEmptyBorder());
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
-		System.out.println("MetadataUI::init: customSettings for "+customSett.getMicName());
 		directoryPane=dir;
 		this.showPreValues=showPreValues;
 		resetInitialisation();
@@ -346,7 +346,6 @@ public class MetaDataUI extends JPanel
 		
 		return model;
 	}
-	
 	
 
 	/** add data from given parent model
@@ -533,9 +532,19 @@ public class MetaDataUI extends JPanel
 						LOGGER.warn("[DATA] NO PIXEL object available");
 						MonitorAndDebug.printConsole("[DATA] NO PIXEL object available");
 					}else{
-						channels=pixels.copyChannelList();
+						List<ome.xml.model.Channel>ch=pixels.copyChannelList();
+						// convert to uos channel type
+						if(!ch.isEmpty())
+							channels=new ArrayList<>();
+						for(int c=0;c<ch.size(); c++ ){
+							channels.add(new Channel(ch.get(c)));
+						}
+						// Java 8:
+//						channels=ch.stream().map(e -> (Channel) e).collect(Collectors.toList());
 						planes=pixels.copyPlaneList();
 					}
+					
+					
 					
 					if(componentsInit){
 						readImageData(image,objectives,annot);
@@ -1093,7 +1102,7 @@ public class MetaDataUI extends JPanel
 	            /* set last channel tab as custom tab and remove delete sign from tab before*/
 	        	if(directoryPane){
 	        		if(index>1){
-	        			DemoCustomTab lastTab=(DemoCustomTab) channelTab.getTabComponentAt(index-1);
+	        			DemoCustomTab lastTab=(DemoCustomTab) channelTab.getComponentAt(index-1);
 	        			if(lastTab!=null) lastTab.hideRemove();
 	        		}
 	        		channelTab.setTabComponentAt(index, new DemoCustomTab(channelTab));
@@ -1523,9 +1532,9 @@ public class MetaDataUI extends JPanel
 		if(initChannelUI  && model.getNumberOfChannels()>0){
 			if(channelTab!=null){
 				for(int i=0; i< channelTab.getTabCount(); i++){
-					if(channelTab.getTabComponentAt(i)!=null){
-						MonitorAndDebug.printConsole("\t ... channel "+i+" : changed data - "+((ChannelViewer) channelTab.getTabComponentAt(i)).inputEvent());
-						result=result || ((ChannelViewer) channelTab.getTabComponentAt(i)).inputEvent();
+					if(channelTab.getComponentAt(i)!=null){
+						MonitorAndDebug.printConsole("\t ... channel "+i+" : changed data - "+((ChannelViewer) channelTab.getComponentAt(i)).inputEvent());
+						result=result || ((ChannelViewer) channelTab.getComponentAt(i)).inputEvent();
 						}
 				}
 			}
@@ -1543,9 +1552,9 @@ public class MetaDataUI extends JPanel
 			}
 		}else{
 			if(initChannelUI && channelTab!=null && channelTab.getTabCount()>0){
-				if(channelTab.getTabComponentAt(0)!=null){
-					MonitorAndDebug.printConsole("\t ... channel 0 : changed data - "+((ChannelViewer) channelTab.getTabComponentAt(0)).inputEvent());
-					result=result || ((ChannelViewer) channelTab.getTabComponentAt(0)).inputEvent();
+				if(channelTab.getComponentAt(0)!=null){
+					MonitorAndDebug.printConsole("\t ... channel 0 : changed data - "+((ChannelViewer) channelTab.getComponentAt(0)).inputEvent());
+					result=result || ((ChannelViewer) channelTab.getComponentAt(0)).inputEvent();
 				}
 			}
 			if(initDetectorUI && detectorViewer!=null){
@@ -1611,12 +1620,18 @@ public class MetaDataUI extends JPanel
 		if(initChannelUI  && model.getNumberOfChannels()>0){
 			if(channelTab!=null){
 				for(int i=0; i< channelTab.getTabCount(); i++){
-					if(channelTab.getTabComponentAt(i)!=null){
-						result=result && ((ChannelViewer) channelTab.getTabComponentAt(i)).allDataWasStored();
-						MonitorAndDebug.printConsole("\t ... Channel data stored - "+((ChannelViewer) channelTab.getTabComponentAt(i)).allDataWasStored());
+					if(channelTab.getComponentAt(i)!=null && channelTab.getComponentAt(i) instanceof ChannelViewer){
+						result=result && ((ChannelViewer) channelTab.getComponentAt(i)).allDataWasStored();
+						MonitorAndDebug.printConsole("\t ... Channel data stored - "+((ChannelViewer) channelTab.getComponentAt(i)).allDataWasStored());
+					}else{
+						MonitorAndDebug.printConsole("\t ... Channel no tabcomponent init");
 					}
 				}
+			}else{
+				MonitorAndDebug.printConsole("\t ... Channel no channeltab");
 			}
+		}else{
+			MonitorAndDebug.printConsole("\t ... Channel no data init");
 		}
 		return result;
 	}
@@ -1656,11 +1671,14 @@ public class MetaDataUI extends JPanel
 		
 		if(initChannelUI  && model.getNumberOfChannels()>0){
 			if(channelTab!=null){
+				
 				for(int i=0; i< channelTab.getTabCount(); i++){
-					if(channelTab.getTabComponentAt(i)!=null){
-					result=result || ((ChannelViewer) channelTab.getTabComponentAt(i)).hasDataToSave();
-					MonitorAndDebug.printConsole("\t ... Channel : changed data - "+
-							((ChannelViewer) channelTab.getTabComponentAt(i)).hasDataToSave());
+					if(channelTab.getComponentAt(i)!=null && channelTab.getComponentAt(i) instanceof ChannelViewer){
+						result=result || ((ChannelViewer) channelTab.getComponentAt(i)).hasDataToSave();
+						MonitorAndDebug.printConsole("\t ... Channel : changed data - "+
+							((ChannelViewer) channelTab.getComponentAt(i)).hasDataToSave());
+					}else{
+						MonitorAndDebug.printConsole("\t ... Channel : no data ");
 					}
 				}
 			}
@@ -1694,10 +1712,13 @@ public class MetaDataUI extends JPanel
 //			}
 		}else{
 			if(initChannelUI && channelTab!=null && channelTab.getTabCount()>0){
-				if(channelTab.getTabComponentAt(0)!=null){
-				result=result || ((ChannelViewer) channelTab.getTabComponentAt(0)).hasDataToSave();
-				MonitorAndDebug.printConsole("\t ... Channel : changed data - ??");
-//						(((ChannelViewer) channelTab.getTabComponentAt(0)).hasDataToSave()));
+				MonitorAndDebug.printConsole("\t ... Channel tabs: "+channelTab.getTabCount());
+				if(channelTab.getComponentAt(0)!=null && channelTab.getComponentAt(0) instanceof ChannelViewer){
+					result=result || ((ChannelViewer) channelTab.getComponentAt(0)).hasDataToSave();
+					MonitorAndDebug.printConsole("\t ... Channel : changed data - "+
+							(((ChannelViewer) channelTab.getComponentAt(0)).hasDataToSave()));
+				}else{
+					MonitorAndDebug.printConsole("\t ... Channel : no data - ??");
 				}
 			}
 			if(initDetectorUI && detectorViewer!=null){
@@ -1738,44 +1759,44 @@ public class MetaDataUI extends JPanel
 		}
 		if(experimentUI!=null){
 			if( experimentUI.hasDataToSave()){
-			List<TagData> list=experimentUI.getChangedTags();
-//			model.setMapAnnotationExperiment(wrapListToMap(list,model.getMapAnnotationExperiment(),"Experiment"));
-			model.setMapAnnotationExperiment(experimentUI.getMapValuesOfChanges(model.getMapAnnotationExperiment()), false); 
-			printList("Experiment",list);
-			experimentUI.saveData();
-			model.setChangesExperiment(list);
-			experimentUI.afterSavingData();
+				List<TagData> list=experimentUI.getChangedTags();
+	//			model.setMapAnnotationExperiment(wrapListToMap(list,model.getMapAnnotationExperiment(),"Experiment"));
+				model.setMapAnnotationExperiment(experimentUI.getMapValuesOfChanges(model.getMapAnnotationExperiment()), false); 
+				printList("Experiment",list);
+				experimentUI.saveData();
+				model.setChangesExperiment(list);
+				experimentUI.afterSavingData();
 			}
 		}
 		if(sampleUI!=null ){
 			if( sampleUI.hasDataToSave()){
-			List<TagData> list=sampleUI.getChangedTags();
-//			model.setMapAnnotationSample(wrapListToMap(list,model.getMapAnnotationSample(),"Sample"));
-			model.setMapAnnotationSample(sampleUI.getMapValuesOfChanges(model.getMapAnnotationSample()), false); 
-			printList("Sample",list);
-			sampleUI.saveData();
-			model.setChangesSample(list);
-			sampleUI.afterSavingData();
+				List<TagData> list=sampleUI.getChangedTags();
+	//			model.setMapAnnotationSample(wrapListToMap(list,model.getMapAnnotationSample(),"Sample"));
+				model.setMapAnnotationSample(sampleUI.getMapValuesOfChanges(model.getMapAnnotationSample()), false); 
+				printList("Sample",list);
+				sampleUI.saveData();
+				model.setChangesSample(list);
+				sampleUI.afterSavingData();
 			}
 		}
 		if(objectiveUI!=null){
 			if( objectiveUI.hasDataToSave()){
-			List<TagData> list=objectiveUI.getChangedTags();
-			printList("Objective",list);
-			objectiveUI.saveData();
-			model.setChangesObject(list);
-			model.setMapAnnotationObjective(objectiveUI.getMapValuesOfChanges(model.getMapAnnotationObjective()), false);
-			objectiveUI.afterSavingData();
+				List<TagData> list=objectiveUI.getChangedTags();
+				printList("Objective",list);
+				objectiveUI.saveData();
+				model.setChangesObject(list);
+				model.setMapAnnotationObjective(objectiveUI.getMapValuesOfChanges(model.getMapAnnotationObjective()), false);
+				objectiveUI.afterSavingData();
 			}
 		}
 		if(imgEnvViewer!=null){
 			if( imgEnvViewer.hasDataToSave()){
-			List<TagData> list=imgEnvViewer.getChangedTags();
-			model.setMapAnnotationImgEnv(imgEnvViewer.getMapValuesOfChanges(model.getMapAnnotationImgEnv()), false);
-			printList("ImgEnv",list);
-			imgEnvViewer.saveData();
-			model.setChangesImageEnv(list);
-			imgEnvViewer.afterSavingData();
+				List<TagData> list=imgEnvViewer.getChangedTags();
+				model.setMapAnnotationImgEnv(imgEnvViewer.getMapValuesOfChanges(model.getMapAnnotationImgEnv()), false);
+				printList("ImgEnv",list);
+				imgEnvViewer.saveData();
+				model.setChangesImageEnv(list);
+				imgEnvViewer.afterSavingData();
 			}
 		}
 		
@@ -1958,7 +1979,7 @@ public class MetaDataUI extends JPanel
 	                MonitorAndDebug.printConsole("\t...Remove tab- index: "+index+", numTabs: "+numChannelTabs);
 //	                 set last channel as removable
 					if(directoryPane && numChannelTabs>2){
-						DemoCustomTab lastTab=(DemoCustomTab) channelTab.getTabComponentAt(index-1);
+						DemoCustomTab lastTab=(DemoCustomTab) channelTab.getComponentAt(index-1);
 						if(lastTab!=null) 
 							lastTab.showRemove();
 						else
@@ -2044,17 +2065,17 @@ public class MetaDataUI extends JPanel
 		if(initChannelUI  && model.getNumberOfChannels()>0){
 			if(channelTab!=null){
 				for(int i=0; i< channelTab.getTabCount(); i++){
-					if(channelTab.getTabComponentAt(i)!=null){
-						result=result || ((ChannelViewer) channelTab.getTabComponentAt(i)).predefinitionValAreLoaded();
-						MonitorAndDebug.printConsole("-- Image : predata loaded - "+((ChannelViewer) channelTab.getTabComponentAt(i)).predefinitionValAreLoaded());
+					if(channelTab.getComponentAt(i)!=null){
+						result=result || ((ChannelViewer) channelTab.getComponentAt(i)).predefinitionValAreLoaded();
+						MonitorAndDebug.printConsole("-- Image : predata loaded - "+((ChannelViewer) channelTab.getComponentAt(i)).predefinitionValAreLoaded());
 					}
 				}
 			}
 		}else{
 			if(initChannelUI && channelTab!=null && channelTab.getTabCount()>0){
-				if(channelTab.getTabComponentAt(0)!=null){
-					result=result || ((ChannelViewer) channelTab.getTabComponentAt(0)).predefinitionValAreLoaded();
-					MonitorAndDebug.printConsole("-- Image : predata loaded - "+((ChannelViewer) channelTab.getTabComponentAt(0)).predefinitionValAreLoaded());
+				if(channelTab.getComponentAt(0)!=null){
+					result=result || ((ChannelViewer) channelTab.getComponentAt(0)).predefinitionValAreLoaded();
+					MonitorAndDebug.printConsole("-- Image : predata loaded - "+((ChannelViewer) channelTab.getComponentAt(0)).predefinitionValAreLoaded());
 				}
 			}
 		}
