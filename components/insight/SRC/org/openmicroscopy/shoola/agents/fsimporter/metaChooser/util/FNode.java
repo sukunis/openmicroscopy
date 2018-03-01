@@ -172,6 +172,10 @@ public class FNode extends DefaultMutableTreeNode
 		return mapAnnot;
 	}
 	
+	
+	/**
+	 * Function to control map data
+	 */
 	public void printMaps()
 	{
 		MonitorAndDebug.printConsole("FNODE :: "+getAbsolutePath());

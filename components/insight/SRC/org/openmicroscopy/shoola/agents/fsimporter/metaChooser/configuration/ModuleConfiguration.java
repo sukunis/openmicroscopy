@@ -81,7 +81,7 @@ public class ModuleConfiguration
 		settingsTagConfList=list;
 	}
 	
-	private void setTag(String name, String val,String unit, Boolean prop, List<TagConfiguration> thisList, boolean visible) 
+	private void setTag(String name, String val,String unit, Boolean prop, List<TagConfiguration> thisList, boolean visible, String[] enums) 
 	{
 		Unit u=null;
 		String[] pU=null;
@@ -89,7 +89,11 @@ public class ModuleConfiguration
 		try {
 			u = TagNames.parseUnit(unit,name);
 			pU= TagNames.getUnits(name);
-			eVal=TagNames.getEnumerationVal(name);
+			if(enums!=null){
+				eVal=enums;
+			}else{
+				eVal=TagNames.getEnumerationVal(name);
+			}
 			thisList.add(new TagConfiguration(name, val,u, prop, visible,pU,eVal));
 		} catch (Exception e) {
 			LOGGER.warn("[HARDWARE] can't parse unit of tag "+name+" ("+unit+")");
@@ -103,17 +107,17 @@ public class ModuleConfiguration
 	{
 		List<TagConfiguration> list=elementList.get(elemIndex).getTagList();
 		if(list!=null)
-			setTag(name, val, unit,prop,list , true) ;
+			setTag(name, val, unit,prop,list , true, null) ;
 	}
 	
-	public void setTag(String name, String val,String unit, Boolean prop) 
+	public void setTag(String name, String val,String unit, Boolean prop, String[] enums, Boolean visible) 
 	{
-		setTag(name, val, unit,prop, tagConfList, true) ;
+		setTag(name, val, unit,prop, tagConfList, visible, enums) ;
 	}
 	
-	public void setSettingTag(String name, String val,String unit, Boolean prop) 
+	public void setSettingTag(String name, String val,String unit, Boolean prop, String[] enums, Boolean visible) 
 	{
-		setTag(name, val, unit, prop, settingsTagConfList, true);
+		setTag(name, val, unit, prop, settingsTagConfList, visible, enums);
 	}
 	
 
@@ -257,7 +261,7 @@ public class ModuleConfiguration
 			}
 		}
 //		if(visible)
-			setTag(name,value,unitStr,prop,list, visible);
+			setTag(name,value,unitStr,prop,list, visible, null);
 	}
 	
 	

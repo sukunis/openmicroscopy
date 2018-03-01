@@ -6,10 +6,10 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample.GridBox;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.Channel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
 
-import ome.xml.model.Channel;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
@@ -745,30 +745,30 @@ public class OMEStore
 	public void storeChannel(Channel c, Image i) 
 	{
 		
-		Pixels pixels=i.getPixels();
-		if(pixels==null){
-			//TODO create new or corrupted data???
-			LOGGER.error("[SAVE] -- no PIXELS object available");
-			ExceptionDialog ld = new ExceptionDialog("OME Format Error!", 
-					"No pixel element available to save channel.",this.getClass().getSimpleName());
-			ld.setVisible(true);
-		}else{
-			int idx = getChannelIndexByID(pixels.copyChannelList(),c.getID());
-			if(idx==-1){
-				if(c.getID()==null || c.getID().equals("")){
-					c.setID(MetadataTools.createLSID("Channel", pixels.sizeOfChannelList()));
-				}
-				LOGGER.info("[SAVE] -- add new CHANNEL "+c.getID());
-				pixels.addChannel(c);
-			}else{
-				Channel omeCH=pixels.getChannel(idx);
-				mergeData(c, omeCH);
-				pixels.setChannel(idx, omeCH);
-					LOGGER.info("[SAVE] -- save CHANNEL "+c.getID()+" at "+idx+" for image ");
-				
-			}
-			i.setPixels(pixels);
-		}
+//		Pixels pixels=i.getPixels();
+//		if(pixels==null){
+//			//TODO create new or corrupted data???
+//			LOGGER.error("[SAVE] -- no PIXELS object available");
+//			ExceptionDialog ld = new ExceptionDialog("OME Format Error!", 
+//					"No pixel element available to save channel.",this.getClass().getSimpleName());
+//			ld.setVisible(true);
+//		}else{
+//			int idx = getChannelIndexByID(pixels.copyChannelList(),c.getID());
+//			if(idx==-1){
+//				if(c.getID()==null || c.getID().equals("")){
+//					c.setID(MetadataTools.createLSID("Channel", pixels.sizeOfChannelList()));
+//				}
+//				LOGGER.info("[SAVE] -- add new CHANNEL "+c.getID());
+//				pixels.addChannel(c);
+//			}else{
+//				Channel omeCH=pixels.getChannel(idx);
+//				mergeData(c, omeCH);
+//				pixels.setChannel(idx, omeCH);
+//					LOGGER.info("[SAVE] -- save CHANNEL "+c.getID()+" at "+idx+" for image ");
+//				
+//			}
+//			i.setPixels(pixels);
+//		}
 	}
 	
 	public void storeImage(Image image, int imageIndex) 

@@ -5,12 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 import ome.units.unit.Unit;
-import ome.xml.model.Channel;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.ContrastMethod;
 import ome.xml.model.primitives.Color;
 
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.Channel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ChannelViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
@@ -102,9 +103,11 @@ public class ChannelModel
 			String name=copyIn.getName();
 			Color color=copyIn.getColor();
 			String fluor=copyIn.getFluor();
+			Time t=copyIn.getDefaultExposureTime();
 			Length exW=copyIn.getExcitationWavelength();
 			Length emW=copyIn.getEmissionWavelength();
-			AcquisitionMode aMode=copyIn.getAcquisitionMode();
+			String aMode=copyIn.getAcquisitionModeAsString();
+			String illType=copyIn.getIlluminationTypeAsString();
 			ContrastMethod cMethod=copyIn.getContrastMethod();
 			Double ndf=copyIn.getNDFilter();
 			
@@ -117,8 +120,10 @@ public class ChannelModel
 			if(exW!=null) channel.setExcitationWavelength(exW);
 			if(emW!=null) channel.setEmissionWavelength(emW);
 			if(aMode!=null) channel.setAcquisitionMode(aMode);
+			if(illType!=null) channel.setIlluminationType(illType);
 			if(cMethod!=null) channel.setContrastMethod(cMethod);
 			if(ndf!=null) channel.setNDFilter(ndf);
+			if(t!=null) channel.setDefaultExposureTime(t);
 		
 		}
 	}
@@ -154,9 +159,10 @@ public class ChannelModel
 		channelOME.setName(in.getName());
 		channelOME.setColor(in.getColor());
 		channelOME.setFluor(in.getFluor());
-		channelOME.setIlluminationType(in.getIlluminationType());
+		channelOME.setIlluminationType(in.getIlluminationTypeAsString());
 		channelOME.setExcitationWavelength(in.getExcitationWavelength());
 		channelOME.setEmissionWavelength(in.getEmissionWavelength());
+		channelOME.setDefaultExposureTime(in.getDefaultExposureTime());
 		channelOME.setAcquisitionMode(in.getAcquisitionMode());
 		channelOME.setContrastMethod(in.getContrastMethod());
 		channelOME.setNDFilter(in.getNDFilter());
@@ -240,10 +246,10 @@ public class ChannelModel
 			channel.setFluor(tagValue);
 			break;
 		case TagNames.ILLUMTYPE:
-			channel.setIlluminationType(ChannelViewer.parseIllumType(tagValue));
+			channel.setIlluminationType(tagValue);
 			break;
 		case TagNames.EXPOSURETIME:
-//TODO			channel.setE
+			channel.setDefaultExposureTime(ChannelViewer.parseToTime(tagValue,tagUnit,true));
 			break;
 		case TagNames.EXCITWAVELENGTH:
 			channel.setExcitationWavelength(ModuleViewer.parseToLength(tagValue,tagUnit, true));
@@ -252,10 +258,7 @@ public class ChannelModel
 			channel.setEmissionWavelength(ModuleViewer.parseToLength(tagValue,tagUnit, true));
 			break;
 		case TagNames.IMAGINGMODE:
-			//TODO
-			break;
-		case TagNames.ILLUMINATIONMODE:
-			//TODO
+			channel.setAcquisitionMode(tagValue);
 			break;
 		case TagNames.CONTRASTMETHOD:
 			channel.setContrastMethod(ChannelViewer.parseContrastMethod(tagValue));
@@ -270,4 +273,6 @@ public class ChannelModel
 			LOGGER.warn("[CONF] unknown tag: "+tagName );break;
 		}
 	}
+
+	
 }

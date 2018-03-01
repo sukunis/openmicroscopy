@@ -7,6 +7,7 @@ import java.awt.Cursor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -52,6 +53,7 @@ public class MetaDataView extends JPanel
 	    	    LoggerFactory.getLogger(MetaDataUI.class);
     
     private OME ome;
+    Hashtable<String, Object> series;
     private File srcFile;
     
     // MetaDataUI
@@ -72,7 +74,6 @@ public class MetaDataView extends JPanel
 
 	private boolean parentDataLoaded;
 	
-	private CustomViewProperties customSett;
     
     
     /**
@@ -145,16 +146,18 @@ public class MetaDataView extends JPanel
 			//load parent data
 			loadParentData(parentData, singleView);
 			
-
+			
+			
 			//load data from file
 			try{
-				loadFileData(fName, ome, 0, singleView);
+				loadFileData(fName, ome, series,0, singleView);
 			}catch(Exception e){
 				LOGGER.error("[DATA] CAN'T read METADATA of "+fName);
 				ExceptionDialog ld = new ExceptionDialog("Metadata Error!", 
 						"Can't read given metadata  from "+fName,e,this.getClass().getSimpleName());
 				ld.setVisible(true);
 			}
+			
 			add(singleView,BorderLayout.CENTER);
 			
 		}else{
@@ -178,7 +181,8 @@ public class MetaDataView extends JPanel
 				loadParentData(parentData,metaUI);
 
 				//load data from file
-				loadFileData(fName, ome, j, metaUI);
+				loadFileData(fName, ome,series, j, metaUI);
+			
 
 				// add series to cardPane
 				seriesListModel.addElement(data.getImageName(j));
@@ -204,15 +208,19 @@ public class MetaDataView extends JPanel
 	 * Read data from OME o into given MetaDataUI component metaUI and link given metaUI to the OME own file.
 	 * @param fName given file
 	 * @param o OME of the given file
+	 * @param series globalSeriesMetaData
 	 * @param j series index
 	 * @param metaUI gui for filedata
 	 * @throws Exception 
 	 */
-	private void loadFileData(String fName, OME o, int j,
+	private void loadFileData(String fName, OME o,Hashtable<String, Object> series,int j,
 			MetaDataUI metaUI) throws Exception 
 	{
+		
+		LOGGER.info("[DATA] -- read file data "+fName);
 		metaUI.linkToFile(new File(fName));
-		metaUI.readData(o, j);
+		metaUI.readData(o,series, j);
+		
 	}
 	
 	
@@ -269,7 +277,7 @@ public class MetaDataView extends JPanel
 	private void loadParentData(MetaDataModel parentData,MetaDataUI pane) 
 	{
 		MonitorAndDebug.printConsole("# MetaDataView::loadParentData()...");
-	
+		LOGGER.info("[DATA] -- Load parent data");
 		if(parentData!=null){
 			try {
 				pane.addData(parentData);
@@ -311,7 +319,7 @@ public class MetaDataView extends JPanel
 //		IMetadata omeMetaData= MetadataTools.createOMEXMLMetadata();
 		IMetadata metadata =  service.createOMEXMLMetadata();
 		reader.setMetadataStore((MetadataStore) metadata);
-		
+	
 		
 		
 		try{
@@ -326,7 +334,7 @@ public class MetaDataView extends JPanel
 		
 		LOGGER.info("[DATA] -- use READER: "+reader.getReader().getClass().getName());
 		System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName());
-		
+		series = reader.getSeriesMetadata();
 		String xml = service.getOMEXML((MetadataRetrieve) metadata);
 		ome = (OME) service.createOMEXMLRoot(xml);
 		

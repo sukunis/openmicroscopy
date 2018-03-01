@@ -270,15 +270,16 @@ public class LightSourceViewer extends ModuleViewer{
 	{
 		String name=t.getName();
 		Boolean prop=t.getProperty();
+		Boolean vis=t.isVisible();
 		switch (name) {
 		case TagNames.SET_WAVELENGTH:
 			setWavelength(null, prop);
-			waveLengthSett.setVisible(true);
+			waveLengthSett.setVisible(vis);
 
 			break;
 		case TagNames.ATTENUATION:
 			setAttenuation(null, prop);
-			attenuation.setVisible(true);
+			attenuation.setVisible(vis);
 
 			break;
 		default: 

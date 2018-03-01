@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import loci.formats.MetadataTools;
-import ome.xml.model.Channel;
+
 import ome.xml.model.Detector;
-import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
 import ome.xml.model.FilterSet;
@@ -42,6 +41,10 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.SampleModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.Channel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.DetectorSettings;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.openmicroscopy.shoola.util.MonitorAndDebug;
@@ -404,7 +407,7 @@ public class MetaDataModel
 	
 	public void addData(Channel c,boolean overwrite,int index)
 	{
-		MonitorAndDebug.printConsole("# MetaDataModel::addData - Channel "+index);
+		MonitorAndDebug.printConsole("# MetaDataModel::addData - Channel "+index+", overwrite= "+overwrite);
 		if(channelModel==null)
 			channelModel=new ChannelModel();
 		
@@ -563,11 +566,21 @@ public class MetaDataModel
 	 *--------------------------------------------*/
 	public void addData(LightPath lp, boolean overwrite, int i) throws Exception 
 	{
-		MonitorAndDebug.printConsole("# MetaDataModel::addData - LightPath "+i);
+		MonitorAndDebug.printConsole("# MetaDataModel::addData - LightPath "+i+", overwrite= "+overwrite);
+		MetaDataUI.printLightPath(lp);
 		if(lightPathModel==null)
 			lightPathModel=new LightPathModel();
 		
 		lightPathModel.addData(lp, overwrite, i);
+	}
+	
+	public void update(List<LightPath> lp) throws Exception
+	{
+		MonitorAndDebug.printConsole("# MetaDataModel::update - LightPath ");
+		if(lightPathModel==null)
+			lightPathModel=new LightPathModel();
+		
+		lightPathModel.update(lp);
 	}
 
 	public FilterSet getFilterSet(int index) throws Exception
@@ -1158,7 +1171,7 @@ public class MetaDataModel
 	}
 
 	/**
-	 * Set list of modified tags for image view
+	 * Save list of new modified tags for image module in MetaDataModel
 	 * @param list
 	 */
 	public void setChangesImage(List<TagData> list)
@@ -1295,6 +1308,7 @@ public class MetaDataModel
 		if(imgModel!=null){
 			MonitorAndDebug.printConsole("# MetaDataModel::update(): image");
 			if(metaDataModel.getChangesImage()!=null){
+				//update model because no viewer exists
 				imgModel.update(metaDataModel.getChangesImage());
 				this.setChangesImage(new ArrayList<>(metaDataModel.getChangesImage()));
 			}
@@ -1663,8 +1677,59 @@ public class MetaDataModel
 			return detectorModel.getMap(index);
 }
 
+	/**
+	 * Add or append [name,value] to map of changes in imageModel
+	 * @param name
+	 * @param value
+	 */
+	public void addToMapAnnotationImage(String name, String value) {
+		if(imgModel==null){
+			imgModel=new ImageModel();
+		}
+		HashMap<String, String> map=getMapAnnotationImage();
+		if(map==null){
+			map= new HashMap<String, String>();
+		}
+		map.put(name, value);
+		imgModel.setMap(map);
+		
+	}
 
-
+	
+	public void addToMapAnnotationLightPath(String name, String value,int index) {
+		if(lightPathModel==null){
+			lightPathModel=new LightPathModel();
+		}
+		HashMap<String, String> map=getMapAnnotationLightPath(index);
+		if(map==null){
+			map= new HashMap<String, String>();
+		}
+		map.put(name, value);
+		lightPathModel.setMap(map,index);
+		
+	}
+	
+	
+	
+	/**
+	 * Add or append [name,value] to map of changes in detectorModel
+	 * @param name
+	 * @param value
+	 * @param index
+	 */
+	public void addToMapAnnotationDetector(String name,String value,int index){
+		if(detectorModel==null){
+			detectorModel=new DetectorModel();
+		}
+		HashMap<String, String> map=getMapAnnotationDetector(index);
+		if(map==null){
+			map= new HashMap<String, String>();
+		}
+		map.put(name, value);
+		detectorModel.setMap(map, index);
+	}
+	
+	
 	public void setMapAnnotationDetector(HashMap<String, String> mapValuesOfChanges, int index, boolean clone) 
 	{
 		if(detectorModel==null)
@@ -1811,7 +1876,10 @@ public class MetaDataModel
 	}
 
 
-
+	/**
+	 * 
+	 * @return map of changes [tagName,tagValue]
+	 */
 	public HashMap<String, String> getMapAnnotationImage() {
 		if(imgModel==null)
 			return null;
@@ -1819,7 +1887,11 @@ public class MetaDataModel
 	}
 
 
-
+	/**
+	 * Save map of changes to image model.
+	 * @param mapValuesOfChanges map of changes [tagName,tagValue]
+	 * @param clone
+	 */
 	public void setMapAnnotationImage(HashMap<String, String> mapValuesOfChanges, boolean clone) {
 		if(imgModel==null)
 			imgModel=new ImageModel();
@@ -1916,10 +1988,19 @@ public class MetaDataModel
 		if(map!=null){
 			for (Iterator i = map.entrySet().iterator(); i.hasNext(); ) {
 				Map.Entry next = (Map.Entry)i.next();
+				
 				list.add(new NamedValue(id+next.getKey().toString(),next.getValue().toString()));
 			}
 		}
 		return list;
 	}
+
+
+
+	
+
+
+
+	
 
 }

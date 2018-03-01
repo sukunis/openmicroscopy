@@ -150,7 +150,6 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     
     private JCheckBox showFileData;
     private JCheckBox showDirData;
-    private JCheckBox showCustomData;
     private boolean enabledPredefinedData;
 //    private JCheckBox showHardwareData;
     private JComboBox<String> mics;
@@ -240,18 +239,18 @@ private boolean disableTreeListener;
      *            The owner of the dialog.
      * @param filters
      *            The list of filters.
-     * @param selectedContainer
-     *            The selected container if any.
-     * @param objects
-     *            The possible objects.
-     *            
      * @param type TODO: necessary?
      *            The type of dialog e.g. screen view.
      * @param importerAction
      *            The cancel-all-imports action.
+     * @param microscope TODO
+     * @param selectedContainer
+     *            The selected container if any.
+     * @param objects
+     *            The possible objects.
      */
     public MetaDataDialog(JFrame owner, FileFilter[] filters, int type,
-            ImporterAction importerAction, Importer importer,JButton importBtn,JButton cancelImportBtn)
+            ImporterAction importerAction, Importer importer,JButton importBtn,JButton cancelImportBtn, String microscope)
     {
         super(1, TITLE, TITLE);
         
@@ -262,7 +261,11 @@ private boolean disableTreeListener;
         addCancelImportButtonLink(cancelImportBtn);
         setClosable(false);
         setCloseVisible(false);
-        initComponents(filters, importerAction);
+        System.out.println("Microscope conf: "+microscope);
+        if(microscope==null || microscope.isEmpty())
+        	initComponents(filters, importerAction, null);
+        else
+        	initComponents(filters, importerAction, microscope);
         buildGUI();
     }
     
@@ -318,7 +321,11 @@ private boolean disableTreeListener;
         if(fileObj.isFolderAsContainer() && fileObj.getParent() instanceof ProjectData){
             Project p=new Project();//==import project
             p.setName(fileObj.getParent().asProject().getName().getValue());
-            p.setDescription(fileObj.getParent().asProject().getDescription().toString());
+            if(fileObj.getParent().asProject().getDescription()!=null){
+            	p.setDescription(fileObj.getParent().asProject().getDescription().toString());
+            }else{
+            	p.setDescription("");
+            }
             ome.addProject(p);
         }else{
             //screen import object
@@ -434,7 +441,7 @@ private boolean disableTreeListener;
 
 
     private void initComponents(FileFilter[] filters,
-            ImporterAction importerAction)
+            ImporterAction importerAction, String microscope)
     {
         holdData=false;
         disableTreeListener=false;
@@ -446,11 +453,11 @@ private boolean disableTreeListener;
 //        refreshFilesButton.addActionListener(this);
         
 
-        loadProfileButton=new JButton("Customize...");
-        loadProfileButton.setBackground(UIUtilities.BACKGROUND);
-        loadProfileButton.setToolTipText("Load/Save/Edit profile file to customize view.");
-        loadProfileButton.setActionCommand("" + CMD_PROFILE);
-        loadProfileButton.addActionListener(this);
+//        loadProfileButton=new JButton("Customize...");
+//        loadProfileButton.setBackground(UIUtilities.BACKGROUND);
+//        loadProfileButton.setToolTipText("Load/Save/Edit profile file to customize view.");
+//        loadProfileButton.setActionCommand("" + CMD_PROFILE);
+//        loadProfileButton.addActionListener(this);
 //	    loadProfileButton.setEnabled(false);
         
 
@@ -486,27 +493,34 @@ private boolean disableTreeListener;
         mics=new JComboBox<String>(MicroscopeProperties.availableMics);
         mics.setActionCommand(""+CHOOSE_MIC);
         mics.addActionListener(this);
-        
+        int indexMic=MicroscopeProperties.getMicIndex(microscope);
+        if(indexMic!=-1){
+        	mics.setSelectedIndex(indexMic); 
+        }
         
         initFilterViewBar();
        
         
         UOSProfileReader propReader=new UOSProfileReader(new File("profileUOSImporter.xml"));
 
-         hardwareDef=new UOSHardwareReader(new File("hardwareUOSImporter.xml"));
+        hardwareDef=new UOSHardwareReader(new File("hardwareUOSImporter.xml"));
 //	    dataView=new MicroscopeDataView(propReader.getViewProperties());
         customSettings=propReader.getViewProperties();
-        if(customSettings==null)
+        if(customSettings==null){
+        	currentMic=MicroscopeProperties.getMicClass(MicroscopeProperties.availableMics[mics.getSelectedIndex()]);
+        	customSettings=currentMic.getViewProperties();
+        	customSettings.setMapr(currentMic.getMapr());
+        }
+        if(customSettings==null){
             customSettings=propReader.getDefaultProperties();
-        
-        customSettings.setMicObjList(hardwareDef.getObjectives());
-        customSettings.setMicDetectorList(hardwareDef.getDetectors());
-        customSettings.setMicLightSrcList(hardwareDef.getLightSources());
-        customSettings.setMicLightPathFilterList(hardwareDef.getLightPathFilters());
+        }        
+//        customSettings.setMicObjList(hardwareDef.getObjectives());
+//        customSettings.setMicDetectorList(hardwareDef.getDetectors());
+//        customSettings.setMicLightSrcList(hardwareDef.getLightSources());
+//        customSettings.setMicLightPathFilterList(hardwareDef.getLightPathFilters());
         
         
         micName=customSettings.getMicName();
-//	    dataView=new MetaDataUI(customSettings);
         MetaDataView view=new MetaDataView();
         
         metaPanel=new JPanel(new BorderLayout());
@@ -569,12 +583,6 @@ private boolean disableTreeListener;
         showDirData.setToolTipText(tooltipText);
         showDirData.setEnabled(false);
          
-        tooltipText="<html>Show predefine data for selection:<br>"
-    			+ "Attention: pre data overwrites file data and will be overwrite by dir data.</html>";
-         showCustomData=new JCheckBox("Pre Data");
-         showCustomData.addItemListener(this);
-         showCustomData.setToolTipText(tooltipText);
-         showCustomData.setEnabled(false);
          
          enabledPredefinedData=true;
          
@@ -720,9 +728,6 @@ private boolean disableTreeListener;
         barM.add(showFileData);
         barM.add(Box.createHorizontalStrut(5));
         barM.add(showDirData);
-        barM.add(Box.createHorizontalStrut(5));
-        barM.add(showCustomData);
-//        showCustomData.setEnabled(false);
         barM.add(Box.createHorizontalStrut(10));
 		return barM;
 		
@@ -927,7 +932,6 @@ private boolean disableTreeListener;
 		disableItemListener=true;
 		showDirData.setSelected(view.parentDataAreLoaded());
 		showFileData.setSelected(view.fileDataAreLoaded());
-		showCustomData.setSelected(view.predefineDataLoaded());
 		disableItemListener=false;
 	}
 
@@ -1014,7 +1018,7 @@ private boolean disableTreeListener;
 		if(node!=null){
 			MonitorAndDebug.printConsole("# MetaDataDialog::deselectNodeAction("+node.getAbsolutePath()+")");
 			LOGGER.debug("MetaDataDialog::Deselect node action for "+node.getAbsolutePath());
-		
+//			node.printMaps();
 			//save input
         	saveInputToModel(node,true);
         	//reset series list
@@ -1073,12 +1077,14 @@ private boolean disableTreeListener;
 //    }
 
     /**
-     * save data model of  node, if any user input available and update childs if node== directory
+     * save data model of  node, if any user input available and update all childs 
+     * that still have a model if node== directory
      */
     private void saveInputToModel(FNode node,boolean showSaveDialog) 
     {
     	if(node!=null){
     		MonitorAndDebug.printConsole("# MetaDataDialog::saveInputToModel():"+node.getAbsolutePath());
+    		
     		//save view to node object
     		node.setView(getMetaDataView(metaPanel));
 //    		MonitorAndDebug.printConsole("# MetaDataDialog::saveInputToModel(): GUI INPUT: "+node.getView().hasUserInput());
@@ -1126,7 +1132,7 @@ private boolean disableTreeListener;
 
 
     /**
-     * GUI input : Update all child views of type directory with existing model with tags changes
+     * GUI input : Update all child views of type directory with EXISTING MODEL with tags changes
      * @param node
      */
     private void updateChildsOfDirectory(FNode node,MetaDataModelObject modelToInherit) 
@@ -1152,7 +1158,7 @@ private boolean disableTreeListener;
 
     		if(child.hasModelObject() ){
     			MonitorAndDebug.printConsole("\t ...update existing model/view of "+child.getAbsolutePath());
-    			LOGGER.debug("Update "+child.getAbsolutePath());
+    			LOGGER.debug("[DEBUG] Update "+child.getAbsolutePath());
     			try {
     				child.getModelObject().updateData(nodeModel);
     				if(child.getView()!=null){
@@ -1447,6 +1453,17 @@ private boolean disableTreeListener;
         	System.out.println("--- LOAD "+MicroscopeProperties.availableMics[mics.getSelectedIndex()]+" HARDWARE SETTINGS ---");
         	
         	currentMic=MicroscopeProperties.getMicClass(MicroscopeProperties.availableMics[mics.getSelectedIndex()]);
+        	// TODO: refresh view
+        	
+    	
+        	customSettings=currentMic.getViewProperties();
+        	customSettings.setMapr(currentMic.getMapr());
+ 			if(fileTree!=null){
+ 				deselectNodeAction((FNode)fileTree.getLastSelectedPathComponent());
+             
+ 				//TODO reload current view if changes
+ 				loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
+ 			}
 
         	break;
         case CMD_SAVE:
@@ -1502,21 +1519,21 @@ private boolean disableTreeListener;
         	repaint();
             
             break;
-        case CMD_PROFILE:
-        	//TODO: reload all available views
-            LOGGER.info("[GUI-ACTION] -- CUSTUMIZE... ----");
-            MonitorAndDebug.printConsole("[GUI-ACTION] -- CUSTUMIZE... ----");
-            UOSProfileEditorUI profileWriter=new UOSProfileEditorUI(customSettings, enabledPredefinedData);
-            profileWriter.setVisible(true);
-            customSettings=profileWriter.getProperties();
-			enabledPredefinedData =profileWriter.shouldPredefinedValLoaded();
-
-			deselectNodeAction((FNode)fileTree.getLastSelectedPathComponent());
-            
-            //TODO reload current view if changes
-            loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
-//            firePropertyChange(CHANGE_CUSTOMSETT, null, customSettings); MetaDataControl
-            break;
+//        case CMD_PROFILE:
+//        	//TODO: reload all available views
+//            LOGGER.info("[GUI-ACTION] -- CUSTUMIZE... ----");
+//            MonitorAndDebug.printConsole("[GUI-ACTION] -- CUSTUMIZE... ----");
+//            UOSProfileEditorUI profileWriter=new UOSProfileEditorUI(customSettings, enabledPredefinedData);
+//            profileWriter.setVisible(true);
+//            customSettings=profileWriter.getProperties();
+//			enabledPredefinedData =profileWriter.shouldPredefinedValLoaded();
+//
+//			deselectNodeAction((FNode)fileTree.getLastSelectedPathComponent());
+//            
+//            //TODO reload current view if changes
+//            loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
+////            firePropertyChange(CHANGE_CUSTOMSETT, null, customSettings); MetaDataControl
+//            break;
         case CMD_SPECIFICATION:
             LOGGER.info("[GUI-ACTION] -- load specification file");
             UOSHardwareEditor specEditor=new UOSHardwareEditor(hardwareDef);
@@ -1608,7 +1625,6 @@ private boolean disableTreeListener;
 	{
 		showFileData.setEnabled(true);
 		showDirData.setEnabled(true);
-		showCustomData.setEnabled(true);
 	}
 
 
@@ -1651,19 +1667,11 @@ private boolean disableTreeListener;
 	@Override
 	public void itemStateChanged(ItemEvent e) 
 	{
-//		Object source=e.getItemSelectable();
-//		if(source==showCustomData )
-//		{
-//			if(e.getStateChange() == ItemEvent.SELECTED){
-//				enabledPredefinedData=true;
-//			}else{
-//				enabledPredefinedData=false;
-//			}
-//		}
+
 		MonitorAndDebug.printConsole("\n+++EVENT : SET FILTER FOR VIEW +++\n");
 		if(!disableItemListener)
 			showFilteredData(showDirData.isSelected(),showFileData.isSelected(),
-					showCustomData.isSelected());
+					false);
 		
 
 	}
@@ -1793,6 +1801,11 @@ private boolean disableTreeListener;
 	public MicroscopeProperties getMicroscopeProperties()
 	{
 		return currentMic;
+	}
+	
+	public void setMicroscopeProperties(MicroscopeProperties m)
+	{
+		currentMic=m;
 	}
 
 }

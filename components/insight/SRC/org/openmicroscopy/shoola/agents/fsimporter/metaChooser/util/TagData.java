@@ -441,10 +441,13 @@ public class TagData
 		fieldActionListener=new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				valChanged=true;
-				valSaved=false;
-				if(inputField.getBorder().equals(errorBorder) && actionListenerActiv){
+				if (actionListenerActiv){
+					valChanged=true;
+					valSaved=false;
+				
+				if(inputField.getBorder().equals(errorBorder)){
 					setTagInfo("");
+				}
 				}
 			}
 		};
@@ -531,8 +534,11 @@ public class TagData
 
 	public void setDefaultValues(String[] list)
 	{
+		if(list==null)
+			return;
 		switch (type) {
 		case COMBOBOX:
+			activateActionListener(false);
 			DefaultComboBoxModel<String>model=(DefaultComboBoxModel<String>) ((JComboBox<String>) inputField).getModel();
 			model.removeAllElements();
 			model.addElement("");
@@ -540,8 +546,9 @@ public class TagData
 				model.addElement(list[c]);
 			}
 			((JComboBox<String>) inputField).setModel(model);
+			activateActionListener(true);
 			break;
-
+			
 		default:
 			break;
 		}
@@ -1053,7 +1060,7 @@ public class TagData
 	{
 		if(type==LIST)
 			return ((ExperimenterBox)inputField).valueChanged();
-		
+	
 		return valChanged;
 	}
 	public boolean isDataSaved(){

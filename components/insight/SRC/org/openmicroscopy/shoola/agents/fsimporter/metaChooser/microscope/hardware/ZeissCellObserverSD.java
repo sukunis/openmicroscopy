@@ -169,40 +169,6 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		return list;
 	}
 
-	@Override
-	protected ModuleConfiguration loadSampleConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected ModuleConfiguration loadLightSrcConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected ModuleConfiguration loadImageEnvConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected ModuleConfiguration loadExperimentConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected ModuleConfiguration loadDetectorConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected ModuleConfiguration loadObjectiveConf(boolean active, GUIPlaceholder pos, String width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 }

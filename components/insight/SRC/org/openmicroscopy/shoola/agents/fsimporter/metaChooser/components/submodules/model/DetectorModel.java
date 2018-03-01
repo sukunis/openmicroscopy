@@ -7,10 +7,10 @@ import java.util.List;
 import ome.units.quantity.ElectricPotential;
 import ome.units.unit.Unit;
 import ome.xml.model.Detector;
-import ome.xml.model.DetectorSettings;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.DetectorType;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.DetectorSettings;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
@@ -180,7 +180,6 @@ public class DetectorModel
 	 */
 	private void completeData(DetectorSettings newElem,int index) throws Exception
 	{
-		MonitorAndDebug.printConsole("# DetectorModel::completeData()");
 		if(settings.size()<=index){
 			expandList(settings.size(),index);
 		}
@@ -199,6 +198,7 @@ public class DetectorModel
 			Double o=copyIn.getOffset();
 			Double z=copyIn.getZoom();
 			Binning b=copyIn.getBinning();
+			String s=copyIn.getSubarray();
 
 			DetectorSettings sett=settings.get(index);
 			if(g!=null) sett.setGain(g);
@@ -206,6 +206,7 @@ public class DetectorModel
 			if(o!=null) sett.setOffset(o);
 			if(z!=null) sett.setZoom(z);
 			if(b!=null) sett.setBinning(b);
+			if(s!=null) sett.setSubarray(s);
 		}
 	}
 	
@@ -346,7 +347,9 @@ public class DetectorModel
 				}
 				break;
 			case TagNames.SUBARRAY:
-				//TODO
+				if(sett!=null){
+					sett.setSubarray(tagValue);
+				}
 				break;
 		default: LOGGER.warn("[CONF] unknown tag: "+tagName );break;
 		}

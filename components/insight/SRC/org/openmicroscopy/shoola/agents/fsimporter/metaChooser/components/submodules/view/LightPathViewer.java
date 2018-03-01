@@ -150,7 +150,7 @@ public class LightPathViewer extends ModuleViewer{
 				
 				saveData();
 				List<Object> linkHardwareList=null;
-				if(parent.getMicroscopeProperties()!=null){
+				if(parent !=null && parent.getMicroscopeProperties()!=null){
 					linkHardwareList=parent.getMicroscopeProperties().getLightPathList();
 				}
 				LightPathEditor creator = new LightPathEditor(new JFrame(),"Edit LightPath",
@@ -270,7 +270,7 @@ public class LightPathViewer extends ModuleViewer{
 	@Override
 	protected void setPredefinedTag(TagConfiguration t) 
 	{
-		//no predefinitions possible
+		lightPathDataChanged=true;
 	}
 
 	/**
@@ -353,6 +353,9 @@ public class LightPathViewer extends ModuleViewer{
 		
 		return lightPathDataChanged;
 	}
+	
+	
+	
 
 	public HashMap<String,String> getMapValuesOfChanges(HashMap<String, String> map, String chName) 
 	{
