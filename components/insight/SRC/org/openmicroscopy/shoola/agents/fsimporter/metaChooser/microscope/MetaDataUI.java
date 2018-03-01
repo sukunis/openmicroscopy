@@ -16,6 +16,8 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,9 +37,9 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import ome.units.quantity.Time;
 import ome.xml.model.Annotation;
 import ome.xml.model.Detector;
-import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
@@ -55,6 +57,7 @@ import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
 import ome.xml.model.Plane;
+import ome.xml.model.StageLabel;
 import ome.xml.model.StructuredAnnotations;
 import omero.gateway.model.MapAnnotationData;
 
@@ -66,6 +69,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.Channel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.DetectorSettings;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ChannelViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.DetectorViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ExperimentViewer;
@@ -77,6 +81,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ObjectiveViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.SampleViewer;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
@@ -305,6 +310,7 @@ public class MetaDataUI extends JPanel
 				LOGGER.info("[GUI] -- init LIGHTPATH modul");
 				model.addToLightPathList_Filter(customSett.getMicLightPathFilterList(), false);
 				initLightPathUI=true;
+				lightPathInput=false;
 			}
 			if(customSett.getImgEnvConf()!=null && customSett.getImgEnvConf().isVisible()){
 				LOGGER.info("[GUI] -- init IMAGEENV modul");
@@ -347,6 +353,64 @@ public class MetaDataUI extends JPanel
 		return model;
 	}
 	
+	
+	/**
+	 * TODO
+	 * add mapr values for specific microscopes
+	 * @throws Exception
+	 */
+	public void addMapr() throws Exception
+	{
+		
+		switch(customSett.getMicName()){
+		case MicroscopeProperties.TIRF4LINE_SMT:
+			HashMap mapr=customSett.getMapr();
+			if(mapr!=null){
+				MonitorAndDebug.printConsole("# MetaDataUI::addMapr(): add channelname - lightPath mapr");
+				for(int i=0; i<model.getNumberOfChannels();i++){
+					String chName=model.getChannelData(i).getName();
+					LightPath lp=(LightPath) mapr.get(chName);
+					if(lp!=null && model.getLightPath(i)==null){
+						int j=1;
+						for(Filter f: lp.copyLinkedExcitationFilterList()){
+							String id="[Excitation Filter]:["+j+"]:";
+							model.addToMapAnnotationLightPath(id+"Model", f.getModel(),i);
+							model.addToMapAnnotationLightPath(id+"Manufactur", f.getManufacturer(),i);
+							if(f.getType()!=null)
+								model.addToMapAnnotationLightPath(id+"Type", (f.getType()==null?"": f.getType().getValue()),i);
+							if(f.getFilterWheel()!=null)
+								model.addToMapAnnotationLightPath(id+"FilterWheel", f.getFilterWheel(),i);
+							
+							j++;
+						}
+						
+						Dichroic d= lp.getLinkedDichroic();
+						if(d!=null){
+							model.addToMapAnnotationLightPath("[Dichroic]:["+j+"]:", d.getModel(),i);
+							j++;
+						}
+						
+						for(Filter f: lp.copyLinkedEmissionFilterList()){
+							String id="[Emmission Filter]:["+j+"]:";
+							model.addToMapAnnotationLightPath(id+"Model", f.getModel(),i);
+							model.addToMapAnnotationLightPath(id+"Manufactur", f.getManufacturer(),i);
+							if(f.getType()!=null)
+								model.addToMapAnnotationLightPath(id+"Type",(f.getType()==null?"": f.getType().getValue()),i);
+							if(f.getFilterWheel()!=null)
+								model.addToMapAnnotationLightPath(id+"FilterWheel", f.getFilterWheel(),i);
+							
+							j++;
+						}
+					}
+				}
+			}
+			break;
+		default:
+			MonitorAndDebug.printConsole("# MetaDataUI::addMapr(): no mapr");
+			break;
+				
+		}
+	}
 
 	/** add data from given parent model
 	 * @throws Exception */
@@ -376,6 +440,7 @@ public class MetaDataUI extends JPanel
 					addLightSrcData(i,parentModel.getLightSourceData(i),parentModel.getLightSourceSettings(i),true);
 				}
 				for(int i=0; i<parentModel.getNumberOfLightPath();i++){
+					System.out.println("########### LightPathData: "+ parentModel.getLightPath(i)==null?"null":"not null");
 					addLightPathData(i,parentModel.getLightPath(i),parentModel.getFilterSet(i),true);
 				}
 				
@@ -383,6 +448,7 @@ public class MetaDataUI extends JPanel
 				//inheritance for file
 				for(int i=0; i<parentModel.getNumberOfChannels();i++){
 					addChannelData(i,parentModel.getChannelData(i),true);
+					System.out.println("########### LightPathData: "+ parentModel.getLightPath(i)==null?"null":"not null");
 					addLightPathData(i,parentModel.getLightPath(i),parentModel.getFilterSet(i),true);
 				}
 				for(int i=0; i<parentModel.getNumberOfDetectors();i++){
@@ -395,6 +461,7 @@ public class MetaDataUI extends JPanel
 			}
 			
 		}
+		
 	}
 	
 
@@ -476,7 +543,7 @@ public class MetaDataUI extends JPanel
 	
 	/** read data from given metadata container 
 	 * @param imageIndex TODO*/
-	public void readData(OME o, int imageIndex) throws Exception
+	public void readData(OME o, Hashtable<String, Object> series,int imageIndex) throws Exception
 	{
 		if(o !=null)
 		{		
@@ -504,6 +571,7 @@ public class MetaDataUI extends JPanel
 					List<FilterSet> filterSets=null;
 					List<Channel> channels=null;
 					List<Plane> planes=null;
+					List<Time> expTime=null;
 
 					//TODO: no referenced instrument? -> createDummy
 					Instrument instrument=image.getLinkedInstrument();
@@ -542,13 +610,16 @@ public class MetaDataUI extends JPanel
 						// Java 8:
 //						channels=ch.stream().map(e -> (Channel) e).collect(Collectors.toList());
 						planes=pixels.copyPlaneList();
+						expTime=getExposureTimes(pixels);
+						
 					}
 					
 					
 					
 					if(componentsInit){
+						String subarray = getSubarray(series);
 						readImageData(image,objectives,annot);
-						readChannelData(channels,lightSources,detectors,filters,dichroics);
+						readChannelData(channels,lightSources,detectors,filters,dichroics,expTime,subarray);
 						
 						readPlaneData(planes);
 						readImageEnvData(image);
@@ -566,20 +637,60 @@ public class MetaDataUI extends JPanel
 					MonitorAndDebug.printConsole("[DATA] NO IMAGE object available");
 				}
 				MonitorAndDebug.printConsole("... end loadFileData()");
+				
+				
+//				addMapr();
 			
 		}else{
 			LOGGER.warn("[DATA] NOT available METADATA ");
 			model.setImageOMEData(null);
 		}
+		
 	}
 	
+	private String getSubarray(Hashtable<String, Object> series) {
+		if(series==null)
+			return null;
+		if(series.containsKey("Detector Clipping #1"))
+			return (String) series.get("Detector Clipping #1");
+		else
+			return null;
+	}
+
+//	private List<Time> getExposureTimes(List<Plane> planes){
+//		List<Time> exposureTimes=new ArrayList<>();
+//		System.out.println("## getExposureTimes()");
+//		if(initPlanesUI && planes!=null && !planes.isEmpty())
+//		{
+//				for(int i=0; i<planes.size(); i++){
+//					System.out.println("ExposureTime: "+planes.get(i).getExposureTime().value());
+//					exposureTimes.add(planes.get(i).getExposureTime());
+//				}
+//		}
+//		return exposureTimes;
+//	}
+	
+	private List<Time> getExposureTimes(Pixels pixels){
+		List<Time> exposureTimes=new ArrayList<>();
+		List<Plane> planes = pixels.copyPlaneList();
+		if(planes!=null && !planes.isEmpty()){
+			for(int i=0; i<planes.size(); i++){
+				if(planes.get(i).getExposureTime()!=null){
+					exposureTimes.add(planes.get(i).getExposureTime());
+				}
+			}
+		}
+//		
+		return exposureTimes;
+	}
 	
 
 	private void readPlaneData(List<Plane> planes) throws Exception
 	{
-//		if(initPlanesUI && planes!=null && !planes.isEmpty())
-//		{
-//				for(int i=0; i<planes.size(); i++){
+	
+//				if(initPlanesUI && planes!=null && !planes.isEmpty())
+//				{
+//						for(int i=0; i<planes.size(); i++){
 //					PlaneCompUI pUI;
 //					if(i<model.getNumberOfPlanes()){
 //						pUI=model.getPlaneModul(i);
@@ -637,30 +748,43 @@ public class MetaDataUI extends JPanel
 
 	private void readChannelData(List<Channel> channels,
 			List<LightSource> lightSources, List<Detector> detectors, 
-			List<Filter> filters, List<Dichroic> dichroics) 
+			List<Filter> filters, List<Dichroic> dichroics,
+			List<Time> exposureTimes,String subarray) 
 	{
+		
+		
+			
+		
 		if(initChannelUI)
 		{
 			for(int i=0; i<channels.size();i++){
-				if(channels.get(i)!=null)
+				Channel ch =channels.get(i);
+				if(ch!=null)
 				{
-					model.addData(channels.get(i), false,i);
-					LOGGER.info("[DATA] -- load CHANNEL data "+channels.get(i).getName());
+					if(exposureTimes!=null && !exposureTimes.isEmpty()){
+						if(i<exposureTimes.size()){
+							ch.setDefaultExposureTime(exposureTimes.get(i));
+						}else{
+							ch.setDefaultExposureTime(exposureTimes.get(0));
+						}
+					}
+					model.addData(ch, false,i);
+					LOGGER.info("[DATA] -- load CHANNEL data "+ch.getName());
 
 					try {
-						readLightPathData(channels.get(i),i,filters,dichroics);
+						readLightPathData(ch,i,filters,dichroics);
 					} catch (Exception e2) {
 						LOGGER.warn("Can't read lightpath data of channel "+i+"! "+e2);
 						e2.printStackTrace();
 					}
 					try {
-						readLightSource(channels.get(i),i,lightSources);
+						readLightSource(ch,i,lightSources);
 					} catch (Exception e1) {
 						LOGGER.warn("Can't read lightSrc data of channel "+i+"! "+e1);
 						e1.printStackTrace();
 					}
 					try {
-						readDetectorData(channels.get(i),i,detectors);
+						readDetectorData(ch,i,detectors,subarray);
 					} catch (Exception e) {
 						LOGGER.warn("Can't read detector data of channel "+i+"! "+e);
 						e.printStackTrace();
@@ -681,7 +805,7 @@ public class MetaDataUI extends JPanel
 				e1.printStackTrace();
 			}
 			try {
-				readDetectorData(channels.get(0),0,detectors);
+				readDetectorData(channels.get(0),0,detectors,subarray);
 			} catch (Exception e) {
 				LOGGER.warn("Can't read detector data of channel 0! "+e);
 				e.printStackTrace();
@@ -772,7 +896,7 @@ public class MetaDataUI extends JPanel
 	}
 
 	private void readDetectorData(Channel channel, int i,
-			List<Detector> detectors) throws Exception 
+			List<Detector> detectors,String subarray) throws Exception 
 	{
 		if(initDetectorUI){
 			if(detectors!=null && !detectors.isEmpty())
@@ -780,7 +904,8 @@ public class MetaDataUI extends JPanel
 				boolean dDataAvailable=false;
 				String linkedDet=null;
 				
-				DetectorSettings ds=channel.getDetectorSettings();
+				DetectorSettings ds=channel.getDetectorSettings()!=null? 
+						new DetectorSettings(channel.getDetectorSettings()):null;
 				Detector d=null;
 
 				// get linked detector from list
@@ -795,6 +920,7 @@ public class MetaDataUI extends JPanel
 					// if only one detector in instruments available, show this
 					if(detectors.size()==1){
 						d=detectors.get(0);
+						ds=new DetectorSettings();
 						dDataAvailable=true;
 					}else{
 						LOGGER.info("[DATA] -- more than one unlinked detectors available");
@@ -805,8 +931,13 @@ public class MetaDataUI extends JPanel
 				if(!dDataAvailable){
 					LOGGER.info("[DATA] -- DETECTOR data not available");
 				}else{
+					ds.setSubarray(subarray);
 					model.addData(d,false,i);
 					model.addData(ds,false,i);
+					//save in each case to key-value pair: subarray 
+					if(subarray!=null && !subarray.equals("")){
+						model.addToMapAnnotationDetector(TagNames.SUBARRAY, subarray, i);
+					}
 				}
 			}else{
 				LOGGER.info("[DATA] -- DETECTOR data not available");
@@ -817,6 +948,13 @@ public class MetaDataUI extends JPanel
 	private void readImageData(Image image, List<Objective> objList, StructuredAnnotations annot) 
 	{
 			model.addData(image, false);
+			//save in each case to key-value pair: subarray 
+			if(image!=null){
+				StageLabel label =image.getStageLabel();
+				if(label!=null)
+				model.addToMapAnnotationImage(TagNames.STAGELABEL,label.getX().value()+
+						", "+label.getY().value()+" "+label.getX().unit().getSymbol() );
+			}
 			try{
 				readObjectiveData(image,objList);
 			}catch(Exception e){
@@ -943,7 +1081,6 @@ public class MetaDataUI extends JPanel
 		showImageData();
 		showChannelData();
 		showSampleData();
-		
 		revalidate();
 		repaint();
 	}
@@ -1251,9 +1388,9 @@ public class MetaDataUI extends JPanel
 		}
 
 		if(initLightPathUI ){
-			boolean input=lightPathViewer.hasDataToSave();
+			boolean input=lightPathViewer.hasDataToSave() ;
 			if(input){
-				lightPathInput=true;
+//				lightPathInput=true;
 				int index=lightPathViewer.getIndex();
 				try {
 					model.setChangesLightPath(model.getLightPath(index),index);
@@ -1689,7 +1826,7 @@ public class MetaDataUI extends JPanel
 						(detectorViewer.hasDataToSave()|| model.getChangesDetector()!=null));
 			}
 			if(initLightPathUI && lightPathViewer!=null){
-				result=result || lightPathViewer.hasDataToSave();
+				result=result || lightPathViewer.hasDataToSave() ;
 				MonitorAndDebug.printConsole("\t ... LightPath : changed data - "+
 						(lightPathViewer.hasDataToSave()));
 			}
@@ -1749,10 +1886,17 @@ public class MetaDataUI extends JPanel
 		MonitorAndDebug.printConsole("# MetaDataUI::save()");
 		if(imageUI!=null){
 			if( imageUI.hasDataToSave()){
+				//get new changes
 				List<TagData> list=imageUI.getChangedTags();
-				model.setMapAnnotationImage(imageUI.getMapValuesOfChanges(model.getMapAnnotationImage()), false); 
 				printList("Image",list);
+				//get all changes
+				HashMap<String, String> map=imageUI.getMapValuesOfChanges(model.getMapAnnotationImage());
+				
+				//save all changes back to image model
+				model.setMapAnnotationImage(map, false); 
+				//save viewer data to image model
 				imageUI.saveData();
+				//save new changes to model
 				model.setChangesImage(list);
 				imageUI.afterSavingData();
 			}
@@ -1813,6 +1957,7 @@ public class MetaDataUI extends JPanel
 				List<TagData> list=chViewer.getChangedTags();
 				printList("Channel "+chViewer.getIndex(),list);
 				chViewer.saveData();
+				printMap(chViewer.getMapValuesOfChanges(model.getMapAnnotationChannel(chViewer.getIndex())));
 				model.setChangesChannel(list, chViewer.getIndex());
 				model.setMapAnnotationChannel(chViewer.getMapValuesOfChanges(model.getMapAnnotationChannel(chViewer.getIndex())),chViewer.getIndex(), false);
 //				chViewer.resetInputEvent();
@@ -1832,19 +1977,25 @@ public class MetaDataUI extends JPanel
 //			detectorViewer.resetInputEvent();
 			detectorViewer.afterSavingData();
 		}
-		if(lightPathViewer!=null && lightPathViewer.hasDataToSave()){
+		if(lightPathViewer!=null && lightPathViewer.hasDataToSave()  ){
+			
 			int index=lightPathViewer.getIndex();
+			HashMap<String,String> map=model.getMapAnnotationLightPath(index);
 			lightPathViewer.saveData();
 			try {
+				printLightPath(model.getLightPath(index));
 				model.setChangesLightPath(model.getLightPath(index),lightPathViewer.getIndex());
-				model.setMapAnnotationLightPath(lightPathViewer.getMapValuesOfChanges(model.getMapAnnotationLightPath(lightPathViewer.getIndex()),chName),lightPathViewer.getIndex(), false);
+				printMap(lightPathViewer.getMapValuesOfChanges(map,chName));
+				model.setMapAnnotationLightPath(lightPathViewer.getMapValuesOfChanges(map,chName),index, false);
+				
 //				lightPathViewer.resetInputEvent();
 				lightPathViewer.afterSavingData();
+				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		}else{System.out.println("### LightPath nothing to save");}
 		if(lightSrcViewer!=null && lightSrcViewer.hasDataToSave()){
 			List<TagData> list=lightSrcViewer.getChangedTags();
 			printList("LightSrc "+lightSrcViewer.getIndex(),list);
@@ -1878,6 +2029,31 @@ public class MetaDataUI extends JPanel
 		MonitorAndDebug.printConsole("\t Changes in "+string);
 		for(TagData t:list){
 			MonitorAndDebug.printConsole("\t\t "+t.getTagName()+" = "+t.getTagValue());
+		}
+	}
+	
+	public static void printLightPath(LightPath lp){
+		System.out.println("\t LightPath:");
+		for(Filter f: lp.copyLinkedExcitationFilterList()){
+			System.out.println("\t\t ExF: "+f.getModel());
+		}
+		if(lp.getLinkedDichroic()!=null)
+			System.out.println("\t\t D: "+lp.getLinkedDichroic().getModel());
+		
+		for(Filter f: lp.copyLinkedEmissionFilterList()){
+			System.out.println("\t\t EmF: "+f.getModel());
+		}
+	}
+	
+	public static void printMap(HashMap<String,String> map){
+		System.out.println("\t HashMap Values:");
+		Iterator iterator = map.keySet().iterator();
+		  
+		while (iterator.hasNext()) {
+		   String key = iterator.next().toString();
+		   String value = map.get(key).toString();
+		  
+		   System.out.println("\t\t"+key + " " + value);
 		}
 	}
 

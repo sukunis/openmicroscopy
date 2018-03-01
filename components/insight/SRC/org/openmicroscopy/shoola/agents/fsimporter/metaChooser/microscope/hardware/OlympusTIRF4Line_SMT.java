@@ -1,6 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
@@ -377,63 +378,62 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		view.setExperimenterConf(getExperimentConf());
 		view.setImgEnvConf(getImageEnvConf());
 	}
-	
-	
+
+
 	// map key: channelname and return lightPath
 	@Override
-	public Object getMapr(String key){
+	public HashMap getMapr(){
+
+		HashMap map=new HashMap<>();
+
 		LightPath lp=null;
-		switch(key){
-		case "DIC":
-			lp=new LightPath();
-			lp.linkEmissionFilter(IX2_MDICT);
-			break;
-		case "405":
-		case "DAPI":
-			lp=new LightPath();
-			lp.linkDichroic(D_ZT_405_488_561_640RPC);
-			lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
-			lp.linkEmissionFilter(BRIGHTLINE_HC_445_45);
-			break;
-		case "488":
-		case "GFP":
-			lp=new LightPath();
-			lp.linkDichroic(D_ZT_405_488_561_640RPC);
-			lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
-			lp.linkEmissionFilter(BRIGHTLINE_HC_525_50);
-			break;
-		case "561":
-		case "TMR":
-			lp=new LightPath();
-			lp.linkDichroic(D_ZT_405_488_561_640RPC);
-			lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
-			lp.linkEmissionFilter(BRIGHTLINE_HC_600_37);
-			break;
-		case "642":
-		case "Cy5":
-			lp=new LightPath();
-			lp.linkDichroic(D_ZT_405_488_561_640RPC);
-			lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
-			lp.linkEmissionFilter(BRIGHTLINE_HC_697_58);
-			break;
-		default:
-			//TODO: if + in channel name:... else return null
-			if(key.contains("+")){
-				lp=new LightPath();
-				lp.linkDichroic(D_ZT_405_488_561_640RPC);
-				lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
-				lp.linkEmissionFilter(D_480DCXR);
-				lp.linkEmissionFilter(D_565DCXR);
-				lp.linkEmissionFilter(D_640DCXR);
-				lp.linkEmissionFilter(BRIGHTLINE_HC_438_24);
-				lp.linkEmissionFilter(BRIGHTLINE_HC_520_35);
-				lp.linkEmissionFilter(BRIGHTLINE_HC_600_37);
-				lp.linkEmissionFilter(BRIGHTLINE_HC_685_40);
-			}
-			break;
-		}
-		return lp;
-		
+		lp=new LightPath();
+		lp.linkEmissionFilter(IX2_MDICT);
+		map.put("DIC", lp);
+
+		lp=new LightPath();
+		lp.linkDichroic(D_ZT_405_488_561_640RPC);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_445_45);
+		map.put("405", lp);
+		map.put("DAPI", lp);
+
+		lp=new LightPath();
+		lp.linkDichroic(D_ZT_405_488_561_640RPC);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_525_50);
+		map.put("488", lp);
+		map.put("GFP", lp);
+
+		lp=new LightPath();
+		lp.linkDichroic(D_ZT_405_488_561_640RPC);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_600_37);
+		map.put("561", lp);
+		map.put("TMR", lp);
+
+		lp=new LightPath();
+		lp.linkDichroic(D_ZT_405_488_561_640RPC);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_697_58);
+		map.put("642", lp);
+		map.put("Cy5", lp);
+
+		//TODO: if + in channel name:... else return null
+		lp=new LightPath();
+		lp.linkDichroic(D_ZT_405_488_561_640RPC);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+		lp.linkEmissionFilter(D_480DCXR);
+		lp.linkEmissionFilter(D_565DCXR);
+		lp.linkEmissionFilter(D_640DCXR);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_438_24);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_520_35);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_600_37);
+		lp.linkEmissionFilter(BRIGHTLINE_HC_685_40);
+		map.put("+", lp);
+
+		return map;
+
 	}
 
 }

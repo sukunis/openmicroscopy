@@ -23,7 +23,6 @@ import javax.swing.border.TitledBorder;
 import ome.units.quantity.ElectricPotential;
 import ome.units.unit.Unit;
 import ome.xml.model.Detector;
-import ome.xml.model.DetectorSettings;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.EnumerationException;
@@ -33,6 +32,7 @@ import omero.model.NamedValue;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.DetectorSettings;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
@@ -163,7 +163,6 @@ public class DetectorViewer extends ModuleViewer{
 		addTagToGUI(confocalZoom,labelsSett,compSett);
 		addTagToGUI(binning,labelsSett,compSett);
 		addTagToGUI(subarray,labelsSett,compSett);
-		subarray.setEnable(false);
 
 		addLabelTextRows(labelsSett, compSett, gridbag, settingsPane);
 
@@ -304,7 +303,6 @@ public class DetectorViewer extends ModuleViewer{
 			binning.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.SUBARRAY:
-			//TODO
 			setSubarray(null, prop);
 			subarray.setVisible(vis);
 			break;
@@ -424,7 +422,6 @@ public class DetectorViewer extends ModuleViewer{
 		case TagNames.SUBARRAY:
 			if(subarray!=null && !subarray.getTagValue().equals(""))
 				return;
-			//TODO
 			setSubarray(t.getValue(), prop);
 			subarray.dataHasChanged(true);
 			break;
@@ -486,8 +483,11 @@ public class DetectorViewer extends ModuleViewer{
 			} catch (NullPointerException e) { }
 			try{ setBinning(settings.getBinning(), REQUIRED);
 			} catch (NullPointerException e) { }
-			//TODO
-			try{ setSubarray(null, REQUIRED);
+			try{
+				
+				setSubarray(settings.getSubarray(), REQUIRED);
+				if(settings.getSubarray()!=null)
+					subarray.dataHasChanged(true);
 			} catch (NullPointerException e) { }
 		}
 		
@@ -509,18 +509,21 @@ public class DetectorViewer extends ModuleViewer{
 			voltage.setEnable(true);
 			zoom.setEnable(true);
 			gain.setEnable(true);
+			subarray.setEnable(true);
 		}else if(type ==DetectorType.CCD || type==DetectorType.EMCCD){
 			voltage.setEnable(false);
 			zoom.setEnable(false);
 			offset.setEnable(true);
 			gain.setEnable(true);
 			binning.setEnable(true);
+			subarray.setEnable(true);
 		}else{
 			voltage.setEnable(false);
 			zoom.setEnable(false);
 			offset.setEnable(false);
 			gain.setEnable(false);
-			binning.setEnable(false);
+			binning.setEnable(true);
+			subarray.setEnable(true);
 		}
 	}
 	
@@ -531,6 +534,7 @@ public class DetectorViewer extends ModuleViewer{
 		if(offset != null) offset.setEnable(true);
 		if(gain != null) gain.setEnable(true);
 		if(binning != null) binning.setEnable(true);
+		if(subarray !=null) subarray.setEnable(true);
 	}
 
 
@@ -746,6 +750,11 @@ public class DetectorViewer extends ModuleViewer{
 			settings.setBinning(parseBinning(binning.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read DETECTOR SETT binning input");
+		}
+		try{
+			settings.setSubarray(subarray.getTagValue());
+		}catch(Exception e){
+			LOGGER.error("[DATA] can't read DETECTOR SETT subarray input");
 		}
 
 //		data.printValues();

@@ -509,6 +509,7 @@ private boolean disableTreeListener;
         if(customSettings==null){
         	currentMic=MicroscopeProperties.getMicClass(MicroscopeProperties.availableMics[mics.getSelectedIndex()]);
         	customSettings=currentMic.getViewProperties();
+        	customSettings.setMapr(currentMic.getMapr());
         }
         if(customSettings==null){
             customSettings=propReader.getDefaultProperties();
@@ -1017,7 +1018,7 @@ private boolean disableTreeListener;
 		if(node!=null){
 			MonitorAndDebug.printConsole("# MetaDataDialog::deselectNodeAction("+node.getAbsolutePath()+")");
 			LOGGER.debug("MetaDataDialog::Deselect node action for "+node.getAbsolutePath());
-		
+//			node.printMaps();
 			//save input
         	saveInputToModel(node,true);
         	//reset series list
@@ -1083,6 +1084,7 @@ private boolean disableTreeListener;
     {
     	if(node!=null){
     		MonitorAndDebug.printConsole("# MetaDataDialog::saveInputToModel():"+node.getAbsolutePath());
+    		
     		//save view to node object
     		node.setView(getMetaDataView(metaPanel));
 //    		MonitorAndDebug.printConsole("# MetaDataDialog::saveInputToModel(): GUI INPUT: "+node.getView().hasUserInput());
@@ -1455,6 +1457,7 @@ private boolean disableTreeListener;
         	
     	
         	customSettings=currentMic.getViewProperties();
+        	customSettings.setMapr(currentMic.getMapr());
  			if(fileTree!=null){
  				deselectNodeAction((FNode)fileTree.getLastSelectedPathComponent());
              

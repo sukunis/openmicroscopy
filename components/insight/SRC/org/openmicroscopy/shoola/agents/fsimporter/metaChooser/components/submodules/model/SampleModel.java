@@ -68,7 +68,6 @@ public class SampleModel
 
 	private void replaceData(Sample s)
 	{
-		MonitorAndDebug.printConsole("# SampleModel::replaceData()");
 		if(s!=null){
 			element=new Sample(s);
 		}
@@ -76,7 +75,6 @@ public class SampleModel
 
 	private void completeData(Sample s) throws Exception
 	{
-		MonitorAndDebug.printConsole("# SampleModel::completeData()");
 		//copy input fields
 		Sample copyIn=null;
 		if(element!=null){
@@ -110,7 +108,6 @@ public class SampleModel
 				ost=os.getObjectType();
 				osNr=os.getObjectNumber();
 			}
-			MonitorAndDebug.printConsole("\t...grid(x,y)= "+osgx+", "+osgy);
 
 			if(pdesc!=null && !pdesc.equals("")) element.setPrepDescription(pdesc);
 			if(pdate!=null) element.setPrepDate(pdate);
@@ -123,8 +120,6 @@ public class SampleModel
 			if(ost!=null && !ost.equals("")) element.getObservedSample().setObjectType(ost);
 			if(osNr!=null && !osNr.equals("")) element.getObservedSample().setObjectNumber(osNr);
 			
-			MonitorAndDebug.printConsole("\t...grid(x,y)= "+element.getObservedSample().getGridNumberX()
-					+", "+element.getObservedSample().getGridNumberY());
 		}
 	}
 	public Sample getSample()

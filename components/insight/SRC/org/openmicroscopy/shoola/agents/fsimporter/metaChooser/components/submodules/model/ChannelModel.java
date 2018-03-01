@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 import ome.units.unit.Unit;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.ContrastMethod;
@@ -102,6 +103,7 @@ public class ChannelModel
 			String name=copyIn.getName();
 			Color color=copyIn.getColor();
 			String fluor=copyIn.getFluor();
+			Time t=copyIn.getDefaultExposureTime();
 			Length exW=copyIn.getExcitationWavelength();
 			Length emW=copyIn.getEmissionWavelength();
 			String aMode=copyIn.getAcquisitionModeAsString();
@@ -121,6 +123,7 @@ public class ChannelModel
 			if(illType!=null) channel.setIlluminationType(illType);
 			if(cMethod!=null) channel.setContrastMethod(cMethod);
 			if(ndf!=null) channel.setNDFilter(ndf);
+			if(t!=null) channel.setDefaultExposureTime(t);
 		
 		}
 	}
@@ -159,6 +162,7 @@ public class ChannelModel
 		channelOME.setIlluminationType(in.getIlluminationTypeAsString());
 		channelOME.setExcitationWavelength(in.getExcitationWavelength());
 		channelOME.setEmissionWavelength(in.getEmissionWavelength());
+		channelOME.setDefaultExposureTime(in.getDefaultExposureTime());
 		channelOME.setAcquisitionMode(in.getAcquisitionMode());
 		channelOME.setContrastMethod(in.getContrastMethod());
 		channelOME.setNDFilter(in.getNDFilter());
@@ -245,7 +249,7 @@ public class ChannelModel
 			channel.setIlluminationType(tagValue);
 			break;
 		case TagNames.EXPOSURETIME:
-//TODO			channel.setE
+			channel.setDefaultExposureTime(ChannelViewer.parseToTime(tagValue,tagUnit,true));
 			break;
 		case TagNames.EXCITWAVELENGTH:
 			channel.setExcitationWavelength(ModuleViewer.parseToLength(tagValue,tagUnit, true));
@@ -269,4 +273,6 @@ public class ChannelModel
 			LOGGER.warn("[CONF] unknown tag: "+tagName );break;
 		}
 	}
+
+	
 }

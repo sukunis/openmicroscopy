@@ -110,7 +110,6 @@ public class ImageViewer extends ModuleViewer{
 		if(stepSize!=null) stepSize.setEnable(false);
 		addTagToGUI(timeIncrement,labels,comp);
 		addTagToGUI(stagePos,labels,comp);
-		//	if(stagePos!=null) stagePos.setEnable(false);
 		addTagToGUI(wellNr,labels,comp);
 		if(wellNr!=null) wellNr.setEnable(false);
 
@@ -251,7 +250,9 @@ public class ImageViewer extends ModuleViewer{
 
 			try{
 				StageLabel stage=image.getStageLabel();
-				setStagePos(stage.getX(),stage.getY(), REQUIRED);
+				if(stage!=null){
+					setStagePos(stage.getX(),stage.getY(), REQUIRED);
+				}
 			} catch (NullPointerException e) { }
 
 			try{
@@ -405,7 +406,9 @@ For example in a video stream.
 
 
 
-
+	/**
+	 * save all viewer data to model
+	 */
 	@Override
 	public void saveData() 
 	{
@@ -497,7 +500,10 @@ For example in a video stream.
 	}
 
 	
-
+	/**
+	 * 
+	 * @return list of tagdata with tagData.valueHasChanged()==true
+	 */
 	public List<TagData> getChangedTags()
 	{
 		List<TagData> list = new ArrayList<TagData>();
@@ -524,6 +530,11 @@ For example in a video stream.
 		return PixelType.fromString(pixelType.getTagValue());
 	}
 	
+	
+	/**
+	 * @param map of changes
+	 * @return map extended by all changes as [tagName,tagValue] where tagData.valueHasChanged()==true
+	 */
 	public HashMap<String, String> getMapValuesOfChanges(HashMap<String, String> map) 
 	{
 		if(map==null)

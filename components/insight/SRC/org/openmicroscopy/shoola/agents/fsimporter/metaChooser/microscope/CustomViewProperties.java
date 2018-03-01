@@ -1,6 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import ome.xml.model.Detector;
 import ome.xml.model.Filter;
@@ -57,6 +58,8 @@ public class CustomViewProperties
 	private List<Filter> micLightPathFilterList;
 
 	private File file;
+
+	private HashMap mapper;
 
 	public CustomViewProperties()
 	{
@@ -397,6 +400,14 @@ public void loadImageConf(boolean active) {
 	public File getFile()
 	{
 		return file;
+	}
+
+	public void setMapr(HashMap mapr) {
+		mapper=mapr;
+	}
+	public HashMap getMapr()
+	{
+		return mapper;
 	}
 
 

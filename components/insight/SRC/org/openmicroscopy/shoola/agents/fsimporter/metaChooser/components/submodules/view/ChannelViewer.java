@@ -12,12 +12,14 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 import ome.units.unit.Unit;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.ContrastMethod;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.PositiveFloat;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ChannelModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.Channel;
@@ -117,7 +119,6 @@ private void buildGUI()
 	addTagToGUI(excitWavelength,labels,comp);
 	addTagToGUI(emissionWavelength,labels,comp);
 	addTagToGUI(exposureTime,labels,comp);
-	if(exposureTime!=null)exposureTime.setEnable(false);
 	addTagToGUI(imagingMode,labels,comp);
 	addTagToGUI(illumType,labels,comp);
 	
@@ -248,8 +249,7 @@ private void setGUIData()
 		} catch (NullPointerException e) { }
 		try{ setIllumType(channel.getIlluminationTypeAsString(), REQUIRED);
 		} catch (NullPointerException e) { }
-		//TODO exposure time
-		try{ setExposureTime(null, REQUIRED);
+		try{ setExposureTime(channel.getDefaultExposureTime(), REQUIRED);
 		} catch (NullPointerException e) { }
 		try{ setExcitWavelength(channel.getExcitationWavelength(), REQUIRED);
 		} catch (NullPointerException e) { }
@@ -313,12 +313,15 @@ private void setIllumType(String value, boolean prop)
 	else 
 		illumType.setTagValue(val,prop);
 }
-private void setExposureTime(String value, boolean prop)
+private void setExposureTime(Time value,boolean prop)
 {
-	if(exposureTime == null) 
-		exposureTime = new TagData(TagNames.EXPOSURETIME,value,prop,TagData.TEXTFIELD);
-	else 
-		exposureTime.setTagValue(value,prop);
+	String val=(value!=null)? String.valueOf(value.value()):"";
+	Unit unit=(value!=null)?value.unit():TagNames.EXPOSURETIME_UNIT;
+	if(exposureTime == null) {
+		exposureTime = new TagData(TagNames.EXPOSURETIME,val,unit,prop,TagData.TEXTFIELD);
+		exposureTime.addDocumentListener(createDocumentListenerPosFloat(exposureTime,"Invalid input. Use float >0!"));
+	}else 
+		exposureTime.setTagValue(val,unit,prop);
 }
 private void setExcitWavelength(Length value, boolean prop)
 {
@@ -459,6 +462,26 @@ public void saveData()
 	
 
 }
+
+public static Time parseToTime(String c, Unit tagUnit, boolean positiveVal) throws Exception
+{
+	if(c==null || c.equals(""))
+		return null;
+	
+	Double value=Double.valueOf(c);
+	Time result=null;
+	if(positiveVal){
+		// if value isn't a positive number-> throws error
+		PositiveFloat pF=new PositiveFloat(value);
+		result=new Time(value, tagUnit);
+	}else{
+		result=new Time(value, tagUnit);
+	}
+	
+	return result;
+}
+
+
 public static ContrastMethod parseContrastMethod(String c) throws EnumerationException
 {
 	if(c.equals(""))

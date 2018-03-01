@@ -73,8 +73,10 @@ public abstract class ModuleViewer extends JPanel
 	
 	public final static String ERROR_PREVALUE="Invalid predefined value: ";
 	
-	
-	// Attention: wrong input( at saveData() use catch case) will not be save
+	/*
+	 * Reset input event, set all data as saved
+	 * Attention: wrong input( at saveData() use catch case) will not be save
+	 */
 	public void afterSavingData() {
 		resetInputEvent();
 		if(tagList!=null){
@@ -134,6 +136,7 @@ public abstract class ModuleViewer extends JPanel
 		}
 		return (result);
 	}
+	
 	
 	public boolean hasDataToSave2(HashMap<String,String> map)
 	{

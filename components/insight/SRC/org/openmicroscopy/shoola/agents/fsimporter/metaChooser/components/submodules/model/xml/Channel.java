@@ -1,5 +1,6 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml;
 
+import ome.units.quantity.Time;
 import ome.xml.model.OMEModel;
 import ome.xml.model.enums.EnumerationException;
 import org.w3c.dom.Element;
@@ -8,8 +9,17 @@ public class Channel extends ome.xml.model.Channel{
 	
 	private String illuminationTypeString;
 	private String imagingMode;
+	private Time defaultExposureTime;
 	
 	
+	public Time getDefaultExposureTime() {
+		return defaultExposureTime;
+	}
+
+	public void setDefaultExposureTime(Time defaultExposureTime) {
+		this.defaultExposureTime = defaultExposureTime;
+	}
+
 	// -- Constructors --
 	/** Default constructor. */
 	public Channel()
@@ -36,12 +46,14 @@ public class Channel extends ome.xml.model.Channel{
 		super(orig);
 		this.illuminationTypeString=orig.illuminationTypeString;
 		this.imagingMode=orig.imagingMode;
+		this.defaultExposureTime=orig.defaultExposureTime;
 	}
 	
 	public Channel(ome.xml.model.Channel c){
 		super(c);
 		this.illuminationTypeString=null;
 		this.imagingMode=null;
+		this.defaultExposureTime=null;
 	}
 	
 	public void setAcquisitionMode(String imagingMode)
@@ -67,5 +79,7 @@ public class Channel extends ome.xml.model.Channel{
 			this.illuminationTypeString=getIlluminationType().getValue();
 		return this.illuminationTypeString;
 	}
+	
+	
 
 }
