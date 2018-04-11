@@ -88,21 +88,31 @@ private void buildGUI()
 {
 	List<JLabel> labels= new ArrayList<JLabel>();
 	List<JComponent> comp=new ArrayList<JComponent>();
-	addLabelToGUI(new JLabel("Raw Material:"),labels,comp);
+	
+	boolean showRawMat=false;
+	if(rawMaterialCode.isVisible() || rawMaterialDesc.isVisible())
+		showRawMat=true;
+	
+	if(showRawMat) addLabelToGUI(new JLabel("Raw Material:"),labels,comp);
 	addTagToGUI(rawMaterialCode,labels,comp);
 	addTagToGUI(rawMaterialDesc,labels,comp);
-	addVSpaceToGui(10,labels,comp);
+	if(showRawMat) addVSpaceToGui(10,labels,comp);
 	
-	
-	addLabelToGUI(new JLabel("Preparation:"),labels,comp);
+	boolean showPrep=false;
+	if(preparationDate.isVisible() || preparationDescription.isVisible() || gridBoxNumber.isVisible())
+		showPrep=true;
+	if(showPrep) addLabelToGUI(new JLabel("Preparation:"),labels,comp);
 	addTagToGUI(preparationDate,labels,comp);
 	addTagToGUI(preparationDescription,labels,comp);
 	addTagToGUI(gridBoxNumber,labels,comp);
 //	addTagToGUI(gridBoxType,labels,comp);
 	
-	addVSpaceToGui(10,labels,comp);
+	if(showPrep)addVSpaceToGui(10,labels,comp);
 	
-	addLabelToGUI(new JLabel("Observed Sample:"),labels,comp);
+	boolean showOS=false;
+	if(expGrid.isVisible() || expObjectType.isVisible() || expObjectNr.isVisible())
+		showOS=true;
+	if(showOS) addLabelToGUI(new JLabel("Observed Sample:"),labels,comp);
 	addTagToGUI(expGrid,labels,comp);
 	addTagToGUI(expObjectType,labels,comp);
 	addTagToGUI(expObjectNr,labels,comp);
