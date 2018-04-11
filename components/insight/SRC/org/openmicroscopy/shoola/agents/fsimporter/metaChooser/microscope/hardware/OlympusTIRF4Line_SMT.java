@@ -71,8 +71,8 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		
 		Laser l=new Laser();
 //		l.setModel("");
-//		l.setManufacturer("");
-//		l.setType(LaserType.SOLIDSTATE);
+		l.setManufacturer("Olympus");
+		l.setType(LaserType.SEMICONDUCTOR);
 //		l.setLaserMedium(LaserMedium.OTHER);
 		l.setWavelength(new Length(405, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
 //		l.setPulse(Pulse.CW);
@@ -81,7 +81,7 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		
 		l=new Laser();
 //		l.setModel("LuxX 488-200");
-//		l.setManufacturer("Omicron");
+		l.setManufacturer("Olympus");
 		l.setType(LaserType.SOLIDSTATE);
 //		l.setLaserMedium(LaserMedium.OTHER);//??
 		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
@@ -91,7 +91,7 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		
 		l=new Laser();
 //		l.setModel("Cobolt Samba 532");
-//		l.setManufacturer("Cobolt");
+		l.setManufacturer("Olympus");
 		l.setType(LaserType.SOLIDSTATE);
 //		l.setLaserMedium(LaserMedium.OTHER);//??
 		l.setWavelength(new Length(561, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
@@ -101,8 +101,8 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		
 		l=new Laser();
 //		l.setModel("Cobolt Jive 561");
-//		l.setManufacturer("Cobolt");
-//		l.setType(LaserType.SOLIDSTATE);
+		l.setManufacturer("Olympus");
+		l.setType(LaserType.SEMICONDUCTOR);
 //		l.setLaserMedium(LaserMedium.OTHER);//??
 		l.setWavelength(new Length(640, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
 //		l.setPulse(Pulse.CW);//??
@@ -233,7 +233,7 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		list.add(o);
 
 		o=new Objective();
-		o.setModel("PLAPON 60x");
+		o.setModel("APON OTIRF 60x/1.49");
 		o.setManufacturer("Olympus");
 		o.setNominalMagnification(60.0);
 		o.setCalibratedMagnification(60.0);
@@ -274,11 +274,11 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 	@Override
 	public ModuleConfiguration loadLightSrcConf(boolean active, GUIPlaceholder pos, String width) {
 		ModuleConfiguration lightSrcConf=new ModuleConfiguration(active,pos,width);
-		lightSrcConf.setTag(TagNames.MODEL,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.MODEL,null,null,true, null, false);
 		lightSrcConf.setTag(TagNames.MANUFAC,null,null,true, null, true);
 		lightSrcConf.setTag(TagNames.POWER,null,TagNames.POWER_UNIT.getSymbol(),true, null, true);
 		lightSrcConf.setTag(TagNames.L_TYPE,null,null,true, null, true);
-		lightSrcConf.setTag(TagNames.MEDIUM,null,null,true, null, true);
+		lightSrcConf.setTag(TagNames.MEDIUM,null,null,true, null, false);
 		lightSrcConf.setTag(TagNames.FREQMUL,null,null,true, null, false);
 		lightSrcConf.setTag(TagNames.TUNABLE,null,null,true, null, false);
 		lightSrcConf.setTag(TagNames.PULSE,null,null,true, null, false);
