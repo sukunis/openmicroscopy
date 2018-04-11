@@ -57,3 +57,4 @@ velocity.log*
 .idea
 /components/blitz/*.classpath
 *.classpath
+/bin/

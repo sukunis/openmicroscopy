@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
-import javafx.util.StringConverter;
+//import javafx.util.StringConverter;
 
 import javax.swing.AbstractButton;
 import javax.swing.Box;
@@ -1104,35 +1104,35 @@ public class TagData
 		
 	}
 
-	class MyStringConverter extends StringConverter<LocalDate>
-	{
-//		
-//		 String creationDate = getImageCreationDate();
-//		    String date = DateTools.formatDate(creationDate, DATE_FORMATS, ".");
-//		    if (creationDate != null && date == null) {
-//		      LOGGER.warn("unknown creation date format: {}", creationDate);
-//		    }
-//		    creationDate = date;
-		DateTimeFormatter dateFormatter = 
-                DateTimeFormatter.ofPattern(datePattern);
-            @Override
-            public String toString(LocalDate date) {
-                if (date != null) {
-                    return dateFormatter.format(date);
-                } else {
-                    return "";
-                }
-            }
-            @Override
-            public LocalDate fromString(String string) {
-                if (string != null && !string.isEmpty()) {
-                    return LocalDate.parse(string, dateFormatter);
-                } else {
-                    return null;
-                }
-            }	
-	}
-	
+//	class MyStringConverter extends StringConverter<LocalDate>
+//	{
+////		
+////		 String creationDate = getImageCreationDate();
+////		    String date = DateTools.formatDate(creationDate, DATE_FORMATS, ".");
+////		    if (creationDate != null && date == null) {
+////		      LOGGER.warn("unknown creation date format: {}", creationDate);
+////		    }
+////		    creationDate = date;
+//		DateTimeFormatter dateFormatter = 
+//                DateTimeFormatter.ofPattern(datePattern);
+//            @Override
+//            public String toString(LocalDate date) {
+//                if (date != null) {
+//                    return dateFormatter.format(date);
+//                } else {
+//                    return "";
+//                }
+//            }
+//            @Override
+//            public LocalDate fromString(String string) {
+//                if (string != null && !string.isEmpty()) {
+//                    return LocalDate.parse(string, dateFormatter);
+//                } else {
+//                    return null;
+//                }
+//            }	
+//	}
+//	
 	class ScrollableTextPane extends JScrollPane
 	{
 		JTextArea area;

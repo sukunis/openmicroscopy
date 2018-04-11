@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.util.List;
 
-import javafx.scene.shape.Box;
+//import javafx.scene.shape.Box;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
