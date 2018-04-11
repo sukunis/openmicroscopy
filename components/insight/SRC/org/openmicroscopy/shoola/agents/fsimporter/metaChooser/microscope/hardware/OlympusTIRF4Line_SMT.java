@@ -74,9 +74,9 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		l.setManufacturer("Olympus");
 		l.setType(LaserType.SEMICONDUCTOR);
 //		l.setLaserMedium(LaserMedium.OTHER);
-		l.setWavelength(new Length(405, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(405, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 //		l.setPulse(Pulse.CW);
-		l.setPower(new Power(100, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(100, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MILLIWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -84,9 +84,9 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		l.setManufacturer("Olympus");
 		l.setType(LaserType.SOLIDSTATE);
 //		l.setLaserMedium(LaserMedium.OTHER);//??
-		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 //		l.setPulse(Pulse.CW);//??
-		l.setPower(new Power(150, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(150, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MILLIWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -94,9 +94,9 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		l.setManufacturer("Olympus");
 		l.setType(LaserType.SOLIDSTATE);
 //		l.setLaserMedium(LaserMedium.OTHER);//??
-		l.setWavelength(new Length(561, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(561, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 //		l.setPulse(Pulse.CW);//??
-		l.setPower(new Power(150, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(150, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MILLIWATT)));
 		list.add(l);
 		
 		l=new Laser();
@@ -104,9 +104,9 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		l.setManufacturer("Olympus");
 		l.setType(LaserType.SEMICONDUCTOR);
 //		l.setLaserMedium(LaserMedium.OTHER);//??
-		l.setWavelength(new Length(640, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NM)));
+		l.setWavelength(new Length(640, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 //		l.setPulse(Pulse.CW);//??
-		l.setPower(new Power(140, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MW)));
+		l.setPower(new Power(140, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MILLIWATT)));
 		list.add(l);
 		
 		
@@ -121,28 +121,28 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		d1.setManufacturer("Chroma");
 		D_ZT_405_488_561_640RPC=d1;
 		
-		BRIGHTLINE_HC_466_523_500_677=getFilter("BrightLine HC 446/523/500/677",FilterType.BANDPASS,446,677,UnitsLength.NM, "Semrock");
+		BRIGHTLINE_HC_466_523_500_677=getFilter("BrightLine HC 446/523/500/677",FilterType.BANDPASS,446,677,UnitsLength.NANOMETER, "Semrock");
 				
 		IX2_MDICT= getFilter("DIC Cube:IX2-MDICT",FilterType.OTHER,-1,-1,null,"Olympus");
 		
 		
-		BRIGHTLINE_HC_445_45=getFilter("BrightLine HC 445/45",FilterType.BANDPASS,423,468,UnitsLength.NM, "Semrock");
+		BRIGHTLINE_HC_445_45=getFilter("BrightLine HC 445/45",FilterType.BANDPASS,423,468,UnitsLength.NANOMETER, "Semrock");
 		
-		BRIGHTLINE_HC_525_50=getFilter("BrightLine HC 525/50",FilterType.BANDPASS,500,550,UnitsLength.NM, "Semrock");
+		BRIGHTLINE_HC_525_50=getFilter("BrightLine HC 525/50",FilterType.BANDPASS,500,550,UnitsLength.NANOMETER, "Semrock");
 		
-		BRIGHTLINE_HC_600_37=getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NM, "Semrock");
+		BRIGHTLINE_HC_600_37=getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NANOMETER, "Semrock");
 		
-		BRIGHTLINE_HC_697_58=getFilter("BrightLine HC 697/58",FilterType.BANDPASS,668,726,UnitsLength.NM, "Semrock");
+		BRIGHTLINE_HC_697_58=getFilter("BrightLine HC 697/58",FilterType.BANDPASS,668,726,UnitsLength.NANOMETER, "Semrock");
 		
 		
-		D_480DCXR=getFilter("Beamsplitter 480dcxr",FilterType.LONGPASS,480,-1,UnitsLength.NM, "Chroma");
-		D_565DCXR=getFilter("Beamsplitter 565dcxr",FilterType.LONGPASS,565,-1,UnitsLength.NM, "Chroma");
-		D_640DCXR=getFilter("Beamsplitter 640dcxr",FilterType.LONGPASS,640,-1,UnitsLength.NM, "Chroma");
+		D_480DCXR=getFilter("Beamsplitter 480dcxr",FilterType.LONGPASS,480,-1,UnitsLength.NANOMETER, "Chroma");
+		D_565DCXR=getFilter("Beamsplitter 565dcxr",FilterType.LONGPASS,565,-1,UnitsLength.NANOMETER, "Chroma");
+		D_640DCXR=getFilter("Beamsplitter 640dcxr",FilterType.LONGPASS,640,-1,UnitsLength.NANOMETER, "Chroma");
 		
-		BRIGHTLINE_HC_438_24=getFilter("BrightLine HC 438/24 (blue:DAPI,BFP)",FilterType.BANDPASS,426,450,UnitsLength.NM, "Semrock");
-		BRIGHTLINE_HC_520_35=getFilter("BrightLine HC 520/35 (green: GFP)",FilterType.BANDPASS,502,538,UnitsLength.NM, "Semrock");
-		BRIGHTLINE_HC_600_37=getFilter("BrightLine HC 600/37 (orange: TMR,mCherry)",FilterType.BANDPASS,582,619,UnitsLength.NM,"Semrock");
-		BRIGHTLINE_HC_685_40=getFilter("BrightLine HC 685/40 (red: Cy5,Atto 655)",FilterType.BANDPASS,665,705,UnitsLength.NM,"Semrock");
+		BRIGHTLINE_HC_438_24=getFilter("BrightLine HC 438/24 (blue:DAPI,BFP)",FilterType.BANDPASS,426,450,UnitsLength.NANOMETER, "Semrock");
+		BRIGHTLINE_HC_520_35=getFilter("BrightLine HC 520/35 (green: GFP)",FilterType.BANDPASS,502,538,UnitsLength.NANOMETER, "Semrock");
+		BRIGHTLINE_HC_600_37=getFilter("BrightLine HC 600/37 (orange: TMR,mCherry)",FilterType.BANDPASS,582,619,UnitsLength.NANOMETER,"Semrock");
+		BRIGHTLINE_HC_685_40=getFilter("BrightLine HC 685/40 (red: Cy5,Atto 655)",FilterType.BANDPASS,665,705,UnitsLength.NANOMETER,"Semrock");
 		
 	}
 
@@ -229,7 +229,7 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		o.setLensNA(0.75);
 		o.setImmersion(Immersion.AIR);
 //		o.setCorrection(Correction.PLANAPO);
-//		o.setWorkingDistance(new Length(600, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+//		o.setWorkingDistance(new Length(600, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 
 		o=new Objective();
@@ -240,7 +240,7 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		o.setLensNA(1.49);
 		o.setImmersion(Immersion.OIL);
 //		o.setCorrection(Correction.PLANFLUOR);
-		o.setWorkingDistance(new Length(100, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(100, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 		
 		o=new Objective();
@@ -251,7 +251,7 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		o.setLensNA(1.49);
 		o.setImmersion(Immersion.OIL);
 //		o.setCorrection(Correction.PLANAPO);
-		o.setWorkingDistance(new Length(100, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(100, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 
 		o=new Objective();
@@ -262,7 +262,7 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		o.setLensNA(1.45);
 		o.setImmersion(Immersion.OIL);
 //		o.setCorrection(Correction.PLANAPO);
-		o.setWorkingDistance(new Length(80, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROM)));
+		o.setWorkingDistance(new Length(80, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
 		
 		
