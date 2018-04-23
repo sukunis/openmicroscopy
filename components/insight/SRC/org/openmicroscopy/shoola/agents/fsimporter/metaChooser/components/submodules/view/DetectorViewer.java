@@ -35,6 +35,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.DetectorSettings;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MetaDataMapAnnotation;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
@@ -82,14 +83,14 @@ public class DetectorViewer extends ModuleViewer{
 
 	private List<Detector> availableElems;
 
-	private MetaDataDialog parent;
+	private MicroscopeProperties mic;
 
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
 	public DetectorViewer(DetectorModel model,ModuleConfiguration conf,int index,
-			boolean showPreValues,List<Detector> availableElemsImgData,MetaDataDialog parent)
+			boolean showPreValues,List<Detector> availableElemsImgData,MicroscopeProperties mic)
 	{
 		MonitorAndDebug.printConsole("# DetectorViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		
@@ -98,7 +99,7 @@ public class DetectorViewer extends ModuleViewer{
 		this.data=model;
 		this.index=index;
 		this.availableElems=availableElemsImgData;
-		this.parent=parent;
+		this.mic=mic;
 		
 		initComponents(conf);
 		initTagList();
@@ -203,8 +204,8 @@ public class DetectorViewer extends ModuleViewer{
 			public void actionPerformed(ActionEvent e) 
 			{
 				List<Detector> linkHardwareList=null;
-				if(parent.getMicroscopeProperties()!=null){
-					linkHardwareList=parent.getMicroscopeProperties().getDetectorList();
+				if(mic!=null){
+					linkHardwareList=mic.getDetectorList();
 				}
 				DetectorEditor creator = new DetectorEditor(new JFrame(),"Choose Detector",
 						availableElems,linkHardwareList); 

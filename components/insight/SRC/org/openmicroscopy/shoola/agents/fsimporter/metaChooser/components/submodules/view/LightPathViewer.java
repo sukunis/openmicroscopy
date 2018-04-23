@@ -26,6 +26,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submod
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.util.LightPathElement;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
@@ -52,20 +53,24 @@ public class LightPathViewer extends ModuleViewer{
 	private List<Object> availableElems;
 	private boolean lightPathDataChanged;
 
-	private MetaDataDialog parent;
+	private MicroscopeProperties mic;
 
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
+	 * @param conf configuration (visible tags usw)
+	 * @param index channel index
+	 * @param availableElems hardwareConf
+	 * @param parent
 	 */
 	public LightPathViewer(LightPathModel model,ModuleConfiguration conf,int index,
-			List<Object> availableElems,MetaDataDialog parent)
+			List<Object> availableElems,MicroscopeProperties mic)
 	{
 		MonitorAndDebug.printConsole("# LightPathViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		this.data=model;
 		this.index=index;
 		this.availableElems=availableElems;
-		this.parent=parent;
+		this.mic=mic;
 		initComponents(conf);
 		buildGUI();
 		resetInputEvent();
@@ -150,11 +155,12 @@ public class LightPathViewer extends ModuleViewer{
 				
 				saveData();
 				List<Object> linkHardwareList=null;
-				if(parent !=null && parent.getMicroscopeProperties()!=null){
-					linkHardwareList=parent.getMicroscopeProperties().getLightPathList();
+				if(mic!=null){
+					linkHardwareList=mic.getLightPathList();
 				}
 				LightPathEditor creator = new LightPathEditor(new JFrame(),"Edit LightPath",
-						availableElems,data.getLightPath(index),linkHardwareList);
+						availableElems,lpForSelection,linkHardwareList);
+				// get result of editor
 				List<Object> newList=creator.getLightPathList(); 
 				lightPathDataChanged= creator.hasDataChanged();
 				if(newList!=null && !newList.isEmpty()){
@@ -242,7 +248,9 @@ public class LightPathViewer extends ModuleViewer{
 	}
 
 
-
+	/**
+	 * Save GUI data to model.
+	 */
 	@Override
 	public void saveData()  
 	{
@@ -259,6 +267,7 @@ public class LightPathViewer extends ModuleViewer{
 		dataChanged=false;
 		lightPathDataChanged=false;
 	}
+
 
 
 

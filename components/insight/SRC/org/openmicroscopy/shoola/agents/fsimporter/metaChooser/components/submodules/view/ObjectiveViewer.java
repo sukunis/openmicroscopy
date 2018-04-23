@@ -32,6 +32,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ObjectiveModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.openmicroscopy.shoola.util.MonitorAndDebug;
@@ -67,19 +68,19 @@ public class ObjectiveViewer extends ModuleViewer
 	
 	private List<Objective> availableElems;
 	
-	private MetaDataDialog parent;
+	private MicroscopeProperties mic;
 	
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
 	public ObjectiveViewer(ObjectiveModel objModel,ModuleConfiguration conf,boolean showPreValues,
-			List<Objective> availableElems,MetaDataDialog parent)
+			List<Objective> availableElems,MicroscopeProperties mic)
 	{
 		MonitorAndDebug.printConsole("# ObjectiveViewer::newInstance("+(objModel!=null?"model":"null")+")");
 		this.data=objModel;
 		this.availableElems=availableElems;
-		this.parent =parent;
+		this.mic =mic;
 		initComponents(conf);
 		initTagList();
 		buildGUI();
@@ -181,8 +182,8 @@ public class ObjectiveViewer extends ModuleViewer
 			public void actionPerformed(ActionEvent e) 
 			{
 				List<Objective> linkHardwareList=null;
-				if(parent.getMicroscopeProperties()!=null){
-					linkHardwareList=parent.getMicroscopeProperties().getObjectiveList();
+				if(mic!=null){
+					linkHardwareList=mic.getObjectiveList();
 				}
 				ObjectiveEditor creator = new ObjectiveEditor(new JFrame(),"Select Objective",
 						availableElems,linkHardwareList);

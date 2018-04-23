@@ -37,6 +37,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightSourceModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.openmicroscopy.shoola.util.MonitorAndDebug;
@@ -72,14 +73,14 @@ public class LightSourceViewer extends ModuleViewer{
 	private boolean setDataFromCode;
 	
 	private List<LightSource> availableElems;
-	private MetaDataDialog parent;
+	private MicroscopeProperties mic;
 	
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
 	 */
 	public LightSourceViewer(LightSourceModel model,ModuleConfiguration conf,
-			int index,boolean showPreValues,List<LightSource> availableElems,MetaDataDialog parent)
+			int index,boolean showPreValues,List<LightSource> availableElems,MicroscopeProperties mic)
 	{
 		MonitorAndDebug.printConsole("# LightSrcViewer::newInstance("+(model!=null?"model":"null")+") "+index);
 		
@@ -88,7 +89,7 @@ public class LightSourceViewer extends ModuleViewer{
 		this.index=index;
 		this.data=model;
 		this.availableElems=availableElems;
-		this.parent =parent;
+		this.mic =mic;
 		
 		initComponents(conf,showPreValues);
 		
@@ -195,8 +196,8 @@ public class LightSourceViewer extends ModuleViewer{
 			public void actionPerformed(ActionEvent e) 
 			{
 				List<LightSource> linkHardwareList=null;
-				if(parent.getMicroscopeProperties()!=null){
-					linkHardwareList=parent.getMicroscopeProperties().getLightSourceList();
+				if(mic!=null){
+					linkHardwareList=mic.getLightSourceList();
 				}
 				
 				LightSourceEditor editor = new LightSourceEditor(new JFrame(),
