@@ -1078,14 +1078,14 @@ private boolean disableTreeListener;
 
     /**
      * save data model of  node, if any user input available and update all childs 
-     * that still have a model if node== directory
+     * that still have a model if deselected node== directory
      */
     private void saveInputToModel(FNode node,boolean showSaveDialog) 
     {
     	if(node!=null){
     		MonitorAndDebug.printConsole("# MetaDataDialog::saveInputToModel():"+node.getAbsolutePath());
     		
-    		//save view to node object
+    		//save current view to deselect node object
     		node.setView(getMetaDataView(metaPanel));
 //    		MonitorAndDebug.printConsole("# MetaDataDialog::saveInputToModel(): GUI INPUT: "+node.getView().hasUserInput());
     		
