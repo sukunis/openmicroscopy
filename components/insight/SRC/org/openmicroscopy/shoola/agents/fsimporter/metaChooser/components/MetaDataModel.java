@@ -299,8 +299,10 @@ public class MetaDataModel
 	
 	public Sample getSample() throws Exception
 	{
-		if(sampleModel==null)
+		if(sampleModel==null) {
+			MonitorAndDebug.printConsole("MetaDataModel::getSampleData - No Sample Data available");
 			return null;
+		}
 		return sampleModel.getSample();
 	}
 	
@@ -325,7 +327,7 @@ public class MetaDataModel
 	
 	public void addData(ExperimentModel e, boolean overwrite) throws Exception 
 	{
-		MonitorAndDebug.printConsole("# MetaDataModel::addData() - Experiment ");	
+		
 		if(expModel==null)
 			expModel=new ExperimentModel();
 		
@@ -391,8 +393,10 @@ public class MetaDataModel
 	 */
 	public Image getImageData() throws Exception
 	{
-		if(imgModel==null)
+		if(imgModel==null) {
+			MonitorAndDebug.printConsole("MetaDataModel::getImageData - No Image Data available");
 			return null;
+		}
 		return imgModel.getImage();
 	}
 
@@ -603,10 +607,11 @@ public class MetaDataModel
 	{
 		if(lightPathModel==null || getNumberOfLightPath()==0){
 			LOGGER.info("No lightPath available for channel "+index);
+			MonitorAndDebug.printConsole("No lightPath available for channel "+index);
 			return null;
 		}
 //		updateLightPathElems( lightPathObjectList, chIdx);
-		
+		MonitorAndDebug.printConsole("MetaDataModel::getLightPath("+index+") - available");
 		return lightPathModel.getLightPath(index);
 	}
 	
@@ -768,10 +773,12 @@ public class MetaDataModel
 		imgEnvModel.addData(i, overwrite);
 	}
 	
-	public ImagingEnvironment getImgagingEnv() throws Exception
+	public ImagingEnvironment getImagingEnv() throws Exception
 	{
-		if(imgEnvModel==null)
+		if(imgEnvModel==null) {
+			MonitorAndDebug.printConsole("MetaDataModel::getImgEnvData - No ImgEnv Data available");
 			return null;
+		}
 
 		return imgEnvModel.getImgEnv();
 	}
@@ -838,14 +845,16 @@ public class MetaDataModel
 	}
 	}
 	/**
-	 * Get objective modul data
+	 * Get objective modul data, if exists else null.
 	 * @return
 	 * @throws Exception
 	 */
 	public Objective getObjectiveData() throws Exception
 	{
-		if(objModel==null)
+		if(objModel==null) {
+			MonitorAndDebug.printConsole("MetaDataModel::getObjectiveData - No Objective Data available");
 			return null;
+		}
 		
 		Objective obj=objModel.getObjective();
 		ObjectiveSettings oSett=getObjectiveSettings();
@@ -1757,6 +1766,7 @@ public class MetaDataModel
 		if(lightPathModel==null)
 			lightPathModel=new LightPathModel();
 		if(mapValuesOfChanges!=null){
+			MonitorAndDebug.printConsole("# MetaDataModel::setMapAnnotationLightPath() - available, clone= "+clone);	
 			if(clone)
 				lightPathModel.setMap((HashMap<String, String>) mapValuesOfChanges.clone(),index);
 			else

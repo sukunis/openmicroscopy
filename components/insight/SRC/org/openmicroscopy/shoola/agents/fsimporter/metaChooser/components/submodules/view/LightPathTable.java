@@ -84,11 +84,11 @@ public class LightPathTable extends JTable
 		
 	      
 		
-		TableColumn classColumn = getColumnModel().getColumn(5);
+		TableColumn classColumn = getColumnModel().getColumn(LightPathTableModel.CLASS_IDX);
 		classColumn.setCellEditor(new DefaultCellEditor(new JComboBox(FilterCompUI.classificList)));
-		classColumn = getColumnModel().getColumn(3);
+		classColumn = getColumnModel().getColumn(LightPathTableModel.TYPE_IDX);
 		classColumn.setCellEditor(new DefaultCellEditor(new JComboBox(FilterCompUI.typeList)));
-		classColumn = getColumnModel().getColumn(6);
+		classColumn = getColumnModel().getColumn(LightPathTableModel.CAT_IDX);
 		classColumn.setCellEditor(new DefaultCellEditor(new JComboBox(new String[]{"","Exitation","Dichroic","Emission"})));
 	}
 	
@@ -165,6 +165,48 @@ public class LightPathTable extends JTable
         return retVal;
     }
 	
+	/**
+	 * 
+	 * @param rowIndex
+	 * @return row as Dichroic element or Filter element
+	 * @throws Exception
+	 */
+	public Object getRowDataAsLightPathObject(int rowIndex) throws Exception {
+		String[] s=getRowData(rowIndex);
+		
+		System.out.println("editor: LightPath element: "+s[LightPathTableModel.MODEL_IDX]);
+		String type="Filter";
+		
+		if(s[0]!=null ){
+			if( s[LightPathTableModel.TYPE_IDX].contains("Dichroic"))
+			type="Dichroic";
+		}
+		switch (type) {
+		case "Dichroic":
+			Dichroic d= new Dichroic();
+			d.setID(s[LightPathTableModel.ID_IDX]);
+			d.setModel(s[LightPathTableModel.MODEL_IDX]);
+			d.setManufacturer(s[LightPathTableModel.MANUFAC_IDX]);
+			return d;
+		default:
+			Filter o=new Filter();
+			if(s[3].equals(FilterType.DICHROIC.toString())){
+				((Filter) o).setID(s[LightPathTableModel.ID_IDX]);
+				((Filter) o).setModel(s[LightPathTableModel.MODEL_IDX]);
+				((Filter) o).setManufacturer(s[LightPathTableModel.MANUFAC_IDX]);
+				((Filter) o).setType(FilterType.DICHROIC);
+			}else{
+				((Filter) o).setID(s[LightPathTableModel.ID_IDX]);
+				((Filter) o).setModel(s[LightPathTableModel.MODEL_IDX]);
+				((Filter) o).setManufacturer(s[LightPathTableModel.MANUFAC_IDX]);
+				((Filter) o).setType(s[LightPathTableModel.TYPE_IDX].equals("")? null : FilterType.fromString(s[LightPathTableModel.TYPE_IDX]));
+				((Filter) o).setFilterWheel(s[LightPathTableModel.FILTERW_IDX]);
+			}
+			return o;
+
+		}
+	}
+	
 	private void removeSelectionFromTable()
 	{
 		LightPathTableModel model = (LightPathTableModel)getModel();
@@ -216,11 +258,19 @@ public class LightPathTable extends JTable
 		};
 
 		private ArrayList<TableColumn> tableColumns;
+		
+		public static final int ID_IDX=0;
+		public static final int MODEL_IDX=2;
+		public static final int MANUFAC_IDX=3;
+		public static final int TYPE_IDX=4;
+		public static final int FILTERW_IDX=5;
+		public static final int CLASS_IDX=1;
+		public static final int CAT_IDX=6;
 
 		public LightPathTableModel()
 		{
 			super(new Object[][] {},
-					new String[] {"ID","Model", "Manufactur", "Type", "Filterwheel", "Classification","Category"});
+					new String[] {"ID","Classification","Model", "Manufacturer", "Type", "Filterwheel", "Category"});
 
 		}
 
@@ -245,22 +295,22 @@ public class LightPathTable extends JTable
 				if(e instanceof Filter){
 					Filter f=(Filter) e;
 					String type=f.getType()!=null ? f.getType().toString() : "";
-					o[0]=f.getID()!=null ? f.getID() : "";
-					o[1]=f.getModel()!=null ? f.getModel() : "";
-					o[2]=f.getManufacturer()!=null ? f.getManufacturer() : "";
-					o[3]=f.getType()!=null ? f.getType().toString() : "";
-					o[4]=f.getFilterWheel()!=null ? f.getFilterWheel() : "";
-					o[5]= "";
-					o[6]= type.equals(FilterType.DICHROIC.toString())? "Dichroic" : (cat!=null ?cat : "");
+					o[ID_IDX]=f.getID()!=null ? f.getID() : "";
+					o[MODEL_IDX]=f.getModel()!=null ? f.getModel() : "";
+					o[MANUFAC_IDX]=f.getManufacturer()!=null ? f.getManufacturer() : "";
+					o[TYPE_IDX]=f.getType()!=null ? f.getType().toString() : "";
+					o[FILTERW_IDX]=f.getFilterWheel()!=null ? f.getFilterWheel() : "";
+					o[CLASS_IDX]= "";
+					o[CAT_IDX]= type.equals(FilterType.DICHROIC.toString())? "Dichroic" : (cat!=null ?cat : "");
 				}else if (e instanceof Dichroic){
 					Dichroic f=(Dichroic) e;
-					o[0]=f.getID()!=null ? f.getID() : "";
-					o[1]=f.getModel()!=null ? f.getModel() : "";
-					o[2]=f.getManufacturer()!=null ? f.getManufacturer() : "";
-					o[3]="Dichroic";
-					o[4]="";
-					o[5]="";
-					o[6]="Dichroic";
+					o[ID_IDX]=f.getID()!=null ? f.getID() : "";
+					o[MODEL_IDX]=f.getModel()!=null ? f.getModel() : "";
+					o[MANUFAC_IDX]=f.getManufacturer()!=null ? f.getManufacturer() : "";
+					o[TYPE_IDX]="Dichroic";
+					o[FILTERW_IDX]="";
+					o[CLASS_IDX]="";
+					o[CAT_IDX]="Dichroic";
 				}
 			}
 			return o;

@@ -219,7 +219,8 @@ public class MetaDataUI extends JPanel
 	 */
 	public MetaDataUI(MetaDataDialog parent,boolean isdir, boolean showPreValues)
 	{
-		MonitorAndDebug.printConsole("# MetaDataUI::new Instance : "+isdir+", "+showPreValues);
+		MonitorAndDebug.printConsole("# MetaDataUI::new Instance : "+isdir+", "+showPreValues+", parent: "+
+				(parent==null?"null":"available"));
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.parent=parent;
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
@@ -244,7 +245,8 @@ public class MetaDataUI extends JPanel
 	 */
 	public MetaDataUI(MetaDataDialog parent,boolean dir,MetaDataModel model, boolean showPreValues)
 	{
-		MonitorAndDebug.printConsole("# MetaDataUI::new Instance : "+dir+", model,"+showPreValues);
+		MonitorAndDebug.printConsole("# MetaDataUI::new Instance : "+dir+", model,"+showPreValues+", parent: "+
+					(parent==null?"null":"available"));
 		this.setBorder(BorderFactory.createEmptyBorder());
 		customSett=((MetaDataDialog) parent).getCustomViewProperties();
 		directoryPane=dir;
@@ -289,6 +291,7 @@ public class MetaDataUI extends JPanel
 	/** init modul components respective to settings*/ 
 	private void initModelComponents() 
 	{
+		System.out.println("MetaDataUI::initModelComponents()");
 		if(!componentsInit){
 			if(customSett.getObjConf()!=null && customSett.getObjConf().isVisible()){
 				LOGGER.info("[GUI] -- init OBJECTIVE modul");
@@ -429,7 +432,7 @@ public class MetaDataUI extends JPanel
 			addImageData(parentModel.getImageData(),true);
 			addObjectiveData(parentModel.getObjectiveData(),parentModel.getObjectiveSettings(),true);
 			addSampleData(parentModel.getSample(),true);
-			addImageEnvData(parentModel.getImgagingEnv(),true);
+			addImageEnvData(parentModel.getImagingEnv(),true);
 //			addPlaneData();
 			
 			if(directoryPane){
@@ -486,7 +489,6 @@ public class MetaDataUI extends JPanel
 	{
 		if(o!=null) model.addData(o,overwrite);
 		if(os!=null) model.addData(os, overwrite);
-
 	}
 
 	private void addLightSrcData(int i, LightSource ls,LightSourceSettings lss, boolean overwrite) throws Exception 
@@ -527,6 +529,7 @@ public class MetaDataUI extends JPanel
 	private void addImageData(Image i,boolean overwrite)  
 	{
 		if( i!=null){
+			MonitorAndDebug.printConsole("# MetaDataModel::addImageData() - add Image ");	
 			model.addData(i,overwrite);
 		}
 	}
@@ -534,6 +537,7 @@ public class MetaDataUI extends JPanel
 	public void addExperimentData(ExperimentModel e,boolean overwrite) throws Exception
 	{
 		if(e!=null){
+			MonitorAndDebug.printConsole("# MetaDataModel::addExperimentData() - add Experiment ");	
 			model.addData(e, overwrite);
 		}
 	}
@@ -1321,6 +1325,7 @@ public class MetaDataUI extends JPanel
 	private void showDetectorData(String name,int index) 
 	{
 		if(initDetectorUI){
+			System.out.println("MetaDataUI::showDetectorData()");
 			detectorPane2=new JPanel(new CardLayout());
 			ModuleConfiguration detModul=customSett.getDetectorConf();
 			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),
@@ -2313,6 +2318,7 @@ public class MetaDataUI extends JPanel
 			model.setMapAnnotationDetector(m.getMapAnnotationDetector(i), i, true);
 		}
 		for(int i=0; i<m.getNumberOfLightPath();i++){
+			
 			model.setMapAnnotationLightPath(m.getMapAnnotationLightPath(i), i, true);
 		}
 		for(int i=0; i<m.getNumberOfLightSrc();i++){

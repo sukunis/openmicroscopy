@@ -150,10 +150,8 @@ public class LightPathViewer extends ModuleViewer{
 
 			public void actionPerformed(ActionEvent e) 
 			{
-				if(data==null)
-					data=new LightPathModel();
+				LightPath lpForSelection=lightPathTable.getLightPath();
 				
-				saveData();
 				List<Object> linkHardwareList=null;
 				if(mic!=null){
 					linkHardwareList=mic.getLightPathList();
@@ -165,14 +163,7 @@ public class LightPathViewer extends ModuleViewer{
 				lightPathDataChanged= creator.hasDataChanged();
 				if(newList!=null && !newList.isEmpty()){
 					inputKeyPressed();
-					try {
-						createLightPath(newList);
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					//				createLightPath(model.updateLightPathElems(newList,chIdx));
-					setGUIData();
+					lightPathTable.setLightPath(newList);
 					dataChanged=true;
 					revalidate();
 					repaint();
@@ -205,45 +196,7 @@ public class LightPathViewer extends ModuleViewer{
 
 		LightPath lightPath=data.getLightPath(index);
 		if(lightPath!=null){
-			
-			//load primary dichroic of instrument
-			Dichroic d=lightPath.getLinkedDichroic();
-			List<Filter> emList=lightPath.copyLinkedEmissionFilterList();
-			List<Filter> exList=lightPath.copyLinkedExcitationFilterList();
-
-			
-			if(exList!=null){
-				for(Filter f:exList){
-					lightPathTable.appendElem(f,EXITATION);
-				}
-			}else{
-				LOGGER.info("can't load EX Filter element");
-			}
-
-			if(d!=null){
-				lightPathTable.appendElem(d,DICHROIC);
-			}else{
-				LOGGER.info("No dichroic element is given");
-			}
-
-			if(emList!=null)
-			{
-				for(Filter f:emList)
-				{
-					String type="";
-					try {
-						type=f.getType().getValue();
-					} catch (Exception e) {
-					}
-					String elemType=EMISSION;
-					if(type.equals(FilterType.DICHROIC.toString()))					{
-						elemType=DICHROIC;
-					}
-					lightPathTable.appendElem(f,elemType);
-				}
-			}else{
-				LOGGER.info("::ATTENTION:: can't load EM Filter element ");
-			}
+			lightPathTable.setLightPath(lightPath);
 		}
 	}
 
@@ -254,12 +207,13 @@ public class LightPathViewer extends ModuleViewer{
 	@Override
 	public void saveData()  
 	{
-		List<Object> lightPathList=lightPathTable.getLightPathList();
-
+		LightPath l=lightPathTable.getLightPath();
+			
 		if(data==null)
 			data=new LightPathModel();
 		try {
-			createLightPath(lightPathList);
+			data.addData(l, true, index);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -282,73 +236,6 @@ public class LightPathViewer extends ModuleViewer{
 		lightPathDataChanged=true;
 	}
 
-	/**
-	 * LightPath order is Exitation Filter -> Dichroic -> Dichroic/Emission filter
-	 * @param list
-	 * @throws Exception 
-	 */
-	public void createLightPath(List<Object> list) throws Exception
-	{
-		if(list!=null && !list.isEmpty()){
-
-			LightPath newElement=new LightPath();
-			int linkType=1;
-			for(Object f : list)
-			{
-				if(f!=null){
-					Dichroic pD=newElement.getLinkedDichroic();
-					boolean primDNotExists= pD==null ? true : false ;
-
-					// Dichroic
-					if(f instanceof Dichroic){
-						linkType=2;
-						// primary dichroic exists?
-						if(primDNotExists){
-							newElement.linkDichroic((Dichroic) f);
-						}else{
-							LOGGER.warn("primary Dichroic still exists! [LightPathViewer::createLightPath]");
-							newElement.linkEmissionFilter(MetaDataModel.convertDichroicToFilter((Dichroic)f));
-						}
-
-					}else if(f instanceof Filter){
-
-						String	type= ((Filter) f).getType()!=null ? ((Filter) f).getType().toString() : "";
-						//filters that comes before and dichroic are exitation filters by definition
-						if(	!type.equals(FilterType.DICHROIC.getValue()) && 
-								linkType==1){
-							newElement.linkExcitationFilter((Filter) f);
-						}else{// link additional dichroic as emission filter
-							linkType=2;
-
-							if( primDNotExists){
-								newElement.linkDichroic(MetaDataModel.convertFilterToDichroic((Filter) f));
-							}else{
-								newElement.linkEmissionFilter((Filter) f);
-							}
-						}
-					}else if(f instanceof FilterSet){
-						//Exitations
-						for(Filter subF:((FilterSet) f).copyLinkedExcitationFilterList()){
-							newElement.linkExcitationFilter(subF);
-						}
-						//Dichroic
-						if(primDNotExists){
-							newElement.linkDichroic(((FilterSet) f).getLinkedDichroic());
-						}else{
-							LOGGER.warn("primary Dichroic still exists! [LightPathViewer::createLightPath]");
-							newElement.linkEmissionFilter(MetaDataModel.convertDichroicToFilter(((FilterSet) f).getLinkedDichroic()));
-						}
-						//Emmisions
-						linkType=2;
-						for(Filter subF : ((FilterSet) f).copyLinkedEmissionFilterList()){
-							newElement.linkEmissionFilter(subF);
-						}
-					}
-				}//f!=null
-			}
-			data.addData(newElement, true, index);
-		}
-	}
 
 
 
@@ -359,7 +246,6 @@ public class LightPathViewer extends ModuleViewer{
 	@Override
 	public boolean hasDataToSave() 
 	{
-		
 		return lightPathDataChanged;
 	}
 	

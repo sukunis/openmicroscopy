@@ -25,8 +25,8 @@ public class LightPathModel
 
 	private List<LightPath> element;
 
-	private List<Object> availableElem;
 
+	/** Map of key-value pairs like [FilterType]:[Nr]:TagName, TagVal **/
 	private List<HashMap<String,String>> maps;
 
 	private List<FilterSet> filtersets;
@@ -42,11 +42,14 @@ public class LightPathModel
 	{
 		element=orig.element;
 		filtersets=orig.filtersets;
-		availableElem=orig.availableElem;
 		maps=orig.maps;
 	}
 	
-	
+	/**
+	 * Return map of changes
+	 * @param i
+	 * @return
+	 */
 	public HashMap<String,String> getMap(int i)
 	{
 		if(i>=maps.size())
@@ -54,6 +57,11 @@ public class LightPathModel
 		return maps.get(i);
 	}
 	
+	/**
+	 * Set map of changes.
+	 * @param map
+	 * @param i
+	 */
 	public void setMap(HashMap<String,String> map,int i)
 	{
 		
@@ -63,50 +71,53 @@ public class LightPathModel
 		maps.set(i, map);
 	}
 
+	/**
+	 * Add filterset data (only replaced functionality)
+	 * @param filterSet
+	 * @param overwrite should be true
+	 * @param i
+	 */
 	public void addData(FilterSet filterSet, boolean overwrite, int i) 
 	{
-		if(overwrite){
-			replaceData(filterSet,i);
-			LOGGER.info("[DATA] -- replace FilterSet data");
-		}else{
-//			completeData("");
-			LOGGER.info("[DATA] -- can't complete FilterSet data");
+		if(!overwrite) {
+			LOGGER.info("[DATA] -- Attention: filterset data could only be replaced");
 		}
+		replaceData(filterSet,i);
+		LOGGER.info("[DATA] -- replace FilterSet data");
 	}
 
+	/**
+	 * @param filterSet
+	 * @param i
+	 */
 	private void replaceData(FilterSet filterSet, int i) 
 	{
+		if(filterSet==null)
+			return;
 		if(filtersets.size()<=i){
 			expandList(filtersets.size(),i);
 		}
-		if(filterSet!=null){
-			filtersets.set(i, new FilterSet(filterSet));
-		}
+		
+		filtersets.set(i, new FilterSet(filterSet));
 		
 	}
 
 	/**
-	 * Overwrite or complete data. Caller class has to handle notification about the changes.
+	 * Overwrite lightpath data. Caller class has to handle notification about the changes.
 	 * @param newElem
-	 * @param overwrite
+	 * @param overwrite should be true
 	 * @throws Exception
 	 */
 	public void addData(LightPath newElem,boolean overwrite,int i) throws Exception
 	{
-		if(newElem==null)
-			return;
 		
-		if(element.size()<=i){
-			expandList(element.size(),i);
+		if(!overwrite) {
+			LOGGER.info("[DATA] -- Attention: LightPath data could only be replaced");
 		}
 		
-		if(overwrite){
-			replaceData(newElem,i);
-			LOGGER.info("[DATA] -- replace LightPath data");
-		}else{
-			completeData(newElem,i);
-			LOGGER.info("[DATA] -- complete LightPath data");
-		}
+		replaceData(newElem,i);
+		LOGGER.info("[DATA] -- replace LightPath data");
+		
 	}
 
 	/**
@@ -115,64 +126,22 @@ public class LightPathModel
 	 */
 	private void replaceData(LightPath newElem,int i)
 	{
-		if(newElem!=null){
-			element.set(i,new LightPath(newElem));
+		if(newElem==null)
+			return;
+		
+		if(element.size()<=i){
+			expandList(element.size(),i);
 		}
-	}
-
-	/**
-	 * Complete existing data with data from newElem
-	 * @param newElem
-	 * @throws Exception
-	 */
-	private void completeData(LightPath newElem,int i) throws Exception
-	{
-		//copy existing data
-		LightPath copyIn=null;
-		if(element!=null){
-			copyIn=new LightPath(element.get(i));
-		}
-		replaceData(newElem,i);
-
-		List<Filter> excitRef =copyIn.copyLinkedExcitationFilterList();
-		List<Filter> emisRef = copyIn.copyLinkedEmissionFilterList();
-		Dichroic dichroic=copyIn.getLinkedDichroic();
-
-		if(excitRef!=null){
-			if(element.get(i).sizeOfLinkedExcitationFilterList()>0){
-				// search by id
-				for(int j=0; j<excitRef.size(); j++){
-					if(!element.get(i).copyLinkedExcitationFilterList().contains(excitRef.get(j))){
-						element.get(i).linkExcitationFilter(excitRef.get(j));
-					}
-				}
-			}else{
-				for(int j=0; j<excitRef.size(); j++){
-					element.get(i).linkExcitationFilter(excitRef.get(j));
-				}
-			}
-		}
-
-		if(emisRef!=null){
-			if(element.get(i).sizeOfLinkedEmissionFilterList()>0){
-				// search by id
-				for(int j=0;j<emisRef.size(); j++){
-					if(!element.get(i).copyLinkedEmissionFilterList().contains(emisRef.get(j))){
-						element.get(i).linkEmissionFilter(emisRef.get(j));
-					}
-				}
-			}else{
-				for(int j=0; j<emisRef.size(); j++){
-					element.get(i).linkEmissionFilter(emisRef.get(j));
-				}
-			}
-		}
-
-		if(dichroic!=null) element.get(i).linkDichroic(dichroic);
+		element.set(i,new LightPath(newElem));
 	}
 
 	
 
+	
+	/** 
+	 * @param i index of lightpath
+	 * @return lightpath at index i in element list
+	 */
 	public LightPath getLightPath(int i) 
 	{
 		if(i>=element.size())
@@ -181,41 +150,7 @@ public class LightPathModel
 	}
 
 	
-//	public List<Object> getList()
-//	{
-//		return availableElem;
-//	}
-//	public void addFilterToList(List<Filter> list)
-//	{
-//		if(list==null || list.size()==0)
-//			return;
-//
-//		if(availableElem==null){
-//
-//			availableElem=new ArrayList<Object>();
-//		}
-//		for(int i=0; i<list.size(); i++){
-//			availableElem.add(list.get(i));
-//		}
-//	}
-//
-//	public void addDichroicToList(List<Dichroic> list)
-//	{
-//		if(list==null || list.size()==0)
-//			return;
-//
-//		if(availableElem==null){
-//
-//			availableElem=new ArrayList<Object>();
-//		}
-//		for(int i=0; i<list.size(); i++){
-//			availableElem.add(list.get(i));
-//		}
-//	}
-//	public void clearList()
-//	{
-//		availableElem=null;
-//	}
+
 	
 	/**
 	 * If index exits size, expand elements and settings list
@@ -230,11 +165,10 @@ public class LightPathModel
 			maps.add(new HashMap<String,String>());
 		}
 	}
-	
 
-	
-	
-
+	/**
+	 * @return size of element list
+	 */
 	public int getNumberOfLightPaths() 
 	{
 		if(element==null)
@@ -243,12 +177,19 @@ public class LightPathModel
 		return element.size();
 	}
 
+	/**
+	 * Remove lightpath at index from element list
+	 * @param index
+	 */
 	public void remove(int index) {
 		if(element!=null && !element.isEmpty())
 			element.remove(index);		
 	}
 
-	// replace lightPaths with changed lightPaths
+	/**
+	 *  replace lightPaths with changed lightPaths
+	 * @param changesLightPath
+	 */
 	public void update(List<LightPath> changesLightPath) 
 	{
 		if(changesLightPath==null){
@@ -295,6 +236,11 @@ public class LightPathModel
 		}
 	}
 
+	/**
+	 * 
+	 * @param i
+	 * @return filterset at index i
+	 */
 	public FilterSet getFilterSet(int i) {
 		if(i>filtersets.size())
 			return null;

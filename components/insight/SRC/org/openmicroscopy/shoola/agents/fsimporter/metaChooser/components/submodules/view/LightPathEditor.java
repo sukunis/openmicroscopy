@@ -54,7 +54,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 	private static final org.slf4j.Logger LOGGER =
     	    LoggerFactory.getLogger(LightPathEditor.class);
     
-    /**output: selected filter for lightPath */
+    /**output: selected filters and dichroics for lightPath */
 	private List<Object> lightPathList;
 	
 	private LightPath lightPath;
@@ -64,7 +64,9 @@ public class LightPathEditor extends JDialog implements ActionListener
 	/** input: list for selection*/
 	private List<Object> availableFilter;
 	
+	/** lightPath result table */
 	private LightPathTable lightPathTable;
+	
 	private AvailableFilterTable avFilterTable;
 
 	private boolean dataChanged;
@@ -149,6 +151,10 @@ public class LightPathEditor extends JDialog implements ActionListener
 		setVisible(true);
 	}
 
+	/**
+	 * create Pane: "New Element:"
+	 * @return
+	 */
 	private JPanel newFilterElemPane()
 	{
 		JButton addBtn = new JButton("Add To LightPath");
@@ -183,6 +189,10 @@ public class LightPathEditor extends JDialog implements ActionListener
 		return topPane;
 	}
 	
+	/**
+	 * Create Pane: "Available Elements"
+	 * @return
+	 */
 	private JPanel availableFilterPane()
 	{
 		JPanel pane=new JPanel();
@@ -195,8 +205,6 @@ public class LightPathEditor extends JDialog implements ActionListener
 
 		avFilterTable = new AvailableFilterTable();  
 		scrollPane.setViewportView(avFilterTable);
-//		avFTable.setPreferredScrollableViewportSize(avFTable.getPreferredSize());
-//		avFTable.setFillsViewportHeight(true);
 		
 		//load data
 		if(availableFilter!=null)
@@ -231,7 +239,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 						for(Filter f: ((FilterSet) selectedObj).copyLinkedExcitationFilterList()){
 							lightPathTable.appendElem(f, "Exitation");
 						}
-						lightPathTable.appendElem(((FilterSet) selectedObj).getLinkedDichroic(),"Dichroic");
+						if(((FilterSet) selectedObj).getLinkedDichroic()!=null) lightPathTable.appendElem(((FilterSet) selectedObj).getLinkedDichroic(),"Dichroic");
 						for(Filter f: ((FilterSet) selectedObj).copyLinkedEmissionFilterList()){
 							lightPathTable.appendElem(f, "Emission");
 						}
@@ -241,18 +249,9 @@ public class LightPathEditor extends JDialog implements ActionListener
 			}
 			
 		});
-		JButton loadBtn = new JButton("Load Filterset");
-		loadBtn.setEnabled(false);
-		loadBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				
-			}
-		});
 		
 		JPanel btnPane=new JPanel();
 		btnPane.setLayout(new BoxLayout(btnPane, BoxLayout.X_AXIS));
-		btnPane.add(loadBtn);
 		btnPane.add(Box.createHorizontalGlue());
 		btnPane.add(addBtn);
 		
@@ -380,52 +379,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 	}
 
 	
-	public static final Object parseToLightPathObject(String[] s) throws Exception
-	{
-//		String type="FilterSet";
-		String type="Filter";
-		
-		
-		if(s[0]!=null ){
-			if( s[0].contains("Dichroic"))
-			type="Dichroic";
-//			else if(s[0].contains("Filter"))
-//				type="Filter";
-		}
-		switch (type) {
-		case "Dichroic":
-			Dichroic d= new Dichroic();
-			d.setID(s[0]);
-			d.setModel(s[1]);
-			d.setManufacturer(s[2]);
-			return d;
-//			break;
 
-//		case "Filter":
-			default:
-			Filter o=new Filter();
-			if(s[3].equals(FilterType.DICHROIC.toString())){
-				((Filter) o).setID(s[0]);
-				((Filter) o).setModel(s[1]);
-				((Filter) o).setManufacturer(s[2]);
-				((Filter) o).setType(FilterType.DICHROIC);
-			}else{
-				((Filter) o).setID(s[0]);
-				((Filter) o).setModel(s[1]);
-				((Filter) o).setManufacturer(s[2]);
-				((Filter) o).setType(s[3].equals("")? null : FilterType.fromString(s[3]));
-				((Filter) o).setFilterWheel(s[4]);
-			}
-			return o;
-//			default: //FilterSet
-//				FilterSet fs = new FilterSet();
-//				fs.setID(s[0]);
-//				fs.setModel(s[1]);
-//				return fs;
-		}
-		
-		
-	}
 	
 	
 	
@@ -434,7 +388,8 @@ public class LightPathEditor extends JDialog implements ActionListener
 	{
 		lightPathList=new ArrayList<Object>();
 		for(int i=0; i<lightPathTable.getRowCount();i++){
-			lightPathList.add(parseToLightPathObject(lightPathTable.getRowData(i)));
+			Object o=lightPathTable.getRowDataAsLightPathObject(i);
+			lightPathList.add(o);
 		}
 	}
 	
@@ -442,7 +397,10 @@ public class LightPathEditor extends JDialog implements ActionListener
 	
 	
 	
-
+	/**
+	 * 
+	 * @return list of Filter for module table
+	 */
 	public List<Object> getLightPathList()
 	{
 		return lightPathList;
