@@ -487,8 +487,6 @@ public class DetectorViewer extends ModuleViewer{
 			try{
 				
 				setSubarray(settings.getSubarray(), REQUIRED);
-				if(settings.getSubarray()!=null)
-					subarray.dataHasChanged(true);
 			} catch (NullPointerException e) { }
 		}
 		
