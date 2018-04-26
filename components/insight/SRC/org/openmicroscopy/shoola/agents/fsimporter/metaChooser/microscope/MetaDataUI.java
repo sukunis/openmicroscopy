@@ -172,7 +172,7 @@ public class MetaDataUI extends JPanel
 	private boolean lightSrcInput;
 	
 	private File file;
-	
+	private String dataToSave_Desc;
 	private CustomViewProperties customSett;
 	private MetaDataDialog parent;
 	
@@ -455,8 +455,7 @@ public class MetaDataUI extends JPanel
 				//inheritance for file
 				for(int i=0; i<parentModel.getNumberOfChannels();i++){
 					addChannelData(i,parentModel.getChannelData(i),true);
-					System.out.println("########### LightPathData: "+ parentModel.getLightPath(i)==null?"null":"not null");
-					addLightPathData(i,parentModel.getLightPath(i),parentModel.getFilterSet(i),true);
+					
 				}
 				for(int i=0; i<parentModel.getNumberOfDetectors();i++){
 					addDetectorData(i, parentModel.getDetector(i),parentModel.getDetectorSettings(i), true);
@@ -464,6 +463,10 @@ public class MetaDataUI extends JPanel
 
 				for(int i=0; i<parentModel.getNumberOfLightSrc(); i++){
 					addLightSrcData(i,parentModel.getLightSourceData(i),parentModel.getLightSourceSettings(i),true); 
+				}
+				for(int i=0; i<parentModel.getNumberOfLightPath();i++){
+					System.out.println("########### LightPathData: "+ parentModel.getLightPath(i)==null?"null":"not null");
+					addLightPathData(i,parentModel.getLightPath(i),parentModel.getFilterSet(i),true);
 				}
 			}
 			
@@ -1787,32 +1790,39 @@ public class MetaDataUI extends JPanel
 	 */
 	public boolean hasDataToSave() 
 	{
+		String changesDesc="";
 		boolean result=false;
+		boolean changes=false;
 		MonitorAndDebug.printConsole("# MetaDataUI::hasDataToSave()");
 		if(initImageUI && imageUI!=null){
-			result=result || imageUI.hasDataToSave() || model.getChangesImage()!=null;
-			MonitorAndDebug.printConsole("\t ... image : changed data - "+
-					(imageUI.hasDataToSave()|| model.getChangesImage()!=null));
+			changes=imageUI.hasDataToSave() || model.getChangesImage()!=null;
+			result=result || changes;
+			if(changes) changesDesc+="Image Modul \n";
+			MonitorAndDebug.printConsole("\t ... image : changed data - "+changes);
 		}
 		if(initExperimentUI && experimentUI!=null){
-			result=result || experimentUI.hasDataToSave() || model.getChangesExperiment()!=null;
-			MonitorAndDebug.printConsole("\t ... Experiment : changed data - "+
-			(experimentUI.hasDataToSave()||model.getChangesExperiment()!=null));
+			changes=experimentUI.hasDataToSave() || model.getChangesExperiment()!=null;
+			result=result || changes;
+			if(changes) changesDesc+="Experiment Modul \n";
+			MonitorAndDebug.printConsole("\t ... Experiment : changed data - "+changes);
 		}
 		if(initObjectiveUI && objectiveUI!=null){
-			result=result || objectiveUI.hasDataToSave()|| model.getChangesObject()!=null;
-			MonitorAndDebug.printConsole("\t ... Objective : changed data - "+
-			objectiveUI.hasDataToSave()+","+( model.getChangesObject()!=null));
+			changes=objectiveUI.hasDataToSave()|| model.getChangesObject()!=null;
+			result=result || changes;
+			if(changes) changesDesc+="Objective Modul \n";
+			MonitorAndDebug.printConsole("\t ... Objective : changed data - "+changes);
 		}
 		if(initSampleUI && sampleUI!=null){
-			result = result || sampleUI.hasDataToSave()|| model.getChangesSample()!=null;
-			MonitorAndDebug.printConsole("\t ... Sample : changed data - "+
-			(sampleUI.hasDataToSave()||model.getChangesSample()!=null));
+			changes=sampleUI.hasDataToSave()|| model.getChangesSample()!=null;
+			result = result || changes;
+			if(changes) changesDesc+="Sample Modul \n";
+			MonitorAndDebug.printConsole("\t ... Sample : changed data - "+changes);
 		}
 		if(initImageEnvUI && imgEnvViewer!=null){
-			result=result || imgEnvViewer.hasDataToSave() || model.getChangesImgEnv()!=null;
-			MonitorAndDebug.printConsole("\t ... ImageEnv : changed data - "+
-					(imgEnvViewer.hasDataToSave()|| model.getChangesImgEnv()!=null));
+			changes= imgEnvViewer.hasDataToSave() || model.getChangesImgEnv()!=null;
+			result=result ||changes;
+			if(changes) changesDesc+="Image Env Modul \n";
+			MonitorAndDebug.printConsole("\t ... ImageEnv : changed data - "+changes);
 		}
 		
 		if(initChannelUI  && model.getNumberOfChannels()>0){
@@ -1820,9 +1830,10 @@ public class MetaDataUI extends JPanel
 				
 				for(int i=0; i< channelTab.getTabCount(); i++){
 					if(channelTab.getComponentAt(i)!=null && channelTab.getComponentAt(i) instanceof ChannelViewer){
-						result=result || ((ChannelViewer) channelTab.getComponentAt(i)).hasDataToSave();
-						MonitorAndDebug.printConsole("\t ... Channel : changed data - "+
-							((ChannelViewer) channelTab.getComponentAt(i)).hasDataToSave());
+						changes=((ChannelViewer) channelTab.getComponentAt(i)).hasDataToSave();
+						result=result || changes;
+						if(changes) changesDesc+="Channel Modul \n";
+						MonitorAndDebug.printConsole("\t ... Channel : changed data - "+changes);
 					}else{
 						MonitorAndDebug.printConsole("\t ... Channel : no data ");
 					}
@@ -1830,62 +1841,65 @@ public class MetaDataUI extends JPanel
 			}
 			
 			if(initDetectorUI && detectorViewer!=null){
-				result=result || detectorViewer.hasDataToSave() || model.getChangesDetector()!=null;
-				MonitorAndDebug.printConsole("\t ... Detector : changed data - "+
-						(detectorViewer.hasDataToSave()|| model.getChangesDetector()!=null));
+				changes=detectorViewer.hasDataToSave() || model.getChangesDetector()!=null;
+				result=result || changes;
+				if(changes) changesDesc+="Detector Modul \n";
+				MonitorAndDebug.printConsole("\t ... Detector : changed data - "+changes);
 			}
 			if(initLightPathUI && lightPathViewer!=null){
-				result=result || lightPathViewer.hasDataToSave() ;
-				MonitorAndDebug.printConsole("\t ... LightPath : changed data - "+
-						(lightPathViewer.hasDataToSave()));
+				changes=lightPathViewer.hasDataToSave()|| model.getChangesLightPath()!=null;
+				result=result || changes ;
+				if(changes) changesDesc+="LightPath Modul \n";
+				MonitorAndDebug.printConsole("\t ... LightPath : changed data - "+changes);
 			}
 			if(initLightSrcUI && lightSrcViewer!=null){
-				result=result || lightSrcViewer.hasDataToSave()||model.getChangesLightSrc()!=null;
-				MonitorAndDebug.printConsole("\t ... LightSrc : changed data - "+
-						(lightSrcViewer.hasDataToSave()|| model.getChangesLightSrc()!=null));
+				changes=lightSrcViewer.hasDataToSave()||model.getChangesLightSrc()!=null;
+				result=result || changes;
+				if(changes) changesDesc+="LightSrc Modul \n";
+				MonitorAndDebug.printConsole("\t ... LightSrc : changed data - "+changes);
 			}
-//			if(initDetectorUI){
-//				result=result || detectorInput;
-//				MonitorAndDebug.printConsole("\t ... Detector : changed data - "+detectorInput);
-//			}
-//			if(initLightPathUI ){
-//				result=result || lightPathInput;
-//				MonitorAndDebug.printConsole("\t ... Objective : changed data - "+lightPathInput);
-//			}
-//			if(initLightSrcUI ){
-//				result=result || lightSrcInput;
-//				MonitorAndDebug.printConsole("\t ... LightSrc : changed data - "+lightSrcInput);
-//			}
+
 		}else{
 			if(initChannelUI && channelTab!=null && channelTab.getTabCount()>0){
 				MonitorAndDebug.printConsole("\t ... Channel tabs: "+channelTab.getTabCount());
 				if(channelTab.getComponentAt(0)!=null && channelTab.getComponentAt(0) instanceof ChannelViewer){
-					result=result || ((ChannelViewer) channelTab.getComponentAt(0)).hasDataToSave();
-					MonitorAndDebug.printConsole("\t ... Channel : changed data - "+
-							(((ChannelViewer) channelTab.getComponentAt(0)).hasDataToSave()));
+					changes=((ChannelViewer) channelTab.getComponentAt(0)).hasDataToSave();
+					result=result || changes;
+					if(changes) changesDesc+="Channel Modul \n";
+					MonitorAndDebug.printConsole("\t ... Channel : changed data - "+changes);
 				}else{
 					MonitorAndDebug.printConsole("\t ... Channel : no data - ??");
 				}
 			}
 			if(initDetectorUI && detectorViewer!=null){
-				result=result || detectorViewer.hasDataToSave() || model.getChangesDetector()!=null;
-				MonitorAndDebug.printConsole("\t ... Detector : changed data - "+
-						(detectorViewer.hasDataToSave()|| model.getChangesDetector()!=null));
+				changes=detectorViewer.hasDataToSave() || model.getChangesDetector()!=null;
+				result=result || changes;
+				if(changes) changesDesc+="Detector Modul \n";
+				MonitorAndDebug.printConsole("\t ... Detector 2: changed data - "+changes);
 			}
 			if(initLightPathUI && lightPathViewer!=null){
-				result=result || lightPathViewer.hasDataToSave();
-				MonitorAndDebug.printConsole("\t ... LightPath : changed data - "+
-						(lightPathViewer.hasDataToSave()));
+				changes=lightPathViewer.hasDataToSave()|| model.getChangesLightPath()!=null;
+				result=result || changes;
+				if(changes) changesDesc+="LightPath Modul \n";
+				MonitorAndDebug.printConsole("\t ... LightPath : changed data - "+changes);
 			}
 			if(initLightSrcUI && lightSrcViewer!=null){
-				result=result || lightSrcViewer.hasDataToSave()||model.getChangesLightSrc()!=null;
-				MonitorAndDebug.printConsole("\t ... LightSrc : changed data - "+
-						(lightSrcViewer.hasDataToSave()|| model.getChangesLightSrc()!=null));
+				changes=lightSrcViewer.hasDataToSave()||model.getChangesLightSrc()!=null;
+				result=result || changes;
+				if(changes) changesDesc+="LightSrc Modul \n";
+				MonitorAndDebug.printConsole("\t ... LightSrc : changed data - "+changes);
 			}
 		}
-		
+		dataToSave_Desc=changesDesc;
 		model.setDataChange(result);
 		return result;
+	}
+	
+	public String getDataToSave_Desc()
+	{
+		if(dataToSave_Desc==null)
+			return "";
+		return dataToSave_Desc;
 	}
 
 	public void save() 
@@ -2018,6 +2032,7 @@ public class MetaDataUI extends JPanel
 		detectorInput=false;
 		lightPathInput=false;
 		lightSrcInput=false;
+		dataToSave_Desc="";
 	}
 
 

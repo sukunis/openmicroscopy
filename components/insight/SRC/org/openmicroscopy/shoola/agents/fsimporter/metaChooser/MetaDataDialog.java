@@ -1107,7 +1107,7 @@ private boolean disableTreeListener;
     				}
     				saveToAll =true;
     				if(showSaveDialog){
-    					saveToAll=showSaveInputDialog(text);
+    					saveToAll=showSaveInputDialog(text+"\n "+node.getView().getDataToSave_Desc());
     				}
     			}
     		}

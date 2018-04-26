@@ -422,6 +422,7 @@ public class MetaDataView extends JPanel
 		}
 	}
 	
+	
 	private void savePreValues()
 	{
 			if(seriesData){
@@ -561,6 +562,25 @@ public class MetaDataView extends JPanel
 			}
 		}
 		return false;
+	}
+	
+	public String getDataToSave_Desc()
+	{
+		String result="";
+		if(seriesData) 
+		{
+			int index=0;
+			for(Component comp:cardPane.getComponents()) {
+				result="["+index+"]: "+((MetaDataUI)comp).getDataToSave_Desc()+"\n";
+				index++;
+			}
+			return result;
+		}else {
+			if(singleView != null) {
+				return singleView.getDataToSave_Desc();
+			}
+		}
+		return result;
 	}
 	
 	public boolean hasUserInput()
