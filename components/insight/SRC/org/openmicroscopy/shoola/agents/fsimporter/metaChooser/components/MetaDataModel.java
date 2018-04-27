@@ -570,8 +570,8 @@ public class MetaDataModel
 	 *--------------------------------------------*/
 	public void addData(LightPath lp, boolean overwrite, int i) throws Exception 
 	{
-		MonitorAndDebug.printConsole("# MetaDataModel::addData - LightPath "+i+", overwrite= "+overwrite);
-		MetaDataUI.printLightPath(lp);
+		MonitorAndDebug.printConsole("# MetaDataModel::addData - Filter "+i+", overwrite= "+overwrite);
+//		MetaDataUI.printLightPath(lp);
 		if(lightPathModel==null)
 			lightPathModel=new LightPathModel();
 		
@@ -580,7 +580,7 @@ public class MetaDataModel
 	
 	public void update(List<LightPath> lp) throws Exception
 	{
-		MonitorAndDebug.printConsole("# MetaDataModel::update - LightPath ");
+		MonitorAndDebug.printConsole("# MetaDataModel::update - Filter ");
 		if(lightPathModel==null)
 			lightPathModel=new LightPathModel();
 		
@@ -1954,7 +1954,7 @@ public class MetaDataModel
 				values=hashMapToValueList(getMapAnnotationChannel(i), values,id+id2);
 				
 				values=hashMapToValueList(getMapAnnotationDetector(i), values,id2+"[Detector]:");
-				values=hashMapToValueList(getMapAnnotationLightPath(i), values,id2+"[LightPath]:");
+				values=hashMapToValueList(getMapAnnotationLightPath(i), values,id2+"[Filter]:");
 				values=hashMapToValueList(getMapAnnotationLightSrc(i), values,id2+"[LightSrc]:");
 			}
 		}else{// no channel available, don't link to any channel
@@ -1964,7 +1964,7 @@ public class MetaDataModel
 				values=hashMapToValueList(getMapAnnotationDetector(i), values,id+"[Detector]:");
 
 			for(int i=0;i<getNumberOfLightPath();i++)
-				values=hashMapToValueList(getMapAnnotationLightPath(i), values,id+"[LightPath]:");
+				values=hashMapToValueList(getMapAnnotationLightPath(i), values,id+"[Filter]:");
 			for(int i=0;i<getNumberOfLightSrc();i++)
 				values=hashMapToValueList(getMapAnnotationLightSrc(i), values,id);
 		}

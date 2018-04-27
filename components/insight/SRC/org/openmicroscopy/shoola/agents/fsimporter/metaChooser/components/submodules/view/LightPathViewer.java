@@ -156,7 +156,7 @@ public class LightPathViewer extends ModuleViewer{
 				if(mic!=null){
 					linkHardwareList=mic.getLightPathList();
 				}
-				LightPathEditor creator = new LightPathEditor(new JFrame(),"Edit LightPath",
+				LightPathEditor creator = new LightPathEditor(new JFrame(),"Edit Filter List",
 						availableElems,lpForSelection,linkHardwareList);
 				// get result of editor
 				List<Object> newList=creator.getLightPathList(); 

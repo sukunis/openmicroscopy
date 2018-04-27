@@ -157,7 +157,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 	 */
 	private JPanel newFilterElemPane()
 	{
-		JButton addBtn = new JButton("Add To LightPath");
+		JButton addBtn = new JButton("Add To Filter List");
 		addBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -214,7 +214,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 			}
 		}
 		
-		JButton addBtn = new JButton("Add To LightPath");
+		JButton addBtn = new JButton("Add To Filter List");
 		addBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -286,7 +286,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 		panel_2.setLayout(new BorderLayout(0, 0));
 		panel_2.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		JLabel label = new JLabel("LightPath:");
+		JLabel label = new JLabel("Filter List:");
 		label.setFont(new Font("Tahoma", Font.BOLD, 11));
 		panel_2.add(label,BorderLayout.NORTH);
 		

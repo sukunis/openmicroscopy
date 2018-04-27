@@ -1271,7 +1271,7 @@ public class MetaDataUI extends JPanel
 			lightPathPane.removeAll();
 			lightPathViewer=new LightPathViewer(model.getLightPathModel(),customSett.getLightPathConf(),
 					index,model.getHardwareList_LightPath(),mic);
-			lightPathPane.add(control.createPropPane(lightPathViewer, "LightPath", "for "+name));
+			lightPathPane.add(control.createPropPane(lightPathViewer, "Filter", "for "+name));
 		}
 	}
 
@@ -1309,7 +1309,7 @@ public class MetaDataUI extends JPanel
 			ModuleConfiguration lightPModul=customSett.getLightPathConf();
 			lightPathViewer=new LightPathViewer(model.getLightPathModel(), customSett.getLightPathConf(),
 					index,model.getHardwareList_LightPath(),mic);
-			lightPathPane.add(control.createPropPane(lightPathViewer, "LightPath", "for "+name));
+			lightPathPane.add(control.createPropPane(lightPathViewer, "Filter", "for "+name));
 			addToPlaceholder(lightPathPane, lightPModul.getPosition(), lightPModul.getWidth());
 		}
 	}
@@ -1759,7 +1759,7 @@ public class MetaDataUI extends JPanel
 		}
 		if(initLightPathUI && lightPathViewer!=null){
 			result=result && !lightPathViewer.inputEvent();
-			MonitorAndDebug.printConsole("\t ... LightPath data stored - "+(!lightPathViewer.inputEvent()));
+			MonitorAndDebug.printConsole("\t ... Filter data stored - "+(!lightPathViewer.inputEvent()));
 		}
 		if(initLightSrcUI && lightSrcViewer!=null){
 			result=result && lightSrcViewer.allDataWasStored();
@@ -1849,8 +1849,8 @@ public class MetaDataUI extends JPanel
 			if(initLightPathUI && lightPathViewer!=null){
 				changes=lightPathViewer.hasDataToSave()|| model.getChangesLightPath()!=null;
 				result=result || changes ;
-				if(changes) changesDesc+="LightPath Modul \n";
-				MonitorAndDebug.printConsole("\t ... LightPath : changed data - "+changes);
+				if(changes) changesDesc+="Filter Modul \n";
+				MonitorAndDebug.printConsole("\t ... Filter : changed data - "+changes);
 			}
 			if(initLightSrcUI && lightSrcViewer!=null){
 				changes=lightSrcViewer.hasDataToSave()||model.getChangesLightSrc()!=null;
@@ -1880,8 +1880,8 @@ public class MetaDataUI extends JPanel
 			if(initLightPathUI && lightPathViewer!=null){
 				changes=lightPathViewer.hasDataToSave()|| model.getChangesLightPath()!=null;
 				result=result || changes;
-				if(changes) changesDesc+="LightPath Modul \n";
-				MonitorAndDebug.printConsole("\t ... LightPath : changed data - "+changes);
+				if(changes) changesDesc+="Filter Modul \n";
+				MonitorAndDebug.printConsole("\t ... Filter : changed data - "+changes);
 			}
 			if(initLightSrcUI && lightSrcViewer!=null){
 				changes=lightSrcViewer.hasDataToSave()||model.getChangesLightSrc()!=null;
@@ -2018,7 +2018,7 @@ public class MetaDataUI extends JPanel
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}else{System.out.println("### LightPath nothing to save");}
+		}else{System.out.println("### Filter nothing to save");}
 		if(lightSrcViewer!=null && lightSrcViewer.hasDataToSave()){
 			List<TagData> list=lightSrcViewer.getChangedTags();
 			printList("LightSrc "+lightSrcViewer.getIndex(),list);
@@ -2057,7 +2057,7 @@ public class MetaDataUI extends JPanel
 	}
 	
 	public static void printLightPath(LightPath lp){
-		System.out.println("\t LightPath:");
+		System.out.println("\t Filter:");
 		for(Filter f: lp.copyLinkedExcitationFilterList()){
 			System.out.println("\t\t ExF: "+f.getModel());
 		}
@@ -2252,7 +2252,7 @@ public class MetaDataUI extends JPanel
 		}
 		if(lightPathViewer!=null){
 			result=result|| lightPathViewer.predefinitionValAreLoaded();
-			MonitorAndDebug.printConsole("-- LightPath : predata loaded - "+lightPathViewer.predefinitionValAreLoaded());
+			MonitorAndDebug.printConsole("-- Filter : predata loaded - "+lightPathViewer.predefinitionValAreLoaded());
 		}
 		if(sampleUI!=null){
 			result=result|| sampleUI.predefinitionValAreLoaded();

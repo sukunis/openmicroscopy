@@ -174,7 +174,7 @@ public class LightPathTable extends JTable
 	public Object getRowDataAsLightPathObject(int rowIndex) throws Exception {
 		String[] s=getRowData(rowIndex);
 		
-		System.out.println("editor: LightPath element: "+s[LightPathTableModel.MODEL_IDX]);
+		System.out.println("editor: Filter element: "+s[LightPathTableModel.MODEL_IDX]);
 		String type="Filter";
 		
 		if(s[0]!=null ){
