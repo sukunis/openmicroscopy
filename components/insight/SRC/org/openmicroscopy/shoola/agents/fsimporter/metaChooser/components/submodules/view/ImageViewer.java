@@ -560,6 +560,14 @@ For example in a video stream.
 		return map;
 }
 
+	public HashMap getMapValueOfExtendedData() {
+		String id="";
+		HashMap map = new HashMap<String, String>();
+		 map.put(id+TagNames.STAGELABEL,stagePos.getTagValue());
+		
+		return map;
+	}
+
 }
 
 

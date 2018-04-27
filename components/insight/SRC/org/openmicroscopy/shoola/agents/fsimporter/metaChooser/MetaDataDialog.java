@@ -1025,7 +1025,7 @@ private boolean disableTreeListener;
         	((DefaultListModel) seriesList.getModel()).removeAllElements();
         	
         	lastNode=node;
-        	
+        	node.printMaps();
         	MonitorAndDebug.printConsole("...# MetaDataDialog::deselectNodeAction("+node.getAbsolutePath()+")");
         }
 	}
@@ -1093,6 +1093,7 @@ private boolean disableTreeListener;
     		boolean saveToAll =false;
     		
     		if(node.getView()!=null){
+    			node.saveExtendedData();
     			if(node.getView().allDataWasStored() ){
     				MonitorAndDebug.printConsole("DATA FOR THIS VIEW STORED: TRUE");
     			}else if(node.getView().hasDataToSave()){

@@ -146,6 +146,16 @@ public class FNode extends DefaultMutableTreeNode
 			e.printStackTrace();
 		}
 		modelObj = view.getModelObject();
+		
+	}
+	public void saveExtendedData()
+	{
+		if(view==null)
+			return;
+		
+			view.saveExtendedMetaData();
+			
+		
 	}
 
 	/**

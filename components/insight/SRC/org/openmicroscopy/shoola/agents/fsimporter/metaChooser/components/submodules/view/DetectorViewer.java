@@ -653,6 +653,8 @@ public class DetectorViewer extends ModuleViewer{
 		else 
 			subarray.setTagValue(value,prop);
 	}
+	
+	
 
 	public String getGain()
 	{
@@ -837,6 +839,14 @@ public class DetectorViewer extends ModuleViewer{
 		if(inputAt(confocalZoom))map.put(id+TagNames.CONFZOOM,confocalZoom.getTagValue());
 		if(inputAt(binning))map.put(id+TagNames.BINNING,binning.getTagValue());
 		if(inputAt(subarray))map.put(id+TagNames.SUBARRAY,subarray.getTagValue());
+		
+		return map;
+	}
+	
+	public HashMap<String,String> getMapValueOfExtendedData(){
+		String id="";
+		HashMap map = new HashMap<String, String>();
+		 map.put(id+TagNames.SUBARRAY,subarray.getTagValue());
 		
 		return map;
 	}

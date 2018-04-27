@@ -2283,6 +2283,28 @@ public class MetaDataUI extends JPanel
 		return result;
 	}
 	
+	/**
+	 * Save extended metadata (all data that should be additional visible for CellNanOs Insight client, but not parsed
+	 * by the standard client.
+	 */
+	public void saveExtendedMetaData() 
+	{
+		if(imageUI!=null) {
+			HashMap map=imageUI.getMapValueOfExtendedData();
+			System.out.println("Image extended data: "+map.size());
+			if(map!= null && map.size()>0)
+				model.addToMapAnnotationImage(TagNames.STAGELABEL,
+						(String) map.get(TagNames.STAGELABEL));
+		}
+		if(detectorViewer!=null) {
+			HashMap map=detectorViewer.getMapValueOfExtendedData();
+			System.out.println("Detector extended data: "+map.size());
+			if(map!= null && map.size()>0)
+				model.addToMapAnnotationDetector(TagNames.SUBARRAY,
+						(String) map.get(TagNames.SUBARRAY), 0);
+		}
+	}
+	
 	public void savePreValues()
 	{
 		if(imageUI!=null && imageUI.predefinitionValAreLoaded()){
@@ -2340,6 +2362,8 @@ public class MetaDataUI extends JPanel
 			model.setMapAnnotationLightSrc(m.getMapAnnotationLightSrc(i), i, true);
 		}
 	}
+
+	
 	
 
 	

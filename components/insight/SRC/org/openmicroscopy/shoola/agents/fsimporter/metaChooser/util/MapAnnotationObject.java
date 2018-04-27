@@ -90,7 +90,9 @@ public class MapAnnotationObject {
 			return;
 		System.out.println("\t file : "+o.getFileName());
 		List<MapAnnotationData> list=o.getMapAnnotationList();
+		int index=0;
 		for(MapAnnotationData m:list){
+			System.out.println("Series_"+index++);
 			printMapAnnotation(m);
 		}
 	}

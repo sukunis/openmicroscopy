@@ -422,6 +422,18 @@ public class MetaDataView extends JPanel
 		}
 	}
 	
+	public void saveExtendedMetaData() {
+		if(seriesData){
+			int index=0;
+			for(Component comp : cardPane.getComponents()){
+				System.out.println("Series_"+index++);
+				((MetaDataUI) comp).saveExtendedMetaData();
+			}
+		}else{
+			singleView.saveExtendedMetaData();
+		}
+	}
+	
 	
 	private void savePreValues()
 	{
