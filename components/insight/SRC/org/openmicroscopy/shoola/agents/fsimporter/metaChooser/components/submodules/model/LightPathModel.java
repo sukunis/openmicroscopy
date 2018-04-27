@@ -199,6 +199,8 @@ public class LightPathModel
 		int index=0;
 		for(LightPath lp:changesLightPath)
 		{
+			if(maps.size()>=index)
+				maps.add(new HashMap<String,String>());
 			if(lp!=null && element.size()>index){
 				element.set(index, lp);
 			}
