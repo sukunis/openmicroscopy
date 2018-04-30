@@ -113,7 +113,7 @@ public abstract class ModuleViewer extends JPanel
 	
 	protected boolean inputAt(TagData tag)
 	{
-		if(tag != null && tag.valueHasChanged()){
+		if(tag != null && tag.isVisible() && tag.valueHasChanged()){
 			return true;
 		}
 		return false;
