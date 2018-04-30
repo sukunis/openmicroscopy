@@ -496,6 +496,8 @@ private boolean disableTreeListener;
         int indexMic=MicroscopeProperties.getMicIndex(microscope);
         if(indexMic!=-1){
         	mics.setSelectedIndex(indexMic); 
+        }else {
+        	mics.setSelectedIndex(0);
         }
         
         initFilterViewBar();

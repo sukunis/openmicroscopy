@@ -114,9 +114,10 @@ public abstract class MicroscopeProperties
 			return new OlympusTIRF4Line_SMT();
 		case TIRF4LINE_STORM:
 			return new OlympusTIRF4Line_STORM();
+		default:
+			return new StandardMic();
 		}	
 		
-		return null;
 	}
 	
 	protected void initCustomView(){
