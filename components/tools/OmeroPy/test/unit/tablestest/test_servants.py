@@ -22,6 +22,9 @@ from path import path
 
 logging.basicConfig(level=logging.DEBUG)
 
+# Don't retry since we expect errors
+omero.tables.RETRIES = 1
+
 
 class communicator_provider(object):
     def __init__(self, ic=None):
@@ -119,6 +122,10 @@ class mocked_config_service(object):
         return self.db_uuid
 
     def getConfigValue(self, str):
+        # Not testing read-only yet.
+        # Server sets these runtime properties at startup.
+        if str.startswith("omero.cluster.read_only.runtime."):
+            return "false"
         rv = self.return_values.pop(0)
         if isinstance(rv, omero.ServerError):
             raise rv

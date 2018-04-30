@@ -55,12 +55,12 @@ def parse_permissions_css(permissions, ownerid, conn):
     restrictions = ('canEdit',
                     'canAnnotate',
                     'canLink',
-                    'canDelete')
+                    'canDelete',
+                    'canChgrp',
+                    'canChown')
     permissionsCss = [r for r in restrictions if permissions.get(r)]
     if ownerid == conn.getUserId():
         permissionsCss.append("isOwned")
-    if ownerid == conn.getUserId() or conn.isAdmin():
-        permissionsCss.append("canChgrp")
     return ' '.join(permissionsCss)
 
 
@@ -1798,7 +1798,7 @@ def _marshal_exp_obj(experimenter):
 
 def marshal_annotations(conn, project_ids=None, dataset_ids=None,
                         image_ids=None, screen_ids=None, plate_ids=None,
-                        run_ids=None, well_ids=None, ann_type=None,
+                        run_ids=None, well_ids=None, ann_type=None, ns=None,
                         group_id=-1, page=1, limit=settings.PAGE):
 
     annotations = []
@@ -1832,6 +1832,8 @@ def marshal_annotations(conn, project_ids=None, dataset_ids=None,
         where_clause.append('ch.class!=CommentAnnotation')
         where_clause.append("""(ch.ns=null or
             ch.ns!='openmicroscopy.org/omero/insight/rating')""")
+    if ns is not None:
+        where_clause.append('ch.ns=:ns')
 
     dtypes = ["Project", "Dataset", "Image",
               "Screen", "Plate", "PlateAcquisition", "Well"]
@@ -1845,6 +1847,8 @@ def marshal_annotations(conn, project_ids=None, dataset_ids=None,
             continue
         params = init_params(group_id, page, limit)
         params.addIds(ids)
+        if ns is not None:
+            params.add('ns', wrap(ns))
         q = """
             select oal from %sAnnotationLink as oal
             join fetch oal.details.creationEvent

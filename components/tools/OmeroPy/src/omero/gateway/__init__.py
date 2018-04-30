@@ -116,11 +116,13 @@ def fileread(fin, fsize, bufsize):
     # Read it all in one go
     p = 0
     rv = ''
-    while p < fsize:
-        s = min(bufsize, fsize-p)
-        rv += fin.read(p, s)
-        p += s
-    fin.close()
+    try:
+        while p < fsize:
+            s = min(bufsize, fsize-p)
+            rv += fin.read(p, s)
+            p += s
+    finally:
+        fin.close()
     return rv
 
 
@@ -138,11 +140,13 @@ def fileread_gen(fin, fsize, bufsize):
     :return: generator of string buffers of size up to bufsize read from fin
     """
     p = 0
-    while p < fsize:
-        s = min(bufsize, fsize-p)
-        yield fin.read(p, s)
-        p += s
-    fin.close()
+    try:
+        while p < fsize:
+            s = min(bufsize, fsize-p)
+            yield fin.read(p, s)
+            p += s
+    finally:
+        fin.close()
 
 
 def getAnnotationLinkTableName(objecttype):
@@ -671,7 +675,14 @@ class BlitzObjectWrapper (object):
         group. Web client will only allow this for the data Owner. Admin CAN
         move other user's data, but we don't support this in Web yet.
         """
-        return self.isOwned() or self._conn.isAdmin()   # See #8974
+        return self.getDetails().getPermissions().canChgrp()
+
+    def canChown(self):
+        """
+        Specifies whether the current user can give this object to another
+        user. Web client does not yet support this.
+        """
+        return self.getDetails().getPermissions().canChown()
 
     def countChildren(self):
         """
@@ -1544,6 +1555,7 @@ class _BlitzGateway (object):
         self._user = None
         self._userid = None
         self._proxies = NoProxies()
+        self._tracked_services = dict()
         if self.c is None:
             self._resetOmeroClient()
         else:
@@ -1560,6 +1572,51 @@ class _BlitzGateway (object):
 
         # The properties we are setting through the interface
         self.setIdentity(username, passwd, not clone)
+
+    def _register_service(self, service_string, stack):
+        """
+        Register the results of traceback.extract_stack() at the time
+        that a service was created.
+        """
+        service_string = str(service_string)
+        self._tracked_services[service_string] = stack
+        logger.info("Registered %s" % service_string)
+
+    def _unregister_service(self, service_string):
+        """
+        Called on close of a service.
+        """
+        service_string = str(service_string)
+        if service_string in self._tracked_services:
+            del self._tracked_services[service_string]
+            logger.info("Unregistered %s" % service_string)
+        else:
+            logger.warn("Cannot find registered service %s" % service_string)
+
+    def _assert_unregistered(self, prefix="Service left open!"):
+        """
+        Log an ERROR for every stateful service that is open
+        and was registered by this BlitzGateway instance.
+
+        Return the number of unclosed services found.
+        """
+
+        try:
+            stateful_services = self.c.getStatefulServices()
+        except Exception, e:
+            logger.warn("No services could be found.", e)
+            stateful_services = []
+
+        count = 0
+        for s in stateful_services:
+            service_string = str(s)
+            stack_list = self._tracked_services.get(service_string, [])
+            if stack_list:
+                count += 1
+                stack_msg = "".join(traceback.format_list(stack_list))
+                logger.error("%s - %s\n%s" % (
+                    prefix, service_string, stack_msg))
+        return count
 
     def createServiceOptsDict(self):
         serviceOpts = ServiceOptsDict(self.c.getImplicitContext().getContext())
@@ -1850,26 +1907,29 @@ class _BlitzGateway (object):
         self._proxies = NoProxies()
         logger.info("closed connecion (uuid=%s)" % str(self._sessionUuid))
 
-    def close(self):  # pragma: no cover
+    def close(self, hard=True):  # pragma: no cover
         """
-        Terminates connection with killSession(). The session is terminated
-        regardless of its connection refcount.
+        Terminates connection with killSession(), where the session is
+        terminated regardless of its connection refcount, or closeSession().
+
+        :param hard: If True, use killSession(), otherwise closeSession()
         """
         self._connected = False
         oldC = self.c
+        for proxy in self._proxies.values():
+            proxy.close()
         if oldC is not None:
             try:
-                self._closeSession()
+                if hard:
+                    self._closeSession()
             finally:
                 oldC.__del__()
                 oldC = None
                 self.c = None
+                self._session = None
 
         self._proxies = NoProxies()
         logger.info("closed connecion (uuid=%s)" % str(self._sessionUuid))
-
-#    def __del__ (self):
-#        logger.debug("##GARBAGE COLLECTOR KICK IN")
 
     def _createProxies(self):
         """
@@ -2263,6 +2323,51 @@ class _BlitzGateway (object):
         group = admin_service.getGroup(self.getEventContext().groupId)
         return ExperimenterGroupWrapper(self, group)
 
+    def getCurrentAdminPrivileges(self):
+        """
+        Returns list of Admin Privileges for the current session.
+
+        :return:    List of strings such as ["ModifyUser", "ModifyGroup"]
+        """
+        privileges = self.getAdminService().getCurrentAdminPrivileges()
+        return [unwrap(p.getValue()) for p in privileges]
+
+    def getAdminPrivileges(self, user_id):
+        """
+        Returns list of Admin Privileges for the specified user.
+
+        :return:    List of strings such as ["ModifyUser", "ModifyGroup"]
+        """
+        privileges = self.getAdminService().getAdminPrivileges(
+            omero.model.ExperimenterI(user_id, False))
+        return [unwrap(p.getValue()) for p in privileges]
+
+    def updateAdminPrivileges(self, exp_id, add=[], remove=[]):
+        """
+        Update the experimenter's Admin Priviledges, adding and removing.
+
+        :param exp_id:  ID of experimenter to update
+        :param add:     List of strings
+        :param remove:  List of strings
+        """
+        admin = self.getAdminService()
+        exp = omero.model.ExperimenterI(exp_id, False)
+
+        privileges = set(self.getAdminPrivileges(exp_id))
+
+        # Add via union
+        privileges = privileges.union(set(add))
+        # Remove via difference
+        privileges = privileges.difference(set(remove))
+
+        to_set = []
+        for p in list(privileges):
+            privilege = omero.model.AdminPrivilegeI()
+            privilege.setValue(rstring(p))
+            to_set.append(privilege)
+
+        admin.setAdminPrivileges(exp, to_set)
+
     def isAdmin(self):
         """
         Checks if a user has administration privileges.
@@ -2271,6 +2376,19 @@ class _BlitzGateway (object):
         """
 
         return self.getEventContext().isAdmin
+
+    def isFullAdmin(self):
+        """
+        Checks if a user has full administration privileges.
+
+        :return:    Boolean
+        """
+
+        if self.getEventContext().isAdmin:
+            allPrivs = list(self.getEnumerationEntries('AdminPrivilege'))
+            return len(allPrivs) == len(self.getCurrentAdminPrivileges())
+
+        return False
 
     def isLeader(self, gid=None):
         """
@@ -3823,12 +3941,16 @@ class _BlitzGateway (object):
         :param fileSize:                The file size
         :param mimetype:                The mimetype of the file. String.
                                         E.g. 'text/plain'
-        :param ns:                      The file namespace
+        :param ns:                      Deprecated in 5.4.0. This is ignored
         :return:                        New :class:`OriginalFileWrapper`
         """
-        updateService = self.getUpdateService()
-        rawFileStore = self.createRawFileStore()
+        if ns is not None:
+            warnings.warn(
+                "Deprecated in 5.4.0. The ns parameter was added in error"
+                " and has always been ignored",
+                DeprecationWarning)
 
+        updateService = self.getUpdateService()
         # create original file, set name, path, mimetype
         originalFile = omero.model.OriginalFileI()
         originalFile.setName(rstring(name))
@@ -3853,6 +3975,7 @@ class _BlitzGateway (object):
 
         # upload file
         fo.seek(0)
+        rawFileStore = self.createRawFileStore()
         try:
             rawFileStore.setFileId(
                 originalFile.getId().getValue(), self.SERVICE_OPTS)
@@ -3886,19 +4009,21 @@ class _BlitzGateway (object):
                                         OriginalFile. If None, use localPath
         :param mimetype:                The mimetype of the file. String.
                                         E.g. 'text/plain'
-        :param ns:                      The namespace of the file.
+        :param ns:                      Deprecated in 5.4.0. This is ignored
         :return:                        New :class:`OriginalFileWrapper`
         """
+        if ns is not None:
+            warnings.warn(
+                "Deprecated in 5.4.0. The ns parameter was added in error"
+                " and has always been ignored",
+                DeprecationWarning)
         if origFilePathAndName is None:
             origFilePathAndName = localPath
         path, name = os.path.split(origFilePathAndName)
         fileSize = os.path.getsize(localPath)
-        fileHandle = open(localPath, 'rb')
-        try:
-            return self.createOriginalFileFromFileObj(
-                fileHandle, path, name, fileSize, mimetype, ns)
-        finally:
-            fileHandle.close()
+        with open(localPath, 'rb') as fileHandle:
+            return self.createOriginalFileFromFileObj(fileHandle, path, name,
+                                                      fileSize, mimetype)
 
     def createFileAnnfromLocalFile(self, localPath, origFilePathAndName=None,
                                    mimetype=None, ns=None, desc=None):
@@ -3923,7 +4048,7 @@ class _BlitzGateway (object):
 
         # create and upload original file
         originalFile = self.createOriginalFileFromLocalFile(
-            localPath, origFilePathAndName, mimetype, ns)
+            localPath, origFilePathAndName, mimetype)
 
         # create FileAnnotation, set ns & description and return wrapped obj
         fa = omero.model.FileAnnotationI()
@@ -4653,6 +4778,7 @@ class ProxyObjectWrapper (object):
 
         if self._obj and isinstance(
                 self._obj, omero.api.StatefulServiceInterfacePrx):
+            self._conn._unregister_service(str(self._obj))
             self._obj.close(*args, **kwargs)
         self._obj = None
 
@@ -4667,13 +4793,17 @@ class ProxyObjectWrapper (object):
         """
 
         self._conn = conn
-        self._sf = conn.c.sf
 
         def cf():
             if self._func_str is None:
-                return self._cast_to(self._sf.getByName(self._service_name))
+                return self._cast_to(
+                    self._conn.c.sf.getByName(self._service_name)
+                )
             else:
-                return getattr(self._sf, self._func_str)()
+                obj = getattr(self._conn.c.sf, self._func_str)()
+                if isinstance(obj, omero.api.StatefulServiceInterfacePrx):
+                    conn._register_service(str(obj), traceback.extract_stack())
+                return obj
         self._create_func = cf
         if self._obj is not None:
             try:
@@ -4714,7 +4844,7 @@ class ProxyObjectWrapper (object):
         """
 
         try:
-            if not self._sf.keepAlive(self._obj):
+            if not self._conn.c.sf.keepAlive(self._obj):
                 logger.debug("... died, recreating ...")
                 self._obj = self._create_func()
         except Ice.ObjectNotExistException:
@@ -5086,19 +5216,21 @@ class _OriginalFileWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
         """
 
         store = self._conn.createRawFileStore()
-        store.setFileId(self._obj.id.val, self._conn.SERVICE_OPTS)
-        size = self._obj.size.val
-        if size <= buf:
-            yield store.read(0, long(size))
-        else:
-            for pos in range(0, long(size), buf):
-                data = None
-                if size-pos < buf:
-                    data = store.read(pos, size-pos)
-                else:
-                    data = store.read(pos, buf)
-                yield data
-        store.close()
+        try:
+            store.setFileId(self._obj.id.val, self._conn.SERVICE_OPTS)
+            size = self._obj.size.val
+            if size <= buf:
+                yield store.read(0, long(size))
+            else:
+                for pos in range(0, long(size), buf):
+                    data = None
+                    if size-pos < buf:
+                        data = store.read(pos, size-pos)
+                    else:
+                        data = store.read(pos, buf)
+                    yield data
+        finally:
+            store.close()
 
 
 OriginalFileWrapper = _OriginalFileWrapper
@@ -7065,14 +7197,14 @@ class _PixelsWrapper (BlitzObjectWrapper):
                       PixelsTypeuint32: ['I', numpy.uint32],
                       PixelsTypefloat: ['f', numpy.float32],
                       PixelsTypedouble: ['d', numpy.float64]}
-
-        rawPixelsStore = self._prepareRawPixelsStore()
+        rawPixelsStore = None
         sizeX = self.sizeX
         sizeY = self.sizeY
         pixelType = self.getPixelsType().value
         numpyType = pixelTypes[pixelType][1]
         exc = None
         try:
+            rawPixelsStore = self._prepareRawPixelsStore()
             for zctTile in zctTileList:
                 z, c, t, tile = zctTile
                 if tile is None:
@@ -7098,7 +7230,8 @@ class _PixelsWrapper (BlitzObjectWrapper):
                 exc_info=True)
             exc = e
         try:
-            rawPixelsStore.close()
+            if rawPixelsStore is not None:
+                rawPixelsStore.close()
         except Exception, e:
             logger.error("Failed to close rawPixelsStore", exc_info=True)
             if exc is None:
@@ -7354,17 +7487,20 @@ class _ChannelWrapper (BlitzObjectWrapper):
         if si is None:
             logger.info("getStatsInfo() is null. See #9695")
             try:
-                minVals = {PixelsTypeint8: -128,
-                           PixelsTypeuint8: 0,
-                           PixelsTypeint16: -32768,
-                           PixelsTypeuint16: 0,
-                           PixelsTypeint32: -32768,
-                           PixelsTypeuint32: 0,
-                           PixelsTypefloat: -32768,
-                           PixelsTypedouble: -32768}
-                pixtype = self._obj.getPixels(
-                    ).getPixelsType().getValue().getValue()
-                return minVals[pixtype]
+                if self._re is not None:
+                    return self._re.getPixelsTypeLowerBound(0)
+                else:
+                    minVals = {PixelsTypeint8: -128,
+                               PixelsTypeuint8: 0,
+                               PixelsTypeint16: -32768,
+                               PixelsTypeuint16: 0,
+                               PixelsTypeint32: -2147483648,
+                               PixelsTypeuint32: 0,
+                               PixelsTypefloat: -2147483648,
+                               PixelsTypedouble: -2147483648}
+                    pixtype = self._obj.getPixels(
+                        ).getPixelsType().getValue().getValue()
+                    return minVals[pixtype]
             except:     # Just in case we don't support pixType above
                 return None
         return si.getGlobalMin().val
@@ -7380,22 +7516,30 @@ class _ChannelWrapper (BlitzObjectWrapper):
         if si is None:
             logger.info("getStatsInfo() is null. See #9695")
             try:
-                maxVals = {PixelsTypeint8: 127,
-                           PixelsTypeuint8: 255,
-                           PixelsTypeint16: 32767,
-                           PixelsTypeuint16: 65535,
-                           PixelsTypeint32: 32767,
-                           PixelsTypeuint32: 65535,
-                           PixelsTypefloat: 32767,
-                           PixelsTypedouble: 32767}
-                pixtype = self._obj.getPixels(
-                    ).getPixelsType().getValue().getValue()
-                return maxVals[pixtype]
+                if self._re is not None:
+                    return self._re.getPixelsTypeUpperBound(0)
+                else:
+                    maxVals = {PixelsTypeint8: 127,
+                               PixelsTypeuint8: 255,
+                               PixelsTypeint16: 32767,
+                               PixelsTypeuint16: 65535,
+                               PixelsTypeint32: 2147483647,
+                               PixelsTypeuint32: 4294967295,
+                               PixelsTypefloat: 2147483647,
+                               PixelsTypedouble: 2147483647}
+                    pixtype = self._obj.getPixels(
+                        ).getPixelsType().getValue().getValue()
+                    return maxVals[pixtype]
             except:     # Just in case we don't support pixType above
                 return None
         return si.getGlobalMax().val
 
     def isReverseIntensity(self):
+        """Deprecated in 5.4.0. Use isInverted()."""
+        warnings.warn("Deprecated. Use isInverted()", DeprecationWarning)
+        return self.isInverted()
+
+    def isInverted(self):
         """
         Returns True if this channel has ReverseIntensityContext
         set on it.
@@ -7411,6 +7555,34 @@ class _ChannelWrapper (BlitzObjectWrapper):
             if isinstance(c, omero.model.ReverseIntensityContext):
                 reverse = True
         return reverse
+
+    def getFamily(self):
+        """
+        Returns the channel family
+
+        :return:    the channel family
+        :rtype:     String
+        """
+        if self._re is None:
+            return None
+
+        f = self._re.getChannelFamily(self._idx)
+        if f is None:
+            return f
+
+        return f.getValue()
+
+    def getCoefficient(self):
+        """
+        Returns the channel coefficient
+
+        :return:    the channel coefficient
+        :rtype:     float
+        """
+        if self._re is None:
+            return None
+
+        return self._re.getChannelCurveCoefficient(self._idx)
 
 ChannelWrapper = _ChannelWrapper
 
@@ -7487,6 +7659,7 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
     _re = None
     _pd = None
     _rm = {}
+    _qf = {}
     _pixels = None
     _archivedFileCount = None
     _filesetFileCount = None
@@ -7582,9 +7755,6 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
     CHILD_WRAPPER_CLASS = None
     PARENT_WRAPPER_CLASS = ['DatasetWrapper', 'WellSampleWrapper']
     _thumbInProgress = False
-
-    def __del__(self):
-        self._re and self._re.untaint()
 
     def __loadedHotSwap__(self):
         ctx = self._conn.SERVICE_OPTS.copy()
@@ -7728,7 +7898,7 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
                 self._re = self._prepareRE(rdid=rdid)
             except omero.ValidationException:
                 logger.debug('on _prepareRE()', exc_info=True)
-                self._re = None
+                self._closeRE()
         return self._re is not None
 
     def resetRDefs(self):
@@ -8148,13 +8318,13 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
             args += [ctx]
             rv = thumb(*args)
             self._thumbInProgress = tb.isInProgress()
-            tb.close()      # close every time to prevent stale state
             return rv
         except Exception:  # pragma: no cover
             logger.error(traceback.format_exc())
+            return None
+        finally:
             if tb is not None:
                 tb.close()
-            return None
 
     @assert_pixels
     def getPixelRange(self):
@@ -8174,16 +8344,6 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
                 return (-(pmax / 2), pmax / 2 - 1)
             else:
                 return (0, pmax-1)
-        finally:
-            rp.close()
-
-    @assert_pixels
-    def requiresPixelsPyramid(self):
-        pixels_id = self._obj.getPrimaryPixels().getId().val
-        rp = self._conn.createRawPixelsStore()
-        try:
-            rp.setPixelsId(pixels_id, True, self._conn.SERVICE_OPTS)
-            return rp.requiresPixelsPyramid()
         finally:
             rp.close()
 
@@ -8307,8 +8467,9 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
             rv[i] = float(level)/sizeXList[0]
         return rv
 
-    def setActiveChannels(self, channels, windows=None, colors=None,
-                          reverseMaps=None):
+    @assert_re()
+    def set_active_channels(self, channels, windows=None, colors=None,
+                            invertMaps=None, reverseMaps=None, noRE=False):
         """
         Sets the active channels on the rendering engine.
         Also sets rendering windows and channel colors
@@ -8332,17 +8493,27 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
                             Must be list for each channel
         :param colors:      List of colors. ['F00', None, '00FF00'].
                             Must be item for each channel
-        :param reverseMaps: List of boolean (or None). If True/False then
+        :param invertMaps:  List of boolean (or None). If True/False then
                             set/remove reverseIntensityMap on channel
+        :param noRE:        If True Channels will not have rendering engine
+                            enabled. In this case, calling channel.getColor()
+                            or getWindowStart() etc. will return None.
         """
+        if reverseMaps is not None:
+            warnings.warn(
+                "setActiveChannels() reverseMaps parameter"
+                "deprecated in OMERO 5.4.0. Use invertMaps",
+                DeprecationWarning)
+            if invertMaps is None:
+                invertMaps = reverseMaps
         abs_channels = [abs(c) for c in channels]
         idx = 0     # index of windows/colors args above
-        for c in range(len(self.getChannels())):
+        for c in range(len(self.getChannels(noRE=noRE))):
             self._re.setActive(c, (c+1) in channels, self._conn.SERVICE_OPTS)
             if (c+1) in channels:
-                if (reverseMaps is not None and
-                        reverseMaps[idx] is not None):
-                    self.setReverseIntensity(c, reverseMaps[idx])
+                if (invertMaps is not None and
+                        invertMaps[idx] is not None):
+                    self.setReverseIntensity(c, invertMaps[idx])
                 if (windows is not None and
                         windows[idx][0] is not None and
                         windows[idx][1] is not None):
@@ -8362,6 +8533,14 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
             if (c+1 in abs_channels):
                 idx += 1
         return True
+
+    @assert_re()
+    def setActiveChannels(self, channels, windows=None, colors=None,
+                          invertMaps=None, reverseMaps=None):
+        warnings.warn("setActiveChannels() is deprecated in OMERO 5.4.0."
+                      "Use set_active_channels", DeprecationWarning)
+        return self.set_active_channels(channels, windows, colors,
+                                        invertMaps, reverseMaps, False)
 
     def getProjections(self):
         """
@@ -8622,21 +8801,90 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
 
     @assert_re()
     def setReverseIntensity(self, channelIndex, reverse=True):
+        """Deprecated in 5.4.0. Use setChannelInverted()."""
+        warnings.warn("Deprecated in 5.4.0. Use setChannelInverted()",
+                      DeprecationWarning)
+        self.setChannelInverted(channelIndex, reverse)
+
+    @assert_re()
+    def setChannelInverted(self, channelIndex, inverted=True):
         """
         Sets or removes a ReverseIntensityMapContext from the
         specified channel. If set, the intensity of the channel
-        is mapped in reverse: brightest -> darkest.
+        is inverted: brightest -> darkest.
 
         :param channelIndex:    The index of channel (int)
-        :param reverse:         If True, set reverse intensity (boolean)
+        :param inverted:        If True, set inverted (boolean)
         """
         r = omero.romio.ReverseIntensityMapContext()
         # Always remove map from channel
         # (doesn't throw exception, even if not on channel)
         self._re.removeCodomainMapFromChannel(r, channelIndex)
-        # If we want to reverse, add it to the channel (again)
-        if reverse:
+        # If we want to invert, add it to the channel (again)
+        if inverted:
             self._re.addCodomainMapToChannel(r, channelIndex)
+
+    @assert_re()
+    def getFamilies(self):
+        """
+        Gets a dict of available families.
+
+        :return:    Families
+        :rtype:     Dict
+        """
+        if not len(self._qf):
+            for f in [BlitzObjectWrapper(self._conn, f)
+                      for f in self._re.getAvailableFamilies()]:
+                self._qf[f.value.lower()] = f
+        return self._qf
+
+    @assert_re()
+    def setQuantizationMap(self, channelIndex, family, coefficient):
+        """
+        Sets the quantization strategy to the given family
+        and coefficient
+
+        :param channelIndex:    The index of channel (int)
+        :param family:          The family (string)
+        :param coefficient:     The coefficient (float)
+        """
+        if channelIndex < 0 or channelIndex >= self.getSizeC():
+            return
+
+        families = self.getFamilies()
+        f = families.get("linear")
+        try:
+            f = families.get(family.lower(), f)
+        except:
+            pass
+
+        c = 1.0
+        try:
+            c = float(coefficient)
+            if c < 0 or c > 1.0:
+                c = 1.0
+        except:
+            pass
+
+        self._re.setQuantizationMap(channelIndex, f._obj, c, False)
+
+    @assert_re()
+    def setQuantizationMaps(self, maps):
+        """
+        Sets the quantization strategy using the given list
+        of mapping information (for each entry, i.e. channel)
+        e.g. [{'family': 'linear', coefficient: 1.0}]
+
+        :param maps:     list of quantization settings
+        """
+        if not isinstance(maps, list):
+            return
+
+        for i, m in enumerate(maps):
+            if isinstance(m, dict):
+                family = m.get('family', None)
+                coefficient = m.get('coefficient', 1.0)
+                self.setQuantizationMap(i, family, coefficient)
 
     @assert_re(ignoreExceptions=(omero.ConcurrencyException))
     def getRenderingDefId(self):
@@ -8693,7 +8941,11 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
                     'start': w.getInputStart().val,
                     'end': w.getInputEnd().val,
                     'color': color.getHtml(),
+                    # 'reverseIntensity' is deprecated. Use 'inverted'
+                    'inverted': reverse,
                     'reverseIntensity': reverse,
+                    'family': unwrap(w.getFamily().getValue()),
+                    'coefficient': unwrap(w.getCoefficient()),
                     'rgb': {'red': w.getRed().val,
                             'green': w.getGreen().val,
                             'blue': w.getBlue().val}
@@ -8716,43 +8968,47 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
         """
         # Prepare the rendering engine parameters on the ImageWrapper.
         re = self._prepareRE()
-        z = re.getDefaultZ()
-        t = re.getDefaultT()
-        x = 0
-        y = 0
-        size_x = self.getSizeX()
-        size_y = self.getSizeY()
-        tile_width, tile_height = re.getTileSize()
-        tiles_wide = math.ceil(float(size_x) / tile_width)
-        tiles_high = math.ceil(float(size_y) / tile_height)
-        # Since the JPEG 2000 algorithm is iterative and rounds pixel counts
-        # at each resolution level we're doing the resulting tile size
-        # calculations in a loop. Also, since the image is physically tiled
-        # the resulting size is a multiple of the tile size and not the
-        # iterative quotient of a 2**(resolutionLevels - 1).
-        for i in range(1, re.getResolutionLevels()):
-            tile_width = round(tile_width / 2.0)
-            tile_height = round(tile_height / 2.0)
-        width = int(tiles_wide * tile_width)
-        height = int(tiles_high * tile_height)
-        jpeg_data = self.renderJpegRegion(z, t, x, y, width, height, level=0)
-        if size is None:
-            return jpeg_data
-        # We've been asked to scale the image by its longest side so we'll
-        # perform that operation until the server has the capability of
-        # doing so.
-        ratio = float(size) / max(width, height)
-        if width > height:
-            size = (int(size), int(height * ratio))
-        else:
-            size = (int(width * ratio), int(size))
-        jpeg_data = Image.open(StringIO(jpeg_data))
-        jpeg_data.thumbnail(size, Image.ANTIALIAS)
-        ImageDraw.Draw(jpeg_data)
-        f = StringIO()
-        jpeg_data.save(f, "JPEG")
-        f.seek(0)
-        return f.read()
+        try:
+            z = re.getDefaultZ()
+            t = re.getDefaultT()
+            x = 0
+            y = 0
+            size_x = self.getSizeX()
+            size_y = self.getSizeY()
+            tile_width, tile_height = re.getTileSize()
+            tiles_wide = math.ceil(float(size_x) / tile_width)
+            tiles_high = math.ceil(float(size_y) / tile_height)
+            # Since the JPEG 2000 algorithm is iterative and rounds pixel
+            # counts at each resolution level we're doing the resulting tile
+            # size calculations in a loop. Also, since the image is physically
+            # tiled the resulting size is a multiple of the tile size and not
+            # the iterative quotient of a 2**(resolutionLevels - 1).
+            for i in range(1, re.getResolutionLevels()):
+                tile_width = round(tile_width / 2.0)
+                tile_height = round(tile_height / 2.0)
+            width = int(tiles_wide * tile_width)
+            height = int(tiles_high * tile_height)
+            jpeg_data = self.renderJpegRegion(
+                z, t, x, y, width, height, level=0)
+            if size is None:
+                return jpeg_data
+            # We've been asked to scale the image by its longest side so we'll
+            # perform that operation until the server has the capability of
+            # doing so.
+            ratio = float(size) / max(width, height)
+            if width > height:
+                size = (int(size), int(height * ratio))
+            else:
+                size = (int(width * ratio), int(size))
+            jpeg_data = Image.open(StringIO(jpeg_data))
+            jpeg_data.thumbnail(size, Image.ANTIALIAS)
+            ImageDraw.Draw(jpeg_data)
+            f = StringIO()
+            jpeg_data.save(f, "JPEG")
+            f.seek(0)
+            return f.read()
+        finally:
+            re.close()
 
     @assert_re()
     def renderJpegRegion(self, z, t, x, y, width, height, level=None,
@@ -8789,21 +9045,30 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
                 except omero.SecurityViolation:  # pragma: no cover
                     self._obj.clearPixels()
                     self._obj.pixelsLoaded = False
-                    self._re = None
+                    self._closeRE()
                     return self.renderJpeg(z, t, None)
             rv = self._re.renderCompressed(self._pd, self._conn.SERVICE_OPTS)
             return rv
-        except omero.InternalException:  # pragma: no cover
-            logger.debug('On renderJpegRegion')
-            logger.debug(traceback.format_exc())
+        except (omero.ApiUsageException, omero.InternalException):
+            logger.debug('On renderJpegRegion', exc_info=True)
             return None
         except Ice.MemoryLimitException:  # pragma: no cover
-            # Make sure renderCompressed isn't called again on this re, as it
-            # hangs
+            # Make sure renderCompressed isn't called again on this re,
+            # as it hangs
             self._obj.clearPixels()
             self._obj.pixelsLoaded = False
-            self._re = None
+            self._closeRE()
             raise
+
+    def _closeRE(self):
+        try:
+            if self._re is not None:
+                self._re.close()
+        except Exception, e:
+            logger.warn("Failed to close " + self._re)
+            logger.debug(e)
+        finally:
+            self._re = None  # This should be the ONLY location to null _re!
 
     @assert_re()
     def renderJpeg(self, z=None, t=None, compression=0.9):
@@ -8832,7 +9097,7 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
                 except omero.SecurityViolation:  # pragma: no cover
                     self._obj.clearPixels()
                     self._obj.pixelsLoaded = False
-                    self._re = None
+                    self._closeRE()
                     return self.renderJpeg(z, t, None)
             projection = self.PROJECTIONS.get(self._pr, -1)
             if not isinstance(
@@ -8858,7 +9123,7 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
             # hangs
             self._obj.clearPixels()
             self._obj.pixelsLoaded = False
-            self._re = None
+            self._closeRE()
             raise
 
     def exportOmeTiff(self, bufsize=0):
@@ -8874,6 +9139,7 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
         :rtype:         String or (size, data generator)
         """
 
+        # the exporter is closed in the fileread* methods
         e = self._conn.createExporter()
         e.addImage(self.getId())
         size = e.generateTiff(self._conn.SERVICE_OPTS)
@@ -9502,6 +9768,11 @@ class _ImageWrapper (BlitzObjectWrapper, OmeroRestrictionWrapper):
         """
 
         return self._obj.getPrimaryPixels().getSizeC().val
+
+    def requiresPixelsPyramid(self):
+        """Returns True if Image Plane is over the max plane size."""
+        max_sizes = self._conn.getMaxPlaneSize()
+        return self.getSizeX() * self.getSizeY() > max_sizes[0] * max_sizes[1]
 
     def clearDefaults(self):
         """

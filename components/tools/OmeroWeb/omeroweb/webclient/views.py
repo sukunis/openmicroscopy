@@ -54,7 +54,6 @@ from django.template import RequestContext as Context
 from django.utils.http import urlencode
 from django.core.urlresolvers import reverse
 from django.utils.encoding import smart_str
-from django.core.servers.basehttp import FileWrapper
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
@@ -118,6 +117,11 @@ def get_long_or_default(request, name, default):
     if val_raw is not None:
         val = long(val_raw)
     return val
+
+
+def get_list(request, name):
+    val = request.GET.getlist(name)
+    return [i for i in val if i != '']
 
 
 def get_longs(request, name):
@@ -195,6 +199,7 @@ class WebclientLoginView(LoginView):
         # webclient has various state that needs cleaning up...
         # if 'active_group' remains in session from previous
         # login, check it's valid for this user
+        # NB: we do this for public users in @login_required.get_connection()
         if request.session.get('active_group'):
             if (request.session.get('active_group') not in
                     conn.getEventContext().memberOfGroups):
@@ -238,13 +243,20 @@ class WebclientLoginView(LoginView):
             'version': omero_version,
             'build_year': build_year,
             'error': error,
-            'form': form}
+            'form': form
+        }
         url = request.GET.get("url")
         if url is not None and len(url) != 0:
             context['url'] = urlencode({'url': url})
 
         if hasattr(settings, 'LOGIN_LOGO'):
             context['LOGIN_LOGO'] = settings.LOGIN_LOGO
+
+        if settings.PUBLIC_ENABLED:
+            redirect = reverse('webindex')
+            if settings.PUBLIC_URL_FILTER.search(redirect):
+                context['public_enabled'] = True
+                context['public_login_redirect'] = redirect
 
         t = template_loader.get_template(self.template)
         c = Context(request, context)
@@ -320,7 +332,7 @@ def logout(request, conn=None, **kwargs):
                 logger.error('Exception during logout.', exc_info=True)
         finally:
             request.session.flush()
-        return HttpResponseRedirect(reverse("webindex"))
+        return HttpResponseRedirect(reverse("weblogin"))
     else:
         context = {
             'url': reverse('weblogout'),
@@ -366,13 +378,22 @@ def _load_template(request, menu, conn=None, url=None, **kwargs):
     # Actual api_paths_to_object() is retrieved by jsTree once loaded
     initially_open_owner = show.initially_open_owner
 
+    # If we failed to find 'show'...
+    if request.GET.get('show', None) is not None and first_sel is None:
+        # and we're logged in as PUBLIC user...
+        if settings.PUBLIC_USER == conn.getUser().getOmeName():
+            # this is likely a regular user who needs to log in as themselves.
+            # Login then redirect to current url
+            return HttpResponseRedirect(
+                "%s?url=%s" % (reverse("weblogin"), url))
+
     # need to be sure that tree will be correct omero.group
     if first_sel is not None:
         switch_active_group(request, first_sel.details.group.id.val)
 
     # search support
     init = {}
-    global_search_form = GlobalSearchForm(data=request.POST.copy())
+    global_search_form = GlobalSearchForm(data=request.GET.copy())
     if menu == "search":
         if global_search_form.is_valid():
             init['query'] = global_search_form.cleaned_data['search_query']
@@ -889,6 +910,10 @@ def api_links(request, conn=None, **kwargs):
     We delegate depending on request method to
     create or delete links between objects.
     """
+    if request.method not in ['POST', 'DELETE']:
+        return JsonResponse(
+            {'Error': 'Need to POST or DELETE JSON data to update links'},
+            status=405)
     # Handle link creation/deletion
     json_data = json.loads(request.body)
 
@@ -1148,17 +1173,18 @@ def api_tags_and_tagged_list_DELETE(request, conn=None, **kwargs):
 def api_annotations(request, conn=None, **kwargs):
 
     r = request.GET
-    image_ids = r.getlist('image')
-    dataset_ids = r.getlist('dataset')
-    project_ids = r.getlist('project')
-    screen_ids = r.getlist('screen')
-    plate_ids = r.getlist('plate')
-    run_ids = r.getlist('acquisition')
-    well_ids = r.getlist('well')
+    image_ids = get_list(request, 'image')
+    dataset_ids = get_list(request, 'dataset')
+    project_ids = get_list(request, 'project')
+    screen_ids = get_list(request, 'screen')
+    plate_ids = get_list(request, 'plate')
+    run_ids = get_list(request, 'acquisition')
+    well_ids = get_list(request, 'well')
     page = get_long_or_default(request, 'page', 1)
     limit = get_long_or_default(request, 'limit', settings.PAGE)
 
     ann_type = r.get('type', None)
+    ns = r.get('ns', None)
 
     anns, exps = tree.marshal_annotations(conn, project_ids=project_ids,
                                           dataset_ids=dataset_ids,
@@ -1168,6 +1194,7 @@ def api_annotations(request, conn=None, **kwargs):
                                           run_ids=run_ids,
                                           well_ids=well_ids,
                                           ann_type=ann_type,
+                                          ns=ns,
                                           page=page,
                                           limit=limit)
 
@@ -1315,7 +1342,8 @@ def load_chgrp_groups(request, conn=None, **kwargs):
     targetGroupIds = set.intersection(*groupSets)
     # ...but not 'user' group
     userGroupId = conn.getAdminService().getSecurityRoles().userGroupId
-    targetGroupIds.remove(userGroupId)
+    if userGroupId in targetGroupIds:
+        targetGroupIds.remove(userGroupId)
 
     # if all the Objects are in a single group, exclude it from the target
     # groups
@@ -1374,9 +1402,12 @@ def load_searching(request, form=None, conn=None, **kwargs):
 
     foundById = []
     # form = 'form' if we are searching. Get query from request...
-    r = request.GET or request.POST
+    r = request.GET
     if form is not None:
-        query_search = r.get('query').replace("+", " ")
+        query_search = r.get('query', None)
+        if query_search is None:
+            return HttpResponse("No search '?query' included")
+        query_search = query_search.replace("+", " ")
         template = "webclient/search/search_details.html"
 
         onlyTypes = r.getlist("datatype")
@@ -1572,8 +1603,8 @@ def load_metadata_preview(request, c_type, c_id, conn=None, share_id=None,
             if c['active']:
                 act = ""
             color = c['lut'] if 'lut' in c else c['color']
-            reverse = 'r' if c['reverseIntensity'] else '-r'
-            chs.append('%s%s|%d:%d%s$%s'
+            reverse = 'r' if c['inverted'] else '-r'
+            chs.append('%s%s|%s:%s%s$%s'
                        % (act, i+1, c['start'], c['end'], reverse, color))
         rdefQueries.append({
             'id': r['id'],
@@ -2543,67 +2574,45 @@ def manage_action_containers(request, action, o_type=None, o_id=None,
         # Used within the jsTree to add a new Project, Dataset, Tag,
         # Tagset etc under a specified parent OR top-level
         if not request.method == 'POST':
-            return HttpResponseRedirect(reverse("manage_action_containers",
-                                        args=["edit", o_type, o_id]))
-        if o_type == "project" and hasattr(manager, o_type) and o_id > 0:
-            # If Parent o_type is 'project'...
-            form = ContainerForm(data=request.POST.copy())
-            if form.is_valid():
-                logger.debug(
-                    "Create new in %s: %s" % (o_type, str(form.cleaned_data)))
-                name = form.cleaned_data['name']
-                description = form.cleaned_data['description']
-                oid = manager.createDataset(name, description)
-                rdict = {'bad': 'false', 'id': oid}
-                return JsonResponse(rdict)
-            else:
-                d = dict()
-                for e in form.errors.iteritems():
-                    d.update({e[0]: unicode(e[1])})
-                rdict = {'bad': 'true', 'errs': d}
-                return JsonResponse(rdict)
-        elif o_type == "tagset" and o_id > 0:
-            form = ContainerForm(data=request.POST.copy())
-            if form.is_valid():
-                name = form.cleaned_data['name']
-                description = form.cleaned_data['description']
-                oid = manager.createTag(name, description)
-                rdict = {'bad': 'false', 'id': oid}
-                return JsonResponse(rdict)
-            else:
-                d = dict()
-                for e in form.errors.iteritems():
-                    d.update({e[0]: unicode(e[1])})
-                rdict = {'bad': 'true', 'errs': d}
-                return JsonResponse(rdict)
-        elif request.POST.get('folder_type') in ("project", "screen",
-                                                 "dataset", "tag", "tagset"):
-            # No parent specified. We can create orphaned 'project', 'dataset'
-            # etc.
-            form = ContainerForm(data=request.POST.copy())
-            if form.is_valid():
-                logger.debug("Create new: %s" % (str(form.cleaned_data)))
-                name = form.cleaned_data['name']
-                description = form.cleaned_data['description']
+            return JsonResponse({"Error": "Must use POST to create container"},
+                                status=405)
+
+        form = ContainerForm(data=request.POST.copy())
+        if form.is_valid():
+            logger.debug(
+                "Create new in %s: %s" % (o_type, str(form.cleaned_data)))
+            name = form.cleaned_data['name']
+            description = form.cleaned_data['description']
+            owner = form.cleaned_data['owner']
+
+            if o_type == "project" and hasattr(manager, o_type) and o_id > 0:
+                oid = manager.createDataset(name, description, owner=owner)
+            elif o_type == "tagset" and o_id > 0:
+                oid = manager.createTag(name, description, owner=owner)
+            elif request.POST.get('folder_type') in ("project", "screen",
+                                                     "dataset",
+                                                     "tag", "tagset"):
+                # No parent specified. We can create orphaned 'project',
+                # 'dataset' etc.
                 folder_type = request.POST.get('folder_type')
                 if folder_type == "dataset":
                     oid = manager.createDataset(
                         name, description,
+                        owner=owner,
                         img_ids=request.POST.getlist('image', None))
                 else:
-                    # lookup method, E.g. createTag, createProject etc.
-                    oid = getattr(manager, "create" +
-                                  folder_type.capitalize())(name, description)
-                rdict = {'bad': 'false', 'id': oid}
-                return JsonResponse(rdict)
+                    oid = conn.createContainer(folder_type, name,
+                                               description, owner=owner)
             else:
-                d = dict()
-                for e in form.errors.iteritems():
-                    d.update({e[0]: unicode(e[1])})
-                rdict = {'bad': 'true', 'errs': d}
-                return JsonResponse(rdict)
+                return HttpResponseServerError("Object does not exist")
+            rdict = {'bad': 'false', 'id': oid}
+            return JsonResponse(rdict)
         else:
-            return HttpResponseServerError("Object does not exist")
+            d = dict()
+            for e in form.errors.iteritems():
+                d.update({e[0]: unicode(e[1])})
+            rdict = {'bad': 'true', 'errs': d}
+            return JsonResponse(rdict)
     elif action == 'add':
         template = "webclient/public/share_form.html"
         experimenters = list(conn.getExperimenters())
@@ -2611,6 +2620,8 @@ def manage_action_containers(request, action, o_type=None, o_id=None,
         if o_type == "share":
             img_ids = request.GET.getlist('image',
                                           request.POST.getlist('image'))
+            if request.method == 'GET' and len(img_ids) == 0:
+                return HttpResponse("No images specified")
             images_to_share = list(conn.getObjects("Image", img_ids))
             if request.method == 'POST':
                 form = BasketShareForm(
@@ -2642,7 +2653,7 @@ def manage_action_containers(request, action, o_type=None, o_id=None,
         context = {'manager': manager, 'form': form}
 
     elif action == 'edit':
-        # form for editing an Object. E.g. Project etc. TODO: not used now?
+        # form for editing Shares only
         if o_type == "share" and o_id > 0:
             template = "webclient/public/share_form.html"
             manager.getMembers(o_id)
@@ -2659,12 +2670,6 @@ def manage_action_containers(request, action, o_type=None, o_id=None,
                 initial['expiration'] = \
                     manager.share.getExpireDate().strftime("%Y-%m-%d")
             form = ShareForm(initial=initial)  # 'guests':share.guestsInShare,
-            context = {'manager': manager, 'form': form}
-        elif hasattr(manager, o_type) and o_id > 0:
-            obj = getattr(manager, o_type)
-            template = "webclient/data/container_form.html"
-            form = ContainerForm(
-                initial={'name': obj.name, 'description': obj.description})
             context = {'manager': manager, 'form': form}
     elif action == 'save':
         # Handles submission of the 'edit' form above. TODO: not used now?
@@ -2890,98 +2895,6 @@ def get_original_file(request, fileId, download=False, conn=None, **kwargs):
     return rsp
 
 
-@login_required()
-def image_as_map(request, imageId, conn=None, **kwargs):
-    """
-    Converts OMERO image into mrc.map file (using tiltpicker utils) and
-    returns the file
-    """
-    warnings.warn(
-        "This module is deprecated as of OMERO 5.3.0", DeprecationWarning)
-
-    from omero_ext.tiltpicker.pyami import mrc
-    from numpy import dstack, zeros, int8
-
-    image = conn.getObject("Image", imageId)
-    if image is None:
-        message = "Image ID %s not found in image_as_map" % imageId
-        logger.error(message)
-        return handlerInternalError(request, message)
-
-    imageName = image.getName()
-    downloadName = (imageName.endswith(".map") and imageName or
-                    "%s.map" % imageName)
-    pixels = image.getPrimaryPixels()
-
-    # get a list of numpy planes and make stack
-    zctList = [(z, 0, 0) for z in range(image.getSizeZ())]
-    npList = list(pixels.getPlanes(zctList))
-    npStack = dstack(npList)
-    logger.info(
-        "Numpy stack for image_as_map: dtype: %s, range %s-%s"
-        % (npStack.dtype.name, npStack.min(), npStack.max()))
-
-    # OAV only supports 'float' and 'int8'. Convert anything else to int8
-    if (pixels.getPixelsType().value != 'float' or
-            ('8bit' in kwargs and kwargs['8bit'])):
-        # scale from -127 -> 128 and conver to 8 bit integer
-        npStack = npStack - npStack.min()  # start at 0
-        # range - 127 -> 128
-        npStack = (npStack * 255.0 / npStack.max()) - 127
-        a = zeros(npStack.shape, dtype=int8)
-        npStack = npStack.round(out=a)
-
-    if "maxSize" in kwargs and int(kwargs["maxSize"]) > 0:
-        sz = int(kwargs["maxSize"])
-        targetSize = sz * sz * sz
-        # if available, use scipy.ndimage to resize
-        if npStack.size > targetSize:
-            try:
-                import scipy.ndimage
-                from numpy import round
-                factor = float(targetSize) / npStack.size
-                factor = pow(factor, 1.0/3)
-                logger.info(
-                    "Resizing numpy stack %s by factor of %s"
-                    % (npStack.shape, factor))
-                npStack = round(
-                    scipy.ndimage.interpolation.zoom(npStack, factor), 1)
-            except ImportError:
-                logger.info(
-                    "Failed to import scipy.ndimage for interpolation of"
-                    " 'image_as_map'. Full size: %s" % str(npStack.shape))
-                pass
-
-    header = {}
-    # Sometimes causes scaling issues in OAV.
-    # header["xlen"] = pixels.physicalSizeX * image.getSizeX()
-    # header["ylen"] = pixels.physicalSizeY * image.getSizeY()
-    # header["zlen"] = pixels.physicalSizeZ * image.getSizeZ()
-    # if header["xlen"] == 0 or header["ylen"] == 0 or header["zlen"] == 0:
-    #     header = {}
-
-    # write mrc.map to temp file
-    import tempfile
-    temp = tempfile.NamedTemporaryFile(suffix='.map')
-    try:
-        mrc.write(npStack, temp.name, header)
-        logger.debug(
-            "download file: %r" % {'name': temp.name, 'size': temp.tell()})
-        originalFile_data = FileWrapper(temp)
-        rsp = HttpResponse(originalFile_data)
-        rsp['Content-Type'] = 'application/force-download'
-        # rsp['Content-Length'] = temp.tell()
-        rsp['Content-Length'] = os.path.getsize(temp.name)
-        rsp['Content-Disposition'] = 'attachment; filename=%s' % downloadName
-        temp.seek(0)
-    except Exception:
-        temp.close()
-        logger.error(traceback.format_exc())
-        return handlerInternalError(
-            request, "Cannot generate map (id:%s)." % (imageId))
-    return rsp
-
-
 @login_required(doConnectionCleanup=False)
 def download_annotation(request, annId, conn=None, **kwargs):
     """ Returns the file annotation as an http response for download """
@@ -3144,6 +3057,9 @@ def load_calendar(request, year=None, month=None, conn=None, **kwargs):
 def load_history(request, year, month, day, conn=None, **kwargs):
     """ The data for a particular date that is loaded into the center panel """
 
+    if year is None or month is None or day is None:
+        raise Http404('Year, month, and day are required')
+
     template = "webclient/history/history_details.html"
 
     # get page
@@ -3211,17 +3127,22 @@ def activities(request, conn=None, **kwargs):
     new_results = []
     _purgeCallback(request)
 
-    # If we have a jobId, just process that (Only chgrp supported)
+    # If we have a jobId (not added to request.session) just process it...
+    # ONLY used for chgrp dry-run in Chgrp dialog.
     jobId = request.GET.get('jobId', None)
     if jobId is not None:
         jobId = str(jobId)
-        prx = omero.cmd.HandlePrx.checkedCast(conn.c.ic.stringToProxy(jobId))
-        rsp = prx.getResponse()
-        if rsp is not None:
-            rv = chgrpMarshal(conn, rsp)
-            rv['finished'] = True
-        else:
-            rv = {'finished': False}
+        try:
+            prx = omero.cmd.HandlePrx.checkedCast(
+                conn.c.ic.stringToProxy(jobId))
+            rsp = prx.getResponse()
+            if rsp is not None:
+                rv = chgrpMarshal(conn, rsp)
+                rv['finished'] = True
+            else:
+                rv = {'finished': False}
+        except IceException:
+            rv = {'finished': True}
         return rv
 
     # test each callback for failure, errors, completion, results etc
@@ -3392,8 +3313,14 @@ def activities(request, conn=None, **kwargs):
                 continue  # ignore
             if status not in ("failed", "finished"):
                 logger.info("Check callback on script: %s" % cbString)
-                proc = omero.grid.ScriptProcessPrx.checkedCast(
-                    conn.c.ic.stringToProxy(cbString))
+                try:
+                    proc = omero.grid.ScriptProcessPrx.checkedCast(
+                        conn.c.ic.stringToProxy(cbString))
+                except IceException as e:
+                    update_callback(request, cbString, status="failed",
+                                    Message="No process found for job",
+                                    error=1)
+                    continue
                 cb = omero.scripts.ProcessCallbackI(conn.c, proc)
                 # check if we get something back from the handle...
                 if cb.block(0):  # ms.
@@ -3404,7 +3331,10 @@ def activities(request, conn=None, **kwargs):
                         update_callback(request, cbString, status="finished")
                         new_results.append(cbString)
                     except Exception, x:
-                        logger.error(traceback.format_exc())
+                        update_callback(request, cbString, status="finished",
+                                        Message="Failed to get results")
+                        logger.info(
+                            "Failed on proc.getResults() for OMERO.script")
                         continue
                     # value could be rstring, rlong, robject
                     rMap = {}
@@ -3445,7 +3375,7 @@ def activities(request, conn=None, **kwargs):
                                         obj_data['name'] = name
                                 rMap[key] = obj_data
                             else:
-                                rMap[key] = v
+                                rMap[key] = unwrap(v)
                     update_callback(request, cbString, results=rMap)
                 else:
                     in_progress += 1
@@ -3666,7 +3596,7 @@ def script_ui(request, scriptId, conn=None, **kwargs):
         elif pt.__class__.__name__ == 'list':
             i["list"] = True
             if "default" in i:
-                i["default"] = i["default"][0]
+                i["default"] = ",".join([str(d) for d in i["default"]])
         elif isinstance(pt, bool):
             i["boolean"] = True
         elif isinstance(pt, int) or isinstance(pt, long):
@@ -4137,10 +4067,13 @@ def chgrp(request, conn=None, **kwargs):
     Handles submission of chgrp form: all data in POST.
     Adds the callback handle to the request.session['callback']['jobId']
     """
+    if not request.method == 'POST':
+        return JsonResponse({'Error': "Need to POST to chgrp"},
+                            status=405)
     # Get the target group_id
     group_id = getIntOrDefault(request, 'group_id', None)
     if group_id is None:
-        raise AttributeError("chgrp: No group_id specified")
+        return JsonResponse({'Error': "chgrp: No group_id specified"})
     group_id = long(group_id)
 
     def getObjectOwnerId(r):

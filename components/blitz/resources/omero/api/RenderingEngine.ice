@@ -203,7 +203,7 @@ module omero {
                  * binary masks.
                  * @param overlays Binary mask to color map.
                  */
-                ["deprecated: use omero::romio::PlaneDefWithMasks instead"] idempotent void setOverlays(omero::RLong tablesId, omero::RLong imageId, LongIntMap rowColorMap) throws ServerError;
+                ["deprecate: use omero::romio::PlaneDefWithMasks instead"] idempotent void setOverlays(omero::RLong tablesId, omero::RLong imageId, LongIntMap rowColorMap) throws ServerError;
 
                 /** Creates an instance of the rendering engine. */
                 idempotent void load() throws ServerError;
@@ -421,7 +421,7 @@ module omero {
                  * @see #updateCodomainMap
                  * @see #removeCodomainMap
                  */
-                 ["deprecated:addCodomainMap() is deprecated. use addCodomainMapToChannel instead."]
+                 ["deprecate:addCodomainMap() is deprecated. use addCodomainMapToChannel instead."]
                 void addCodomainMap(omero::romio::CodomainMapContext mapCtx) throws ServerError;
 
                 /**
@@ -433,7 +433,7 @@ module omero {
                  * @see #addCodomainMap
                  * @see #removeCodomainMap
                  */
-                 ["deprecated:removeCodomainMap() is deprecated."]
+                 ["deprecate:removeCodomainMap() is deprecated."]
                 void updateCodomainMap(omero::romio::CodomainMapContext mapCtx) throws ServerError;
 
                 /**
@@ -444,7 +444,7 @@ module omero {
                  * @see #addCodomainMap
                  * @see #updateCodomainMap
                  */
-                 ["deprecated:removeCodomainMap() is deprecated. use removeCodomainMapFromChannel instead."]
+                 ["deprecate:removeCodomainMap() is deprecated. use removeCodomainMapFromChannel instead."]
                 void removeCodomainMap(omero::romio::CodomainMapContext mapCtx) throws ServerError;
 
                 /**
@@ -469,6 +469,34 @@ module omero {
                  * @see #addCodomainMapToChannel
                  */
                 void removeCodomainMapFromChannel(omero::romio::CodomainMapContext mapCtx, int w) throws ServerError;
+
+                /**
+                 * Updates the current rendering settings based on a provided rendering
+                 * definition and associated sub-objects.
+                 * @param settings Rendering definition to copy from. Each sub-object
+                 * will be processed as though the specific method was called with
+                 * related attributes provided as arguments. The following methods are
+                 * called underneath: <ul>
+                 * <li>{@link RenderingEngine#setModel(RenderingModel)}</li>
+                 * <li>{@link RenderingEngine#setDefaultZ(int)}</li>
+                 * <li>{@link RenderingEngine#setDefaultT(int)}</li>
+                 * <li>{@link RenderingEngine#setQuantumStrategy(int)}</li>
+                 * <li>{@link RenderingEngine#setCodomainInterval(int, int)}</li>
+                 * <li>{@link RenderingEngine#setActive(int, boolean)}</li>
+                 * <li>{@link RenderingEngine#setChannelWindow(int, double, double)}</li>
+                 * <li>{@link RenderingEngine#setQuantizationMap(int, Family, double, boolean)}</li>
+                 * <li>{@link RenderingEngine#setRGBA(int, int, int, int, int)}</li>
+                 * <li>{@link RenderingEngine#setChannelLookupTable(int, String)}</li>
+                 * </ul>
+                 * If one or more attributes that apply to a particular method are
+                 * <code>null</code> it will be <b>skipped</b> in its entirety. The
+                 * underlying Renderer is not able to handle partial field updates.
+                 * Furthermore, {@link ome.model.display.ChannelBinding} references that are
+                 * <code>null</code> and indexes in the {@link RenderingDef#WAVERENDERING}
+                 * array greater than the currently looked up {@link Pixels#SIZEC} will be
+                 * skipped.
+                 */
+                idempotent void updateSettings(omero::model::RenderingDef settings) throws ServerError;
 
                 /** Saves the current rendering settings in the database. */
                 void saveCurrentSettings() throws ServerError;

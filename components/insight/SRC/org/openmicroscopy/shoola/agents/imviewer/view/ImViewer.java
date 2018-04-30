@@ -915,6 +915,13 @@ public interface ImViewer
      */
     public List getActiveChannelsInGrid();
 
+    /**
+     * Returns the list of channels turned on in the <code>ProjectionView</code>.
+     * 
+     * @return See above.
+     */
+    public List getActiveChannelsInProjection();
+
     /** Brings up the preferences widget. */
 	public void showPreferences();
 
@@ -1191,7 +1198,15 @@ public interface ImViewer
 	 * @return See above.
 	 */
 	public boolean canAnnotate();
-	
+
+	/**
+     * Returns <code>true</code> if the permissions of the group allows 
+     * edit <code>false</code> otherwise.
+     *
+     * @return See above.
+     */
+    public boolean canEdit();
+
 	/**
 	 * Returns <code>true</code> if the user currently logged in is the
 	 * owner of the image, <code>false</code> otherwise.

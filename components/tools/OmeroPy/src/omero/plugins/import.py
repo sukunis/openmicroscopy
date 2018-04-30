@@ -83,7 +83,7 @@ Examples:
   $ bin/omero import -- --debug=ERROR foo.tiff
 
 For additional information, see:
-http://www.openmicroscopy.org/site/support/omero5.2/users/cli/import.html
+https://docs.openmicroscopy.org/latest/omero/users/cli/import.html
 Report bugs to <ome-users@lists.openmicroscopy.org.uk>
 """
 TESTHELP = """Run the Importer TestEngine suite (devs-only)"""
@@ -419,6 +419,11 @@ class ImportControl(BaseControl):
         add_java_argument(
             "--output", choices=OUTPUT_CHOICES,
             help="Set an alternative output style",
+            metavar="TYPE")
+        add_java_argument(
+            "--encrypted",
+            choices=("true", "false"),
+            help="Whether the import should use SSL or not",
             metavar="TYPE")
 
         # Arguments previously *following" `--`

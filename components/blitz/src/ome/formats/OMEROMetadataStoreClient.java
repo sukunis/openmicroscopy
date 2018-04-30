@@ -698,10 +698,17 @@ public class OMEROMetadataStoreClient
     {
         secure(server, port);
         serviceFactory = c.joinSession(sessionKey);
-    if (!isSecure)
-    {
-            unsecure();
-    }
+        if (!isSecure)
+        {
+            try
+            {
+                unsecure();
+            } catch (Ice.ConnectionRefusedException cre)
+            {
+                log.warn("Cannot fallback. Using secure connection", cre);
+            }
+        }
+
         initializeServices(true);
     }
 
@@ -2156,7 +2163,7 @@ public class OMEROMetadataStoreClient
      * the pixels server-side will have not completed successfully.
      *
      * @throws ServerError if the pixel store could not be finalized or a new one created
-     * @see <a href="http://trac.openmicroscopy.org/ome/ticket/5594">Trac ticket #5594</a>
+     * @see <a href="https://trac.openmicroscopy.org/ome/ticket/5594">Trac ticket #5594</a>
      */
     public void finalizePixelStore() throws ServerError
     {

@@ -26,7 +26,7 @@ from datetime import date
 from datetime import datetime
 from datetime import timedelta
 
-from test.integration.clitest.cli import CLITest
+from omero.testlib.cli import CLITest
 from omero.cli import NonZeroReturnCode
 from omero.model import DatasetI
 from omero.plugins.search import SearchControl
@@ -172,3 +172,11 @@ class TestSearch(CLITest):
         _to = "--to=%s" % self.days_ago(-1)
         args = ["Dataset", txt, _from, _to]
         self.assertSearch(args, name=self._uuid_ds)
+
+    def test_search_index_by_user(self, capsys):
+        self.mkimage()
+        short = self.short()
+        self.args.extend(("Image", short + "*", "--index"))
+        self.cli.invoke(self.args, strict=False)
+        o, e = capsys.readouterr()
+        assert 'Only admin can index object' in str(e)

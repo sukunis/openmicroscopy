@@ -185,7 +185,7 @@ public class OmeroReader extends FormatReader {
         try {
             store = serviceFactory.createRawPixelsStore();
             store.setPixelsId(pix.getId().getValue(), false);
-            plane = store.getPlane(zct[0], zct[1], zct[2]);
+            plane = store.getTile(zct[0], zct[1], zct[2], x, y, w, h);
         }
         catch (ServerError e) {
             throw new FormatException(e);
@@ -201,10 +201,7 @@ public class OmeroReader extends FormatReader {
             }
         }
 
-        try (RandomAccessInputStream s = new RandomAccessInputStream(plane)) {
-            readPlane(s, x, y, w, h, buf);
-        }
-
+        System.arraycopy(plane, 0, buf, 0, plane.length);
         return buf;
     }
 
@@ -831,8 +828,8 @@ public class OmeroReader extends FormatReader {
 
         if (str == null) return points;
 
-        List<Integer> x = new ArrayList<Integer>();
-        List<Integer> y = new ArrayList<Integer>();
+        List<Float> x = new ArrayList<Float>();
+        List<Float> y = new ArrayList<Float>();
         StringTokenizer tt = new StringTokenizer(str, " ");
         int numTokens = tt.countTokens();
         StringTokenizer t;
@@ -841,8 +838,8 @@ public class OmeroReader extends FormatReader {
             t = new StringTokenizer(tt.nextToken(), ",");
             total = t.countTokens()/2;
             for (int j = 0; j < total; j++) {
-                x.add(new Integer(t.nextToken()));
-                y.add(new Integer(t.nextToken()));
+                x.add(new Float(t.nextToken()));
+                y.add(new Float(t.nextToken()));
             }
         }
 

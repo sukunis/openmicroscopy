@@ -1,7 +1,8 @@
 /*
- *   Copyright 2006-2016 University of Dundee. All rights reserved.
+ *   Copyright 2006-2018 University of Dundee. All rights reserved.
  *   Use is subject to license terms supplied in LICENSE.txt
  */
+
 package integration;
 
 import java.io.File;
@@ -25,6 +26,8 @@ import omero.api.IAdminPrx;
 import omero.api.IRoiPrx;
 import omero.api.RoiOptions;
 import omero.api.RoiResult;
+import omero.cmd.Delete2;
+import omero.gateway.util.Requests;
 import omero.model.Annotation;
 import omero.model.Arc;
 import omero.model.BooleanAnnotation;
@@ -636,6 +639,31 @@ public class ImporterTest extends AbstractServerTest {
             Assert.fail("Cannot import the following formats:" + s);
         }
         Assert.assertEquals(0, failures.size());
+    }
+
+    @Test(timeOut = 20000)
+    public void testImportFinishTooLargePixelsImage() throws Exception {
+        // Simulates QA 17685 (an image with unreasonably huge pixel sizes stuck the import process
+        // in a basically endless loop when trying to throw an exception); purpose is to
+        // check that the import process finishes within a certain amount of time.
+        File f = new File(
+                System.getProperty("java.io.tmpdir"),
+                "testImportInsaneImage&pixelType=uint8&sizeX=892411973&sizeY=1684497696&sizeZ=25971.fake");
+        f.deleteOnExit();
+        f.createNewFile();
+        List<Pixels> pixels = null;
+        try {
+            pixels = importFile(f, OME_FORMAT);
+        } catch (Throwable e) {
+            throw new Exception("cannot import image", e);
+        }
+        Pixels p = pixels.get(0);
+        Assert.assertEquals(p.getSizeX().getValue(), 892411973);
+        Assert.assertEquals(p.getSizeY().getValue(), 1684497696);
+        Assert.assertEquals(p.getSizeZ().getValue(), 25971);
+        
+        Delete2 dc = Requests.delete().target(p.getImage()).build();
+        callback(true, root, dc);
     }
 
     /**
@@ -1596,4 +1624,22 @@ public class ImporterTest extends AbstractServerTest {
         }
     }
 
+    /**
+     * Test that import into another's container in a read-annotate group fails.
+     * @throws Throwable expecting importFile to throw IllegalArgumentException
+     */
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testImportImageIntoOthersDataset() throws Throwable {
+        /* create test image file */
+        final File testImage = File.createTempFile(ImporterTest.class.getName() + "-image", "." + OME_FORMAT);
+        new XMLWriter().writeFile(testImage, new XMLMockObjects().createImage(), true);
+        testImage.deleteOnExit();
+        /* one user has a dataset in a read-annotate group */
+        newUserAndGroup("rwra--");
+        Dataset dataset = (Dataset) iUpdate.saveAndReturnObject(mmFactory.simpleDataset()).proxy();
+        /* another user in that group attempts to import into that dataset */
+        newUserInGroup();
+        dataset = (Dataset) iQuery.get(Dataset.class.getSimpleName(), dataset.getId().getValue());
+        importFile(testImage, OME_FORMAT, dataset);
+    }
 }

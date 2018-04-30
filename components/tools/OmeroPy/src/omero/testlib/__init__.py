@@ -62,8 +62,11 @@ from omero.model.enums import PixelsTypeuint32, PixelsTypefloat
 from omero.model.enums import PixelsTypedouble
 
 from omero.rtypes import rbool, rstring, rlong, rtime, rint, unwrap
+from omero.sys import ParametersI
 from omero.util.temp_files import create_path
 from path import path
+
+import hashlib
 
 
 class Clients(object):
@@ -93,6 +96,16 @@ class ITest(object):
     # If the new user created in setup_class should own their group
     # Can be overriden by test instances
     DEFAULT_GROUP_OWNER = False
+    # If the new user created in setup_class should
+    # be member of system group. This is to be
+    # set to True if the new user should be Restricted Admin
+    # Can be overriden by test instances
+    DEFAULT_SYSTEM = False
+    # If the new user created in setup_class is system group member
+    # default value None makes the new user to Full Admin
+    # For Restricted Admin with no privileges, set the value to ()
+    # Can be overriden by test instances
+    DEFAULT_PRIVILEGES = None
 
     @classmethod
     def setup_class(cls):
@@ -111,11 +124,15 @@ class ITest(object):
             cls.root.setAgent("OMERO.py.root_test")
             cls.root.createSession("root", rootpass)
             cls.root.getSession().keepAlive(None)
-        except:
-            raise Exception("Could not initiate a root connection")
+        except Exception:
+            cls.log.error("Could not initiate a root connection")
+            raise
 
         cls.group = cls.new_group(perms=cls.DEFAULT_PERMS)
-        cls.user = cls.new_user(group=cls.group, owner=cls.DEFAULT_GROUP_OWNER)
+        cls.user = cls.new_user(group=cls.group,
+                                owner=cls.DEFAULT_GROUP_OWNER,
+                                system=cls.DEFAULT_SYSTEM,
+                                privileges=cls.DEFAULT_PRIVILEGES)
         cls.client = omero.client()  # ok because adds self
         cls.__clients.add(cls.client)
         cls.client.setAgent("OMERO.py.test")
@@ -519,10 +536,13 @@ class ITest(object):
     @classmethod
     def new_user(cls, group=None, perms=None,
                  owner=False, system=False, uname=None,
-                 email=None):
+                 email=None, privileges=None):
         """
         :owner: If user is to be an owner of the created group
-        :system: If user is to be a system admin
+        :system: If user is to be a system group member
+        :privileges: If system group member is to have privileges
+                     privileges=None gives all privileges (full admin)
+                     privileges=() gives no privileges
         """
 
         if not cls.root:
@@ -553,14 +573,23 @@ class ITest(object):
         e = admin_service.lookupExperimenter(uname)
         if owner:
             admin_service.setGroupOwner(g, e)
+        if privileges is not None:
+            system = True
         if system:
             admin_service.addGroups(e, [ExperimenterGroupI(0, False)])
 
+        if privileges is not None:
+            to_set = []
+            for p in privileges:
+                privilege = omero.model.AdminPrivilegeI()
+                privilege.setValue(rstring(p))
+                to_set.append(privilege)
+            admin_service.setAdminPrivileges(e, to_set)
         return admin_service.getExperimenter(uid)
 
     def new_client(self, group=None, user=None, perms=None,
                    owner=False, system=False, session=None,
-                   password=None, email=None):
+                   password=None, email=None, privileges=None):
         """
         Like new_user() but returns an active client.
 
@@ -580,7 +609,8 @@ class ITest(object):
                 user, name = self.user_and_name(user)
             else:
                 user = self.new_user(group, perms, owner=owner,
-                                     system=system, email=email)
+                                     system=system, email=email,
+                                     privileges=privileges)
             props["omero.user"] = user.omeName.val
             if password is not None:
                 props["omero.pass"] = password
@@ -594,8 +624,10 @@ class ITest(object):
         return client
 
     def new_client_and_user(self, group=None, perms=None,
-                            owner=False, system=False):
-        user = self.new_user(group, owner=owner, system=system, perms=perms)
+                            owner=False, system=False,
+                            privileges=None):
+        user = self.new_user(group, owner=owner, system=system, perms=perms,
+                             privileges=privileges)
         client = self.new_client(
             group, user, perms=perms, owner=owner, system=system)
         return client, user
@@ -1095,6 +1127,49 @@ class ITest(object):
 
         self.do_submit(command, client)
 
+    def wait_for_pyramid(self, id):
+        store = self.client.sf.createRawPixelsStore()
+        not_ready = True
+        count = 0
+        elapse_time = 1  # time in seconds
+        try:
+            # Do not wait more than 60 seconds
+            while not_ready and count < 60:
+                try:
+                    store.setPixelsId(id, True)
+                    # No exception. The pyramid is now ready
+                    not_ready = False
+                except Exception:
+                    # try again in elapse_time
+                    time.sleep(elapse_time)
+                    count = count + elapse_time
+        finally:
+            store.close()
+
+    def import_pyramid(self, tmpdir, name=None, client=None, skip="all"):
+        if name is None:
+            name = "test&sizeX=4000&sizeY=4000.fake"
+        fakefile = tmpdir.join(name)
+        fakefile.write('')
+        if client is None:
+            client = self.client
+        pixels = self.import_image(filename=str(fakefile), client=client,
+                                   skip=skip)[0]
+        id = long(float(pixels))
+        assert id >= 0
+        # wait for the pyramid to be generated
+        self.wait_for_pyramid(id)
+        query_service = client.sf.getQueryService()
+        pix = query_service.findByQuery(
+            "select p from Pixels p where p.id = :id",
+            ParametersI().addId(id))
+        return pix.image.id.val
+
+    def calculate_sha1(self, data):
+        h = hashlib.sha1()
+        h.update(data)
+        return h.hexdigest()
+
 
 class ProjectionFixture(object):
     """
@@ -1105,7 +1180,8 @@ class ProjectionFixture(object):
     def __init__(self, perms, writer, reader,
                  can_read,
                  can_annotate=False, can_delete=False,
-                 can_edit=False, can_link=False):
+                 can_edit=False, can_link=False,
+                 can_chgrp=False, can_chown=False):
         self.perms = perms
         self.writer = writer
         self.reader = reader
@@ -1115,6 +1191,8 @@ class ProjectionFixture(object):
         self.canDelete = can_delete
         self.canEdit = can_edit
         self.canLink = can_link
+        self.canChgrp = can_chgrp
+        self.canChown = can_chown
 
     def get_name(self):
         name = self.perms
@@ -1131,53 +1209,53 @@ class ProjectionFixture(object):
 PF = ProjectionFixture
 PFS = (
     # Private group as root
-    PF("rw----", "system-admin", "system-admin", 1, 0, 1, 1, 0),
-    PF("rw----", "system-admin", "group-owner", 1, 0, 1, 1, 0),
+    PF("rw----", "system-admin", "system-admin", 1, 0, 1, 1, 0, 1, 1),
+    PF("rw----", "system-admin", "group-owner", 1, 0, 1, 1, 0, 0, 1),
     PF("rw----", "system-admin", "member2", 0),
     # Private group as group-owner
-    PF("rw----", "group-owner", "system-admin", 1, 0, 1, 1, 0),
-    PF("rw----", "group-owner", "group-owner", 1, 0, 1, 1, 0),
+    PF("rw----", "group-owner", "system-admin", 1, 0, 1, 1, 0, 1, 1),
+    PF("rw----", "group-owner", "group-owner", 1, 0, 1, 1, 0, 0, 1),
     PF("rw----", "group-owner", "member2", 0),
     # Private group as member
-    PF("rw----", "member1", "system-admin", 1, 0, 1, 1, 0),
-    PF("rw----", "member1", "group-owner", 1, 0, 1, 1, 0),
+    PF("rw----", "member1", "system-admin", 1, 0, 1, 1, 0, 1, 1),
+    PF("rw----", "member1", "group-owner", 1, 0, 1, 1, 0, 0, 1),
     PF("rw----", "member1", "member2", 0),
     # Read-only group as root
-    PF("rwr---", "system-admin", "system-admin", 1, 1, 1, 1, 1),
-    PF("rwr---", "system-admin", "group-owner", 1, 1, 1, 1, 1),
-    PF("rwr---", "system-admin", "member2", 1, 0, 0, 0, 0),
+    PF("rwr---", "system-admin", "system-admin", 1, 1, 1, 1, 1, 1, 1),
+    PF("rwr---", "system-admin", "group-owner", 1, 1, 1, 1, 1, 0, 1),
+    PF("rwr---", "system-admin", "member2", 1, 0, 0, 0, 0, 0, 0),
     # Read-only group as group-owner
-    PF("rwr---", "group-owner", "system-admin", 1, 1, 1, 1, 1),
-    PF("rwr---", "group-owner", "group-owner", 1, 1, 1, 1, 1),
-    PF("rwr---", "group-owner", "member2", 1, 0, 0, 0, 0),
+    PF("rwr---", "group-owner", "system-admin", 1, 1, 1, 1, 1, 1, 1),
+    PF("rwr---", "group-owner", "group-owner", 1, 1, 1, 1, 1, 0, 1),
+    PF("rwr---", "group-owner", "member2", 1, 0, 0, 0, 0, 0, 0),
     # Read-only group as member
-    PF("rwr---", "member1", "system-admin", 1, 1, 1, 1, 1),
-    PF("rwr---", "member1", "group-owner", 1, 1, 1, 1, 1),
-    PF("rwr---", "member1", "member2", 1, 0, 0, 0, 0),
+    PF("rwr---", "member1", "system-admin", 1, 1, 1, 1, 1, 1, 1),
+    PF("rwr---", "member1", "group-owner", 1, 1, 1, 1, 1, 0, 1),
+    PF("rwr---", "member1", "member2", 1, 0, 0, 0, 0, 0, 0),
     # Read-annotate group as root
-    PF("rwra--", "system-admin", "system-admin", 1, 1, 1, 1, 1),
-    PF("rwra--", "system-admin", "group-owner", 1, 1, 1, 1, 1),
-    PF("rwra--", "system-admin", "member2", 1, 1, 0, 0, 0),
+    PF("rwra--", "system-admin", "system-admin", 1, 1, 1, 1, 1, 1, 1),
+    PF("rwra--", "system-admin", "group-owner", 1, 1, 1, 1, 1, 0, 1),
+    PF("rwra--", "system-admin", "member2", 1, 1, 0, 0, 0, 0, 0),
     # Read-annotate group as group-owner
-    PF("rwra--", "group-owner", "system-admin", 1, 1, 1, 1, 1),
-    PF("rwra--", "group-owner", "group-owner", 1, 1, 1, 1, 1),
-    PF("rwra--", "group-owner", "member2", 1, 1, 0, 0, 0),
+    PF("rwra--", "group-owner", "system-admin", 1, 1, 1, 1, 1, 1, 1),
+    PF("rwra--", "group-owner", "group-owner", 1, 1, 1, 1, 1, 0, 1),
+    PF("rwra--", "group-owner", "member2", 1, 1, 0, 0, 0, 0, 0),
     # Read-annotate group as member
-    PF("rwra--", "member1", "system-admin", 1, 1, 1, 1, 1),
-    PF("rwra--", "member1", "group-owner", 1, 1, 1, 1, 1),
-    PF("rwra--", "member1", "member2", 1, 1, 0, 0, 0),
+    PF("rwra--", "member1", "system-admin", 1, 1, 1, 1, 1, 1, 1),
+    PF("rwra--", "member1", "group-owner", 1, 1, 1, 1, 1, 0, 1),
+    PF("rwra--", "member1", "member2", 1, 1, 0, 0, 0, 0, 0),
     # Read-write group as root
-    PF("rwrw--", "system-admin", "system-admin", 1, 1, 1, 1, 1),
-    PF("rwrw--", "system-admin", "group-owner", 1, 1, 1, 1, 1),
-    PF("rwrw--", "system-admin", "member2", 1, 1, 1, 1, 1),
+    PF("rwrw--", "system-admin", "system-admin", 1, 1, 1, 1, 1, 1, 1),
+    PF("rwrw--", "system-admin", "group-owner", 1, 1, 1, 1, 1, 0, 1),
+    PF("rwrw--", "system-admin", "member2", 1, 1, 1, 1, 1, 0, 0),
     # Read-write group as group-owner
-    PF("rwrw--", "group-owner", "system-admin", 1, 1, 1, 1, 1),
-    PF("rwrw--", "group-owner", "group-owner", 1, 1, 1, 1, 1),
-    PF("rwrw--", "group-owner", "member2", 1, 1, 1, 1, 1),
+    PF("rwrw--", "group-owner", "system-admin", 1, 1, 1, 1, 1, 1, 1),
+    PF("rwrw--", "group-owner", "group-owner", 1, 1, 1, 1, 1, 0, 1),
+    PF("rwrw--", "group-owner", "member2", 1, 1, 1, 1, 1, 0, 0),
     # Read-write group as member
-    PF("rwrw--", "member1", "system-admin", 1, 1, 1, 1, 1),
-    PF("rwrw--", "member1", "group-owner", 1, 1, 1, 1, 1),
-    PF("rwrw--", "member1", "member2", 1, 1, 1, 1, 1),
+    PF("rwrw--", "member1", "system-admin", 1, 1, 1, 1, 1, 1, 1),
+    PF("rwrw--", "member1", "group-owner", 1, 1, 1, 1, 1, 0, 1),
+    PF("rwrw--", "member1", "member2", 1, 1, 1, 1, 1, 0, 0),
 )
 
 

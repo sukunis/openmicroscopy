@@ -20,6 +20,7 @@
  */
 package omero.gateway.facility;
 
+import java.util.Collections;
 import java.util.Map;
 
 import omero.gateway.Gateway;
@@ -121,6 +122,9 @@ public class RawDataFacility extends Facility implements AutoCloseable {
             PixelsData pixels, int[] channels, int binCount,
             boolean globalRange, PlaneDef plane)
             throws DSOutOfServiceException, DSAccessException {
+        if (pixels == null)
+            return Collections.emptyMap();
+        
         try {
             if (plane == null)
                 plane = new PlaneDef(omeis.providers.re.data.PlaneDef.XY, 0, 0,
@@ -156,6 +160,9 @@ public class RawDataFacility extends Facility implements AutoCloseable {
      */
     public Plane2D getPlane(SecurityContext ctx, PixelsData pixels, int z,
             int t, int c) throws DSOutOfServiceException, DSAccessException {
+        if (pixels == null)
+            return null;
+        
         try {
             return getDataSink(ctx, pixels, gateway).getPlane(z, t, c);
         } catch (Exception e) {
@@ -163,48 +170,6 @@ public class RawDataFacility extends Facility implements AutoCloseable {
                     + " c=" + c);
         }
         return null;
-    }
-
-    /**
-     * Extracts a 2D plane from the pixels set.
-     *
-     * @param ctx
-     *            The security context.
-     * @param pixels
-     *            The {@link PixelsData} object to fetch the data from.
-     * @param z
-     *            The z-section at which data is to be fetched.
-     * @param t
-     *            The timepoint at which data is to be fetched.
-     * @param c
-     *            The channel at which data is to be fetched.
-     * @param close
-     *            Pass <code>true</code> to close the connection to the
-     *            Pixelstore, <code>false</code> to leave it open. (deprecated,
-     *            the resources will be closed when the facility itself is
-     *            closed, see {@link #close()}, {@link AutoCloseable})
-     * @return A plane 2D object that encapsulates the actual plane pixels.
-     * @throws DataSourceException
-     *             If an error occurs while retrieving the plane data from the
-     *             pixels source.
-     * @deprecated Use getPlane(SecurityContext, PixelsData, z, t, c) instead
-     */
-    @Deprecated
-    public Plane2D getPlane(SecurityContext ctx, PixelsData pixels, int z,
-            int t, int c, boolean close) throws DataSourceException {
-        Plane2D data = null;
-        DataSink ds = null;
-        try {
-            ds = getDataSink(ctx, pixels, gateway);
-            data = ds.getPlane(z, t, c);
-        } catch (DSOutOfServiceException e) {
-            throw new DataSourceException("Can't initiate DataSink", e);
-        }
-        finally {
-            if (close)
-                ds.close();
-        }
-        return data;
     }
 
     /**
@@ -236,6 +201,9 @@ public class RawDataFacility extends Facility implements AutoCloseable {
     public Plane2D getTile(SecurityContext ctx, PixelsData pixels, int z,
             int t, int c, int x, int y, int w, int h)
             throws DataSourceException {
+        if (pixels == null)
+            return null;
+        
         try {
             return getDataSink(ctx, pixels, gateway).getTile(z, t, c, x, y, w,
                     h);

@@ -19,7 +19,7 @@
 
 """Tests querying of ROIs and Shapes with json api."""
 
-from omeroweb.testlib import IWebTest, _get_response_json
+from omeroweb.testlib import IWebTest, get_json
 from django.core.urlresolvers import reverse
 from omeroweb.api import api_settings
 import pytest
@@ -30,6 +30,7 @@ from omero.model import EllipseI, \
     ImageI, \
     LengthI, \
     LineI, \
+    MaskI, \
     PointI, \
     PolygonI, \
     RectangleI, \
@@ -116,7 +117,18 @@ class TestContainers(IWebTest):
         points = "10,20, 50,150, 200,200, 250,75"
         polygon.points = rstring(points)
 
-        return [rect, ellipse, line, point, polygon]
+        mask = MaskI()
+        mask.setTheC(rint(0))
+        mask.setTheZ(rint(0))
+        mask.setTheT(rint(0))
+        mask.setX(rdouble(100))
+        mask.setY(rdouble(100))
+        mask.setWidth(rdouble(500))
+        mask.setHeight(rdouble(500))
+        mask.setTextValue(rstring("test-Mask"))
+        mask.setBytes(None)
+
+        return [rect, ellipse, line, point, polygon, mask]
 
     @pytest.fixture()
     def image_rois(self, user1, shapes):
@@ -157,11 +169,11 @@ class TestContainers(IWebTest):
 
         # List ALL rois
         rois_url = reverse('api_rois', kwargs={'api_version': version})
-        rsp = _get_response_json(client, rois_url, {})
+        rsp = get_json(client, rois_url)
         assert_objects(conn, rsp['data'], rois, dtype="Roi",
                        opts={'load_shapes': True})
 
         # ROIs on the image
-        rsp = _get_response_json(client, rois_url, {'image': image.id.val})
+        rsp = get_json(client, rois_url, {'image': image.id.val})
         assert_objects(conn, rsp['data'], rois[:2], dtype="Roi",
                        opts={'load_shapes': True})

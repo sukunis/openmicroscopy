@@ -2459,6 +2459,16 @@ class ImViewerComponent
 		return view.getActiveChannelsInGrid();
 	}
 
+    /** 
+     * Implemented as specified by the {@link ImViewer} interface.
+     * @see ImViewer#getActiveChannelsInProjection()
+     */
+    public List getActiveChannelsInProjection()
+    {
+        if (model.getState() == DISCARDED) return null;
+        return view.getActiveChannelsInProjection();
+    }
+    
 	/** 
 	 * Implemented as specified by the {@link ImViewer} interface.
 	 * @see ImViewer#showPreferences()
@@ -3220,6 +3230,16 @@ class ImViewerComponent
 		if (isUserOwner()) return true;
 		return model.getImage().canAnnotate();
 	}
+
+	/** 
+     * Implemented as specified by the {@link ImViewer} interface.
+     * @see ImViewer#canEdit()
+     */
+    public boolean canEdit()
+    {
+        if (isUserOwner()) return true;
+        return model.getImage().canEdit();
+    }
 
 	/** 
 	 * Implemented as specified by the {@link ImViewer} interface.

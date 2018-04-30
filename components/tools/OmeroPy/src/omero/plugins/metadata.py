@@ -23,7 +23,8 @@ from omero.gateway import BlitzGateway
 from omero.util import populate_metadata, populate_roi, pydict_text_io
 from omero.util.metadata_utils import NSBULKANNOTATIONSCONFIG
 from omero.util.metadata_utils import NSBULKANNOTATIONSRAW
-
+from omero.grid import LongColumn
+from omero.model.enums import UnitsLength
 
 HELP = """Metadata utilities
 
@@ -143,9 +144,11 @@ class MetadataControl(BaseControl):
         bulkanns = parser.add(sub, self.bulkanns)
         mapanns = parser.add(sub, self.mapanns)
         allanns = parser.add(sub, self.allanns)
+        parser.add(sub, self.testtables)
         rois = parser.add(sub, self.rois)
         populate = parser.add(sub, self.populate)
         populateroi = parser.add(sub, self.populateroi)
+        pixelsize = parser.add(sub, self.pixelsize)
 
         populate.add_argument("--batch",
                               type=long,
@@ -154,7 +157,7 @@ class MetadataControl(BaseControl):
         self._add_wait(populate)
 
         for x in (summary, original, bulkanns, measures, mapanns, allanns,
-                  rois, populate, populateroi):
+                  rois, populate, populateroi, pixelsize):
             x.add_argument("obj",
                            type=ProxyStringType(),
                            help="Object in Class:ID format")
@@ -208,6 +211,16 @@ class MetadataControl(BaseControl):
         populateroi.add_argument(
             "--measurement", type=int, default=None,
             help="Index of the measurement to populate. By default, all")
+
+        pixelsize.add_argument(
+            "--x", type=float, default=None, help="Physical pixel size X")
+        pixelsize.add_argument(
+            "--y", type=float, default=None, help="Physical pixel size Y")
+        pixelsize.add_argument(
+            "--z", type=float, default=None, help="Physical pixel size Z")
+        pixelsize.add_argument(
+            "--unit", default="micrometer",
+            help="Unit (nanometer, micrometer, etc.) (default: micrometer)")
 
     def _clientconn(self, args):
         client = self.ctx.conn(args)
@@ -395,6 +408,36 @@ class MetadataControl(BaseControl):
             indent = 0
         self._output_ann(md, get_anns, args.parents, indent)
 
+    def testtables(self, args):
+        "Tests whether tables can be created and initialized"
+        client, conn = self._clientconn(args)
+
+        sf = client.getSession()
+        sr = sf.sharedResources()
+        table = sr.newTable(1, 'testtables')
+        if table is None:
+            self.ctx.die(100, "Failed to create Table")
+
+        # If we have a table...
+        initialized = False
+        try:
+            table.initialize([LongColumn('ID', '', [])])
+            initialized = True
+        except:
+            pass
+        finally:
+            table.close()
+
+        try:
+            orig_file = table.getOriginalFile()
+            conn.deleteObject(orig_file)
+        except:
+            # Anything else to do here?
+            pass
+
+        if not initialized:
+            self.ctx.die(100, "Failed to initialize Table")
+
     # WRITE
 
     def populate(self, args):
@@ -521,6 +564,67 @@ class MetadataControl(BaseControl):
                         continue
                 meas = ctx.get_measurement_ctx(i)
                 meas.parse_and_populate()
+
+    def pixelsize(self, args):
+        "Set physical pixel size"
+        if not args.x and not args.y and not args.z:
+            self.ctx.die(100, "No pixel sizes specified.")
+
+        unit = getattr(UnitsLength, args.unit.upper())
+        if not unit:
+            self.ctx.die(100, "%s is not recognized as valid unit."
+                              % args.unit)
+
+        md = self._load(args)
+        client, conn = self._clientconn(args)
+
+        if md.get_type() == "Screen":
+            q = """SELECT pix FROM Pixels pix, WellSample ws, Plate p,
+                   ScreenPlateLink spl WHERE
+                   spl.child=p AND pix.image=ws.image AND ws.well.plate=p AND
+                   spl.parent.id=:id"""
+        elif md.get_type() == "Plate":
+            q = """SELECT pix FROM Pixels pix, WellSample ws WHERE
+                   pix.image=ws.image AND ws.well.plate.id=:id"""
+        elif md.get_type() == "PlateAcquisition":
+            q = """SELECT pix FROM Pixels pix, WellSample ws WHERE
+                   pix.image=ws.image AND ws.plateAcquisition.id=:id"""
+        elif md.get_type() == "Well":
+            q = """SELECT pix FROM Pixels pix, WellSample ws WHERE
+                   pix.image=ws.image AND ws.well.id=:id"""
+        elif md.get_type() == "Project":
+            q = """SELECT pix FROM Pixels pix, DatasetImageLink dil,
+                   ProjectDatasetLink pdl WHERE dil.child=pix.image AND
+                   dil.parent=pdl.child AND pdl.parent.id=:id"""
+        elif md.get_type() == "Dataset":
+            q = """SELECT pix FROM Pixels pix, DatasetImageLink dil WHERE
+                   dil.child=pix.image AND dil.parent.id=:id"""
+        elif md.get_type() == "Image":
+            q = """SELECT pix FROM Pixels pix WHERE pix.image.id=:id"""
+        else:
+            raise Exception("Not implemented for type %s" % md.get_type())
+
+        ctx = {'omero.group': '-1'}
+
+        params = omero.sys.ParametersI()
+        params.addId(md.get_id())
+        pixels = conn.getQueryService().findAllByQuery(q, params, ctx)
+
+        if not pixels:
+            self.ctx.die(100, "Failed to get Pixel object(s)")
+
+        for pixel in pixels:
+            if args.x:
+                pixel.setPhysicalSizeX(omero.model.LengthI(args.x, unit))
+            if args.y:
+                pixel.setPhysicalSizeY(omero.model.LengthI(args.y, unit))
+            if args.z:
+                pixel.setPhysicalSizeZ(omero.model.LengthI(args.z, unit))
+
+        groupId = pixels[0].getDetails().getGroup().getId().getValue()
+        ctx = {'omero.group': str(groupId)}
+        conn.getUpdateService().saveArray(pixels, ctx)
+
 
 try:
     if "OMERO_DEV_PLUGINS" in os.environ:
