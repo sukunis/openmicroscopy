@@ -161,7 +161,7 @@ public class LightPathViewer extends ModuleViewer{
 				// get result of editor
 				List<Object> newList=creator.getLightPathList(); 
 				lightPathDataChanged= creator.hasDataChanged();
-				if(newList!=null && !newList.isEmpty()){
+				if(newList!=null && !newList.isEmpty() && lightPathDataChanged){
 					inputKeyPressed();
 					lightPathTable.setLightPath(newList);
 					dataChanged=true;
@@ -220,6 +220,7 @@ public class LightPathViewer extends ModuleViewer{
 		}
 		dataChanged=false;
 		lightPathDataChanged=false;
+		data.setInput(false,index);
 	}
 
 
@@ -246,15 +247,15 @@ public class LightPathViewer extends ModuleViewer{
 	@Override
 	public boolean hasDataToSave() 
 	{
-		return lightPathDataChanged;
+		return lightPathDataChanged || data.hasInput(index);
 	}
 	
 	
 	
 
-	public HashMap<String,String> getMapValuesOfChanges(HashMap<String, String> map, String chName) 
+	public HashMap<String,String> getMapValuesOfChanges(HashMap<String, String> map, int chIndex) 
 	{
-		LightPath lp=data.getLightPath(index);
+		LightPath lp=data.getLightPath(chIndex);
 		
 		if( lp==null)
 			return null;

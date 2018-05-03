@@ -24,8 +24,9 @@ public class LightPathModel
 			LoggerFactory.getLogger(LightPathModel.class);
 
 	private List<LightPath> element;
-
-
+	
+	private List<Boolean> input;
+	
 	/** Map of key-value pairs like [FilterType]:[Nr]:TagName, TagVal **/
 	private List<HashMap<String,String>> maps;
 
@@ -36,6 +37,7 @@ public class LightPathModel
 		element=new ArrayList<LightPath>();
 		filtersets = new ArrayList<FilterSet>();
 		maps=new ArrayList<HashMap<String,String>>();
+		input=new ArrayList<Boolean>();
 	}
 
 	public LightPathModel(LightPathModel orig)
@@ -43,6 +45,7 @@ public class LightPathModel
 		element=orig.element;
 		filtersets=orig.filtersets;
 		maps=orig.maps;
+		input=orig.input;
 	}
 	
 	/**
@@ -58,7 +61,7 @@ public class LightPathModel
 	}
 	
 	/**
-	 * Set map of changes.
+	 * Set map of changes at index.
 	 * @param map
 	 * @param i
 	 */
@@ -163,6 +166,7 @@ public class LightPathModel
 			element.add(new LightPath());
 			filtersets.add(null);
 			maps.add(new HashMap<String,String>());
+			input.add(false);
 		}
 	}
 
@@ -249,5 +253,19 @@ public class LightPathModel
 	
 		return filtersets.get(i);
 	}
+	
 
+	public void setInput(boolean changes,int index)
+	{
+		if(index>=input.size())
+			return;
+		input.set(index, changes);
+	}
+	
+	public boolean hasInput(int index)
+	{
+		if(index>=input.size())
+			return false;
+		return input.get(index);
+	}
 }

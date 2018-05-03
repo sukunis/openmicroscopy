@@ -368,46 +368,18 @@ public class MetaDataUI extends JPanel
 	 */
 	public void addMapr() throws Exception
 	{
-		
+		MonitorAndDebug.printConsole("#### MetaDataUI::addMapr(): add channelname - lightPath mapr#####");
 		switch(customSett.getMicName()){
 		case MicroscopeProperties.TIRF4LINE_SMT:
 			HashMap mapr=customSett.getMapr();
 			if(mapr!=null){
-				MonitorAndDebug.printConsole("# MetaDataUI::addMapr(): add channelname - lightPath mapr");
+				MonitorAndDebug.printConsole("#### MetaDataUI::addMapr(): add channelname - lightPath mapr#####");
 				for(int i=0; i<model.getNumberOfChannels();i++){
 					String chName=model.getChannelData(i).getName();
 					LightPath lp=(LightPath) mapr.get(chName);
-					if(lp!=null && model.getLightPath(i)==null){
-						int j=1;
-						for(Filter f: lp.copyLinkedExcitationFilterList()){
-							String id="[Excitation Filter]:["+j+"]:";
-							model.addToMapAnnotationLightPath(id+"Model", f.getModel(),i);
-							model.addToMapAnnotationLightPath(id+"Manufactur", f.getManufacturer(),i);
-							if(f.getType()!=null)
-								model.addToMapAnnotationLightPath(id+"Type", (f.getType()==null?"": f.getType().getValue()),i);
-							if(f.getFilterWheel()!=null)
-								model.addToMapAnnotationLightPath(id+"FilterWheel", f.getFilterWheel(),i);
-							
-							j++;
-						}
-						
-						Dichroic d= lp.getLinkedDichroic();
-						if(d!=null){
-							model.addToMapAnnotationLightPath("[Dichroic]:["+j+"]:", d.getModel(),i);
-							j++;
-						}
-						
-						for(Filter f: lp.copyLinkedEmissionFilterList()){
-							String id="[Emmission Filter]:["+j+"]:";
-							model.addToMapAnnotationLightPath(id+"Model", f.getModel(),i);
-							model.addToMapAnnotationLightPath(id+"Manufactur", f.getManufacturer(),i);
-							if(f.getType()!=null)
-								model.addToMapAnnotationLightPath(id+"Type",(f.getType()==null?"": f.getType().getValue()),i);
-							if(f.getFilterWheel()!=null)
-								model.addToMapAnnotationLightPath(id+"FilterWheel", f.getFilterWheel(),i);
-							
-							j++;
-						}
+					if(lp!=null) {
+						addLightPathData(i, lp, null, true);
+						model.getLightPathModel().setInput(true,i);
 					}
 				}
 			}
@@ -643,14 +615,15 @@ public class MetaDataUI extends JPanel
 						model.addToLightPathList_Dichroic(dichroics,true);
 						model.addToLightPathList_FilterSet(filterSets, true);
 					}
+					addMapr();
 				}else{
-					LOGGER.warn("[DATA] NO IMAGE object available");
-					MonitorAndDebug.printConsole("[DATA] NO IMAGE object available");
+					LOGGER.warn("[DATA] NO IMAGE object available in file");
+					MonitorAndDebug.printConsole("[DATA] NO IMAGE object available in file");
 				}
 				MonitorAndDebug.printConsole("... end loadFileData()");
 				
 				
-//				addMapr();
+				
 			
 		}else{
 			LOGGER.warn("[DATA] NOT available METADATA ");
@@ -1405,14 +1378,23 @@ public class MetaDataUI extends JPanel
 //				lightPathInput=true;
 				int index=lightPathViewer.getIndex();
 				try {
-					model.setChangesLightPath(model.getLightPath(index),index);
-					model.setMapAnnotationLightPath(
-							lightPathViewer.getMapValuesOfChanges(model.getMapAnnotationLightPath(index),lastSelection.getName()),index, true);
+					
+					
+					
+					
+					lightPathViewer.saveData();
+				
+						//printLightPath(model.getLightPath(index));
+						model.setChangesLightPath(model.getLightPath(index),index);
+						//overwrite the whole lightpath for this channel
+						//printMap(lightPathViewer.getMapValuesOfChanges(null,index));
+						model.setMapAnnotationLightPath(lightPathViewer.getMapValuesOfChanges(null,index),index, true);
+						
+					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				lightPathViewer.saveData();
 			}
 			//update lightPath
 			setLightPathVisible(chName, chNr);
@@ -2008,8 +1990,9 @@ public class MetaDataUI extends JPanel
 			try {
 				printLightPath(model.getLightPath(index));
 				model.setChangesLightPath(model.getLightPath(index),lightPathViewer.getIndex());
-				printMap(lightPathViewer.getMapValuesOfChanges(map,chName));
-				model.setMapAnnotationLightPath(lightPathViewer.getMapValuesOfChanges(map,chName),index, false);
+				//overwrite the whole lightpath for this channel
+				//printMap(lightPathViewer.getMapValuesOfChanges(null,index));
+				model.setMapAnnotationLightPath(lightPathViewer.getMapValuesOfChanges(null,index),index, true);
 				
 //				lightPathViewer.resetInputEvent();
 				lightPathViewer.afterSavingData();
@@ -2018,7 +2001,10 @@ public class MetaDataUI extends JPanel
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}else{System.out.println("### Filter nothing to save");}
+		}else{
+			System.out.println("### Filter nothing to save");
+		}
+		
 		if(lightSrcViewer!=null && lightSrcViewer.hasDataToSave()){
 			List<TagData> list=lightSrcViewer.getChangedTags();
 			printList("LightSrc "+lightSrcViewer.getIndex(),list);
@@ -2075,9 +2061,9 @@ public class MetaDataUI extends JPanel
 		  
 		while (iterator.hasNext()) {
 		   String key = iterator.next().toString();
-		   String value = map.get(key).toString();
+		   String value = map.get(key)!=null? map.get(key).toString():"";
 		  
-		   System.out.println("\t\t"+key + " " + value);
+		   System.out.println("\t\t"+key + ": " + value);
 		}
 	}
 

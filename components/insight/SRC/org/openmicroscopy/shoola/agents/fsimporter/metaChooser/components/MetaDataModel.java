@@ -1998,8 +1998,8 @@ public class MetaDataModel
 		if(map!=null){
 			for (Iterator i = map.entrySet().iterator(); i.hasNext(); ) {
 				Map.Entry next = (Map.Entry)i.next();
-				
-				list.add(new NamedValue(id+next.getKey().toString(),next.getValue().toString()));
+				if(next.getValue()!=null)
+					list.add(new NamedValue(id+next.getKey().toString(),next.getValue().toString()));
 			}
 		}
 		return list;
