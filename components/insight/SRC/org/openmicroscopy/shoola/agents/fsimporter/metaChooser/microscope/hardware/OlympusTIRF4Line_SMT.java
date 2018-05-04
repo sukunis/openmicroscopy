@@ -41,10 +41,10 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 	private Filter IX2_MDICT;
 	private Dichroic D_ZT_405_488_561_640RPC;
 	private Filter BRIGHTLINE_HC_466_523_500_677;
-	private Filter BRIGHTLINE_HC_445_45;
-	private Filter BRIGHTLINE_HC_525_50;
-	private Filter BRIGHTLINE_HC_600_37;
-	private Filter BRIGHTLINE_HC_697_58;
+	private Filter sec_BRIGHTLINE_HC_445_45;
+	private Filter sec_BRIGHTLINE_HC_525_50;
+	private Filter sec_BRIGHTLINE_HC_600_37;
+	private Filter sec_BRIGHTLINE_HC_697_58;
 
 	private Filter D_480DCXR;
 	private Filter D_565DCXR;
@@ -52,6 +52,7 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 	private Filter BRIGHTLINE_HC_438_24;
 	private Filter BRIGHTLINE_HC_520_35;
 	private Filter BRIGHTLINE_HC_685_40;
+	private Filter BRIGHTLINE_HC_600_37;
 	
 	
 	public OlympusTIRF4Line_SMT()
@@ -126,13 +127,13 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		IX2_MDICT= getFilter("DIC Cube:IX2-MDICT",FilterType.OTHER,-1,-1,null,"Olympus");
 		
 		
-		BRIGHTLINE_HC_445_45=getFilter("BrightLine HC 445/45",FilterType.BANDPASS,423,468,UnitsLength.NANOMETER, "Semrock");
+		sec_BRIGHTLINE_HC_445_45=getFilter("BrightLine HC 445/45",FilterType.BANDPASS,423,468,UnitsLength.NANOMETER, "Semrock");
 		
-		BRIGHTLINE_HC_525_50=getFilter("BrightLine HC 525/50",FilterType.BANDPASS,500,550,UnitsLength.NANOMETER, "Semrock");
+		sec_BRIGHTLINE_HC_525_50=getFilter("BrightLine HC 525/50",FilterType.BANDPASS,500,550,UnitsLength.NANOMETER, "Semrock");
 		
-		BRIGHTLINE_HC_600_37=getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NANOMETER, "Semrock");
+		sec_BRIGHTLINE_HC_600_37=getFilter("BrightLine HC 600/37",FilterType.BANDPASS,582,619,UnitsLength.NANOMETER, "Semrock");
 		
-		BRIGHTLINE_HC_697_58=getFilter("BrightLine HC 697/58",FilterType.BANDPASS,668,726,UnitsLength.NANOMETER, "Semrock");
+		sec_BRIGHTLINE_HC_697_58=getFilter("BrightLine HC 697/58",FilterType.BANDPASS,668,726,UnitsLength.NANOMETER, "Semrock");
 		
 		
 		D_480DCXR=getFilter("Beamsplitter 480dcxr",FilterType.LONGPASS,480,-1,UnitsLength.NANOMETER, "Chroma");
@@ -166,16 +167,16 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		list.add(IX2_MDICT);
 		
 		//405 und DAPI
-		list.add(BRIGHTLINE_HC_445_45);
+		list.add(sec_BRIGHTLINE_HC_445_45);
 		
 		//488 und GFP
-		list.add(BRIGHTLINE_HC_525_50);
+		list.add(sec_BRIGHTLINE_HC_525_50);
 		
 		//561 und TMR
-		list.add(BRIGHTLINE_HC_600_37);
+		list.add(sec_BRIGHTLINE_HC_600_37);
 		
 		//642 und Cy5
-		list.add(BRIGHTLINE_HC_697_58);
+		list.add(sec_BRIGHTLINE_HC_697_58);
 		
 		
 		//405+488 (405+561, 405+561, 488+561, 488+561+642,...)
@@ -394,28 +395,28 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		lp=new LightPath();
 		lp.linkDichroic(D_ZT_405_488_561_640RPC);
 		lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
-		lp.linkEmissionFilter(BRIGHTLINE_HC_445_45);
+		lp.linkEmissionFilter(sec_BRIGHTLINE_HC_445_45);
 		map.put("405", lp);
 		map.put("DAPI", lp);
 
 		lp=new LightPath();
 		lp.linkDichroic(D_ZT_405_488_561_640RPC);
 		lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
-		lp.linkEmissionFilter(BRIGHTLINE_HC_525_50);
+		lp.linkEmissionFilter(sec_BRIGHTLINE_HC_525_50);
 		map.put("488", lp);
 		map.put("GFP", lp);
 
 		lp=new LightPath();
 		lp.linkDichroic(D_ZT_405_488_561_640RPC);
 		lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
-		lp.linkEmissionFilter(BRIGHTLINE_HC_600_37);
+		lp.linkEmissionFilter(sec_BRIGHTLINE_HC_600_37);
 		map.put("561", lp);
 		map.put("TMR", lp);
 
 		lp=new LightPath();
 		lp.linkDichroic(D_ZT_405_488_561_640RPC);
 		lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
-		lp.linkEmissionFilter(BRIGHTLINE_HC_697_58);
+		lp.linkEmissionFilter(sec_BRIGHTLINE_HC_697_58);
 		map.put("642", lp);
 		map.put("Cy5", lp);
 
