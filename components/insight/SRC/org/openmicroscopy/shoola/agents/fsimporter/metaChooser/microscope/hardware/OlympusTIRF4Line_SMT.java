@@ -226,7 +226,6 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		o.setModel("UPLAFLN 20x");
 		o.setManufacturer("Olympus");
 		o.setNominalMagnification(20.0);
-		o.setCalibratedMagnification(20.0);
 		o.setLensNA(0.75);
 		o.setImmersion(Immersion.AIR);
 //		o.setCorrection(Correction.PLANAPO);
@@ -237,7 +236,6 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		o.setModel("APON OTIRF 60x/1.49");
 		o.setManufacturer("Olympus");
 		o.setNominalMagnification(60.0);
-		o.setCalibratedMagnification(60.0);
 		o.setLensNA(1.49);
 		o.setImmersion(Immersion.OIL);
 //		o.setCorrection(Correction.PLANFLUOR);
@@ -248,7 +246,6 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		o.setModel("UAPON OTIRF 100x / 1,49");
 		o.setManufacturer("Olympus");
 		o.setNominalMagnification(100.0);
-		o.setCalibratedMagnification(100.0);
 		o.setLensNA(1.49);
 		o.setImmersion(Immersion.OIL);
 //		o.setCorrection(Correction.PLANAPO);
@@ -259,7 +256,6 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		o.setModel("UAPO OTIRFM 150x / 1,45");
 		o.setManufacturer("Olympus");
 		o.setNominalMagnification(150.0);
-		o.setCalibratedMagnification(150.0);
 		o.setLensNA(1.45);
 		o.setImmersion(Immersion.OIL);
 //		o.setCorrection(Correction.PLANAPO);
@@ -360,6 +356,23 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		imgEnvConf.setTag(TagNames.HUMIDITY,null,null,true, null, true);
 		imgEnvConf.setTag(TagNames.CO2,null,null,true, null, true);
 		return imgEnvConf;
+	}
+	@Override
+	protected  ModuleConfiguration loadObjectiveConf(boolean active,GUIPlaceholder pos,String width){
+		ModuleConfiguration oConf=new ModuleConfiguration(active,pos,width);
+		oConf.setTag(TagNames.MODEL,null,null,true, null, true);
+		oConf.setTag(TagNames.MANUFAC,null,null,true, null, true);
+		oConf.setTag(TagNames.NOMMAGN,null,null,true, null, true);
+		oConf.setTag(TagNames.CALMAGN,null,null,true, null, false);
+		oConf.setTag(TagNames.LENSNA,null,null,true, null, true);
+		oConf.setTag(TagNames.IMMERSION,null,null,true, null, true);
+		oConf.setTag(TagNames.CORRECTION,null,null,true, null, true);
+		oConf.setTag(TagNames.WORKDIST,null,TagNames.WORKDIST_UNIT.getSymbol(),true, null, true);
+		
+		oConf.setSettingTag(TagNames.CORCOLLAR,null,null,true, null, true);
+		oConf.setSettingTag(TagNames.OBJ_MEDIUM,null,null,true, null, true);
+		oConf.setSettingTag(TagNames.REFINDEX,null,null,true, null, true);
+		return oConf;
 	}
 	
 	
