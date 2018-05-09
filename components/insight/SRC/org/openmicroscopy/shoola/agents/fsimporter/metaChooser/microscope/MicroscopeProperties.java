@@ -146,7 +146,8 @@ public abstract class MicroscopeProperties
 	}
 	
 	/**
-	 * 
+	 * Override this configuration in hardware specification file if you want to change this
+	 * default view (for hiding tags or something
 	 * @param active
 	 * @param pos
 	 * @param width
@@ -192,7 +193,8 @@ public abstract class MicroscopeProperties
 	}
 
 	/**
-	 * 
+	 * Override this configuration in hardware specification file if you want to change this
+	 * default view (for hiding tags or something
 	 */
 	protected  ModuleConfiguration loadSampleConf(boolean active,GUIPlaceholder pos,String width){
 		ModuleConfiguration sampleConf=new ModuleConfiguration(active,pos,width);
@@ -210,7 +212,8 @@ public abstract class MicroscopeProperties
 	
 
 	/**
-	 * 
+	 * Override this configuration in hardware specification file if you want to change this
+	 * default view (for hiding tags or something
 	 */
 	protected  ModuleConfiguration loadLightSrcConf(boolean active,GUIPlaceholder pos,String width){
 		// laser module for lightSrc
@@ -235,7 +238,8 @@ public abstract class MicroscopeProperties
 		
 
 	/**
-	 * 
+	 * Override this configuration in hardware specification file if you want to change this
+	 * default view (for hiding tags or something
 	 */
 	protected  ModuleConfiguration loadImageEnvConf(boolean active,GUIPlaceholder pos,String width){
 		ModuleConfiguration imgEnvConf=new ModuleConfiguration(active,pos,width);
@@ -247,7 +251,8 @@ public abstract class MicroscopeProperties
 	}
 
 	/**
-	 * 
+	 * Override this configuration in hardware specification file if you want to change this
+	 * default view (for hiding tags or something
 	 */
 	protected  ModuleConfiguration loadExperimentConf(boolean active,GUIPlaceholder pos,String width){
 		ModuleConfiguration expConf=new ModuleConfiguration(active,pos,width);
@@ -261,7 +266,8 @@ public abstract class MicroscopeProperties
 	}
 
 	/**
-	 * 
+	 * Override this configuration in hardware specification file if you want to change this
+	 * default view (for hiding tags or something
 	 */
 	protected  ModuleConfiguration loadDetectorConf(boolean active,GUIPlaceholder pos,String width){
 		ModuleConfiguration detectorConf=new ModuleConfiguration(active,pos,width);
@@ -280,7 +286,8 @@ public abstract class MicroscopeProperties
 	}
 
 	/**
-	 * 
+	 * Override this configuration in hardware specification file if you want to change this
+	 * default view (for hiding tags or something
 	 */
 	protected  ModuleConfiguration loadObjectiveConf(boolean active,GUIPlaceholder pos,String width){
 		ModuleConfiguration oConf=new ModuleConfiguration(active,pos,width);
