@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
@@ -47,7 +48,23 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		
 	}
 	
-	
+	@Override
+	protected void initCustomView(){
+		view = new CustomViewProperties();
+		LOGGER.info("[VIEW_PROP] Load OlympusLSMFV1000 view");
+		view.setMicName(FLUOVIEW1000);
+		view.setMicDesc(" ");
+		view.setImageConf(getImageConf());
+    	
+		view.setObjConf(getObjectiveConf());
+		view.setDetectorConf(getDetectorConf());
+		view.setLightSrcConf(getLightSrcConf());
+		view.setChannelConf(getChannelConf());
+		view.setLightPathConf(getLightPathConf());
+		view.setSampleConf(getSampleConf());
+		view.setExperimenterConf(getExperimentConf());
+		view.setImgEnvConf(getImageEnvConf());
+	}
 
 
 

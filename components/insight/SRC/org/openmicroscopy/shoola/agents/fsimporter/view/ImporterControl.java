@@ -443,6 +443,8 @@ class ImporterControl
     			view.showMetaDataDialog();
     		}else if(ImportDialog.ADD_MAP_ANNOTATION.equals(name)){
     			view.setMapAnnotation((MapAnnotationObject) evt.getNewValue());
+    		}else if(ImportDialog.REFRESH_TITLE.equals(name)) {
+    			view.setNewTitle((String) evt.getNewValue());
     		}
         }
 

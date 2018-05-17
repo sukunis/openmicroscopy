@@ -381,6 +381,7 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		view = new CustomViewProperties();
 		LOGGER.info("[VIEW_PROP] Load OlympusTIRF4Line_SMT view");
 		view.setMicName(TIRF4LINE_SMT);
+		view.setMicDesc(" Contains automatic Channel-Filter Mapping!");
 		view.setImageConf(getImageConf());
     	
 		view.setObjConf(getObjectiveConf());

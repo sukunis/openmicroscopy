@@ -22,6 +22,7 @@ public class CustomViewProperties
 	    	    LoggerFactory.getLogger(CustomViewProperties.class);
 
     private String micName;
+    private String micDesc;
 
 	static enum MicSubmodule
 	{
@@ -64,6 +65,7 @@ public class CustomViewProperties
 	public CustomViewProperties()
 	{
 		micName="Unspecified";
+		micDesc=null;
 		init=false;
 //		moduleList=new ArrayList<Submodule>();
 		
@@ -360,6 +362,14 @@ public void loadImageConf(boolean active) {
 
 	public void setMicName(String micName) {
 		this.micName = micName;
+	}
+	
+	public String getMicDesc() {
+		return micDesc;
+	}
+	
+	public void setMicDesc(String micDesc) {
+		this.micDesc=micDesc;
 	}
 
 	public List<Objective> getMicObjList() {

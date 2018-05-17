@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ModuleConfiguration;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
@@ -46,6 +47,24 @@ public class LeicaLSMSP5 extends MicroscopeProperties
 		objectives=this.getMicObjectiveList();
 		lightSources=this.getMicLightSrcList();
 		lightPathObjects=this.getMicLightPathFilterList();
+	}
+	
+	@Override
+	protected void initCustomView(){
+		view = new CustomViewProperties();
+		LOGGER.info("[VIEW_PROP] Load LeicaLSMSP5 view");
+		view.setMicName(LEICASP5);
+		view.setMicDesc(" ");
+		view.setImageConf(getImageConf());
+    	
+		view.setObjConf(getObjectiveConf());
+		view.setDetectorConf(getDetectorConf());
+		view.setLightSrcConf(getLightSrcConf());
+		view.setChannelConf(getChannelConf());
+		view.setLightPathConf(getLightPathConf());
+		view.setSampleConf(getSampleConf());
+		view.setExperimenterConf(getExperimentConf());
+		view.setImgEnvConf(getImageEnvConf());
 	}
 
 	

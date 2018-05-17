@@ -935,9 +935,13 @@ public class MetaDataUI extends JPanel
 			//save in each case to key-value pair: subarray 
 			if(image!=null){
 				StageLabel label =image.getStageLabel();
-				if(label!=null)
-				model.addToMapAnnotationImage(TagNames.STAGELABEL,label.getX().value()+
+				
+				
+				if(label!=null &&label.getX()!=null && label.getY()!=null) {
+					model.addToMapAnnotationImage(TagNames.STAGELABEL,label.getX().value()+
 						", "+label.getY().value()+" "+label.getX().unit().getSymbol() );
+					
+				}
 			}
 			try{
 				readObjectiveData(image,objList);

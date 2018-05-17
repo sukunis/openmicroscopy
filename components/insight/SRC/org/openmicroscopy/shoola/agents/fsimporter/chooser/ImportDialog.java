@@ -154,6 +154,8 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	
 	public static final String SHOW_METADATA_DIALOG="showMetaDataDialog";
 	
+	public static final String REFRESH_TITLE="refreshDialogTitle";
+	
 	// Command Ids
 	/** Action id indicating to import the selected files. */
 	private static final int CMD_IMPORT = 1;

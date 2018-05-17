@@ -182,6 +182,7 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private FNode lastNode;
     
     private String micName;
+    private String micDesc;
     
     private boolean holdData;
 
@@ -523,6 +524,7 @@ private boolean disableTreeListener;
         
         
         micName=customSettings.getMicName();
+        micDesc=customSettings.getMicDesc();
         MetaDataView view=new MetaDataView();
         
         metaPanel=new JPanel(new BorderLayout());
@@ -782,6 +784,14 @@ private boolean disableTreeListener;
 
     public void setMicName(String micName) {
         this.micName = micName;
+    }
+    
+    public String getMicDesc() {
+    	return micDesc;
+    }
+    
+    public void setMicDesc(String micDesc) {
+    	this.micDesc =micDesc;
     }
 
     /**
@@ -1453,9 +1463,10 @@ private boolean disableTreeListener;
 //            
 //            break;
         case CHOOSE_MIC:
-        	System.out.println("--- LOAD "+MicroscopeProperties.availableMics[mics.getSelectedIndex()]+" HARDWARE SETTINGS ---");
+        	String newSelection=MicroscopeProperties.availableMics[mics.getSelectedIndex()];
+        	System.out.println("--- LOAD "+newSelection+" HARDWARE SETTINGS ---");
         	
-        	currentMic=MicroscopeProperties.getMicClass(MicroscopeProperties.availableMics[mics.getSelectedIndex()]);
+        	currentMic=MicroscopeProperties.getMicClass(newSelection);
         	// TODO: refresh view
         	
     	
@@ -1467,7 +1478,9 @@ private boolean disableTreeListener;
  				//TODO reload current view if changes
  				loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
  			}
-
+ 			// inform ImporterControl about this changes
+ 			String newTitle=customSettings.getMicName()+(customSettings.getMicDesc()!=null?(": "+customSettings.getMicDesc()): "");
+ 			firePropertyChange(ImportDialog.REFRESH_TITLE,null,newTitle);
         	break;
         case CMD_SAVE:
             LOGGER.info("[GUI-ACTION] -- save");

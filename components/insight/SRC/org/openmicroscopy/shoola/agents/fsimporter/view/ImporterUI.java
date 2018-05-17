@@ -483,7 +483,8 @@ class ImporterUI extends TopWindow
 			c.add(createDebugTab(), "0, 0");
 			tabs.insertClosableComponent(c);
 		}
-		setNewTitle(metaData.getMicName());
+		String title=metaData.getMicName()+(metaData.getMicDesc()!=null?metaData.getMicDesc():"");
+		setNewTitle(title);
 		pack();
 	}
 	
