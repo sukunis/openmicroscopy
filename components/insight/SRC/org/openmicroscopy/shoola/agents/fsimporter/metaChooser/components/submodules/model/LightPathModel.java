@@ -74,52 +74,55 @@ public class LightPathModel
 		maps.set(i, map);
 	}
 
-	/**
-	 * Add filterset data (only replaced functionality)
-	 * @param filterSet
-	 * @param overwrite should be true
-	 * @param i
-	 */
-	public void addData(FilterSet filterSet, boolean overwrite, int i) 
-	{
-		if(!overwrite) {
-			LOGGER.info("[DATA] -- Attention: filterset data could only be replaced");
-		}
-		replaceData(filterSet,i);
-		LOGGER.info("[DATA] -- replace FilterSet data");
-	}
+//	/**
+//	 * Add filterset data (only replaced functionality)
+//	 * @param filterSet
+//	 * @param overwrite should be true
+//	 * @param i
+//	 */
+//	public void addData(FilterSet filterSet, boolean overwrite, int i) 
+//	{
+//		if(!overwrite) {
+//			LOGGER.info("[DATA] -- Attention: filterset data could only be replaced");
+//		}
+//		replaceData(filterSet,i);
+//		LOGGER.info("[DATA] -- replace FilterSet data");
+//	}
+//
+//	/**
+//	 * @param filterSet
+//	 * @param i
+//	 */
+//	private void replaceData(FilterSet filterSet, int i) 
+//	{
+//		if(filterSet==null)
+//			return;
+//		if(filtersets.size()<=i){
+//			expandList(filtersets.size(),i);
+//		}
+//		
+//		filtersets.set(i, new FilterSet(filterSet));
+//		
+//	}
 
 	/**
-	 * @param filterSet
-	 * @param i
-	 */
-	private void replaceData(FilterSet filterSet, int i) 
-	{
-		if(filterSet==null)
-			return;
-		if(filtersets.size()<=i){
-			expandList(filtersets.size(),i);
-		}
-		
-		filtersets.set(i, new FilterSet(filterSet));
-		
-	}
-
-	/**
-	 * Overwrite lightpath data. Caller class has to handle notification about the changes.
+	 * Replace lightpath data. Caller class has to handle notification about the changes.
 	 * @param newElem
-	 * @param overwrite should be true
+	 * @param overwrite =true -> lp will save as mapannotation
 	 * @throws Exception
 	 */
 	public void addData(LightPath newElem,boolean overwrite,int i) throws Exception
 	{
 		
-		if(!overwrite) {
-			LOGGER.info("[DATA] -- Attention: LightPath data could only be replaced");
-		}
 		
 		replaceData(newElem,i);
-		LOGGER.info("[DATA] -- replace LightPath data");
+		LOGGER.info("[DATA] -- replace LightPath data at index: "+i);
+
+		if(overwrite) {
+			LOGGER.info("[DATA] -- Save as map: LightPath "+i);
+			setMap(getChangesAsMap(i),i);
+		}
+		
 		
 	}
 
@@ -190,6 +193,58 @@ public class LightPathModel
 			element.remove(index);		
 	}
 
+//	/**
+//	 *  replace lightPaths with changed lightPaths
+//	 * @param changesLightPath
+//	 */
+//	public void update(List<LightPath> changesLightPath) 
+//	{
+//		if(changesLightPath==null){
+//			MonitorAndDebug.printConsole("\t no changes for lightPath");
+//			return;
+//		}
+//		int index=0;
+//		for(LightPath lp:changesLightPath)
+//		{
+//			if(maps.size()>=index)
+//				maps.add(new HashMap<String,String>());
+//			if(lp!=null && element.size()>index){
+//				element.set(index, lp);
+//			}
+//			
+//			//update map annotation
+//			int i=1;
+//			for(Filter f: lp.copyLinkedExcitationFilterList()){
+//				String id="[Excitation Filter]:["+i+"]:";
+//				maps.get(index).put(id+"Model", f.getModel());
+//				maps.get(index).put(id+"Manufactur", f.getManufacturer());
+//				maps.get(index).put(id+"Type", (f.getType()==null?"": f.getType().getValue()));
+//				maps.get(index).put(id+"FilterWheel", f.getFilterWheel());
+//				
+//				i++;
+//			}
+//			
+//			Dichroic d= lp.getLinkedDichroic();
+//			if(d!=null){
+//				maps.get(index).put("[Dichroic]:["+i+"]:", d.getModel());
+//				i++;
+//			}
+//			
+//			for(Filter f: lp.copyLinkedEmissionFilterList()){
+//				String id="[Emmission Filter]:["+i+"]:";
+//				maps.get(index).put(id+"Model", f.getModel());
+//				maps.get(index).put(id+"Manufactur", f.getManufacturer());
+//				maps.get(index).put(id+"Type",(f.getType()==null?"": f.getType().getValue()));
+//				maps.get(index).put(id+"FilterWheel", f.getFilterWheel());
+//				
+//				i++;
+//			}
+//			
+//			
+//			index++;
+//		}
+//	}
+	
 	/**
 	 *  replace lightPaths with changed lightPaths
 	 * @param changesLightPath
@@ -201,42 +256,40 @@ public class LightPathModel
 			return;
 		}
 		int index=0;
+		
+		
 		for(LightPath lp:changesLightPath)
 		{
-			if(maps.size()>=index)
-				maps.add(new HashMap<String,String>());
-			if(lp!=null && element.size()>index){
-				element.set(index, lp);
-			}
-			
+			replaceData(lp, index);
+			HashMap thisMap=new HashMap<String,String>();
 			//update map annotation
 			int i=1;
 			for(Filter f: lp.copyLinkedExcitationFilterList()){
 				String id="[Excitation Filter]:["+i+"]:";
-				maps.get(index).put(id+"Model", f.getModel());
-				maps.get(index).put(id+"Manufactur", f.getManufacturer());
-				maps.get(index).put(id+"Type", (f.getType()==null?"": f.getType().getValue()));
-				maps.get(index).put(id+"FilterWheel", f.getFilterWheel());
+				thisMap.put(id+"Model", f.getModel());
+				thisMap.put(id+"Manufactur", f.getManufacturer());
+				thisMap.put(id+"Type", (f.getType()==null?"": f.getType().getValue()));
+				thisMap.put(id+"FilterWheel", f.getFilterWheel());
 				
 				i++;
 			}
 			
 			Dichroic d= lp.getLinkedDichroic();
 			if(d!=null){
-				maps.get(index).put("[Dichroic]:["+i+"]:", d.getModel());
+				thisMap.put("[Dichroic]:["+i+"]:", d.getModel());
 				i++;
 			}
 			
 			for(Filter f: lp.copyLinkedEmissionFilterList()){
 				String id="[Emmission Filter]:["+i+"]:";
-				maps.get(index).put(id+"Model", f.getModel());
-				maps.get(index).put(id+"Manufactur", f.getManufacturer());
-				maps.get(index).put(id+"Type",(f.getType()==null?"": f.getType().getValue()));
-				maps.get(index).put(id+"FilterWheel", f.getFilterWheel());
+				thisMap.put(id+"Model", f.getModel());
+				thisMap.put(id+"Manufactur", f.getManufacturer());
+				thisMap.put(id+"Type",(f.getType()==null?"": f.getType().getValue()));
+				thisMap.put(id+"FilterWheel", f.getFilterWheel());
 				
 				i++;
 			}
-			
+			setMap(thisMap, index);
 			
 			index++;
 		}
@@ -267,5 +320,42 @@ public class LightPathModel
 		if(index>=input.size())
 			return false;
 		return input.get(index);
+	}
+	
+	public HashMap<String,String> getChangesAsMap(int index)
+	{
+		if(hasInput(index)) {
+			LightPath lp=getLightPath(index);
+			HashMap thisMap=new HashMap<String,String>();
+			//update map annotation
+			int i=1;
+			for(Filter f: lp.copyLinkedExcitationFilterList()){
+				String id="[Excitation Filter]:["+i+"]:";
+				thisMap.put(id+"Model", f.getModel());
+				thisMap.put(id+"Manufactur", f.getManufacturer());
+				thisMap.put(id+"Type", (f.getType()==null?"": f.getType().getValue()));
+				thisMap.put(id+"FilterWheel", f.getFilterWheel());
+				
+				i++;
+			}
+			
+			Dichroic d= lp.getLinkedDichroic();
+			if(d!=null){
+				thisMap.put("[Dichroic]:["+i+"]:", d.getModel());
+				i++;
+			}
+			
+			for(Filter f: lp.copyLinkedEmissionFilterList()){
+				String id="[Emmission Filter]:["+i+"]:";
+				thisMap.put(id+"Model", f.getModel());
+				thisMap.put(id+"Manufactur", f.getManufacturer());
+				thisMap.put(id+"Type",(f.getType()==null?"": f.getType().getValue()));
+				thisMap.put(id+"FilterWheel", f.getFilterWheel());
+				
+				i++;
+			}
+			return thisMap;
+		}
+		return null;
 	}
 }

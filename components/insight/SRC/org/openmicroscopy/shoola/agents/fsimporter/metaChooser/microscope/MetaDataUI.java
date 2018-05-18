@@ -68,6 +68,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMESto
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.LightPathModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.Channel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml.DetectorSettings;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ChannelViewer;
@@ -291,7 +292,6 @@ public class MetaDataUI extends JPanel
 	/** init modul components respective to settings*/ 
 	private void initModelComponents() 
 	{
-		System.out.println("MetaDataUI::initModelComponents()");
 		if(!componentsInit){
 			if(customSett.getObjConf()!=null && customSett.getObjConf().isVisible()){
 				LOGGER.info("[GUI] -- init OBJECTIVE modul");
@@ -380,6 +380,11 @@ public class MetaDataUI extends JPanel
 					if(lp!=null) {
 						addLightPathData(i, lp, null, true);
 						model.getLightPathModel().setInput(true,i);
+						
+//						model.setChangesLightPath(model.getLightPath(i),i);
+//						//overwrite the whole lightpath for this channel
+//						//printMap(lightPathViewer.getMapValuesOfChanges(null,index));
+//						model.setMapAnnotationLightPath(lightPathViewer.getMapValuesOfChanges(null,index),index, true);
 					}
 				}
 			}
@@ -419,8 +424,7 @@ public class MetaDataUI extends JPanel
 					addLightSrcData(i,parentModel.getLightSourceData(i),parentModel.getLightSourceSettings(i),true);
 				}
 				for(int i=0; i<parentModel.getNumberOfLightPath();i++){
-					System.out.println("########### LightPathData: "+ parentModel.getLightPath(i)==null?"null":"not null");
-					addLightPathData(i,parentModel.getLightPath(i),parentModel.getFilterSet(i),true);
+					addLightPathData(i,parentModel.getLightPath(i),/*parentModel.getFilterSet(i)*/null,true);
 				}
 				
 			}else{
@@ -437,8 +441,7 @@ public class MetaDataUI extends JPanel
 					addLightSrcData(i,parentModel.getLightSourceData(i),parentModel.getLightSourceSettings(i),true); 
 				}
 				for(int i=0; i<parentModel.getNumberOfLightPath();i++){
-					System.out.println("########### LightPathData: "+ parentModel.getLightPath(i)==null?"null":"not null");
-					addLightPathData(i,parentModel.getLightPath(i),parentModel.getFilterSet(i),true);
+					addLightPathData(i,parentModel.getLightPath(i),/*parentModel.getFilterSet(i)*/null,true);
 				}
 			}
 			
@@ -491,14 +494,22 @@ public class MetaDataUI extends JPanel
 			}
 	}
 	
+	/**
+	 * Add lightpath data to model
+	 * @param i
+	 * @param lightPath
+	 * @param filterSet
+	 * @param b
+	 * @throws Exception
+	 */
 	private void addLightPathData(int i, LightPath lightPath, FilterSet filterSet, boolean b) throws Exception 
 	{
 			if(lightPath!=null){
 				model.addData(lightPath, b,i);
 			}
-			if(filterSet!=null){
-				model.addData(filterSet, b,i);
-	}
+//			if(filterSet!=null){
+//				model.addData(filterSet, b,i);
+//			}
 	}
 
 	private void addImageData(Image i,boolean overwrite)  
@@ -1305,7 +1316,6 @@ public class MetaDataUI extends JPanel
 	private void showDetectorData(String name,int index) 
 	{
 		if(initDetectorUI){
-			System.out.println("MetaDataUI::showDetectorData()");
 			detectorPane2=new JPanel(new CardLayout());
 			ModuleConfiguration detModul=customSett.getDetectorConf();
 			detectorViewer=new DetectorViewer(model.getDetectorModel(),customSett.getDetectorConf(),
@@ -1382,10 +1392,6 @@ public class MetaDataUI extends JPanel
 //				lightPathInput=true;
 				int index=lightPathViewer.getIndex();
 				try {
-					
-					
-					
-					
 					lightPathViewer.saveData();
 				
 						//printLightPath(model.getLightPath(index));
@@ -1888,10 +1894,12 @@ public class MetaDataUI extends JPanel
 		return dataToSave_Desc;
 	}
 
+	// save current viewer input 
 	public void save() 
 	{
 		String chName=null;
 		
+		// save current module viewer changes
 		MonitorAndDebug.printConsole("# MetaDataUI::save()");
 		if(imageUI!=null){
 			if( imageUI.hasDataToSave()){
@@ -1990,10 +1998,11 @@ public class MetaDataUI extends JPanel
 			
 			int index=lightPathViewer.getIndex();
 			HashMap<String,String> map=model.getMapAnnotationLightPath(index);
+			//save current viewer data - but was is about the mapping data without viewer??
 			lightPathViewer.saveData();
 			try {
 				printLightPath(model.getLightPath(index));
-				model.setChangesLightPath(model.getLightPath(index),lightPathViewer.getIndex());
+				model.setChangesLightPath(model.getLightPath(index),index);
 				//overwrite the whole lightpath for this channel
 				//printMap(lightPathViewer.getMapValuesOfChanges(null,index));
 				model.setMapAnnotationLightPath(lightPathViewer.getMapValuesOfChanges(null,index),index, true);
@@ -2005,8 +2014,6 @@ public class MetaDataUI extends JPanel
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}else{
-			System.out.println("### Filter nothing to save");
 		}
 		
 		if(lightSrcViewer!=null && lightSrcViewer.hasDataToSave()){
@@ -2019,10 +2026,48 @@ public class MetaDataUI extends JPanel
 			lightSrcViewer.afterSavingData();
 		}
 		
+		//save mapr changes
+		saveModelChanges();
+		
 		detectorInput=false;
 		lightPathInput=false;
 		lightSrcInput=false;
 		dataToSave_Desc="";
+	}
+	
+	private void saveModelChanges()
+	{
+		LightPathModel lp=model.getLightPathModel();
+		if(lp!=null ){
+			
+			for(int i=0; i<=lp.getNumberOfLightPaths(); i++) {
+			
+				if(lp.hasInput(i)) {
+					try {
+						MonitorAndDebug.printConsole("# MetaDataUI::saveModelChanges()::Filter of CH "+i);
+//						printLightPath(model.getLightPath(i));
+						model.setChangesLightPath(model.getLightPath(i),i);
+						model.setMapAnnotationLightPath(lp.getChangesAsMap(i), i, true);
+						
+						printMap(model.getMapAnnotationLightPath(i));
+						
+//						model.setMapAnnotationLightPath(lp.getMap(i),i, true);
+						
+						
+						lp.setInput(false, i);
+					}catch (Exception e) {
+						e.printStackTrace();
+					}
+				}else {
+					MonitorAndDebug.printConsole("# MetaDataUI::saveModelChanges(): Filter nothing to save: "+i);
+				}
+			}
+			
+			
+		}else {
+			MonitorAndDebug.printConsole("# MetaDataUI::saveModelChanges(): Filter nothing to save");
+		}
+		
 	}
 
 

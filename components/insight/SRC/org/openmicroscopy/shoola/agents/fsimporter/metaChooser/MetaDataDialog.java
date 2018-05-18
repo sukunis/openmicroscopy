@@ -1112,16 +1112,17 @@ private boolean disableTreeListener;
     				MonitorAndDebug.printConsole("DATA FOR THIS VIEW STORED: FALSE");
 
 
-    				String text="There are unsaved changes for "+node.getAbsolutePath()+"!\n "
-    						+ "Do you like to save this changes?";
-    				if(!node.isLeaf()){
-    					text="There are unsaved changes for current directory!\n "
-    							+ "Do you like to save this changes for the directory and for all child objects?";
-    				}
+//    				String text="There are unsaved changes for "+node.getAbsolutePath()+"!\n "
+//    						+ "Do you like to save this changes?";
+//    				if(!node.isLeaf()){
+//    					text="There are unsaved changes for current directory!\n "
+//    							+ "Do you like to save this changes for the directory and for all child objects?";
+//    				}
     				saveToAll =true;
-    				if(showSaveDialog){
-    					saveToAll=showSaveInputDialog(text+"\n "+node.getView().getDataToSave_Desc());
-    				}
+    				// show "save changes" - dialog
+//    				if(showSaveDialog){
+//    					saveToAll=showSaveInputDialog(text+"\n "+node.getView().getDataToSave_Desc());
+//    				}
     			}
     		}
 

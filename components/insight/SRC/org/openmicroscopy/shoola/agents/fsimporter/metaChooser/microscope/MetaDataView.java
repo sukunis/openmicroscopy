@@ -641,6 +641,8 @@ public class MetaDataView extends JPanel
 		parentDataLoaded=b;		
 	}
 
+	
+	
 	/** return mapAnnotationData for singleView and List<MapAnnotationData> for seriesData*/ 
 	public MapAnnotationObject getMapAnnotation() 
 	{

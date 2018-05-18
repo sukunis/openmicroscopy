@@ -587,25 +587,25 @@ public class MetaDataModel
 		lightPathModel.update(lp);
 	}
 
-	public FilterSet getFilterSet(int index) throws Exception
-	{
-		if(lightPathModel==null || getNumberOfLightPath()==0){
-			return null;
-		}
-		return lightPathModel.getFilterSet(index);
-	}
-
-	public void addData(FilterSet filterSet, boolean b, int i) {
-		if(lightPathModel==null)
-			lightPathModel=new LightPathModel();
-		
-		lightPathModel.addData(filterSet, b, i);
-	}
+//	public FilterSet getFilterSet(int index) throws Exception
+//	{
+//		if(lightPathModel==null || getNumberOfLightPath()==0){
+//			return null;
+//		}
+//		return lightPathModel.getFilterSet(index);
+//	}
+//
+//	public void addData(FilterSet filterSet, boolean b, int i) {
+//		if(lightPathModel==null)
+//			lightPathModel=new LightPathModel();
+//		
+//		lightPathModel.addData(filterSet, b, i);
+//	}
 
 
 	public LightPath getLightPath(int index) throws Exception
 	{
-		if(lightPathModel==null || getNumberOfLightPath()==0){
+		if(lightPathModel==null || getNumberOfLightPath()<index){
 			LOGGER.info("No lightPath available for channel "+index);
 			MonitorAndDebug.printConsole("No lightPath available for channel "+index);
 			return null;
@@ -1752,6 +1752,7 @@ public class MetaDataModel
 	}
 	
 
+	
 	public HashMap<String,String> getMapAnnotationLightPath(int index) {
 		if(lightPathModel==null)
 			return null;
@@ -1935,6 +1936,7 @@ public class MetaDataModel
 	
 	public MapAnnotationData getAnnotation()
 	{
+		System.out.println("# MetaDataModel:: Collect all MapAnnotations");
 		MapAnnotation ma = new MapAnnotationI();
 		List<NamedValue> values = new ArrayList<NamedValue>();
 		
@@ -1956,6 +1958,7 @@ public class MetaDataModel
 				values=hashMapToValueList(getMapAnnotationDetector(i), values,id2+"[Detector]:");
 				values=hashMapToValueList(getMapAnnotationLightPath(i), values,id2+"[Filter]:");
 				values=hashMapToValueList(getMapAnnotationLightSrc(i), values,id2+"[LightSrc]:");
+				System.out.println("# MetaDataModel:: Collect all MapAnnotations: Channel & Co: "+i);
 			}
 		}else{// no channel available, don't link to any channel
 			String id="";
