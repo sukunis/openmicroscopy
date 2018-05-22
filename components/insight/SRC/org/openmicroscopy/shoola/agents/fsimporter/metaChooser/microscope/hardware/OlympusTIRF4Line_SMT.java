@@ -183,9 +183,12 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		fs1= new FilterSet();
 		fs1.setModel("QuadView Filter Cube");
 		//TODO
-		fs1.linkEmissionFilter(D_480DCXR);
-		fs1.linkEmissionFilter(D_565DCXR);
-		fs1.linkEmissionFilter(D_640DCXR);
+		Filter D_480DCXR_D=getFilter("Beamsplitter 480dcxr",FilterType.DICHROIC,480,-1,UnitsLength.NANOMETER, "Chroma");
+		Filter D_565DCXR_D=getFilter("Beamsplitter 565dcxr",FilterType.DICHROIC,565,-1,UnitsLength.NANOMETER, "Chroma");
+		Filter D_640DCXR_D=getFilter("Beamsplitter 640dcxr",FilterType.DICHROIC,640,-1,UnitsLength.NANOMETER, "Chroma");
+		fs1.linkEmissionFilter(D_480DCXR_D);
+		fs1.linkEmissionFilter(D_565DCXR_D);
+		fs1.linkEmissionFilter(D_640DCXR_D);
 		
 		fs1.linkEmissionFilter(BRIGHTLINE_HC_438_24);
 		fs1.linkEmissionFilter(BRIGHTLINE_HC_520_35);
@@ -193,7 +196,50 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		fs1.linkEmissionFilter(BRIGHTLINE_HC_685_40);
 		list.add(fs1);
 		
+		// Filter by channel name
 		
+
+		FilterSet lp405_DAPI=new FilterSet();
+		lp405_DAPI.setModel("405 or DAPI");
+		lp405_DAPI.linkDichroic(D_ZT_405_488_561_640RPC);
+		lp405_DAPI.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+		lp405_DAPI.linkEmissionFilter(sec_BRIGHTLINE_HC_445_45);
+		list.add(lp405_DAPI);
+
+		FilterSet lp488_GFP=new FilterSet();
+		lp488_GFP.setModel("488 or GFP");
+		lp488_GFP.linkDichroic(D_ZT_405_488_561_640RPC);
+		lp488_GFP.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+		lp488_GFP.linkEmissionFilter(sec_BRIGHTLINE_HC_525_50);
+		list.add(lp488_GFP);
+
+		FilterSet lp561_TMR=new FilterSet();
+		lp561_TMR.setModel("561 or TMR");
+		lp561_TMR.linkDichroic(D_ZT_405_488_561_640RPC);
+		lp561_TMR.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+		lp561_TMR.linkEmissionFilter(sec_BRIGHTLINE_HC_600_37);
+		list.add(lp561_TMR);
+
+		FilterSet lp642_Cy5=new FilterSet();
+		lp642_Cy5.setModel("642 or Cy5");
+		lp642_Cy5.linkDichroic(D_ZT_405_488_561_640RPC);
+		lp642_Cy5.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+		lp642_Cy5.linkEmissionFilter(sec_BRIGHTLINE_HC_697_58);
+		list.add(lp642_Cy5);
+
+		//TODO: if + in channel name:... else return null
+		FilterSet lpPlus=new FilterSet();
+		lpPlus.setModel("Channel +");
+		lpPlus.linkDichroic(D_ZT_405_488_561_640RPC);
+		lpPlus.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
+		lpPlus.linkEmissionFilter(D_480DCXR);
+		lpPlus.linkEmissionFilter(D_565DCXR);
+		lpPlus.linkEmissionFilter(D_640DCXR);
+		lpPlus.linkEmissionFilter(BRIGHTLINE_HC_438_24);
+		lpPlus.linkEmissionFilter(BRIGHTLINE_HC_520_35);
+		lpPlus.linkEmissionFilter(BRIGHTLINE_HC_600_37);
+		lpPlus.linkEmissionFilter(BRIGHTLINE_HC_685_40);
+		list.add(lpPlus);
 		
 		return list;
 	}
