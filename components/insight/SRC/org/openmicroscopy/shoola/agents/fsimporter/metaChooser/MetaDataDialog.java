@@ -852,8 +852,9 @@ private boolean disableTreeListener;
     /**
      * Generate MetaDataView for selected node and load predefined value, parent, import and model data.
      * @param node selected node in the filetree
+     * @param reload TODO
      */
-    private void loadAndShowDataForSelection(FNode node)
+    private void loadAndShowDataForSelection(FNode node, boolean reload)
     {
     	String file=null;
     	if(node==null || (file=getSelectedFilePath(node))==null)
@@ -886,10 +887,12 @@ private boolean disableTreeListener;
     	}else{
     		try{
     			//if model still exists, it was still updated by parent data at deselectedNodeAction()
-    			if(node.hasModelObject()){
+    			if(node.hasModelObject() && !reload){
+    				System.out.println("\n USE AVAILABLE VIEW\n");
     				view = node.getView();
     				view.setVisible();
     			}else{
+    				System.out.println("\n NEW VIEW\n");
     				view = loadAndShowDataForFile(file, importData, parentModel, view, true, true && enabledPredefinedData);
     			}
     		}catch(Exception e){
@@ -1477,7 +1480,7 @@ private boolean disableTreeListener;
  				deselectNodeAction((FNode)fileTree.getLastSelectedPathComponent());
              
  				//TODO reload current view if changes
- 				loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
+ 				loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent(), true);
  			}
  			// inform ImporterControl about this changes
  			String newTitle=customSettings.getMicName()+(customSettings.getMicDesc()!=null?(": "+customSettings.getMicDesc()): "");
@@ -1615,7 +1618,7 @@ private boolean disableTreeListener;
 		   enableSaveButtons(selectedNode.isLeaf());
 		   enableViewButtons();
 		   resetFileDataButton.setEnabled(true);
-           loadAndShowDataForSelection(selectedNode);
+           loadAndShowDataForSelection(selectedNode, false);
            
            revalidate();
            repaint();
