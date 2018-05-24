@@ -2,6 +2,7 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modul
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -110,8 +111,10 @@ public class FilterCompUI extends LightPathElem
 //		add(new TitledSeparator("Filter", 3, TitledBorder.DEFAULT_POSITION),BorderLayout.NORTH);
 		add(globalPane,BorderLayout.NORTH);
 		tb=new TitledBorder("");
-		setBorder(BorderFactory.createCompoundBorder(tb,
-						BorderFactory.createEmptyBorder(5,5,5,5)));
+//		setBorder(BorderFactory.createCompoundBorder(tb,
+//						BorderFactory.createEmptyBorder(5,5,5,5)));
+		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.black, 1),
+				BorderFactory.createEmptyBorder(5,5,5,5)));
 	}
 
 	private void readGUIInput() throws Exception

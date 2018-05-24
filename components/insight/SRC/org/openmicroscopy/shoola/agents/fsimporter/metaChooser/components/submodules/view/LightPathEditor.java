@@ -1,6 +1,7 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
@@ -202,6 +204,8 @@ public class LightPathEditor extends JDialog implements ActionListener
 		label.setFont(new Font("Tahoma", Font.BOLD, 11));
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.black, 1),
+				BorderFactory.createEmptyBorder(5,5,5,5)));
 
 		avFilterTable = new AvailableFilterTable();  
 		scrollPane.setViewportView(avFilterTable);
