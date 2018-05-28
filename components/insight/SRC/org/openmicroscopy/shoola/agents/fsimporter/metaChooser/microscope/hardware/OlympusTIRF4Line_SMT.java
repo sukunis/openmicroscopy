@@ -450,14 +450,14 @@ public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 		LightPath lp=null;
 		lp=new LightPath();
 		lp.linkEmissionFilter(IX2_MDICT);
-		map.put("DIC", lp);
+		map.put("DIC", lp);//mapr name
 
 		lp=new LightPath();
 		lp.linkDichroic(D_ZT_405_488_561_640RPC);
 		lp.linkEmissionFilter(BRIGHTLINE_HC_466_523_500_677);
 		lp.linkEmissionFilter(sec_BRIGHTLINE_HC_445_45);
 		map.put("405", lp);
-		map.put("DAPI", lp);
+		map.put("BFP", lp);
 
 		lp=new LightPath();
 		lp.linkDichroic(D_ZT_405_488_561_640RPC);
