@@ -1,6 +1,6 @@
 /*
  *------------------------------------------------------------------------------
- *  Copyright (C) 2006-2014 University of Dundee. All rights reserved.
+ *  Copyright (C) 2006-2016 University of Dundee. All rights reserved.
  *
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -54,9 +54,7 @@ import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.env.data.model.ImportableObject;
 import org.openmicroscopy.shoola.env.data.model.ResultsObject;
 import org.openmicroscopy.shoola.env.data.model.ThumbnailData;
-
 import omero.gateway.SecurityContext;
-
 import org.openmicroscopy.shoola.env.event.EventBus;
 import org.openmicroscopy.shoola.env.ui.UserNotifier;
 import org.openmicroscopy.shoola.util.file.ImportErrorObject;
@@ -199,7 +197,6 @@ class ImporterComponent
 	{
 		if (element == null) return;
 		view.setSelectedPane(element, true);
-		
 		model.fireImportData(element.getData(), element.getID());
 	}
 	
@@ -336,7 +333,6 @@ class ImporterComponent
         if (model.getState() == DISCARDED) return;
         boolean reactivate = chooser != null;
         model.setImportFor(userId);
-        
         if (chooser == null) {
             chooser = new ImportDialog(view, model.getSupportedFormats(),
                     selectedContainer, objects, type,
@@ -351,23 +347,18 @@ class ImporterComponent
         }
         chooser.setSelectedGroup(getSelectedGroup());
         
-        
+		//read out workstation name from config file
         String microscopeName = (String) ImporterAgent.getRegistry().lookup(LookupNames.MICROSCOPE_WORKSTATION);
         
-        
-        //Metadata biology
+        //create instance of metadata editor (MetaDataDialog) and add it to the view
         if(metaDataChooser==null){
         	metaDataChooser = new MetaDataDialog(view,model.getSupportedFormats(),type, 
         			controller.getAction(ImporterControl.CANCEL_BUTTON),this,
         			chooser.getImportButton(),chooser.getCancelImportButton(), microscopeName); 
         	metaDataChooser.addPropertyChangeListener(controller);
         	view.addMDComponent(metaDataChooser);
-        }else{
-        	//metaDataChooser.reset();
-        	//metaDataChooser.requestFocusInWindow();
-//        	view.selectMetaDataChooser();
         }
-        
+
         if (model.isMaster() || CollectionUtils.isEmpty(objects) || !reactivate)
             refreshContainers(new ImportLocationDetails(type));
         //load available disk space
@@ -740,8 +731,6 @@ class ImporterComponent
 	{
 		if (data == null)
 			throw new IllegalArgumentException("No object to create.");
-		
-	
 		model.fireDataCreation(data);
 		fireStateChange();
 	}
@@ -935,7 +924,6 @@ class ImporterComponent
 		if (element == null) return;
 		Object result = component.getImportResult();
 		Object formattedResult = element.uploadComplete(component, result);
-		
 		if (!controller.isMaster()) {
 			EventBus bus = ImporterAgent.getRegistry().getEventBus();
 			ImportStatusEvent e = new ImportStatusEvent(hasOnGoingImport(),
@@ -1008,8 +996,4 @@ class ImporterComponent
             }
         }
     }
-    
-   
-    
-   
 }
