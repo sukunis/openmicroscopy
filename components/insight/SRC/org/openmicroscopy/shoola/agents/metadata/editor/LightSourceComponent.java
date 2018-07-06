@@ -153,6 +153,8 @@ class LightSourceComponent
             key = (String) entry.getKey();
             set = !notSet.contains(key);
             value = entry.getValue();
+            
+            
             label = UIUtilities.setTextFont(key, Font.BOLD, sizeLabel);
             label.setBackground(UIUtilities.BACKGROUND_COLOR);
             if (LightSourceData.LASER.equals(kind)) {
@@ -254,8 +256,7 @@ class LightSourceComponent
                 	filamentTypeBox.setEditedColor(UIUtilities.EDITED_COLOR);
                 	area = filamentTypeBox;//parent.replaceCombobox(filamentTypeBox);
             	}
-            } else if (LightSourceData.LIGHT_EMITTING_DIODE.equals(
-            		kind)) {
+            } else if (LightSourceData.LIGHT_EMITTING_DIODE.equals(kind)) {
             	if (EditorUtil.TYPE.equals(key)) {
             		
                 	area = new JLabel();
@@ -298,14 +299,13 @@ class LightSourceComponent
             	((OMETextArea) area).setText((String) value);
             	((OMETextArea) area).setEditedColor(
             			UIUtilities.EDITED_COLOR);
-            }
-            else {
+            }else {
             	area = UIUtilities.createComponent(OMETextArea.class, null);
             	((OMETextArea) area).setEditable(false);
-                if (value != null)
-                    ((OMETextArea) area).setText(value.toString());
-                else
-                    ((OMETextArea) area).setText("N/A");
+            	if (value != null)
+            		((OMETextArea) area).setText(value.toString());
+            	else
+            		((OMETextArea) area).setText("N/A");
             	((OMETextArea) area).setEditedColor(
             			UIUtilities.EDITED_COLOR);
             }

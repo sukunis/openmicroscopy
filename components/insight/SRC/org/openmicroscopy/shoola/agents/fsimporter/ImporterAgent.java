@@ -55,8 +55,6 @@ import org.openmicroscopy.shoola.env.event.AgentEventListener;
 import org.openmicroscopy.shoola.env.event.EventBus;
 import org.openmicroscopy.shoola.env.ui.TaskBar;
 
-import omero.gateway.model.ExperimenterData;
-import omero.gateway.model.GroupData;
 
 /** 
  * This agent interacts is used to import images.
@@ -323,7 +321,7 @@ public class ImporterAgent
     /** Registers the agent with the tool bar.*/
     private void register()
     {
-        String description = "Open the Importer.";
+        String description = "Open the UOS Importer.";
         TaskBar tb = registry.getTaskBar();
         IconManager icons = IconManager.getInstance();
         JButton b = new JButton(icons.getIcon(IconManager.IMPORT));

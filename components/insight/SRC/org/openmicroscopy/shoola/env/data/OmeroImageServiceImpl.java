@@ -62,6 +62,9 @@ import omero.model.Channel;
 import omero.model.Dataset;
 import omero.model.IObject;
 import omero.model.Image;
+import omero.model.MapAnnotation;
+import omero.model.MapAnnotationI;
+import omero.model.NamedValue;
 import omero.model.Pixels;
 import omero.model.Project;
 import omero.model.ProjectDatasetLink;
@@ -75,6 +78,7 @@ import omero.sys.Parameters;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.env.LookupNames;
 import org.openmicroscopy.shoola.env.config.Registry;
 import org.openmicroscopy.shoola.env.data.login.UserCredentials;
@@ -92,7 +96,6 @@ import org.openmicroscopy.shoola.env.data.model.ScriptObject;
 import org.openmicroscopy.shoola.env.data.util.ModelMapper;
 
 import omero.gateway.util.PojoMapper;
-
 import org.openmicroscopy.shoola.env.data.util.Resolver;
 
 import omero.gateway.SecurityContext;
@@ -120,6 +123,7 @@ import omero.gateway.model.DatasetData;
 import omero.gateway.model.ExperimenterData;
 import omero.gateway.model.FileAnnotationData;
 import omero.gateway.model.ImageData;
+import omero.gateway.model.MapAnnotationData;
 import omero.gateway.model.PixelsData;
 import omero.gateway.model.ROIData;
 import omero.gateway.model.ScreenData;
@@ -199,6 +203,11 @@ class OmeroImageServiceImpl
 			if (close) gateway.closeImport(ctx, userName);
 			return Boolean.valueOf(false);
 		}
+		
+//		System.out.println("# OmeroImageServiceImpl::importCandidates()...");
+		
+		Map<String,MapAnnotationObject> map=new HashMap<>();
+		map.putAll(object.getMap());
 		Entry<File, StatusLabel> entry;
 		Iterator<Entry<File, StatusLabel>> jj = files.entrySet().iterator();
 		StatusLabel label = null;
@@ -212,11 +221,14 @@ class OmeroImageServiceImpl
 		while (jj.hasNext()) {
 			entry = jj.next();
 			file = (File) entry.getKey();
-			if (hcs && !file.getName().endsWith(ImportableObject.DAT_EXTENSION))
+//			System.out.println("--- IMPORT: "+file.getAbsolutePath()+", MAPS SIZE: "+map.size());
+			
+			if (hcs && !file.getName().endsWith(ImportableObject.DAT_EXTENSION)){
 				if (ioContainer != null && 
 					!(ioContainer.getClass().equals(Screen.class) ||
 					ioContainer.getClass().equals(ScreenI.class)))
 					ioContainer = null;
+			}
 			label = (StatusLabel) entry.getValue();
 			if (close) {
 				toClose = index == n;
@@ -225,6 +237,7 @@ class OmeroImageServiceImpl
 			if (!label.isMarkedAsCancel()) {
 				try {
 					if (ioContainer == null) label.setNoContainer();
+					// beeinflusst irgendwie map of annotation in object
 					ic = gateway.getImportCandidates(ctx, object, file, status);
 					icContainers = ic.getContainers();
 					if (icContainers.size() == 0) {
@@ -241,7 +254,10 @@ class OmeroImageServiceImpl
 							label.setCallback(Boolean.valueOf(false));
 						else {
 							importIc = icContainers.get(0);
-							importIc.setCustomAnnotationList(list);
+//							System.out.println("\t ->OmeroImageServiceImpl::importCandidates(): importImageFile3 : MAP SIZE: "+map.size());
+							List<Annotation> newList=addMetaDataAnnotations(map, list, file);
+							importIc.setCustomAnnotationList(newList);
+							
 							label.setCallback(gateway.importImageFile(ctx,
 									object, ioContainer, importIc,
 									label, toClose, userName));
@@ -254,6 +270,7 @@ class OmeroImageServiceImpl
 				label.setCallback(Boolean.valueOf(false));
 			}
 		}
+//		System.out.println("\t ...OmeroImageServiceImpl::importCandidates()");
 		if (close) gateway.closeImport(ctx, userName);
 		return null;
 	}
@@ -999,6 +1016,10 @@ class OmeroImageServiceImpl
 		if (importable == null || importable.getFile() == null)
 			throw new IllegalArgumentException("No images to import.");
 		StatusLabel status = importable.getStatus();
+		
+		Map<String,MapAnnotationObject> map=new HashMap<>();
+		map.putAll(object.getMap());
+		
 		SecurityContext ctx = new SecurityContext(importable.getGroup().getId());
 		//If import as.
 		ExperimenterData loggedIn = context.getAdminService().getUserDetails();
@@ -1010,10 +1031,10 @@ class OmeroImageServiceImpl
 			if (exp.getId() != loggedIn.getId())
 				userName = exp.getUserName();
 		}
-	      if (status.isMarkedAsCancel()) {
-	            if (close) gateway.closeImport(ctx, userName);
-	            return Boolean.valueOf(false);
-	        }
+		if (status.isMarkedAsCancel()) {
+			if (close) gateway.closeImport(ctx, userName);
+			return Boolean.valueOf(false);
+		}
 		Collection<TagAnnotationData> tags = object.getTags();
 		List<Annotation> customAnnotationList = new ArrayList<Annotation>();
 		List<IObject> l;
@@ -1033,9 +1054,9 @@ class OmeroImageServiceImpl
 			}
 			//save the tag.
 			try {
-			    if (l.size() > 0) {
-			        l = gateway.saveAndReturnObject(ctx, l, parameters, userName);
-			    }
+				if (l.size() > 0) {
+					l = gateway.saveAndReturnObject(ctx, l, parameters, userName);
+				}
 				Iterator<IObject> j = l.iterator();
 				Annotation a;
 				while (j.hasNext()) {
@@ -1045,12 +1066,17 @@ class OmeroImageServiceImpl
 				}
 				object.setTags(values);
 			} catch (Exception e) {
-			    LogMessage msg = new LogMessage();
-			    msg.print("Cannot create the tags.");
-			    msg.print(e);
-			    context.getLogger().error(this, msg);
+				LogMessage msg = new LogMessage();
+				msg.print("Cannot create the tags.");
+				msg.print(e);
+				context.getLogger().error(this, msg);
 			}
 		}
+		
+		
+
+		
+		
 		IObject link;
 		//prepare the container.
 		List<String> candidates;
@@ -1059,7 +1085,7 @@ class OmeroImageServiceImpl
 		DatasetData dataset = importable.getDataset();
 		DataObject container = importable.getParent();
 		IObject ioContainer = null;
-		
+
 		DataObject createdData;
 		IObject project = null;
 		DataObject folder = null;
@@ -1070,34 +1096,34 @@ class OmeroImageServiceImpl
 		if (file.isFile()) {
 			ic = gateway.getImportCandidates(ctx, object, file, status);
 			if (CollectionUtils.isEmpty(ic.getContainers())) {
-			    Object o = status.getImportResult();
-                if (o instanceof ImportException) {
-                    return o;
-                }
-                ImportException e = new ImportException(
-                        ImportException.FILE_NOT_VALID_TEXT);
-                status.setCallback(e);
-                status.setText(ImportException.FILE_NOT_VALID_TEXT);
-                return e;
+				Object o = status.getImportResult();
+				if (o instanceof ImportException) {
+					return o;
+				}
+				ImportException e = new ImportException(
+						ImportException.FILE_NOT_VALID_TEXT);
+				status.setCallback(e);
+				status.setText(ImportException.FILE_NOT_VALID_TEXT);
+				return e;
 			}
 			hcsFile = isHCS(ic.getContainers());
 			//Create the container if required.
 			if (hcsFile) {
 				if (ic != null) {
-                    candidates = ic.getPaths();
-                    if (candidates.size() == 1) { 
-                        String value = candidates.get(0);
-                        if (!file.getAbsolutePath().equals(value) && 
-                            object.isFileinQueue(value)) {
-                            if (close) gateway.closeImport(ctx, userName);
-                            status.markedAsDuplicate();
-                            return Boolean.valueOf(true);
-                        }
-                    }
-                }
+					candidates = ic.getPaths();
+					if (candidates.size() == 1) { 
+						String value = candidates.get(0);
+						if (!file.getAbsolutePath().equals(value) && 
+								object.isFileinQueue(value)) {
+							if (close) gateway.closeImport(ctx, userName);
+							status.markedAsDuplicate();
+							return Boolean.valueOf(true);
+						}
+					}
+				}
 				dataset = null;
-                if (!(container instanceof ScreenData))
-                    container = null;
+				if (!(container instanceof ScreenData))
+					container = null;
 			}
 
 			//remove hcs check if we want to create screen from folder.
@@ -1188,11 +1214,15 @@ class OmeroImageServiceImpl
 					status.resetFile(f);
 					if (ioContainer == null) status.setNoContainer();
 					importIc = ic.getContainers().get(0);
-					importIc.setCustomAnnotationList(customAnnotationList);
+//					System.out.println("# OmeroImageServiceImpl::importFile(): importImageFile1");
+					List<Annotation> newList=addMetaDataAnnotations(map, customAnnotationList, file);
+					importIc.setCustomAnnotationList(newList);
 					status.setUsedFiles(importIc.getUsedFiles());
 					//Check after scanning
 					if (status.isMarkedAsCancel())
 						return Boolean.valueOf(false);
+					
+
 					return gateway.importImageFile(ctx, object, ioContainer,
 							importIc, status, close, userName);
 				} else {
@@ -1231,12 +1261,17 @@ class OmeroImageServiceImpl
 					return new ImportException(
 							ImportException.FILE_NOT_VALID_TEXT);
 				}
+//				System.out.println("# OmeroImageServiceImpl::importFile(): importImageFile2");
+				List<Annotation> newList=addMetaDataAnnotations(map, customAnnotationList, file);
+				
 				importIc = icContainers.get(0);
-				importIc.setCustomAnnotationList(customAnnotationList);
+				importIc.setCustomAnnotationList(newList);
 				status.setUsedFiles(importIc.getUsedFiles());
 				//Check after scanning
 				if (status.isMarkedAsCancel())
 					return Boolean.valueOf(false);
+				
+
 				return gateway.importImageFile(ctx, object, ioContainer,
 						importIc, status, close, userName);
 			}
@@ -1378,6 +1413,29 @@ class OmeroImageServiceImpl
 		}
 		return Boolean.valueOf(true);
 	}
+
+	private List<Annotation> addMetaDataAnnotations(Map<String,MapAnnotationObject> map, List<Annotation> customAnnotationList, File file)
+	{
+//		System.out.println("# OmeroImageServiceImpl::addMetaDataAnnotations()...");
+		List<Annotation> result=null;
+		MapAnnotationObject maps=map.get(file.getAbsolutePath());
+		// for seriesData and single file
+		if(maps!=null){
+			result=new ArrayList<Annotation>(customAnnotationList);
+			for(MapAnnotationData m:maps.getMapAnnotationList()){
+				result.add((Annotation) m.asIObject());
+			}
+		}else
+			result=customAnnotationList;
+//		System.out.println("... OmeroImageServiceImpl::addMetaDataAnnotations()");
+		return result;
+	}
+
+	
+
+	
+
+
 	
 	/** 
 	 * Implemented as specified by {@link OmeroImageService}. 
@@ -1450,7 +1508,7 @@ class OmeroImageServiceImpl
 			throw new IllegalArgumentException("No image specified.");
 		return gateway.saveROI(ctx, imageID, userID, roiList);
 	}
-
+	
 	/**
      * Applies the transforms to the specified XML file.
      *
