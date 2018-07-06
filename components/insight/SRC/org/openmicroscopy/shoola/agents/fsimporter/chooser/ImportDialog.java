@@ -20,6 +20,7 @@
  */
 package org.openmicroscopy.shoola.agents.fsimporter.chooser;
 
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
@@ -279,7 +280,6 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	/** The length of a column. */
 	private static final int COLUMN_WIDTH = 200;
 	
-	
 	/** The approval option the user chose. */
 	private int option;
 
@@ -411,7 +411,6 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 		chooser.setSelectedFile(new File("."));
 		
 		table.addFiles(fileList, importSettings);
-		//firePropertyChange(REFRESH_FILE_LIST,null,table.getFilesToImport());
 		importButton.setEnabled(table.hasFilesToImport());
 		nextButton.setEnabled(table.hasFilesToImport());
 	}
@@ -863,10 +862,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	 */
 	private JPanel buildToolBarRight() {
 		JPanel bar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		// replace importButton by next button to load the metadata editor before the import starts
 		bar.add(nextButton);
-//		bar.add(cancelImportButton);
-//		bar.add(Box.createHorizontalStrut(5));
-//		bar.add(importButton);
+
 		bar.add(Box.createHorizontalStrut(10));
 		return bar;
 	}
@@ -1165,13 +1163,8 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 			}
 		}
 
-		//maps
-//		Iterator<ImportableFile> it = files.iterator();
-//		while (it.hasNext()) {
-//			file = it.next();
-			object.setMapAnnotation(mapAnnotation);
-			
-//		}
+
+		object.setMapAnnotation(mapAnnotation);
 
 		object.setScanningDepth(ImporterAgent.getScanningDepth());
 		Boolean loadThumbnails = (Boolean) ImporterAgent.getRegistry()
@@ -1752,7 +1745,6 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 
 		switch (commandId) {
 			case CMD_IMPORT:
-//				importFiles();
 				firePropertyChange(STARTIMPORT_PROPERTY,false,true);
 				break;
 			case CMD_CLOSE:
@@ -1787,9 +1779,9 @@ public class ImportDialog extends ClosableTabbedPaneComponent
 	
 	
 	/**
-	 * Copy the import settings chosen but the user.
+	 * Copy the import location settings chosen by the user.
 	 * 
-	 * @return The import settings selected by the user.
+	 * @return The import location settings selected by the user.
 	 */
 	private ImportLocationSettings copyImportLocationSettings(ImportableFile file)
 	{
