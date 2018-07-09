@@ -377,8 +377,6 @@ public class StatusLabel
     public void setUsedFiles(String[] usedFiles)
     {
         if (usedFiles == null) return;
-        
-//        System.out.println("# StatusLabel::setUsedFiles() : "+usedFiles[0]);
         for (int i = 0; i < usedFiles.length; i++) {
             sizeUpload += (new File(usedFiles[i])).length();
         }
@@ -519,7 +517,6 @@ public class StatusLabel
      */
     public void setFiles(Map<File, StatusLabel> files)
     {
-//    	System.out.println("# StatusLabel::setFiles() : "+files.size());
         if (isMarkedAsCancel()) return;
         generalLabel.setText(NO_FILES_TEXT);
         if (!CollectionUtils.isEmpty(files.entrySet())) {

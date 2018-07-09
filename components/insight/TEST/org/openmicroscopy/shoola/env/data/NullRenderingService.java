@@ -353,12 +353,6 @@ public class NullRenderingService
 		return null;
 	}
 	
-	public ImageData saveImageLink(SecurityContext ctx,long metaID,long srcID)
-			throws DSOutOfServiceException, DSAccessException
-			{
-		return null;
-			}
-
 	/**
      * No-op implementation
      * @see OmeroImageService#loadROIFromServer(long, long)

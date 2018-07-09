@@ -99,8 +99,6 @@ public class ImagesImporter
         }
     }
 
-
-
 	/**
      * Returns the lastly retrieved thumbnail.
      * This will be packed by the framework into a feedback event and

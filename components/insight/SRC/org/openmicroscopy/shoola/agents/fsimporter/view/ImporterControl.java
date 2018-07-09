@@ -69,7 +69,7 @@ import org.openmicroscopy.shoola.env.LookupNames;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.env.data.model.ImportableObject;
 import org.openmicroscopy.shoola.env.data.util.StatusLabel;
-
+import omero.log.Logger;
 import org.openmicroscopy.shoola.env.ui.UserNotifier;
 import org.openmicroscopy.shoola.util.file.ImportErrorObject;
 import org.openmicroscopy.shoola.util.ui.ClosableTabbedPane;
@@ -88,9 +88,6 @@ import omero.gateway.model.GroupData;
  * @author Donald MacDonald &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:donald@lifesci.dundee.ac.uk">donald@lifesci.dundee.ac.uk</a>
  * @version 3.0
- * <small>
- * (<b>Internal version:</b> $Revision: $Date: $)
- * </small>
  * @since 3.0-Beta4
  */
 class ImporterControl
@@ -435,10 +432,6 @@ class ImporterControl
                     model.onUploadComplete((FileImportComponent) evt.getNewValue());
             } else if(ImportDialog.REFRESH_FILE_LIST.equals(name)){
     			view.refreshMetaFileView((List<ImportableFile>) evt.getNewValue());
-    		} else if(ImportDialog.ADD_AND_REFRESH_FILE_LIST.equals(name)){
-//    			view.addAndRefreshMetaFileView( (File[]) evt.getNewValue());
-//    			view.addToMetaDataFileMap((File[])evt.getNewValue());
-//    			model.setMetaDataText(((File[])evt.getNewValue())!=null );
     		} else if(ImportDialog.SHOW_METADATA_DIALOG.equals(name)){
     			view.showMetaDataDialog();
     		}else if(ImportDialog.ADD_MAP_ANNOTATION.equals(name)){

@@ -495,8 +495,6 @@ public class ImportableObject
 		return false;
 	}
 	
-
-	
 	/**
 	 * Returns the nodes of reference.
 	 * 

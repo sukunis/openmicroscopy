@@ -62,9 +62,6 @@ import omero.model.Channel;
 import omero.model.Dataset;
 import omero.model.IObject;
 import omero.model.Image;
-import omero.model.MapAnnotation;
-import omero.model.MapAnnotationI;
-import omero.model.NamedValue;
 import omero.model.Pixels;
 import omero.model.Project;
 import omero.model.ProjectDatasetLink;
@@ -96,6 +93,7 @@ import org.openmicroscopy.shoola.env.data.model.ScriptObject;
 import org.openmicroscopy.shoola.env.data.util.ModelMapper;
 
 import omero.gateway.util.PojoMapper;
+
 import org.openmicroscopy.shoola.env.data.util.Resolver;
 
 import omero.gateway.SecurityContext;
@@ -204,8 +202,6 @@ class OmeroImageServiceImpl
 			return Boolean.valueOf(false);
 		}
 		
-//		System.out.println("# OmeroImageServiceImpl::importCandidates()...");
-		
 		Map<String,MapAnnotationObject> map=new HashMap<>();
 		map.putAll(object.getMap());
 		Entry<File, StatusLabel> entry;
@@ -221,7 +217,6 @@ class OmeroImageServiceImpl
 		while (jj.hasNext()) {
 			entry = jj.next();
 			file = (File) entry.getKey();
-//			System.out.println("--- IMPORT: "+file.getAbsolutePath()+", MAPS SIZE: "+map.size());
 			
 			if (hcs && !file.getName().endsWith(ImportableObject.DAT_EXTENSION)){
 				if (ioContainer != null && 
@@ -254,7 +249,6 @@ class OmeroImageServiceImpl
 							label.setCallback(Boolean.valueOf(false));
 						else {
 							importIc = icContainers.get(0);
-//							System.out.println("\t ->OmeroImageServiceImpl::importCandidates(): importImageFile3 : MAP SIZE: "+map.size());
 							List<Annotation> newList=addMetaDataAnnotations(map, list, file);
 							importIc.setCustomAnnotationList(newList);
 							
@@ -270,7 +264,6 @@ class OmeroImageServiceImpl
 				label.setCallback(Boolean.valueOf(false));
 			}
 		}
-//		System.out.println("\t ...OmeroImageServiceImpl::importCandidates()");
 		if (close) gateway.closeImport(ctx, userName);
 		return null;
 	}
@@ -1072,11 +1065,6 @@ class OmeroImageServiceImpl
 				context.getLogger().error(this, msg);
 			}
 		}
-		
-		
-
-		
-		
 		IObject link;
 		//prepare the container.
 		List<String> candidates;
@@ -1214,15 +1202,12 @@ class OmeroImageServiceImpl
 					status.resetFile(f);
 					if (ioContainer == null) status.setNoContainer();
 					importIc = ic.getContainers().get(0);
-//					System.out.println("# OmeroImageServiceImpl::importFile(): importImageFile1");
 					List<Annotation> newList=addMetaDataAnnotations(map, customAnnotationList, file);
 					importIc.setCustomAnnotationList(newList);
 					status.setUsedFiles(importIc.getUsedFiles());
 					//Check after scanning
 					if (status.isMarkedAsCancel())
 						return Boolean.valueOf(false);
-					
-
 					return gateway.importImageFile(ctx, object, ioContainer,
 							importIc, status, close, userName);
 				} else {
@@ -1261,7 +1246,6 @@ class OmeroImageServiceImpl
 					return new ImportException(
 							ImportException.FILE_NOT_VALID_TEXT);
 				}
-//				System.out.println("# OmeroImageServiceImpl::importFile(): importImageFile2");
 				List<Annotation> newList=addMetaDataAnnotations(map, customAnnotationList, file);
 				
 				importIc = icContainers.get(0);
@@ -1270,8 +1254,6 @@ class OmeroImageServiceImpl
 				//Check after scanning
 				if (status.isMarkedAsCancel())
 					return Boolean.valueOf(false);
-				
-
 				return gateway.importImageFile(ctx, object, ioContainer,
 						importIc, status, close, userName);
 			}
@@ -1416,7 +1398,6 @@ class OmeroImageServiceImpl
 
 	private List<Annotation> addMetaDataAnnotations(Map<String,MapAnnotationObject> map, List<Annotation> customAnnotationList, File file)
 	{
-//		System.out.println("# OmeroImageServiceImpl::addMetaDataAnnotations()...");
 		List<Annotation> result=null;
 		MapAnnotationObject maps=map.get(file.getAbsolutePath());
 		// for seriesData and single file
@@ -1427,16 +1408,9 @@ class OmeroImageServiceImpl
 			}
 		}else
 			result=customAnnotationList;
-//		System.out.println("... OmeroImageServiceImpl::addMetaDataAnnotations()");
 		return result;
 	}
 
-	
-
-	
-
-
-	
 	/** 
 	 * Implemented as specified by {@link OmeroImageService}. 
 	 * @see OmeroImageService#getSupportedFileFormats()

@@ -185,8 +185,6 @@ class EditorUI
 	{
 		addTab("General", generalPane, "General Information.");
 		addTab("Acquisition", acquisitionPane, "Acquisition Metadata.");
-		
-		
 		if (init) {
 			if (model.getRndIndex() == MetadataViewer.RND_SPECIFIC) {
 				addTab(RENDERER_NAME_SPECIFIC, dummyPanel, 
@@ -196,7 +194,6 @@ class EditorUI
 						RENDERER_DESCRIPTION);
 			}
 		}	
-		
 	}
 	
 	/**

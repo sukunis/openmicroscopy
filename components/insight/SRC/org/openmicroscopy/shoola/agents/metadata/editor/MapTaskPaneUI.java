@@ -460,7 +460,6 @@ public class MapTaskPaneUI extends AnnotationTaskPaneUI implements
         return !MapAnnotationData.NS_CLIENT_CREATED.equals(data.getNameSpace());
     }
     
-    
     /**
      * Creates a {@link MapTable} and adds it to the list of mapTables; Returns
      * <code>null</code> if the {@link MapAnnotationData} is empty and not
