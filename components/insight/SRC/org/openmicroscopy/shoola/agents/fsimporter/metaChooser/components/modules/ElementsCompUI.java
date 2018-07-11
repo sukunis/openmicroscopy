@@ -21,10 +21,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ElementsCompUI extends JPanel
 {
-//	protected MetaDataControl controller;
-	
 	/** Logger for this class. */
-//    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
 	 protected static final org.slf4j.Logger LOGGER =
 	    	    LoggerFactory.getLogger(ElementsCompUI.class);
 	 
@@ -56,10 +53,6 @@ public abstract class ElementsCompUI extends JPanel
 	public abstract void update(List<TagData> list);
 	
 	
-//	public void initController(MetaDataControl _controller){
-//		controller=_controller;
-//	}
-	
 	/**
 	 * Get enum values as string[]
 	 * @param e Enum.class
@@ -67,16 +60,8 @@ public abstract class ElementsCompUI extends JPanel
 	 */
 	public static String[] getNames(Class<? extends Enum<?>> e) {
 		 return Arrays.toString(e.getEnumConstants()).replaceAll("^.|.$", "").split(", ");
-//	    return Arrays.stream(e.getEnumConstants()).map(Enum::name).toArray(String[]::new);
 	}
-	
-//	protected void setTag(TagData field, String title,String val,boolean prop,int type)
-//	{
-//		if(field == null) 
-//			field = new TagData(title,val,prop,type);
-//		else 
-//			field.setTagValue(val,prop);
-//	}
+
 	
 	public static PositiveInteger parseToPositiveInt(String c)
 	{
