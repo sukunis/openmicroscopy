@@ -174,22 +174,7 @@ public class FilterCompUI extends LightPathElem
 		return filter;
 	}
 	
-//	public Filter copyData() throws Exception
-//	{
-//		Filter f=new Filter();
-//		if(filter!=null){
-//			readGUIInput();
-//			f.setManufacturer(filter.getManufacturer());
-//			f.setModel(filter.getModel());
-//			f.setID(filter.getID());
-//			f.setFilterWheel(filter.getFilterWheel());
-//			f.setType(filter.getType());
-//		}
-//		
-//		return f;
-//	}
-	
-	
+
 	public void buildComponents() 
 	{
 		labels.clear();
@@ -289,13 +274,7 @@ public class FilterCompUI extends LightPathElem
 		type.setVisible(true);
 		
 	}
-//	public void setName(String value)
-//	{
-//		if(name == null) 
-//			name = new TagData("Name: ",value,ElementsCompUI.OPTIONAL,TEXTFIELD);
-//		else 
-//			name.setTagValue(value,ElementsCompUI.OPTIONAL);
-//	}
+
 	public void setFilterWheel(String value, boolean prop)
 	{
 		if(filterwheel == null) 
