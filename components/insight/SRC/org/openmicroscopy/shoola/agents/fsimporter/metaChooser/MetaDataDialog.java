@@ -72,7 +72,6 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileEditorUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareEditor;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeProperties;
@@ -134,9 +133,6 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     
     /** load another profile xml */
     private JButton loadProfileButton;
-
-    /** load another hardware specification */
-    private JButton loadHardwareSpecButton;
 
     /** reset metadata to data from image file*/
     private JButton resetFileDataButton;
@@ -218,7 +214,6 @@ private boolean disableTreeListener;
 
     private static final int CMD_SAVE = 7;
 
-    private static final int CMD_SPECIFICATION = 8;
 
     private static final int CMD_PROFILE = 9;
     
@@ -462,13 +457,7 @@ private boolean disableTreeListener;
 //	    loadProfileButton.setEnabled(false);
         
 
-        loadHardwareSpecButton=new JButton("Hardware...");
-        loadHardwareSpecButton.setBackground(UIUtilities.BACKGROUND);
-        loadHardwareSpecButton.setToolTipText("Load another microscope hardware specification");
-        loadHardwareSpecButton.setActionCommand("" + CMD_SPECIFICATION);
-        loadHardwareSpecButton.addActionListener(this);
-      
-//	    loadHardwareSpecButton.setEnabled(false);
+       
         
         resetFileDataButton=new JButton("Clear Input");
         resetFileDataButton.setBackground(UIUtilities.BACKGROUND);
@@ -688,10 +677,6 @@ private boolean disableTreeListener;
 //        barL.add(loadProfileButton);
 //        loadProfileButton.setEnabled(false);
 //        barL.add(Box.createHorizontalStrut(2));
-//        //load Hardware specification
-//        barL.add(loadHardwareSpecButton);
-//        loadHardwareSpecButton.setEnabled(false);
-//        barL.add(Box.createHorizontalStrut(10));
         
         JPanel barM = buildFilterViewBar();
         
@@ -1554,12 +1539,7 @@ private boolean disableTreeListener;
 //            loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
 ////            firePropertyChange(CHANGE_CUSTOMSETT, null, customSettings); MetaDataControl
 //            break;
-        case CMD_SPECIFICATION:
-            LOGGER.info("[GUI-ACTION] -- load specification file");
-            UOSHardwareEditor specEditor=new UOSHardwareEditor(hardwareDef);
-            specEditor.setVisible(true);
-            
-            break;
+    
         case CMD_VIEWFILE:
             Border redline = BorderFactory.createLineBorder(Color.red);
             Border compound= BorderFactory.createRaisedBevelBorder();
