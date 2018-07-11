@@ -108,7 +108,6 @@ public class FilterCompUI extends LightPathElem
 		globalPane=new JPanel();
 		globalPane.setLayout(gridbag);
 		
-//		add(new TitledSeparator("Filter", 3, TitledBorder.DEFAULT_POSITION),BorderLayout.NORTH);
 		add(globalPane,BorderLayout.NORTH);
 		tb=new TitledBorder("");
 //		setBorder(BorderFactory.createCompoundBorder(tb,

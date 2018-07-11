@@ -137,7 +137,6 @@ public class ImageViewer extends ModuleViewer{
 		globalPane=new JPanel();
 		globalPane.setLayout(gridbag);
 
-		//		add(new TitledSeparator("Channel", 3, TitledBorder.DEFAULT_POSITION),BorderLayout.NORTH);
 		add(globalPane,BorderLayout.NORTH);
 
 		setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
