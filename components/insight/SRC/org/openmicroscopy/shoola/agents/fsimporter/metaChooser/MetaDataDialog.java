@@ -69,7 +69,6 @@ import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileEditorUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
@@ -159,7 +158,6 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
     private JPanel metaPanel;
 //	private MetaDataUI dataView;
     private CustomViewProperties customSettings;
-    private UOSHardwareReader hardwareDef;
     
     
     
@@ -495,8 +493,6 @@ private boolean disableTreeListener;
         
         UOSProfileReader propReader=new UOSProfileReader(new File("profileUOSImporter.xml"));
 
-        hardwareDef=new UOSHardwareReader(new File("hardwareUOSImporter.xml"));
-//	    dataView=new MicroscopeDataView(propReader.getViewProperties());
         customSettings=propReader.getViewProperties();
         if(customSettings==null){
         	currentMic=MicroscopeProperties.getMicClass(MicroscopeProperties.availableMics[mics.getSelectedIndex()]);
@@ -506,11 +502,6 @@ private boolean disableTreeListener;
         if(customSettings==null){
             customSettings=propReader.getDefaultProperties();
         }        
-//        customSettings.setMicObjList(hardwareDef.getObjectives());
-//        customSettings.setMicDetectorList(hardwareDef.getDetectors());
-//        customSettings.setMicLightSrcList(hardwareDef.getLightSources());
-//        customSettings.setMicLightPathFilterList(hardwareDef.getLightPathFilters());
-        
         
         micName=customSettings.getMicName();
         micDesc=customSettings.getMicDesc();

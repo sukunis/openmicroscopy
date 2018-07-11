@@ -1,6 +1,5 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSHardwareReader;
 
 import ome.units.unit.Unit;
 
