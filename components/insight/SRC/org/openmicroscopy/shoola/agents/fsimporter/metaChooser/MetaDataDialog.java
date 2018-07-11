@@ -69,12 +69,9 @@ import org.openmicroscopy.shoola.agents.fsimporter.actions.ImporterAction;
 import org.openmicroscopy.shoola.agents.fsimporter.chooser.ImportDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModelObject;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileEditorUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.CustomViewProperties;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MicroscopeProperties;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusLSMFV1000;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.FNode;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
@@ -491,16 +488,14 @@ private boolean disableTreeListener;
         initFilterViewBar();
        
         
-        UOSProfileReader propReader=new UOSProfileReader(new File("profileUOSImporter.xml"));
-
-        customSettings=propReader.getViewProperties();
         if(customSettings==null){
         	currentMic=MicroscopeProperties.getMicClass(MicroscopeProperties.availableMics[mics.getSelectedIndex()]);
         	customSettings=currentMic.getViewProperties();
         	customSettings.setMapr(currentMic.getMapr());
         }
         if(customSettings==null){
-            customSettings=propReader.getDefaultProperties();
+            customSettings=new CustomViewProperties();
+            customSettings.init();
         }        
         
         micName=customSettings.getMicName();
@@ -1515,22 +1510,6 @@ private boolean disableTreeListener;
         	repaint();
             
             break;
-//        case CMD_PROFILE:
-//        	//TODO: reload all available views
-//            LOGGER.info("[GUI-ACTION] -- CUSTUMIZE... ----");
-//            MonitorAndDebug.printConsole("[GUI-ACTION] -- CUSTUMIZE... ----");
-//            UOSProfileEditorUI profileWriter=new UOSProfileEditorUI(customSettings, enabledPredefinedData);
-//            profileWriter.setVisible(true);
-//            customSettings=profileWriter.getProperties();
-//			enabledPredefinedData =profileWriter.shouldPredefinedValLoaded();
-//
-//			deselectNodeAction((FNode)fileTree.getLastSelectedPathComponent());
-//            
-//            //TODO reload current view if changes
-//            loadAndShowDataForSelection((FNode)fileTree.getLastSelectedPathComponent());
-////            firePropertyChange(CHANGE_CUSTOMSETT, null, customSettings); MetaDataControl
-//            break;
-    
         case CMD_VIEWFILE:
             Border redline = BorderFactory.createLineBorder(Color.red);
             Border compound= BorderFactory.createRaisedBevelBorder();

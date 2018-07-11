@@ -121,52 +121,9 @@ public class ModuleConfiguration
 	}
 	
 
-	public Element toXML(Document doc,String moduleName )
-	{
-		Element module = doc.createElement(moduleName);
-		module.setAttribute(UOSProfileReader.M_POSITION, getPosition().name());
-		module.setAttribute(UOSProfileReader.M_WIDTH,"1");
-		module.setAttribute(UOSProfileReader.M_VIS, String.valueOf(isVisible()));
-		
-		for(TagConfiguration tag:tagConfList){
-			module.appendChild(tagToXML(doc, tag));
-		}
-		if(settingsTagConfList!=null && !settingsTagConfList.isEmpty()){
-			Element sett=doc.createElement("Settings");
-			for(TagConfiguration tag:settingsTagConfList){
-				sett.appendChild(tagToXML(doc, tag));
-			}
-			module.appendChild(sett);
-		}
-		
-		return module;
-	}
 	
-	/**
-	 * Special for lightPath
-	 * @param doc
-	 * @param moduleName
-	 * @return
-	 */
-	public Element toXML_LP(Document doc,String moduleName )
-	{
-		Element module = doc.createElement(moduleName);
-		module.setAttribute(UOSProfileReader.M_POSITION, getPosition().name());
-		module.setAttribute(UOSProfileReader.M_WIDTH,"1");
-		module.setAttribute(UOSProfileReader.M_VIS, String.valueOf(isVisible()));
-		
-		for(LightPathElement lp:elementList){
-			Element elem = doc.createElement(lp.getClazz());
-			
-			for(TagConfiguration tag : lp.getTagList()){
-				elem.appendChild(tagToXML(doc, tag));
-			}
-		
-			module.appendChild(elem);
-		}
-		
-		return module;
-	}
+	
+	
 	
 	private Element tagToXML(Document doc,TagConfiguration tag)
 	{

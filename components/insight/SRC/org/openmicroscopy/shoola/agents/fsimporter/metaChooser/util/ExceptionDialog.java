@@ -25,7 +25,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.UOSProfileReader;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
