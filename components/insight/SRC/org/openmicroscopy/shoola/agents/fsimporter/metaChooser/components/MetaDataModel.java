@@ -30,8 +30,6 @@ import omero.model.NamedValue;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneCompUI;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.PlaneSliderCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ChannelModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.DetectorModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
@@ -102,9 +100,6 @@ public class MetaDataModel
 //	private List<Integer> linkedChannelForDichroic;
 	
 	
-	/** list of all planes of selected image*/
-	private List<ElementsCompUI> planeList;
-	
 	//TODO
 //	private ElementsCompUI stage;
 	private Image imageOME;
@@ -138,20 +133,13 @@ public class MetaDataModel
 
 	private List<FilterSet> filterSetList;
 
-	/** Objects for MapAnnotation creation*/
-//	private HashMap<String, String> lightPathAnnotation;
-//	private HashMap<String, String> lightSrcAnnotation;
-//	private HashMap<String, String> channelAnnotation;
-	
-	
-	
 	
 	public MetaDataModel()
 	{
 		imageIndex=-1;
 		
 		channelModel=null;
-		planeList=new ArrayList<ElementsCompUI>();
+		
 		lightSrcModel=null;
 		
 		lightPathModel=null;
@@ -170,7 +158,6 @@ public class MetaDataModel
 		sampleModel=null;
 		objModel=null;
 		imgEnvModel=null;
-//		planeSliderUI.clearDataValues();
 		imgModel=null;
 		
 		lightSrcModel=null;
@@ -180,24 +167,6 @@ public class MetaDataModel
 	}
 	
 	
-	
-	
-	
-	
-	
-//	public void setImageProp(int imgIdx, int _numOfChannels)
-//	{
-//		imageIndex=imgIdx;
-//		numOfChannels=_numOfChannels;
-//		
-//		
-//		channelList=new ArrayList<ElementsCompUI>(numOfChannels);
-//		planeList=new ArrayList<ElementsCompUI>();
-//		lightSrcList=new ArrayList<ElementsCompUI>(numOfChannels);
-//		detectorList=new ArrayList<ElementsCompUI>(numOfChannels);
-//		
-//		lightPathList=new ArrayList<ElementsCompUI>(numOfChannels);
-//	}
 	
 	public void setOME(OME o)
 	{
@@ -745,19 +714,6 @@ public class MetaDataModel
 	
 	
 	
-	
-	
-
-	public PlaneSliderCompUI getPlaneModel()
-	{
-		return (PlaneSliderCompUI)planeSliderUI;
-	}
-	
-	public void setPlaneModel(PlaneSliderCompUI p)
-	{
-		planeSliderUI=p;
-	}
-	
 	public ImageEnvModel getImgEnvModel() 
 	{
 		if(imgEnvModel==null)
@@ -1158,26 +1114,6 @@ public class MetaDataModel
 	}
 
 
-	
-
-	public PlaneCompUI getPlaneModul(int i) {
-		// TODO Auto-generated method stub
-		return planeList!=null ? (PlaneCompUI) planeList.get(i):null;
-	}
-	public void addPlaneModul(PlaneCompUI pUI) 
-	{
-		if(planeList!=null)
-			planeList.add(pUI);
-	}
-	public List<ElementsCompUI> getPlaneModulList() {
-		// TODO Auto-generated method stub
-		return planeList;
-	}
-	
-	public int getNumberOfPlanes() 
-	{
-		return planeList!=null ? planeList.size():0;
-	}
 
 	/**
 	 * Save list of new modified tags for image module in MetaDataModel
