@@ -58,8 +58,7 @@ public class LightSourceModel
 	
 	private List<HashMap<String,String>> maps;
 
-	// list of available lightSrc (set by hardware definition)
-//	private List<LightSource> availableElem;
+	
 
 	public LightSourceModel()
 	{
@@ -74,7 +73,6 @@ public class LightSourceModel
 		element=orig.element;
 		settings=orig.settings;
 		maps=orig.maps;
-//		availableElem=orig.availableElem;
 	}
 
 	
@@ -398,7 +396,6 @@ public class LightSourceModel
 		for(int i=size;i<index+1;i++){
 			element.add((LightSource) newElem);
 			maps.add(new HashMap<String,String>());
-//			settings.add(new LightSourceSettings());
 		}
 	}
 	
@@ -477,15 +474,6 @@ public class LightSourceModel
 		case TagNames.ATTENUATION:
 			sett.setAttenuation(LightSourceViewer.parseAttenuation(tagValue));
 			break;
-//		case "SourceType":
-//			switch(tagValue){
-//			case LASER: updateLaserData((Laser) lightSrc,tagName,tagValue,tagUnit);break;
-//			case ARC:updateArcData((Arc) lightSrc,tagName,tagValue,tagUnit);break;
-//			case FILAMENT: updateFilamentData((Filament) lightSrc,tagName,tagValue,tagUnit);break;
-//			case GENERIC_EXCITATION: updateGESData((GenericExcitationSource) lightSrc,tagName,tagValue,tagUnit);break;
-//			case LIGHT_EMITTING_DIODE: updateLEDData((LightEmittingDiode) lightSrc,tagName,tagValue,tagUnit);break;
-//			default: break;
-//			}
 		default:break;
 		}
 	}
@@ -645,7 +633,6 @@ public class LightSourceModel
 			if(d!=null){
 				MonitorAndDebug.printConsole("\t"+d.getClass().getSimpleName()+" : "+i);
 				MonitorAndDebug.printConsole("\t...lightSrc model model = "+(d.getModel()!=null ? d.getModel(): ""));
-//				MonitorAndDebug.printConsole("\t...lightSrc model pulse = "+(((Laser) d).getPulse()!=null ? ((Laser) d).getPulse().getValue(): ""));
 				MonitorAndDebug.printConsole("\t...lightSrc model power = "+(d.getPower()!=null ? d.getPower(): ""));
 				MonitorAndDebug.printConsole("\t...lightSrc model tunable = "+(((Laser) d).getTuneable()!=null ? ((Laser) d).getTuneable(): ""));
 			}

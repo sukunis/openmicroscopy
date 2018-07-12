@@ -30,12 +30,10 @@ public class LightPathModel
 	/** Map of key-value pairs like [FilterType]:[Nr]:TagName, TagVal **/
 	private List<HashMap<String,String>> maps;
 
-	private List<FilterSet> filtersets;
 
 	public LightPathModel()
 	{
 		element=new ArrayList<LightPath>();
-		filtersets = new ArrayList<FilterSet>();
 		maps=new ArrayList<HashMap<String,String>>();
 		input=new ArrayList<Boolean>();
 	}
@@ -43,7 +41,6 @@ public class LightPathModel
 	public LightPathModel(LightPathModel orig)
 	{
 		element=orig.element;
-		filtersets=orig.filtersets;
 		maps=orig.maps;
 		input=orig.input;
 	}
@@ -74,36 +71,6 @@ public class LightPathModel
 		maps.set(i, map);
 	}
 
-//	/**
-//	 * Add filterset data (only replaced functionality)
-//	 * @param filterSet
-//	 * @param overwrite should be true
-//	 * @param i
-//	 */
-//	public void addData(FilterSet filterSet, boolean overwrite, int i) 
-//	{
-//		if(!overwrite) {
-//			LOGGER.info("[DATA] -- Attention: filterset data could only be replaced");
-//		}
-//		replaceData(filterSet,i);
-//		LOGGER.info("[DATA] -- replace FilterSet data");
-//	}
-//
-//	/**
-//	 * @param filterSet
-//	 * @param i
-//	 */
-//	private void replaceData(FilterSet filterSet, int i) 
-//	{
-//		if(filterSet==null)
-//			return;
-//		if(filtersets.size()<=i){
-//			expandList(filtersets.size(),i);
-//		}
-//		
-//		filtersets.set(i, new FilterSet(filterSet));
-//		
-//	}
 
 	/**
 	 * Replace lightpath data. Caller class has to handle notification about the changes.
@@ -113,8 +80,6 @@ public class LightPathModel
 	 */
 	public void addData(LightPath newElem,boolean overwrite,int i) throws Exception
 	{
-		
-		
 		replaceData(newElem,i);
 		LOGGER.info("[DATA] -- replace LightPath data at index: "+i);
 
@@ -122,8 +87,6 @@ public class LightPathModel
 			LOGGER.info("[DATA] -- Save as map: LightPath "+i);
 			setMap(getChangesAsMap(i),i);
 		}
-		
-		
 	}
 
 	/**
@@ -167,7 +130,6 @@ public class LightPathModel
 	{
 		for(int i=size;i<index+1;i++){
 			element.add(new LightPath());
-			filtersets.add(null);
 			maps.add(new HashMap<String,String>());
 			input.add(false);
 		}
@@ -193,57 +155,7 @@ public class LightPathModel
 			element.remove(index);		
 	}
 
-//	/**
-//	 *  replace lightPaths with changed lightPaths
-//	 * @param changesLightPath
-//	 */
-//	public void update(List<LightPath> changesLightPath) 
-//	{
-//		if(changesLightPath==null){
-//			MonitorAndDebug.printConsole("\t no changes for lightPath");
-//			return;
-//		}
-//		int index=0;
-//		for(LightPath lp:changesLightPath)
-//		{
-//			if(maps.size()>=index)
-//				maps.add(new HashMap<String,String>());
-//			if(lp!=null && element.size()>index){
-//				element.set(index, lp);
-//			}
-//			
-//			//update map annotation
-//			int i=1;
-//			for(Filter f: lp.copyLinkedExcitationFilterList()){
-//				String id="[Excitation Filter]:["+i+"]:";
-//				maps.get(index).put(id+"Model", f.getModel());
-//				maps.get(index).put(id+"Manufactur", f.getManufacturer());
-//				maps.get(index).put(id+"Type", (f.getType()==null?"": f.getType().getValue()));
-//				maps.get(index).put(id+"FilterWheel", f.getFilterWheel());
-//				
-//				i++;
-//			}
-//			
-//			Dichroic d= lp.getLinkedDichroic();
-//			if(d!=null){
-//				maps.get(index).put("[Dichroic]:["+i+"]:", d.getModel());
-//				i++;
-//			}
-//			
-//			for(Filter f: lp.copyLinkedEmissionFilterList()){
-//				String id="[Emmission Filter]:["+i+"]:";
-//				maps.get(index).put(id+"Model", f.getModel());
-//				maps.get(index).put(id+"Manufactur", f.getManufacturer());
-//				maps.get(index).put(id+"Type",(f.getType()==null?"": f.getType().getValue()));
-//				maps.get(index).put(id+"FilterWheel", f.getFilterWheel());
-//				
-//				i++;
-//			}
-//			
-//			
-//			index++;
-//		}
-//	}
+
 	
 	/**
 	 *  replace lightPaths with changed lightPaths
@@ -295,18 +207,6 @@ public class LightPathModel
 		}
 	}
 
-	/**
-	 * 
-	 * @param i
-	 * @return filterset at index i
-	 */
-	public FilterSet getFilterSet(int i) {
-		if(i>filtersets.size())
-			return null;
-	
-		return filtersets.get(i);
-	}
-	
 
 	public void setInput(boolean changes,int index)
 	{

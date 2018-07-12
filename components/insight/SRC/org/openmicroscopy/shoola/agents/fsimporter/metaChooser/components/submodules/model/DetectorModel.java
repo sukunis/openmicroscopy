@@ -50,7 +50,6 @@ public class DetectorModel
 		element=orig.element;
 		settings=orig.settings;
 		maps=orig.maps;
-//		availableElem=orig.availableElem;
 	}
 	
 	/**

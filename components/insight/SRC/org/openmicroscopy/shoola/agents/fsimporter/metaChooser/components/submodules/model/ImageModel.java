@@ -245,17 +245,7 @@ public class ImageModel
 	{
 		String delims="[,]";
 		String[] splitting =value.split(delims);	
-
-//		String[] result=new String[i];
-//		
-//		int size=i;
-//		if(splitting.length<i)
-//			size=splitting.length;
-//		
-//		for(int j=0; j<size;j++){
-//			result[j]=splitting[j];
-//		}
-		
+	
 		return splitting;
 	}
 

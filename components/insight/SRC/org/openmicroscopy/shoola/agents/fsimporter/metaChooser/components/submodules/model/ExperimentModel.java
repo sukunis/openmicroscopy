@@ -40,8 +40,6 @@ public class ExperimentModel {
 	String projectName;
 	String group;
 	Experimenter experimenter;
-//	ExperimenterListModel experimenterListModel;
-//	List<Experimenter> expList;
 
 	private HashMap<String, String> map;
 	
@@ -61,12 +59,6 @@ public class ExperimentModel {
 		projectPartner=orig.projectPartner;
 	}
 	
-//	public ExperimentContainer(Experiment exp, Experimenter exper, Experimenter projPartner)
-//	{
-//		experiment=exp;
-//		experimenter=exper;
-//		projectPartner=projPartner;
-//	}
 	
 	public ExperimentModel(Experiment exp, Experimenter exper, String projPartner)
 	{
@@ -125,9 +117,6 @@ public class ExperimentModel {
 			projectPartner=new Experimenter();
 		projectPartner.setLastName(name);
 	}
-//	public void setProjectPartner(Experimenter projectPartner) {
-//		this.projectPartner = projectPartner;
-//	}
 
 	public Experimenter getExperimenter() {
 		return experimenter;

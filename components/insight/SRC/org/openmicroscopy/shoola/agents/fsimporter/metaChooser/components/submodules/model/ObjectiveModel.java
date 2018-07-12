@@ -36,9 +36,6 @@ public class ObjectiveModel
 	
 	private HashMap<String,String> map;
 	
-	// list of available objective (set by hardware definition)
-//	private List<Objective> availableElem;
-	
 	public ObjectiveModel()
 	{
 		
@@ -49,7 +46,6 @@ public class ObjectiveModel
 	{
 		element=orig.element;
 		settings=orig.settings;
-//		availableElem=orig.availableElem;
 	}
 	
 	/**
