@@ -64,7 +64,6 @@ import omero.gateway.model.MapAnnotationData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataControl;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDataModel;
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.format.Sample;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ExperimentModel;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.ImageEnvModel;
@@ -998,7 +997,7 @@ public class MetaDataUI extends JPanel
 		List<Annotation> list=image.copyLinkedAnnotationList();
 		String sampleID=null;
 		for(int i=0; i<list.size(); i++){
-			if(image.getLinkedAnnotation(i).getID().contains(OMEStore.MAP_ANNOT_ID))
+			if(image.getLinkedAnnotation(i).getID().contains(MetaDataDialog.MAP_ANNOT_ID))
 				sampleID= image.getLinkedAnnotation(i).getID();
 		}
 		if(sampleID!=null){

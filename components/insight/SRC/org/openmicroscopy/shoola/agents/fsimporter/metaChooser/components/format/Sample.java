@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import loci.formats.MetadataTools;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ExceptionDialog;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -113,7 +113,7 @@ public class Sample
 	{
 		List<MapPair> listMP=annot.getValue();
 		switch (annot.getNamespace()) {
-		case OMEStore.NS_2016_06_07:
+		case MetaDataDialog.NS_2016_06_07:
 			parseFromXMLMapAnnotation2016_06_07(listMP);
 			break;
 
@@ -127,7 +127,7 @@ public class Sample
 	public Sample(MapAnnotationData anno) 
 	{
 		switch (anno.getNameSpace()) {
-		case OMEStore.NS_2016_06_07:
+		case MetaDataDialog.NS_2016_06_07:
 			parseFromOMEROMapAnnotation2016_06_07((List<NamedValue>) anno.getContent());
 			break;
 
@@ -564,7 +564,7 @@ public class Sample
 	public static boolean validAnnot(String annoNS) 
 	{
 		switch (annoNS) {
-		case OMEStore.NS_2016_06_07:
+		case MetaDataDialog.NS_2016_06_07:
 			return true;
 
 		default:

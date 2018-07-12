@@ -6,7 +6,7 @@ import java.util.List;
 
 import loci.formats.FormatException;
 
-import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.OMEStore;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.MetaDataDialog;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.openmicroscopy.shoola.util.MonitorAndDebug;
@@ -301,7 +301,7 @@ public class ExperimentModel {
 		List<MapPair> listMP=map.getValue();
 		String result=null;
 		switch (map.getNamespace()) {
-		case OMEStore.NS_2016_06_07:
+		case MetaDataDialog.NS_2016_06_07:
 			result=parseFromMapAnnotation2016_06_07(listMP);
 			break;
 

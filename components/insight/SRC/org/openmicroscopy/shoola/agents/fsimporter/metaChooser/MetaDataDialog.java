@@ -99,6 +99,16 @@ public class MetaDataDialog extends ClosableTabbedPaneComponent
 //    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
      private static final org.slf4j.Logger LOGGER =
                 LoggerFactory.getLogger(MetaDataDialog.class);
+     
+     
+   //** Namespaces for parsing from xml */
+ 	public static final String NS_2016_06_07="uos.de/omero/metadata/cellnanos/2015-06-07";
+
+
+ 	public static final String CELLNANOS_NS="uos.de/omero/metadata/cellnanos/2015-06-07";
+
+ 	public static final String MAP_ANNOT_ID = "Annotation:CellNanOs";
+ 	
     
     private boolean DEBUG=false;
     
