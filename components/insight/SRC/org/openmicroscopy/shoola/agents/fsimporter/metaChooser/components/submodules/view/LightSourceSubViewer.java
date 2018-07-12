@@ -49,10 +49,10 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 	protected TagData power;
 	protected TagData model;
 	protected TagData type;
-	
+
 	protected TagData description;//lightEmittingDiode
 	protected TagData map;//genericExcitationSource
-	
+
 	//laser
 	protected TagData medium;
 	protected TagData freqMul;
@@ -62,53 +62,53 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 	protected TagData repRate;
 	protected TagData pump;
 	protected TagData waveLength;
-	
+
 
 	protected String classification;
 	protected LightSourceModel data;
 	protected int index;
-	
+
 	abstract protected void initTagList();
 	abstract protected void setGUIData();
 	abstract protected void noticeEditorInput();
 	abstract protected void addTags(List<JLabel> labels, List<JComponent> comp);
-	
+
 	protected void initComponents(ModuleConfiguration conf)
 	{
 		setLayout(new BorderLayout(0,0));
-		
+
 		gridbag = new GridBagLayout();
-		
+
 		gridBagConstraints = new GridBagConstraints();
 		globalPane=new JPanel();
-		
+
 		globalPane.setAlignmentX(Component.LEFT_ALIGNMENT);
 		globalPane.setAlignmentY(Component.TOP_ALIGNMENT);
-		
+
 		globalPane.setLayout(gridbag);
-		
+
 		add(globalPane,BorderLayout.NORTH);
 		setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-		
+
 		// init tag layout
 		List<TagConfiguration> list=conf.getTagList();
 		initTags(list);
-		
+
 	}
-	
+
 	public void buildGUI() {
 		List<JLabel> labels= new ArrayList<JLabel>();
 		List<JComponent> comp=new ArrayList<JComponent>();
 		addTags(labels,comp);
-		
+
 		addLabelTextRows(labels, comp, gridbag, globalPane);
-		
+
 		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.weightx = 1.0;
 		initTagList();
 	}
-	
+
 	public void setManufact(String value, boolean prop)
 	{
 		if(manufact == null) 
@@ -119,7 +119,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 	public void setType(Enumeration value,boolean prop)
 	{
 		String val;
-		
+
 		switch(classification){
 		case "Laser":
 			val= (value != null)? ((LaserType) value).getValue() : "";
@@ -142,17 +142,17 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			else 
 				type.setTagValue(val,prop);
 			break;
-			default:
-				val= (value != null)? ((LaserType) value).getValue() : "";
-				if(type == null) 
-					type = new TagData(TagNames.L_TYPE,val,prop,TagData.COMBOBOX,getNames(LaserType.class));
-				else 
-					type.setTagValue(val,prop);
-				break;
+		default:
+			val= (value != null)? ((LaserType) value).getValue() : "";
+			if(type == null) 
+				type = new TagData(TagNames.L_TYPE,val,prop,TagData.COMBOBOX,getNames(LaserType.class));
+			else 
+				type.setTagValue(val,prop);
+			break;
 		}
-		
+
 	}
-	
+
 	public void setPower(Power value, boolean prop)
 	{
 		String val= (value != null)? String.valueOf(value.value()) : "";
@@ -170,10 +170,10 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		else 
 			model.setTagValue(value,prop);
 	}
-	
-	
-	
-	
+
+
+
+
 	public void setMedium(LaserMedium value, boolean prop)
 	{
 		String val= (value != null)? value.getValue() : "";
@@ -190,8 +190,8 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		else 
 			freqMul.setTagValue(val,prop);
 	}
-	
-	
+
+
 	public void setTunable(Boolean value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value): "";
@@ -200,8 +200,8 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		else 
 			tunable.setTagValue(val,prop);
 	}
-	
-	
+
+
 	public void setPulse(Pulse value, boolean prop)
 	{
 		String val= (value != null)? value.getValue() : "";
@@ -230,9 +230,9 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		}else {
 			repRate.setTagValue(val,unit,prop);
 		}
-			
+
 	}
-	
+
 	public void setPump(String value, boolean prop)
 	{
 		if(pump == null) 
@@ -250,10 +250,10 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		}else 
 			waveLength.setTagValue(val,unit,prop);
 	}
-	
-	
-	
-	
+
+
+
+
 	public void setDescription(String value, boolean prop)
 	{
 		if(description == null) 
@@ -261,7 +261,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		else 
 			description.setTagValue(value,prop);
 	}
-	
+
 	//TODO
 	public void setMap(List<MapPair> value, boolean prop)
 	{
@@ -271,7 +271,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		else 
 			map.setTagValue(val,prop);
 	}
-	
+
 	protected void initTag(TagConfiguration t)
 	{
 		String name=t.getName();
@@ -294,52 +294,51 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			type.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.POWER:
-					setPower(null, prop);
+			setPower(null, prop);
 			power.setVisible(vis);
 			break;
 		case TagNames.MEDIUM:
-				setMedium(null, prop);
+			setMedium(null, prop);
 			medium.setVisible(vis);
 			medium.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.FREQMUL:
-				setFreqMultiplication(null, prop);
+			setFreqMultiplication(null, prop);
 			freqMul.setVisible(vis);
 			break;
 		case TagNames.TUNABLE:
-				setTunable(null, prop);
+			setTunable(null, prop);
 			tunable.setVisible(vis);
 			tunable.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.PULSE:
-				setPulse(null,prop);
+			setPulse(null,prop);
 			pulse.setVisible(vis);
 			pulse.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.POCKELCELL:
-				setPocketCell(null, prop);
+			setPocketCell(null, prop);
 			pockelCell.setVisible(vis);
 			pockelCell.setDefaultValues(t.getPossibleValues());
 			break;
 		case TagNames.REPRATE:
-				setRepititationRate(null, prop);
+			setRepititationRate(null, prop);
 			repRate.setVisible(vis);
 			break;
 		case TagNames.PUMP:
-				setPump(null, prop);
+			setPump(null, prop);
 			pump.setVisible(vis);
 			break;
 		case TagNames.WAVELENGTH:
-				setWavelength(null, prop);
+			setWavelength(null, prop);
 			waveLength.setVisible(vis);
 			break;
 		case TagNames.MAP:
-				setMap(null, prop);
+			setMap(null, prop);
 			map.setVisible(vis);
 			break;
 		case TagNames.DESC:
 			setDescription(null, prop);
-//			TODO: ((LightEmittingDiode)lightSrc).set
 			description.setVisible(vis);
 			break;
 		default:
@@ -350,12 +349,12 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 	{
 		if(t.getValue()==null || t.getValue().equals(""))
 			return;
-		
+
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
-		
+
 		MonitorAndDebug.printConsole("# LightSourceSubViewer::setPredefinedTag(): "+name+" - "+classification);
-		
+
 		Boolean prop=t.getProperty();
 		switch(name){
 		case TagNames.MODEL:
@@ -370,9 +369,9 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			setManufact(t.getValue(), prop);
 			manufact.dataHasChanged(true);
 			break;
-//		case TagNames.TYPE:
-//			if(type!=null && !type.getTagValue().equals(""))
-//				return;
+			//		case TagNames.TYPE:
+			//			if(type!=null && !type.getTagValue().equals(""))
+			//				return;
 		case TagNames.L_TYPE:
 			if(classification.equals(LightSourceModel.LASER)){
 				LaserType d=parseLaserType(t.getValue());
@@ -473,8 +472,8 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		case TagNames.PUMP:
 			if(pump!=null && !pump.getTagValue().equals(""))
 				return;
-				setPump(t.getValue(), prop);
-				pump.dataHasChanged(true);
+			setPump(t.getValue(), prop);
+			pump.dataHasChanged(true);
 			break;
 		case TagNames.WAVELENGTH:
 			if(waveLength!=null && !waveLength.getTagValue().equals(""))
@@ -487,8 +486,8 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			}
 			break;
 		case TagNames.MAP:
-//			TODO
-//				setMap(t.getValue(), prop);
+			//			TODO
+			//				setMap(t.getValue(), prop);
 			break;
 		case TagNames.DESC:
 			if(description!=null && !description.getTagValue().equals(""))
@@ -500,7 +499,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			LOGGER.warn("[CONF] unknown tag: "+name );break;
 		}
 	}
-	
+
 	public List<TagData> getChangedTags() {
 		List<TagData> list = new ArrayList<TagData>();
 		if(inputAt(model)) list.add(model);
@@ -517,18 +516,18 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		if(inputAt(repRate)) list.add(repRate);
 		if(inputAt(pump)) list.add(pump);
 		if(inputAt(waveLength)) list.add(waveLength);
-		
+
 		return list;
-		
-		
+
+
 	}
-	
+
 	public HashMap<String,String> getMapValuesOfChanges(HashMap<String, String> mapAnnot, String refName) 
 	{
 		if(mapAnnot==null)
 			mapAnnot=new HashMap<String, String>();
-		
-		
+
+
 		if(inputAt(model)) mapAnnot.put(refName+TagNames.MODEL,model.getTagValue());
 		if(inputAt(manufact)) mapAnnot.put(refName+TagNames.MANUFAC,manufact.getTagValue());
 		if(inputAt(type)) mapAnnot.put(refName+"Type",type.getTagValue());
@@ -543,35 +542,33 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 		if(inputAt(repRate)) mapAnnot.put(refName+TagNames.REPRATE,repRate.getTagValue()+" "+repRate.getTagUnit().getSymbol());
 		if(inputAt(pump)) mapAnnot.put(refName+TagNames.PUMP,pump.getTagValue());
 		if(inputAt(waveLength)) mapAnnot.put(refName+TagNames.WAVELENGTH,waveLength.getTagValue()+" "+waveLength.getTagUnit().getSymbol());
-		
+
 		return mapAnnot;	
 	}
-	
+
 	public static Power parsePower(String c,Unit<Power> unit) throws Exception
 	{
 		if(c==null || c.equals(""))
 			return null;
-//		if(unit==null)
-//			unit=powerUnit;
-		
+
 		return new Power(Double.valueOf(c),unit);
-		
+
 	}
 	public static LaserMedium parseMedium(String c) 
 	{
 		if(c==null || c.equals(""))
 			return null;
-		
+
 		LaserMedium m=null;
 		try{
 			m=LaserMedium.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("LaserMedium: "+c+" is not supported");
-//			m=LaserMedium.OTHER;
+			//			m=LaserMedium.OTHER;
 		}
 		return m;
 	}
-	
+
 	public static Pulse parsePulse(String c) 
 	{
 		if(c==null || c.equals(""))
@@ -581,7 +578,7 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 			m=Pulse.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("Pulse: "+c+" is not supported");
-//			m=Pulse.OTHER;
+			//			m=Pulse.OTHER;
 		}
 		return m;
 	}
@@ -589,61 +586,53 @@ public abstract class LightSourceSubViewer extends ModuleViewer
 	{
 		if(c==null || c.equals(""))
 			return null;
-//		
-//		LOGGER.info("[DEBUG] parse: unit= "+unit.getSymbol());
-//		
-//		if(unit==null || unit.equals("")){
-//			LOGGER.warning("unknown unit for frequency of lightSrc, set to "+repRateUnit);
-//			return new Frequency(parseToDouble(c), repRateUnit);
-//		}else{
-			return new Frequency(parseToDouble(c),unit);
-			
-//		}
+
+		return new Frequency(parseToDouble(c),unit);
 	}
-	
+
 	public static LaserType parseLaserType(String c) 
 	{
 		if(c==null || c.equals(""))
 			return null;
-		
+
 		LaserType a=null;
 		try{
 			a=LaserType.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("LaserType: "+c+" is not supported");
-//			a=LaserType.OTHER;
+			//			a=LaserType.OTHER;
 		}
 		return a;
 	}
-	
+
 	public static FilamentType parseFilamentType(String c) {
 		if(c==null || c.equals(""))
 			return null;
-		
+
 		FilamentType a=null;
 		try{
 			a=FilamentType.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("FilamentType: "+c+" is not supported");
-//			a=FilamentType.OTHER;
+			//			a=FilamentType.OTHER;
 		}
 		return a;
 	}
 	public static ArcType parseArcType(String c)  {
 		if(c==null || c.equals(""))
 			return null;
-		
+
 		ArcType a=null;
 		try{
 			a=ArcType.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("ArcType: "+c+" is not supported");
-//			a=ArcType.OTHER;
+			//			a=ArcType.OTHER;
 		}
 		return a;
 	}
 	public String getClassification() {
 		return classification;
 	}
-	
+
 }

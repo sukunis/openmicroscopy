@@ -49,7 +49,7 @@ public class LightPathViewer extends ModuleViewer{
 	static final String EXITATION="Excitation Filter";
 	static final String EMISSION="Emission Filter";
 	static final String DICHROIC="Dichroic";
-	
+
 	private List<Object> availableElems;
 	private boolean lightPathDataChanged;
 
@@ -77,19 +77,19 @@ public class LightPathViewer extends ModuleViewer{
 		showPreDefinitions(conf);
 		lightPathDataChanged=false;
 	}
-	
+
 	public void showPreDefinitions(ModuleConfiguration conf) 
 	{
 		List<LightPathElement> list=conf.getElementList();
 		if(list==null)
 			return;
-		
+
 		if(lightPathTable.getRowCount()==0){
 			for(LightPathElement t:list){
 				lightPathTable.appendElem(parseObject(t), t.getClazz());
 			}
 		}
-		
+
 	}
 
 	private Object parseObject(LightPathElement t) 
@@ -108,7 +108,7 @@ public class LightPathViewer extends ModuleViewer{
 			return f;
 		}
 	}
-	
+
 	private FilterType parseFilterType(String c)
 	{
 		if(c==null || c.equals(""))
@@ -146,12 +146,12 @@ public class LightPathViewer extends ModuleViewer{
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
 		editBtn.addActionListener(new ActionListener() {
-			
+
 
 			public void actionPerformed(ActionEvent e) 
 			{
 				LightPath lpForSelection=lightPathTable.getLightPath();
-				
+
 				List<Object> linkHardwareList=null;
 				if(mic!=null){
 					linkHardwareList=mic.getLightPathList();
@@ -190,7 +190,7 @@ public class LightPathViewer extends ModuleViewer{
 	private void setGUIData() 
 	{
 		lightPathTable.clearData();
-		
+
 		if(data==null || data.getNumberOfLightPaths()==0)
 			return;
 
@@ -208,12 +208,12 @@ public class LightPathViewer extends ModuleViewer{
 	public void saveData()  
 	{
 		LightPath l=lightPathTable.getLightPath();
-			
+
 		if(data==null)
 			data=new LightPathModel();
 		try {
 			data.addData(l, true, index);
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -243,27 +243,27 @@ public class LightPathViewer extends ModuleViewer{
 	public int getIndex() {
 		return index;
 	}
-	
+
 	@Override
 	public boolean hasDataToSave() 
 	{
 		return lightPathDataChanged || data.hasInput(index);
 	}
-	
-	
-	
+
+
+
 
 	public HashMap<String,String> getMapValuesOfChanges(HashMap<String, String> map, int chIndex) 
 	{
 		LightPath lp=data.getLightPath(chIndex);
-		
+
 		if( lp==null)
 			return null;
-		
+
 		if(map==null)
 			map=new HashMap<String, String>();
-		
-		
+
+
 		int i=1;
 		for(Filter f: lp.copyLinkedExcitationFilterList()){
 			String id="[Excitation Filter]:["+i+"]:";
@@ -271,28 +271,25 @@ public class LightPathViewer extends ModuleViewer{
 			map.put(id+"Manufactur", f.getManufacturer());
 			map.put(id+"Type", (f.getType()==null?"": f.getType().getValue()));
 			map.put(id+"FilterWheel", f.getFilterWheel());
-			
+
 			i++;
 		}
-		
+
 		Dichroic d= lp.getLinkedDichroic();
 		if(d!=null){
 			map.put("[Dichroic]:["+i+"]:", d.getModel());
 			i++;
 		}
-		
+
 		for(Filter f: lp.copyLinkedEmissionFilterList()){
 			String id="[Emmission Filter]:["+i+"]:";
 			map.put(id+"Model", f.getModel());
 			map.put(id+"Manufactur", f.getManufacturer());
 			map.put(id+"Type",(f.getType()==null?"": f.getType().getValue()));
 			map.put(id+"FilterWheel", f.getFilterWheel());
-			
+
 			i++;
 		}
-		
-		
-		
 		return map;
 	}
 

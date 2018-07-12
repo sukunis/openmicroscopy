@@ -25,33 +25,29 @@ public class LightPathTableSmall extends JTable
 {
 	/** Logger for this class. */
 	private static final org.slf4j.Logger LOGGER =
-    	    LoggerFactory.getLogger(LightPathTableSmall.class);
-    
+			LoggerFactory.getLogger(LightPathTableSmall.class);
 
-	
-	
-//	private JPopupMenu popupMenu;
-    private List<Object> lightPathMembers;
-    private LightPath availableElem;
-	
+	private List<Object> lightPathMembers;
+	private LightPath availableElem;
+
 	public LightPathTableSmall()
 	{
 		setModel(new CustomModel());
 		lightPathMembers=new ArrayList<Object>();
 		availableElem=null;
 	}
-	
+
 	public boolean isCellEditable(int row,int column)
 	{  
-        return false;  
+		return false;  
 	} 
-	
+
 	public void appendElem(Object o, String category)
 	{
 		if(o instanceof FilterCompUI){
 			Filter f;
 			try {
-				f = (Filter) ((FilterCompUI) o).getData();//((FilterCompUI) o).copyData();
+				f = (Filter) ((FilterCompUI) o).getData();
 				if(f!=null){
 					((CustomModel) getModel()).addRow(f,"");
 					((FilterCompUI) o).clearDataValues();
@@ -61,43 +57,43 @@ public class LightPathTableSmall extends JTable
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}else{
 			((CustomModel) getModel()).addRow(o,category);
 		}
 		lightPathMembers.add(o);
 	}
-	
+
 	/**
-     * Return a row from the table as a array of strings
-     * @param rowIndex The index of the row you would like
-     * @return Returns the row from the table as an array of strings or null if
-     * the index is invalid
-     */
+	 * Return a row from the table as a array of strings
+	 * @param rowIndex The index of the row you would like
+	 * @return Returns the row from the table as an array of strings or null if
+	 * the index is invalid
+	 */
 	public Object getRowData(int rowIndex)
-    {
+	{
 		if(lightPathMembers!=null && !lightPathMembers.isEmpty()){
 			return lightPathMembers.get(rowIndex);
 		}
 		else
 			return null;
-    }
-	
-	
-	
+	}
+
+
+
 	public void clearData()
 	{
 		lightPathMembers=new ArrayList<Object>();
 		availableElem=null;
 		setModel(new CustomModel());
 	}
-	
-	
+
+
 	public List<Object> getLightPathElementList() 
 	{
 		return lightPathMembers;
 	}
-	
+
 	public LightPath getLightPath()
 	{
 		if(availableElem==null) {
@@ -106,9 +102,9 @@ public class LightPathTableSmall extends JTable
 		}
 		return availableElem;
 	}
-	
+
 	private LightPath createLightPath(List<Object> list) {
-		
+
 		if(list!=null && !list.isEmpty()){
 
 			LightPath newElement=new LightPath();
@@ -170,8 +166,8 @@ public class LightPathTableSmall extends JTable
 		}
 		return null;
 	}
-	
-	
+
+
 	private void setExFilter(List<Filter> exList) {
 		if(exList!=null){
 			for(Filter f:exList){
@@ -181,7 +177,7 @@ public class LightPathTableSmall extends JTable
 			LOGGER.info("can't load EX Filter element");
 		}
 	}
-	
+
 	private void setEmFilter(List<Filter> emList) {
 		if(emList!=null)
 		{
@@ -202,7 +198,7 @@ public class LightPathTableSmall extends JTable
 			LOGGER.info("::ATTENTION:: can't load EM Filter element ");
 		}
 	}
-	
+
 	private void setDichroic(Dichroic d) {
 		if(d!=null){
 			appendElem(d,LightPathViewer.DICHROIC);
@@ -210,7 +206,7 @@ public class LightPathTableSmall extends JTable
 			LOGGER.info("No dichroic element is given");
 		}
 	}
-	
+
 	public void setLightPath(List<Object> elements) {
 		clearData();
 		availableElem=createLightPath(elements);
@@ -218,7 +214,7 @@ public class LightPathTableSmall extends JTable
 		setDichroic(availableElem.getLinkedDichroic());
 		setEmFilter(availableElem.copyLinkedEmissionFilterList());
 	}
-	
+
 	public void setLightPath(LightPath lightPath)
 	{
 		clearData();
@@ -228,11 +224,9 @@ public class LightPathTableSmall extends JTable
 		List<Filter> emList=lightPath.copyLinkedEmissionFilterList();
 		List<Filter> exList=lightPath.copyLinkedExcitationFilterList();
 
-		
 		setExFilter(exList);
 
 		setDichroic(d);
-		
 
 		setEmFilter(emList);
 	}
@@ -284,12 +278,7 @@ public class LightPathTableSmall extends JTable
 			}
 			return o;
 		}
-		
+
 	}
 
-
-
-
-	
-	
 }

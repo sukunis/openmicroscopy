@@ -45,12 +45,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ObjectiveViewer extends ModuleViewer 
 {
-	 private static final org.slf4j.Logger LOGGER =
-	    	    LoggerFactory.getLogger(ObjectiveViewer.class);
-	 
+	private static final org.slf4j.Logger LOGGER =
+			LoggerFactory.getLogger(ObjectiveViewer.class);
+
 	private ObjectiveModel data;
 	private Box box;
-	
+
 	// available objective tags
 	private TagData model;
 	private TagData manufact;
@@ -65,11 +65,11 @@ public class ObjectiveViewer extends ModuleViewer
 	private TagData corCollar;
 	private TagData medium;
 	private TagData refractIndex;
-	
+
 	private List<Objective> availableElems;
-	
+
 	private MicroscopeProperties mic;
-	
+
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
@@ -88,7 +88,7 @@ public class ObjectiveViewer extends ModuleViewer
 		showPredefinitions(conf.getTagList(), showPreValues);
 		showPredefinitions(conf.getSettingList(), showPreValues);
 	}
-	
+
 	private void initTagList()
 	{
 		tagList=new ArrayList<TagData>();
@@ -104,7 +104,7 @@ public class ObjectiveViewer extends ModuleViewer
 		tagList.add(corCollar);
 		tagList.add(medium);
 		tagList.add(refractIndex);
-		
+
 	}
 
 	/**
@@ -119,16 +119,16 @@ public class ObjectiveViewer extends ModuleViewer
 		addTagToGUI(nomMagn,labels,comp);
 		addTagToGUI(calMagn,labels,comp);
 		addTagToGUI(lensNA,labels,comp);
-		
-//		addTagToGUI(correction,labels,comp);
+
+		//		addTagToGUI(correction,labels,comp);
 		addTagToGUI(workDist,labels,comp);
-		
+
 		addLabelTextRows(labels, comp, gridbag, globalPane);
-		
+
 		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.weightx = 1.0;
-		
+
 		//Settings
 		GridBagConstraints cSett=new GridBagConstraints();
 		GridBagLayout gridbagSett = new GridBagLayout();
@@ -137,19 +137,19 @@ public class ObjectiveViewer extends ModuleViewer
 		JPanel settingsPane=new JPanel(gridbagSett);
 		addLabelToGUI(new JLabel("Settings:"),labelsSett,compSett);
 		addTagToGUI(corCollar,labelsSett,compSett);
-//		addTagToGUI(medium,labelsSett,compSett);
+		//		addTagToGUI(medium,labelsSett,compSett);
 		addTagToGUI(immersion,labels,comp);
 		addTagToGUI(refractIndex,labelsSett,compSett);
-		
+
 		addLabelTextRows(labelsSett, compSett, gridbag, settingsPane);
-		
+
 		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.weightx = 1.0;
-		
+
 		box.add(Box.createVerticalStrut(20));
 		box.add(settingsPane);
-		
+
 		// set data
 		setGUIData();
 		setSettingsGUIData();
@@ -165,16 +165,16 @@ public class ObjectiveViewer extends ModuleViewer
 		setLayout(new BorderLayout(5,5));
 		setBorder(BorderFactory.createCompoundBorder(new TitledBorder(""),
 				BorderFactory.createEmptyBorder(5,10,5,10)));
-		
+
 		gridbag = new GridBagLayout();
 		gridBagConstraints = new GridBagConstraints();
-		
+
 		globalPane=new JPanel();
 		globalPane.setLayout(gridbag);
-		
+
 		box=Box.createVerticalBox();
 		box.add(globalPane);
-		
+
 		JButton editBtn=new JButton("Choose...");
 		editBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		editBtn.setEnabled(true);
@@ -207,7 +207,7 @@ public class ObjectiveViewer extends ModuleViewer
 		});
 		add(box,BorderLayout.NORTH);
 		add(editBtn,BorderLayout.SOUTH);
-		
+
 		// init tag layout
 		List<TagConfiguration> list=conf.getTagList();
 		List<TagConfiguration> settList=conf.getSettingList();
@@ -220,14 +220,14 @@ public class ObjectiveViewer extends ModuleViewer
 	 * */
 	private void noticeEditorInput() 
 	{
-		 model.dataHasChanged(true);
-		 manufact.dataHasChanged(true);
+		model.dataHasChanged(true);
+		manufact.dataHasChanged(true);
 		nomMagn.dataHasChanged(true);
-		 calMagn.dataHasChanged(true);
-		 lensNA.dataHasChanged(true);
-		 immersion.dataHasChanged(true);
-		 correction.dataHasChanged(true);
-		 workDist.dataHasChanged(true);
+		calMagn.dataHasChanged(true);
+		lensNA.dataHasChanged(true);
+		immersion.dataHasChanged(true);
+		correction.dataHasChanged(true);
+		workDist.dataHasChanged(true);
 	}
 
 	/**
@@ -287,12 +287,12 @@ public class ObjectiveViewer extends ModuleViewer
 		default:LOGGER.warn("[CONF] OBJECTIVE  unknown tag: "+name );break;
 		}
 	}
-	
+
 	protected void setPredefinedTag(TagConfiguration t) 
 	{
 		if(t.getValue()==null || t.getValue().equals(""))
 			return;
-		
+
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
@@ -320,8 +320,8 @@ public class ObjectiveViewer extends ModuleViewer
 			if(refractIndex!=null && !refractIndex.getTagValue().equals(""))
 				return;
 			try{
-			setRefractIndex(ModuleViewer.parseToDouble(t.getValue()), prop);
-			refractIndex.dataHasChanged(true);
+				setRefractIndex(ModuleViewer.parseToDouble(t.getValue()), prop);
+				refractIndex.dataHasChanged(true);
 			}catch(Exception e){
 				refractIndex.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -342,8 +342,8 @@ public class ObjectiveViewer extends ModuleViewer
 			if(nomMagn!=null && !nomMagn.getTagValue().equals(""))
 				return;
 			try{
-			setNomMagnification(ModuleViewer.parseToDouble(t.getValue()), prop);
-			nomMagn.dataHasChanged(true);
+				setNomMagnification(ModuleViewer.parseToDouble(t.getValue()), prop);
+				nomMagn.dataHasChanged(true);
 			}catch(Exception e){
 				nomMagn.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -352,8 +352,8 @@ public class ObjectiveViewer extends ModuleViewer
 			if(calMagn!=null && !calMagn.getTagValue().equals(""))
 				return;
 			try{
-			setCalMagnification(ModuleViewer.parseToDouble(t.getValue()),prop);
-			calMagn.dataHasChanged(true);
+				setCalMagnification(ModuleViewer.parseToDouble(t.getValue()),prop);
+				calMagn.dataHasChanged(true);
 			}catch(Exception e){
 				calMagn.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -362,8 +362,8 @@ public class ObjectiveViewer extends ModuleViewer
 			if(lensNA!=null && !lensNA.getTagValue().equals(""))
 				return;
 			try{
-			setLensNA(ModuleViewer.parseToDouble(t.getValue()),prop);
-			lensNA.dataHasChanged(true);
+				setLensNA(ModuleViewer.parseToDouble(t.getValue()),prop);
+				lensNA.dataHasChanged(true);
 			}catch(Exception e){
 				lensNA.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -426,9 +426,9 @@ public class ObjectiveViewer extends ModuleViewer
 		} catch (NullPointerException e) { }
 		try{setIris(objective.getIris());
 		} catch (NullPointerException e) { }
-		
+
 	}
-	
+
 	private void setSettingsGUIData()
 	{
 		if(data==null)
@@ -440,14 +440,10 @@ public class ObjectiveViewer extends ModuleViewer
 		} catch (NullPointerException e) { }
 		try{ setCorCollar(settings.getCorrectionCollar(), REQUIRED);
 		} catch (NullPointerException e) { }
-	
+
 	}
 
 
-	
-
-	
-	
 	private void setModel(String value,boolean prop)
 	{
 		if(model == null) 
@@ -459,7 +455,7 @@ public class ObjectiveViewer extends ModuleViewer
 	{
 		setModel(value, REQUIRED);
 	}
-	
+
 	private void setManufact(String value,boolean prop)
 	{
 		if(manufact == null) 
@@ -471,7 +467,7 @@ public class ObjectiveViewer extends ModuleViewer
 	{
 		setManufact(value, REQUIRED);
 	}
-	
+
 	private void setNomMagnification(Double value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
@@ -481,14 +477,14 @@ public class ObjectiveViewer extends ModuleViewer
 		}else 
 			nomMagn.setTagValue(val,prop);
 	}
-	
-	
-	
+
+
+
 	private void setNomMagnification(Double value)
 	{
 		setNomMagnification(value, REQUIRED);
 	}
-	
+
 	private void setCalMagnification(Double value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
@@ -502,7 +498,7 @@ public class ObjectiveViewer extends ModuleViewer
 	{
 		setCalMagnification(value, REQUIRED);
 	}
-	
+
 	private void setLensNA(Double value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
@@ -516,7 +512,7 @@ public class ObjectiveViewer extends ModuleViewer
 	{
 		setLensNA(value, REQUIRED);
 	}
-	
+
 	private void setImmersion(Immersion value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
@@ -529,7 +525,7 @@ public class ObjectiveViewer extends ModuleViewer
 	{
 		setImmersion(value, REQUIRED);
 	}
-	
+
 	private void setCorrection(Correction value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
@@ -542,7 +538,7 @@ public class ObjectiveViewer extends ModuleViewer
 	{
 		setCorrection(value, REQUIRED);
 	}
-	
+
 	private void setWorkingDist(Length value,boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
@@ -557,7 +553,7 @@ public class ObjectiveViewer extends ModuleViewer
 	{
 		setWorkingDist(value, REQUIRED);
 	}
-	
+
 	private void setIris(Boolean value,boolean prop)
 	{
 		String val= (value != null) ? String.valueOf(value):"";
@@ -566,12 +562,12 @@ public class ObjectiveViewer extends ModuleViewer
 		else 
 			iris.setTagValue(val,prop);
 	}
-	
+
 	private void setIris(Boolean value)
 	{
 		setIris(value, REQUIRED);
 	}
-	
+
 	/*------------------------------------------------------
 	 * Settings Values
 	 * -----------------------------------------------------*/
@@ -608,7 +604,7 @@ public class ObjectiveViewer extends ModuleViewer
 		if(data==null){
 			data=new ObjectiveModel();
 		}
-		
+
 		if(data.getObjective()==null){
 			try {
 				data.addData(new Objective(),true);
@@ -618,7 +614,7 @@ public class ObjectiveViewer extends ModuleViewer
 			}
 		}
 		Objective objective =data.getObjective();
-		
+
 		try{
 			objective.setModel(model.getTagValue());
 		}catch(Exception e){
@@ -662,7 +658,7 @@ public class ObjectiveViewer extends ModuleViewer
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read OBJECTIVE working distance input");
 		}
-		
+
 		// --- Settings --------------------
 		if(data.getSettings()==null){
 			try {
@@ -673,8 +669,8 @@ public class ObjectiveViewer extends ModuleViewer
 			}
 		}
 		ObjectiveSettings settings=data.getSettings();
-		
-		
+
+
 		//TODO input checker
 		try{
 			settings.setRefractiveIndex(parseToDouble(refractIndex.getTagValue()));
@@ -692,24 +688,24 @@ public class ObjectiveViewer extends ModuleViewer
 			LOGGER.error("[DATA] can't read OBJECTIVE SETT correction collar input");
 		}
 		dataChanged=false;
-	
+
 	}
-	
+
 	public static Medium parseMedium(String c) 
 	{
 		if(c==null || c.equals(""))
 			return null;
-		
+
 		Medium a=null;
 		try{
 			a=Medium.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("Medium: "+c+" is not supported");
-//			a=Medium.OTHER;
+			//			a=Medium.OTHER;
 		}
 		return a;
 	}
-	
+
 	public static Immersion parseImmersion(String c) 
 	{
 		if(c==null || c.equals(""))
@@ -719,11 +715,11 @@ public class ObjectiveViewer extends ModuleViewer
 			m=Immersion.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("Immersion: "+c+" is not supported");
-//			m=Immersion.OTHER;
+			//			m=Immersion.OTHER;
 		}
 		return m;
 	}
-	
+
 	public static Correction parseCorrection(String c) 
 	{
 		if(c==null || c.equals(""))
@@ -733,13 +729,13 @@ public class ObjectiveViewer extends ModuleViewer
 			m=Correction.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("Correction: "+c+" is not supported");
-//			m=Correction.OTHER;
+			//			m=Correction.OTHER;
 		}
 		return m;
 	}
-	
+
 	public List<TagData> getChangedTags() {
-		
+
 		List<TagData> list = new ArrayList<TagData>();
 		if(inputAt(model)) list.add(model);
 		if(inputAt(manufact)) list.add(manufact);
@@ -749,8 +745,7 @@ public class ObjectiveViewer extends ModuleViewer
 		if(inputAt(immersion)) list.add(immersion);
 		if(inputAt(correction)) list.add(correction);
 		if(inputAt(workDist)) list.add(workDist);
-		//if(isActive(iris)) list.add(iris);
-		
+
 		//settings
 		if(inputAt(iris))list.add(iris);
 		if(inputAt(corCollar))list.add(corCollar);
@@ -758,14 +753,14 @@ public class ObjectiveViewer extends ModuleViewer
 		if(inputAt(refractIndex))list.add(refractIndex);
 		return list;
 	}
-	
+
 	public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map)
 	{
 		if(map==null)
 			map=new HashMap<String, String>();
-		
+
 		String id="";
-		
+
 		if(inputAt(model)) map.put(id+TagNames.MODEL,model.getTagValue());
 		if(inputAt(manufact)) map.put(id+TagNames.MANUFAC,manufact.getTagValue());
 		if(inputAt(nomMagn)) map.put(id+TagNames.NOMMAGN,nomMagn.getTagValue());
@@ -774,15 +769,14 @@ public class ObjectiveViewer extends ModuleViewer
 		if(inputAt(immersion))map.put(id+TagNames.IMMERSION,immersion.getTagValue());
 		if(inputAt(correction))map.put(id+TagNames.CORRECTION,correction.getTagValue());
 		if(inputAt(workDist))map.put(id+TagNames.WORKDIST,workDist.getTagValue()+" "+workDist.getTagUnit().getSymbol());
-		
-//		id=id+"[Settings]:";
+
 		//settings
 		if(inputAt(iris))map.put(id+"Iris",iris.getTagValue());
 		if(inputAt(corCollar))map.put(id+TagNames.CORCOLLAR,corCollar.getTagValue());
 		if(inputAt(medium))map.put(id+TagNames.OBJ_MEDIUM,medium.getTagValue());
 		if(inputAt(refractIndex))map.put(id+TagNames.REFINDEX,refractIndex.getTagValue());
-		
+
 		return map;
 	}
-	
+
 }

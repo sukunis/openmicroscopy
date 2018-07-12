@@ -60,21 +60,19 @@ public class LightSourceViewer extends ModuleViewer{
 			LightSourceModel.ARC,LightSourceModel.FILAMENT,
 			LightSourceModel.GENERIC_EXCITATION,LightSourceModel.LIGHT_EMITTING_DIODE};
 	private JComboBox<String> sourceType;
-	
+
 	private int index;
 
 	//available element setting tags
 	private TagData waveLengthSett;
 	/**==Absorptionskoefizient a fraction, as a value from 0.0 to 1.0*/
 	private TagData attenuation;
-	//??
-	//private TagData intensity;
 
 	private boolean setDataFromCode;
-	
+
 	private List<LightSource> availableElems;
 	private MicroscopeProperties mic;
-	
+
 	/**
 	 * Creates a new instance.
 	 * @param model Reference to model.
@@ -83,23 +81,21 @@ public class LightSourceViewer extends ModuleViewer{
 			int index,boolean showPreValues,List<LightSource> availableElems,MicroscopeProperties mic)
 	{
 		MonitorAndDebug.printConsole("# LightSrcViewer::newInstance("+(model!=null?"model":"null")+") "+index);
-		
-//		model.printValues();
-		
+
 		this.index=index;
 		this.data=model;
 		this.availableElems=availableElems;
 		this.mic =mic;
-		
+
 		initComponents(conf,showPreValues);
-		
+
 		buildGUI();
 		resetInputEvent();
-		
+
 		// set data from model
 		setGUIData();
 		setSettingsGUIData();
-		
+
 		initTagList();
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).showPredefinitions(conf.getTagList(),showPreValues);
 		showPredefinitions(conf.getSettingList(), showPreValues);
@@ -134,7 +130,6 @@ public class LightSourceViewer extends ModuleViewer{
 		addLabelToGUI(new JLabel("Settings:"),labelsSett,compSett);
 		addTagToGUI(waveLengthSett,labelsSett,compSett);
 		addTagToGUI(attenuation,labelsSett,compSett);
-		//	addTagToGUI(intensity,labelsSett,compSett);
 
 		addLabelTextRows(labelsSett, compSett, gridbag, settingsPane);
 
@@ -148,7 +143,7 @@ public class LightSourceViewer extends ModuleViewer{
 		box.add(Box.createVerticalStrut(20));
 		box.add(settingsPane);
 
-		
+
 		dataChanged=false;
 	}
 
@@ -199,13 +194,13 @@ public class LightSourceViewer extends ModuleViewer{
 				if(mic!=null){
 					linkHardwareList=mic.getLightSourceList();
 				}
-				
+
 				LightSourceEditor editor = new LightSourceEditor(new JFrame(),
 						"Select From Available LightSource", availableElems,linkHardwareList); 
 				LightSource l=editor.getSelectedLightSource();
 				if(l!=null ){
 					inputKeyPressed();
-//					dataChanged=true;
+					//					dataChanged=true;
 					try {
 						System.out.println("Replace LightSource");
 						data.addData(l, true,index);
@@ -220,7 +215,7 @@ public class LightSourceViewer extends ModuleViewer{
 				}		
 			}
 
-			
+
 		});
 		add(box,BorderLayout.NORTH);
 		add(editBtn,BorderLayout.SOUTH);
@@ -231,7 +226,7 @@ public class LightSourceViewer extends ModuleViewer{
 		globalPane.add(new LS_FilamentViewer(data, conf, index,showPreValues),LightSourceModel.FILAMENT);
 		globalPane.add(new LS_GESViewer(data, conf, index,showPreValues),LightSourceModel.GENERIC_EXCITATION);
 		globalPane.add(new LS_LEDViewer(data, conf, index,showPreValues),LightSourceModel.LIGHT_EMITTING_DIODE);
-		
+
 		initTags(conf.getSettingList());
 	}
 
@@ -246,7 +241,6 @@ public class LightSourceViewer extends ModuleViewer{
 	private void noticeEditorInput()
 	{
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).noticeEditorInput();
-		
 	}
 
 	/**
@@ -257,7 +251,7 @@ public class LightSourceViewer extends ModuleViewer{
 	protected void showSubCompForSelection(String sType) throws Exception 
 	{
 		lightSrcCard.show(globalPane,sType);
-		
+
 		//notice only user mouse/keybord action
 		if(!setDataFromCode)
 			dataChanged=true;
@@ -292,7 +286,7 @@ public class LightSourceViewer extends ModuleViewer{
 	{
 		if(t.getValue()==null || t.getValue().equals(""))
 			return;
-		
+
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
 		Boolean prop=t.getProperty();
@@ -311,8 +305,8 @@ public class LightSourceViewer extends ModuleViewer{
 			if(attenuation!=null && !attenuation.getTagValue().equals(""))
 				return;
 			try{
-			setAttenuation(parseAttenuation(t.getValue()), prop);
-			attenuation.dataHasChanged(true);
+				setAttenuation(parseAttenuation(t.getValue()), prop);
+				attenuation.dataHasChanged(true);
 			}catch(Exception e){
 				attenuation.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -330,7 +324,7 @@ public class LightSourceViewer extends ModuleViewer{
 	{
 		if(data==null || data.getNumberOfLightSrc()==0 || data.getLightSource(index)==null)
 			return;
-		
+
 		setDataFromCode=true;
 		switch (data.getLightSource(index).getClass().getSimpleName()) {
 		case LightSourceModel.LASER: sourceType.setSelectedIndex(0);break;
@@ -357,13 +351,6 @@ public class LightSourceViewer extends ModuleViewer{
 			}catch (NullPointerException e){}
 		}
 	}
-
-
-
-	/*------------------------------------------------------
-	 * Set methods data Values
-	 * -----------------------------------------------------*/
-
 
 
 	/*------------------------------------------------------
@@ -393,15 +380,15 @@ public class LightSourceViewer extends ModuleViewer{
 	@Override
 	public void saveData() 
 	{		
-//		MonitorAndDebug.printConsole("\t... lightSrc dataChanged = "+dataChanged);
-//		if(tagList!=null){
-//			for(int i=0; i<tagList.size();i++){
-//				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
-//				MonitorAndDebug.printConsole("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
-//			}
-//		}
-		
-//		MonitorAndDebug.printConsole("\t...save data for "+((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getClassification());
+		//		MonitorAndDebug.printConsole("\t... lightSrc dataChanged = "+dataChanged);
+		//		if(tagList!=null){
+		//			for(int i=0; i<tagList.size();i++){
+		//				boolean val=tagList.get(i)!=null ? tagList.get(i).valueChanged() : false;
+		//				MonitorAndDebug.printConsole("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
+		//			}
+		//		}
+
+		//		MonitorAndDebug.printConsole("\t...save data for "+((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getClassification());
 		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).saveData();
 
 		// --- Settings --------------------
@@ -414,7 +401,7 @@ public class LightSourceViewer extends ModuleViewer{
 			}
 		}
 		LightSourceSettings settings=data.getSettings(index);
-		
+
 		try{
 			settings.setWavelength(parseToLength(waveLengthSett.getTagValue(),waveLengthSett.getTagUnit(), true));
 		}catch(Exception e){
@@ -426,9 +413,7 @@ public class LightSourceViewer extends ModuleViewer{
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC SETT attenuation input");
 		}
-		
-//		data.printValues();
-		
+
 		dataChanged=false;
 	}
 	public static PercentFraction parseAttenuation(String c) throws Exception
@@ -452,7 +437,7 @@ public class LightSourceViewer extends ModuleViewer{
 		}
 		return (result);
 	}
-	
+
 	@Override
 	public boolean allDataWasStored()
 	{
@@ -468,20 +453,20 @@ public class LightSourceViewer extends ModuleViewer{
 		result=result  &&((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).allDataWasStored();
 		return result;
 	}
-	
+
 	// Attention: wrong input( at saveData() use catch case) will not be save
 	@Override
-		public void afterSavingData() {
-			resetInputEvent();
-			if(tagList!=null){
-				for(TagData t: tagList){
-					if(t!=null) t.dataSaved(true);
-				}
+	public void afterSavingData() {
+		resetInputEvent();
+		if(tagList!=null){
+			for(TagData t: tagList){
+				if(t!=null) t.dataSaved(true);
 			}
-			((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).resetInputEvent();
-			((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).afterSavingData();
 		}
-	
+		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).resetInputEvent();
+		((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).afterSavingData();
+	}
+
 	public List<TagData> getChangedTags() {
 		List<TagData> result=new ArrayList<TagData>();
 		for(TagData t:((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getChangedTags()){
@@ -489,19 +474,19 @@ public class LightSourceViewer extends ModuleViewer{
 		}
 		if(inputAt(waveLengthSett)) result.add(waveLengthSett);
 		if(inputAt(attenuation)) result.add(attenuation);
-		
+
 		result.add(new TagData("SourceType", sourceTypeList[sourceType.getSelectedIndex()], OPTIONAL, TagData.TEXTFIELD));
-		
+
 		return result;
 	}
-	
+
 	public HashMap<String,String> getMapValuesOfChanges(HashMap<String,String> map,String chName)
 	{
 		if(map==null)
 			map=new HashMap<String, String>();
-		
+
 		LightSource l=data.getLightSource(index);
-		
+
 		String kindOfLS="";
 		if(l instanceof Laser){
 			kindOfLS=LightSourceModel.LASER;
@@ -516,13 +501,11 @@ public class LightSourceViewer extends ModuleViewer{
 		}
 		String id="["+kindOfLS+"]:";
 		map=((LightSourceSubViewer) globalPane.getComponent(sourceType.getSelectedIndex())).getMapValuesOfChanges(map,id);
-		
-		
-//		id=id+"[Settings]:";
+
 		if(inputAt(waveLengthSett)) map.put(id+TagNames.SET_WAVELENGTH,waveLengthSett.getTagValue()+" "+waveLengthSett.getTagUnit().getSymbol());
 		if(inputAt(attenuation)) map.put(id+TagNames.ATTENUATION,attenuation.getTagValue());
-		
-		
+
+
 		return map;
 	}
 

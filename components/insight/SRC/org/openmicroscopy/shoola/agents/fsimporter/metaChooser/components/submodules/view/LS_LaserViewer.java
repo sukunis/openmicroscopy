@@ -27,7 +27,7 @@ public class LS_LaserViewer extends LightSourceSubViewer
 	public LS_LaserViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
 		MonitorAndDebug.printConsole("# LS_LaserViewer::new Instance("+(model!=null?"model":"null")+") "+index);
-		
+
 		classification=LightSourceModel.LASER;
 		this.data=model;
 		this.index=index;
@@ -35,20 +35,19 @@ public class LS_LaserViewer extends LightSourceSubViewer
 		buildGUI();
 		resetInputEvent();
 		initTagList();
-		
-//		showPredefinitions(conf.getTagList(), showPreValues);
+
 	}
-	
+
 	@Override
 	protected void initTagList() 
 	{
-tagList=new ArrayList<TagData>();
-		
+		tagList=new ArrayList<TagData>();
+
 		tagList.add(model);
 		tagList.add(manufact);
 		tagList.add(power);
 		tagList.add(type);
-		
+
 		tagList.add(medium);
 		tagList.add(freqMul);
 		tagList.add(tunable);
@@ -63,7 +62,7 @@ tagList=new ArrayList<TagData>();
 	protected void setGUIData() {
 		if(data==null)
 			return;
-		
+
 		if(data.getLightSource(index)==null){
 			try {
 				data.addData(new Laser(), true, index);
@@ -73,9 +72,9 @@ tagList=new ArrayList<TagData>();
 			}
 		}
 		MonitorAndDebug.printConsole("# LS_LaserViewer::setGUIData()");
-		
+
 		Laser lightSrc=(Laser) data.getLightSource(index);
-		
+
 		try{setManufact(((Laser)lightSrc).getManufacturer(), REQUIRED);
 		} catch (NullPointerException e) { }
 		try{setModel(((Laser)lightSrc).getModel(), REQUIRED);
@@ -123,20 +122,17 @@ tagList=new ArrayList<TagData>();
 	@Override
 	public void saveData() 
 	{
-		
-//		MonitorAndDebug.printConsole("\t... lightSrc dataChanged = "+dataChanged);
 		if(tagList!=null){
 			for(int i=0; i<tagList.size();i++){
 				boolean val=tagList.get(i)!=null ? tagList.get(i).valueHasChanged() : false;
-//				MonitorAndDebug.printConsole("\t... lightSrc change "+tagList.get(i).getTagName()+" = "+val);
 			}
 		}
-		
-		
+
+
 		if(data==null)
 			data=new LightSourceModel();
-		
-		
+
+
 		if(data.getLightSource(index)==null){
 			try {
 				data.addData(new Laser(), true, index);
@@ -160,7 +156,7 @@ tagList=new ArrayList<TagData>();
 			lightSrc=(Laser) data.getLightSource(index);
 			MonitorAndDebug.printConsole("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
 		}
-		
+
 		try{
 			((Laser)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
 					null : manufact.getTagValue());
@@ -197,7 +193,7 @@ tagList=new ArrayList<TagData>();
 			LOGGER.error("[DATA] can't read LIGHTSRC medium input");
 		}
 		try{
-				((Laser)lightSrc).setTuneable(parseToBoolean(tunable.getTagValue()));
+			((Laser)lightSrc).setTuneable(parseToBoolean(tunable.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC tunable input");
 		}
@@ -209,7 +205,7 @@ tagList=new ArrayList<TagData>();
 		}
 		try{
 			if(!pockelCell.getTagValue().equals(""))
-			((Laser)lightSrc).setPockelCell(parseToBoolean(pockelCell.getTagValue()));
+				((Laser)lightSrc).setPockelCell(parseToBoolean(pockelCell.getTagValue()));
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC pockell cell input");
 		}

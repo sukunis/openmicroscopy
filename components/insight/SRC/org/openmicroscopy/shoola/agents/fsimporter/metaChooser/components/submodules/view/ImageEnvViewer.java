@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ImageEnvViewer extends ModuleViewer{
 
-	
+
 
 	private static final org.slf4j.Logger LOGGER =
 			LoggerFactory.getLogger(ImageEnvViewer.class);
@@ -89,8 +89,6 @@ public class ImageEnvViewer extends ModuleViewer{
 		gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER; //last
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.weightx = 1.0;
-
-
 
 		// set data
 		setGUIData();
@@ -153,7 +151,7 @@ public class ImageEnvViewer extends ModuleViewer{
 			LOGGER.warn("[CONF] unknown tag: "+name );break;
 		}
 	}
-	
+
 	protected void setPredefinedTag(TagConfiguration t) 
 	{
 		if(t.getValue()==null || t.getValue().equals(""))
@@ -174,11 +172,11 @@ public class ImageEnvViewer extends ModuleViewer{
 				String unitError=t.getUnitSymbol();
 				if(t.getUnit()==null){
 					unitError="Unknown unit, use default "+TagNames.TEMPERATURE_UNIT.getSymbol();
-					
+
 				}
 				temperature.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+unitError+"]");
 			}
-			
+
 
 			break;
 		case TagNames.AIRPRESS:
@@ -191,7 +189,7 @@ public class ImageEnvViewer extends ModuleViewer{
 			}catch(Exception e){
 				airPressure.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnit()+"]");
 			}
-			
+
 			break;
 		case TagNames.HUMIDITY:
 			if(humidity!=null && !humidity.getTagValue().equals(""))
@@ -226,7 +224,7 @@ public class ImageEnvViewer extends ModuleViewer{
 	{
 		if(data==null)
 			return;
-		
+
 		ImagingEnvironment env=data.getImgEnv();
 		if(env!=null){
 			MonitorAndDebug.printConsole("# ImgEnvViewer::setGUIData()");
@@ -239,11 +237,7 @@ public class ImageEnvViewer extends ModuleViewer{
 			try {if(co2Percent!=null) setCo2Percent(env.getCO2Percent(), REQUIRED);	} 
 			catch (NullPointerException e) {}
 		}
-
-
 	}
-
-
 
 
 	/*------------------------------------------------------
@@ -253,7 +247,6 @@ public class ImageEnvViewer extends ModuleViewer{
 	private void setTemperature(Temperature value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		//	temperatureUnit=(value!=null) ? value.unit():temperatureUnit;
 		Unit unit=(value!=null)?value.unit() : TagNames.TEMPERATURE_UNIT;
 		if(temperature == null) 
 			temperature = new TagData(TagNames.TEMP,val,unit,prop,TagData.TEXTFIELD);
@@ -264,7 +257,6 @@ public class ImageEnvViewer extends ModuleViewer{
 	private void setAirPressure(Pressure value, boolean prop)
 	{
 		String val=(value!=null) ? String.valueOf(value.value()) :"";
-		//	airPressureUnit=(value!=null) ? value.unit() :airPressureUnit;
 		Unit unit= value!=null ? value.unit() : TagNames.PRESSURE_UNIT;
 		if(airPressure == null) 
 			airPressure = new TagData(TagNames.AIRPRESS,val,unit,prop,TagData.TEXTFIELD);
@@ -304,60 +296,36 @@ public class ImageEnvViewer extends ModuleViewer{
 
 		if(data.getImgEnv()==null)
 			data.addData(new ImagingEnvironment(), true);
-		
+
 		ImagingEnvironment env=data.getImgEnv();
-		
-		
+
+
 		try{
 			env.setTemperature(temperature.getTagValue().equals("") ?
 					null : new Temperature(Double.valueOf(temperature.getTagValue()), temperature.getTagUnit()));
-//			temperature.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV temperature input");
 		}
 		try{
 			env.setAirPressure(airPressure.getTagValue().equals("") ? 
 					null : new Pressure(Double.valueOf(airPressure.getTagValue()),airPressure.getTagUnit()));
-//			airPressure.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV air pressure input");
 		}
 		try{
 			//TODO input format hint: percentvalue elem of [0,1]
-			//test input
 			String val=humidity.getTagValue();
-//			if(!humidity.getTagValue().equals("")){
-//				if(Float.valueOf(val)>100){
-//					WarningDialog ld=new WarningDialog("Humidity value not valid!", 
-//							"Humidity value must be between 0 and 100!",this.getClass().getSimpleName());
-//					ld.setVisible(true);
-//					val="";
-//				}
-//			}
 			env.setHumidity(parseToPercentFraction(val));
-//			humidity.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV humidity input");
 		}
 		try{
-			//test input
 			String val=co2Percent.getTagValue();
-//			if(!co2Percent.getTagValue().equals("")){
-//				if(Float.valueOf(val)>100){
-//					WarningDialog ld=new WarningDialog("CO2 Percent value not valid!", 
-//							"CO2 Percent value must be between 0 and 100!",this.getClass().getSimpleName());
-//					ld.setVisible(true);
-//					val="";
-//				}
-//			}
 			env.setCO2Percent(parseToPercentFraction(val));
-//			co2Percent.dataSaved(true);
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read IMAGE ENV co2 percent input");
 		}
-		
-//		data.addData(env, true);
-		
+
 		dataChanged=false;
 	}
 	public List<TagData> getChangedTags() {
@@ -370,15 +338,15 @@ public class ImageEnvViewer extends ModuleViewer{
 		return list;
 
 	}
-	
+
 	public HashMap<String, String> getMapValuesOfChanges(HashMap<String, String> map) 
 	{
 		if(map==null)
 			map=new HashMap<String, String>();
-		
+
 		String id="";
 		if(inputAt(temperature)) map.put(id+temperature.getTagName(),temperature.getTagValue()+" "+
-						temperature.getTagUnit().getSymbol());
+				temperature.getTagUnit().getSymbol());
 		if(inputAt(airPressure)) map.put(id+airPressure.getTagName(),airPressure.getTagValue()+" "+
 				airPressure.getTagUnit().getSymbol());
 		if(inputAt(humidity)) map.put(id+humidity.getTagName(),humidity.getTagValue()+" "+
@@ -387,28 +355,25 @@ public class ImageEnvViewer extends ModuleViewer{
 				co2Percent.getTagUnit().getSymbol());
 		return map;
 	}
-	
+
 	public static Temperature parseTemperature(String c, Unit unit) throws Exception
 	{
 		if(c==null || c.equals(""))
 			return null;
 
-		
+
 		return new Temperature(Double.valueOf(c), unit);
 	}
-	
+
 	public static Pressure parsePressure(String c, Unit unit) throws Exception
 	{
 		if(c==null || c.equals(""))
 			return null;
 
-		
+
 		return new Pressure(Double.valueOf(c), unit);
 	}
-	
-	
-	
-	
+
 }
 
 

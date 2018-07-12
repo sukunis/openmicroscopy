@@ -26,18 +26,18 @@ import ome.xml.model.enums.FilterType;
 
 public class LightPathTable extends JTable
 {
-	
+
 	/** Logger for this class. */
 	private static final org.slf4j.Logger LOGGER =
-    	    LoggerFactory.getLogger(LightPathTable.class);
-    
+			LoggerFactory.getLogger(LightPathTable.class);
+
 	private JPopupMenu popupMenu;
 	private boolean dataChanged; 
-	
+
 	public LightPathTable()
 	{
 		setModel(new LightPathTableModel());
-		
+
 		popupMenu = new JPopupMenu();
 		JMenuItem removeItem=new JMenuItem("Remove");
 		removeItem.addActionListener(new ActionListener() {
@@ -55,7 +55,7 @@ public class LightPathTable extends JTable
 				dataChanged=true;
 			}
 		});
-		
+
 		JMenuItem mvDownItem=new JMenuItem("Move down");
 		mvDownItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -64,26 +64,26 @@ public class LightPathTable extends JTable
 				dataChanged=true;
 			}
 		});
-		 
-	      popupMenu.add(mvUpItem);
-	      popupMenu.add(mvDownItem);
-	      popupMenu.add(new JPopupMenu.Separator());
-	      popupMenu.add(removeItem);
-	      popupMenu.add(new JPopupMenu.Separator());
-	      
-	      
-	     
-		
+
+		popupMenu.add(mvUpItem);
+		popupMenu.add(mvDownItem);
+		popupMenu.add(new JPopupMenu.Separator());
+		popupMenu.add(removeItem);
+		popupMenu.add(new JPopupMenu.Separator());
+
+
+
+
 		addMouseListener(new MouseAdapter() {
-	         public void mouseClicked(MouseEvent me) {
-	            if (SwingUtilities.isRightMouseButton(me))
-	               popupMenu.show(getParent(), me.getX(), me.getY());
-	         }
-	      });
-		
-		
-	      
-		
+			public void mouseClicked(MouseEvent me) {
+				if (SwingUtilities.isRightMouseButton(me))
+					popupMenu.show(getParent(), me.getX(), me.getY());
+			}
+		});
+
+
+
+
 		TableColumn classColumn = getColumnModel().getColumn(LightPathTableModel.CLASS_IDX);
 		classColumn.setCellEditor(new DefaultCellEditor(new JComboBox(FilterCompUI.classificList)));
 		classColumn = getColumnModel().getColumn(LightPathTableModel.TYPE_IDX);
@@ -91,22 +91,21 @@ public class LightPathTable extends JTable
 		classColumn = getColumnModel().getColumn(LightPathTableModel.CAT_IDX);
 		classColumn.setCellEditor(new DefaultCellEditor(new JComboBox(new String[]{"","Exitation","Dichroic","Emission"})));
 	}
-	
-	
-	
+
+
+
 	public boolean isCellEditable(int row,int column){  
-//        Object o = getValueAt(row,column);  
-        if(column==0) return false;  
-        return true;  
-      } 
-	
-	
+		if(column==0) return false;  
+		return true;  
+	} 
+
+
 	public void notifyAvFilter(JMenu insert)
 	{
 		popupMenu.add(insert);
 	}
-	
-	
+
+
 	public void insertElemAtSelection(Object o)
 	{
 		LightPathTableModel model =  (LightPathTableModel)getModel();
@@ -118,7 +117,7 @@ public class LightPathTable extends JTable
 			LOGGER.error("Can't insert filter into LIGHTPATH");
 		}
 	}
-	
+
 	public void appendElem(Object o, String category)
 	{
 		if(o instanceof FilterCompUI){
@@ -134,37 +133,37 @@ public class LightPathTable extends JTable
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}else{
 			((LightPathTableModel) getModel()).addRow(o,category);
 		}
 	}
-	
-	/**
-     * Return a row from the table as a array of strings
-     * @param rowIndex The index of the row you would like
-     * @return Returns the row from the table as an array of strings or null if
-     * the index is invalid
-     */
-	public String[] getRowData(int rowIndex)
-    {
-        //test the index
-        if ( (rowIndex  >  getRowCount()) || rowIndex  <  0)
-            return null;
 
-        ArrayList<String> data = new ArrayList<String>();
-        for (int c = 0; c  <  getColumnCount(); c++)
-        {
-            data.add((String) getValueAt(rowIndex, c));
-        }
-        String[] retVal = new String[data.size()];
-        for (int i = 0; i  <  retVal.length; i++)
-        {
-            retVal[i] = data.get(i);
-        }
-        return retVal;
-    }
-	
+	/**
+	 * Return a row from the table as a array of strings
+	 * @param rowIndex The index of the row you would like
+	 * @return Returns the row from the table as an array of strings or null if
+	 * the index is invalid
+	 */
+	public String[] getRowData(int rowIndex)
+	{
+		//test the index
+		if ( (rowIndex  >  getRowCount()) || rowIndex  <  0)
+			return null;
+
+		ArrayList<String> data = new ArrayList<String>();
+		for (int c = 0; c  <  getColumnCount(); c++)
+		{
+			data.add((String) getValueAt(rowIndex, c));
+		}
+		String[] retVal = new String[data.size()];
+		for (int i = 0; i  <  retVal.length; i++)
+		{
+			retVal[i] = data.get(i);
+		}
+		return retVal;
+	}
+
 	/**
 	 * 
 	 * @param rowIndex
@@ -173,13 +172,13 @@ public class LightPathTable extends JTable
 	 */
 	public Object getRowDataAsLightPathObject(int rowIndex) throws Exception {
 		String[] s=getRowData(rowIndex);
-		
+
 		System.out.println("editor: Filter element: "+s[LightPathTableModel.MODEL_IDX]);
 		String type="Filter";
-		
+
 		if(s[0]!=null ){
 			if( s[LightPathTableModel.TYPE_IDX].contains("Dichroic"))
-			type="Dichroic";
+				type="Dichroic";
 		}
 		switch (type) {
 		case "Dichroic":
@@ -206,16 +205,16 @@ public class LightPathTable extends JTable
 
 		}
 	}
-	
+
 	private void removeSelectionFromTable()
 	{
 		LightPathTableModel model = (LightPathTableModel)getModel();
 		int numRows = getSelectedRows().length;
 		for(int i=0; i<numRows ; i++ ) {
-		    model.removeRow(getSelectedRow());
+			model.removeRow(getSelectedRow());
 		}
 	}
-	
+
 	private void moveRowUp()
 	{
 		LightPathTableModel model =  (LightPathTableModel)getModel();
@@ -234,7 +233,7 @@ public class LightPathTable extends JTable
 			setRowSelectionInterval(rows[0]+1, rows[rows.length-1]+1);
 		}catch(Exception e){}
 	}
-	
+
 	public void clearData()
 	{
 		LightPathTableModel model = (LightPathTableModel)getModel();
@@ -242,7 +241,7 @@ public class LightPathTable extends JTable
 			model.removeRow(i);
 		}
 	}
-	
+
 	public boolean hasDataChanged()
 	{
 		return dataChanged;
@@ -258,7 +257,7 @@ public class LightPathTable extends JTable
 		};
 
 		private ArrayList<TableColumn> tableColumns;
-		
+
 		public static final int ID_IDX=0;
 		public static final int MODEL_IDX=2;
 		public static final int MANUFAC_IDX=3;
@@ -287,7 +286,7 @@ public class LightPathTable extends JTable
 		{
 			super.insertRow(index, parseFromFilterLong(o, ""));
 		}
-		
+
 		private Object[] parseFromFilterLong(Object e,String cat)
 		{
 			Object[] o=new Object[7];
@@ -315,7 +314,7 @@ public class LightPathTable extends JTable
 			}
 			return o;
 		}
-		
+
 	}
-	
+
 }

@@ -67,9 +67,7 @@ public class ImageViewer extends ModuleViewer{
 	{
 		MonitorAndDebug.printConsole("# ImageViewer::newInstance("+(model!=null?"model":"null")+")");
 		this.data=model;
-		
-//		model.printValues();
-		
+
 		initComponents(conf);
 		initTagList();
 		buildGUI();
@@ -206,7 +204,7 @@ public class ImageViewer extends ModuleViewer{
 			LOGGER.warn("[CONF] unknown tag: "+name );break;
 		}
 	}
-	
+
 	@Override	
 	protected void setPredefinedTag(TagConfiguration t) 
 	{
@@ -220,16 +218,16 @@ public class ImageViewer extends ModuleViewer{
 	{
 		if(data==null)
 			return;
-		
+
 		Image image=data.getImage();
-		
+
 		if(image!=null){ 
 			try{setName(image.getName(),REQUIRED);
 			} catch (NullPointerException e) { }
 
 			try{setDescription(image.getDescription(),REQUIRED);
 			} catch (NullPointerException e) { }
-			
+
 			try{
 				String[] dimXY={image.getPixels().getSizeX().toString(),
 						image.getPixels().getSizeY().toString()};
@@ -269,7 +267,7 @@ public class ImageViewer extends ModuleViewer{
 
 			try{ 
 				setPixelSizeXY(image.getPixels().getPhysicalSizeX(),image.getPixels().getPhysicalSizeY(),
-					REQUIRED);
+						REQUIRED);
 			} catch (NullPointerException e) { }
 		}
 	}
@@ -293,7 +291,7 @@ public class ImageViewer extends ModuleViewer{
 			desc = new TagData(TagNames.IMG_DESC,value,prop,TagData.TEXTFIELD);
 		else 
 			desc.setTagValue(value,prop);
-		
+
 	}
 	//Datums- und Zeitfeld
 	private void setAcqTime(Timestamp value, boolean prop)
@@ -331,12 +329,12 @@ public class ImageViewer extends ModuleViewer{
 			pixelSize = new TagData(TagNames.PIXELSIZE,val,unit,prop,TagData.ARRAYFIELDS);
 			pixelSize.addDocumentListener(createDocumentListenerPosFloat(pixelSize,"Invalid input. Use float >0!"));
 		}else {
-			
+
 			pixelSize.setTagValue(valX,0,prop);
 			pixelSize.setTagValue(valY,1,prop);
 			pixelSize.setTagUnit(unit);
 		}
-		
+
 	}
 	private void setDimZTC(String[] value, boolean prop)
 	{
@@ -401,10 +399,6 @@ For example in a video stream.
 	}
 
 
-
-
-
-
 	/**
 	 * save all viewer data to model
 	 */
@@ -414,7 +408,7 @@ For example in a video stream.
 		if(data==null){
 			data=new ImageModel();
 		}
-		
+
 		if(data.getImage()==null){
 			try {
 				data.addData(new Image(),true);
@@ -423,7 +417,7 @@ For example in a video stream.
 				e.printStackTrace();
 			}
 		}
-		
+
 		Image image=data.getImage();
 		if(image.getPixels()==null)
 			image.setPixels(new Pixels());
@@ -483,10 +477,10 @@ For example in a video stream.
 		}
 
 		//TODO: wellNr,stepSize
-		
+
 		if(image.getStageLabel()==null)
 			image.setStageLabel(new StageLabel());
-		
+
 		try {
 			image.getStageLabel().setX(parseToLength(stagePos.getTagValue(0),stagePos.getTagUnit(), false));
 			image.getStageLabel().setY(parseToLength(stagePos.getTagValue(1),stagePos.getTagUnit(), false));
@@ -498,7 +492,7 @@ For example in a video stream.
 
 	}
 
-	
+
 	/**
 	 * 
 	 * @return list of tagdata with tagData.valueHasChanged()==true
@@ -517,7 +511,7 @@ For example in a video stream.
 		if(timeIncrement.valueHasChanged()) list.add(timeIncrement);
 		if(stagePos.valueHasChanged()) list.add(stagePos);
 		if(wellNr.valueHasChanged()) list.add(wellNr);
-		
+
 		return list;
 	}
 
@@ -528,8 +522,8 @@ For example in a video stream.
 
 		return PixelType.fromString(pixelType.getTagValue());
 	}
-	
-	
+
+
 	/**
 	 * @param map of changes
 	 * @return map extended by all changes as [tagName,tagValue] where tagData.valueHasChanged()==true
@@ -538,32 +532,32 @@ For example in a video stream.
 	{
 		if(map==null)
 			map=new HashMap<String, String>();
-		
+
 		String id="";
-		
+
 		if(name.valueHasChanged()) map.put(id+name.getTagName(),name.getTagValue());
 		if(desc.valueHasChanged()) map.put(id+desc.getTagName(),desc.getTagValue());
 		if(acqTime.valueHasChanged()) map.put(id+acqTime.getTagName(),acqTime.getTagValue());
 		if(dimXY.valueHasChanged()) map.put(id+dimXY.getTagName(),dimXY.getTagValue());
 		if(pixelType.valueHasChanged()) map.put(id+pixelType.getTagName(),pixelType.getTagValue());
 		if(pixelSize.valueHasChanged()) map.put(id+pixelSize.getTagName(),pixelSize.getTagValue()+" "+
-					pixelSize.getTagUnit().getSymbol());
+				pixelSize.getTagUnit().getSymbol());
 		if(dimZTC.valueHasChanged()) map.put(id+dimZTC.getTagName(),dimZTC.getTagValue());
 		if(stepSize.valueHasChanged()) map.put(id+stepSize.getTagName(),stepSize.getTagValue());
 		if(timeIncrement.valueHasChanged()) map.put(id+timeIncrement.getTagName(),timeIncrement.getTagValue()+" "+
-					timeIncrement.getTagUnit().getSymbol());
+				timeIncrement.getTagUnit().getSymbol());
 		if(stagePos.valueHasChanged()) map.put(id+stagePos.getTagName(),stagePos.getTagValue()+" "+
-					stagePos.getTagUnit().getSymbol());
+				stagePos.getTagUnit().getSymbol());
 		if(wellNr.valueHasChanged()) map.put(id+wellNr.getTagName(),wellNr.getTagValue());
-		
+
 		return map;
-}
+	}
 
 	public HashMap getMapValueOfExtendedData() {
 		String id="";
 		HashMap map = new HashMap<String, String>();
-		 map.put(id+TagNames.STAGELABEL,stagePos.getTagValue());
-		
+		map.put(id+TagNames.STAGELABEL,stagePos.getTagValue());
+
 		return map;
 	}
 

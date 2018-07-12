@@ -29,7 +29,6 @@ public class LS_LEDViewer extends LightSourceSubViewer
 		buildGUI();
 		resetInputEvent();
 		initTagList();
-//		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 
 	@Override
@@ -58,8 +57,6 @@ public class LS_LEDViewer extends LightSourceSubViewer
 	protected void addTags(List<JLabel> labels, List<JComponent> comp) {
 		addTagToGUI(model,labels,comp);
 		addTagToGUI(manufact,labels,comp);
-
-
 		addTagToGUI(description,labels,comp);
 	}
 
@@ -68,8 +65,8 @@ public class LS_LEDViewer extends LightSourceSubViewer
 	{
 		if(data==null)
 			data=new LightSourceModel();
-		
-		
+
+
 		if( data.getLightSource(index)==null){
 			try {
 				data.addData(new LightEmittingDiode(), true, index);
@@ -93,7 +90,7 @@ public class LS_LEDViewer extends LightSourceSubViewer
 			lightSrc=(LightEmittingDiode) data.getLightSource(index);
 			MonitorAndDebug.printConsole("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
 		}
-		
+
 		try{
 			((LightEmittingDiode)lightSrc).setManufacturer(manufact.getTagValue().equals("")? null : manufact.getTagValue());
 		}catch(Exception e){
@@ -106,7 +103,7 @@ public class LS_LEDViewer extends LightSourceSubViewer
 		}
 
 	}
-	
+
 	@Override
 	protected void noticeEditorInput()
 	{

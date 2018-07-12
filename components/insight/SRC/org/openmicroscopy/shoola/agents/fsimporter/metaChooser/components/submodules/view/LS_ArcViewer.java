@@ -21,7 +21,7 @@ import org.openmicroscopy.shoola.util.MonitorAndDebug;
  */
 public class LS_ArcViewer extends LightSourceSubViewer 
 {
-	
+
 	public LS_ArcViewer(LightSourceModel model,ModuleConfiguration conf,int index,boolean showPreValues)
 	{
 		classification=LightSourceModel.ARC;
@@ -31,7 +31,6 @@ public class LS_ArcViewer extends LightSourceSubViewer
 		buildGUI();
 		resetInputEvent();
 		initTagList();
-//		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 	@Override
 	protected void initTagList() {
@@ -72,8 +71,8 @@ public class LS_ArcViewer extends LightSourceSubViewer
 	{
 		if(data==null)
 			data=new LightSourceModel();
-		
-		
+
+
 		if(data.getLightSource(index)==null){
 			try {
 				data.addData(new Arc(), true, index);
@@ -83,7 +82,7 @@ public class LS_ArcViewer extends LightSourceSubViewer
 			}
 		}
 		Arc lightSrc=null;
-		
+
 		try{
 			lightSrc=(Arc) data.getLightSource(index);
 		}catch(ClassCastException e){
@@ -123,14 +122,14 @@ public class LS_ArcViewer extends LightSourceSubViewer
 			LOGGER.error("[DATA] can't read LIGHTSRC arc type input");
 		}
 	}
-	
-	
+
+
 	@Override
 	protected void noticeEditorInput()
 	{
 		model.dataHasChanged(true);
 		power.dataHasChanged(true);
 	}
-	
+
 
 }

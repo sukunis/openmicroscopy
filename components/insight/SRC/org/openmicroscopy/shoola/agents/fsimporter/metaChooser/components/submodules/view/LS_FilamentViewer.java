@@ -30,7 +30,6 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 		buildGUI();
 		resetInputEvent();
 		initTagList();
-//		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 
 	@Override
@@ -74,8 +73,8 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 	{
 		if(data==null)
 			data=new LightSourceModel();
-		
-		
+
+
 		if(data.getLightSource(index)==null){
 			try {
 				data.addData(new Filament(), true, index);
@@ -84,7 +83,7 @@ public class LS_FilamentViewer extends LightSourceSubViewer
 				e.printStackTrace();
 			}
 		}
-		
+
 		Filament lightSrc=null;
 		try{
 			lightSrc=(Filament) data.getLightSource(index);

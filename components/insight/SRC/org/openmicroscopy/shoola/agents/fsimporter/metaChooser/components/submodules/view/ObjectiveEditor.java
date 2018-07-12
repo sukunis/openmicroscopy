@@ -28,22 +28,21 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 {
 	/** Logger for this class. */
 	private static final org.slf4j.Logger LOGGER =
-    	    LoggerFactory.getLogger(ObjectiveEditor.class);
-    
-    private List<Objective> availableObjectives;
-    private ObjectiveTable objectivTable;
-    private Objective selectObjective;
-    
+			LoggerFactory.getLogger(ObjectiveEditor.class);
+
+	private List<Objective> availableObjectives;
+	private ObjectiveTable objectivTable;
+	private Objective selectObjective;
+
 	private List<Objective> hardwareDetectorList;
 
 	private List<Objective> imgDataObjectives;
-    
+
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
-	
+
 	public ObjectiveEditor(JFrame parent, String title, 
 			List<Objective> availableObjectives,List<Objective> linkHardwareList)
 	{
@@ -54,7 +53,7 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 		selectObjective=null;
 		initGUI();
 	}
-	
+
 	private void createList() {
 		availableObjectives=new ArrayList<>();
 		if(hardwareDetectorList!=null && hardwareDetectorList.size()>0){
@@ -64,8 +63,8 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 			availableObjectives.addAll(imgDataObjectives);
 		}
 	}
-	
-	
+
+
 	private void initGUI() 
 	{
 
@@ -78,31 +77,25 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 		//Bottom
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		
-//		JButton loadBtn= new JButton("Load Workstation List");
-//		loadBtn.setActionCommand("Load");
-//		loadBtn.setEnabled(false);
-//		buttonPane.add(loadBtn);
-//		buttonPane.add(Box.createHorizontalGlue());
 
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-					try {
-						int row=objectivTable.getSelectedRow();
-						if(row!=-1)
-							selectObjective=availableObjectives.get(row);
-					} catch (Exception e1) {
-						LOGGER.error("can't read objective from table");
-						e1.printStackTrace();
-					}
-				
+
+				try {
+					int row=objectivTable.getSelectedRow();
+					if(row!=-1)
+						selectObjective=availableObjectives.get(row);
+				} catch (Exception e1) {
+					LOGGER.error("can't read objective from table");
+					e1.printStackTrace();
+				}
+
 				setVisible(false);
 				dispose();
 			}
 
-			
+
 		});
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
@@ -127,7 +120,7 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 		setVisible(true);
 	}
 
-	
+
 
 
 
@@ -139,16 +132,14 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 
 		JLabel label = new JLabel("Available Elements:");
 		label.setFont(new Font("Tahoma", Font.BOLD, 11));
-		
+
 		JScrollPane scrollPane = new JScrollPane();
-		
+
 
 		objectivTable = new ObjectiveTable();
 		scrollPane.setViewportView(objectivTable);
-//		objectivTable.setPreferredScrollableViewportSize(objectivTable.getPreferredSize());
-//		objectivTable.setFillsViewportHeight(true);
 		objectivTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
+
 		if(availableObjectives!=null){
 			for(Objective o: availableObjectives){
 				objectivTable.appendElem(o);
@@ -167,48 +158,15 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 			setModel(new ObjectiveTableModel());
 		}
 		public boolean isCellEditable(int row,int column){  
-	        return false;  
-	      }
-		
+			return false;  
+		}
+
 		public void appendElem(Objective o)
 		{
 			((ObjectiveTableModel) getModel()).addRow(o);
 		}
-		
-//		/**
-//	     * Return a row from the table as a array of strings
-//	     * @param rowIndex The index of the row you would like
-//	     * @return Returns the row from the table as an array of strings or null if
-//	     * the index is invalid
-//	     */
-//		public String[] getRowData(int rowIndex)
-//	    {
-//	        //test the index
-//	        if ( (rowIndex  >  getRowCount()) || rowIndex  <  0)
-//	            return null;
-//
-//	        ArrayList<String> data = new ArrayList<String>();
-//	        for (int c = 0; c  <  getColumnCount(); c++)
-//	        {
-//	            data.add((String) getValueAt(rowIndex, c));
-//	        }
-//	        String[] retVal = new String[data.size()];
-//	        for (int i = 0; i  <  retVal.length; i++)
-//	        {
-//	            retVal[i] = data.get(i);
-//	        }
-//	        return retVal;
-//	    }
-//		
-//		public void clearData()
-//		{
-//			ObjectiveTableModel model = (ObjectiveTableModel)getModel();
-//			for(int i=0; i<model.getRowCount(); i++){
-//				model.removeRow(i);
-//			}
-//		}
 	}
-	
+
 	class ObjectiveTableModel extends DefaultTableModel
 	{
 		Class[] columnTypes = new Class[] {
@@ -222,8 +180,8 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 		{
 			super(new Object[][] {},
 					new String[] {"ID","Model", "Manufactur", "Nominal Magn.",
-					"Calibration Magn.", "Lens NA","Immersion","Correction",
-					"Working Distance"});
+							"Calibration Magn.", "Lens NA","Immersion","Correction",
+			"Working Distance"});
 
 		}
 
@@ -240,7 +198,7 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 		{
 			super.insertRow(index, parseFromObjectiveLong(o));
 		}
-		
+
 		private Object[] parseFromObjectiveLong(Objective e)
 		{
 			Object[] o=new Object[9];
@@ -288,14 +246,14 @@ public class ObjectiveEditor extends JDialog implements ActionListener
 			}
 			return o;
 		}
-		
+
 	}
 
 	public Objective getObjective() 
 	{ 
 		if(selectObjective==null)
 			return null;
-	
+
 		return new Objective(selectObjective);
 	}
 

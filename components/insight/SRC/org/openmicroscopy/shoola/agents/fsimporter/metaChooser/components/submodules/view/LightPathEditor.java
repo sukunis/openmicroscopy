@@ -54,29 +54,29 @@ public class LightPathEditor extends JDialog implements ActionListener
 
 	/** Logger for this class. */
 	private static final org.slf4j.Logger LOGGER =
-    	    LoggerFactory.getLogger(LightPathEditor.class);
-    
-    /**output: selected filters and dichroics for lightPath */
+			LoggerFactory.getLogger(LightPathEditor.class);
+
+	/**output: selected filters and dichroics for lightPath */
 	private List<Object> lightPathList;
-	
+
 	private LightPath lightPath;
-	
+
 	private FilterCompUI filterUI;
 
 	/** input: list for selection*/
 	private List<Object> availableFilter;
-	
+
 	/** lightPath result table */
 	private LightPathTable lightPathTable;
-	
+
 	private AvailableFilterTable avFilterTable;
 
 	private boolean dataChanged;
-	
+
 	private List<Object> hardwareFilterList;
 
 	private List<Object> imgDataFilterList;
-	
+
 	public LightPathEditor(JFrame parent,String title, List<Object> _availableFilter,
 			LightPath l,List<Object> linkHardwareList)
 	{
@@ -89,9 +89,9 @@ public class LightPathEditor extends JDialog implements ActionListener
 		dataChanged=false;
 		JPanel	panel=createGUIEditor();
 		initGUI(panel);
-		
+
 	}
-	
+
 	private void createList() {
 		availableFilter=new ArrayList<>();
 		if(hardwareFilterList!=null && hardwareFilterList.size()>0){
@@ -102,7 +102,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 		}
 	}
 
-	
+
 	private void initGUI(JPanel panel)
 	{
 		setBounds(100, 100, 500, 600);
@@ -118,14 +118,14 @@ public class LightPathEditor extends JDialog implements ActionListener
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-					try {
-						createLightPathListFromJTable();
-					} catch (Exception e1) {
-						LOGGER.error("CAN'T READ LIGHTPATH FROM TABLE");
-						e1.printStackTrace();
-					}
-				
+
+				try {
+					createLightPathListFromJTable();
+				} catch (Exception e1) {
+					LOGGER.error("CAN'T READ LIGHTPATH FROM TABLE");
+					e1.printStackTrace();
+				}
+
 				setVisible(false);
 				dispose();
 			}
@@ -168,29 +168,29 @@ public class LightPathEditor extends JDialog implements ActionListener
 				dataChanged=true;
 			}
 		});
-		
+
 		JPanel btnPane=new JPanel();
 		btnPane.setLayout(new BoxLayout(btnPane, BoxLayout.X_AXIS));
 		btnPane.add(Box.createHorizontalGlue());
 		btnPane.add(addBtn);
-		
+
 		filterUI=new FilterCompUI(null);
 		filterUI.createDummyPane(false);
 		filterUI.buildComponents();
 
 		JLabel label = new JLabel("New Element:");
 		label.setFont(new Font("Tahoma", Font.BOLD, 11));
-		
-		
+
+
 		JPanel topPane=new JPanel();
 		topPane.setLayout(new BorderLayout(0, 0));
 		topPane.add(label, BorderLayout.NORTH);
 		topPane.add(filterUI,BorderLayout.CENTER);
 		topPane.add(btnPane,BorderLayout.SOUTH);
-		
+
 		return topPane;
 	}
-	
+
 	/**
 	 * Create Pane: "Available Elements"
 	 * @return
@@ -202,14 +202,14 @@ public class LightPathEditor extends JDialog implements ActionListener
 
 		JLabel label = new JLabel("Available Elements:");
 		label.setFont(new Font("Tahoma", Font.BOLD, 11));
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.black, 1),
 				BorderFactory.createEmptyBorder(5,5,5,5)));
 
 		avFilterTable = new AvailableFilterTable();  
 		scrollPane.setViewportView(avFilterTable);
-		
+
 		//load data
 		if(availableFilter!=null)
 		{
@@ -217,7 +217,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 				avFilterTable.appendElem(f);
 			}
 		}
-		
+
 		JButton addBtn = new JButton("Add To Filter List");
 		addBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
@@ -251,37 +251,37 @@ public class LightPathEditor extends JDialog implements ActionListener
 				}//for
 				dataChanged=true;
 			}
-			
+
 		});
-		
+
 		JPanel btnPane=new JPanel();
 		btnPane.setLayout(new BoxLayout(btnPane, BoxLayout.X_AXIS));
 		btnPane.add(Box.createHorizontalGlue());
 		btnPane.add(addBtn);
-		
+
 		pane.add(label,BorderLayout.NORTH);
 		pane.add(scrollPane,BorderLayout.CENTER);
 		pane.add(btnPane,BorderLayout.SOUTH);
-		
+
 		return pane;
 	}
-	
+
 	private JPanel createGUIEditor()
 	{
-		
+
 		JPanel top=new JPanel();
 		top.setLayout(new BoxLayout(top,BoxLayout.X_AXIS));
 		top.setBorder(new EmptyBorder(5,5,5,5));
 		top.add(newFilterElemPane());
 		top.add(Box.createHorizontalStrut(5));
 		top.add(availableFilterPane());
-		
+
 		JPanel panel=new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		panel.add(top);
-		
-		
+
+
 		panel.add(Box.createVerticalStrut(10));
 
 		//bottom
@@ -293,17 +293,17 @@ public class LightPathEditor extends JDialog implements ActionListener
 		JLabel label = new JLabel("Filter List:");
 		label.setFont(new Font("Tahoma", Font.BOLD, 11));
 		panel_2.add(label,BorderLayout.NORTH);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		panel_2.add(scrollPane,BorderLayout.CENTER);
 
 		lightPathTable = new LightPathTable();
 		scrollPane.setViewportView(lightPathTable);
 
-		
-		
+
+
 		if(lightPath!=null){
-			
+
 			List<Filter> exL=lightPath.copyLinkedExcitationFilterList();
 			for(Filter f:exL){
 				try{lightPathTable.appendElem(f, "Exitation");}catch(Exception e){e.printStackTrace();};
@@ -311,34 +311,34 @@ public class LightPathEditor extends JDialog implements ActionListener
 
 			if(lightPath.getLinkedDichroic()!=null)
 				lightPathTable.appendElem(lightPath.getLinkedDichroic(), "Dichroic");
-			
+
 			List<Filter> emL=lightPath.copyLinkedEmissionFilterList();
 			for(Filter f:emL){
 				try{lightPathTable.appendElem(f, "Emission");}catch(Exception e){e.printStackTrace();};
 			}
 		}
-	 
-	    JMenu insert= new JMenu("Insert Filter before");
-	    createFilterListMenu(insert,availableFilter);
-	    lightPathTable.notifyAvFilter(insert);  
 
-		
-	    Action action = new AbstractAction()
-	    {
-	        public void actionPerformed(ActionEvent e)
-	        {
-	        	MonitorAndDebug.printConsole("# LightPathEditor::changes Table \n dataChanged=true");
-	        	dataChanged=true;
-//	            TableCellListener tcl = (TableCellListener)e.getSource();
-//	            MonitorAndDebug.printConsole("Row   : " + tcl.getRow());
-//	            MonitorAndDebug.printConsole("Column: " + tcl.getColumn());
-//	            MonitorAndDebug.printConsole("Old   : " + tcl.getOldValue());
-//	            MonitorAndDebug.printConsole("New   : " + tcl.getNewValue());
-	        }
-	    };
+		JMenu insert= new JMenu("Insert Filter before");
+		createFilterListMenu(insert,availableFilter);
+		lightPathTable.notifyAvFilter(insert);  
 
-	    TableCellListener tcl = new TableCellListener(lightPathTable, action);
-	    
+
+		Action action = new AbstractAction()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				MonitorAndDebug.printConsole("# LightPathEditor::changes Table \n dataChanged=true");
+				dataChanged=true;
+				//	            TableCellListener tcl = (TableCellListener)e.getSource();
+				//	            MonitorAndDebug.printConsole("Row   : " + tcl.getRow());
+				//	            MonitorAndDebug.printConsole("Column: " + tcl.getColumn());
+				//	            MonitorAndDebug.printConsole("Old   : " + tcl.getOldValue());
+				//	            MonitorAndDebug.printConsole("New   : " + tcl.getNewValue());
+			}
+		};
+
+		TableCellListener tcl = new TableCellListener(lightPathTable, action);
+
 		return panel;
 
 	}
@@ -352,7 +352,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 			insert.add(item);
 			return;
 		}
-		
+
 		int i=0;
 		for(Object f: list){
 			if(f!=null){
@@ -379,15 +379,9 @@ public class LightPathEditor extends JDialog implements ActionListener
 				i++;
 			}
 		}
-		
+
 	}
 
-	
-
-	
-	
-	
-	
 	private void createLightPathListFromJTable() throws Exception
 	{
 		lightPathList=new ArrayList<Object>();
@@ -396,11 +390,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 			lightPathList.add(o);
 		}
 	}
-	
-	
-	
-	
-	
+
 	/**
 	 * 
 	 * @return list of Filter for module table
@@ -413,22 +403,20 @@ public class LightPathEditor extends JDialog implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
-		 JMenuItem source = (JMenuItem)(e.getSource());
-		    try{
-		        JMenuItem menuItem = (JMenuItem) e.getSource(); 
-		        JPopupMenu popupMenu = (JPopupMenu) menuItem.getParent(); 
-		        Component invoker = popupMenu.getInvoker();  
-		        // Print MenuItem index against the total number of items
-//		        MonitorAndDebug.printConsole(popupMenu.getComponentZOrder(menuItem)+"/"+popupMenu.getComponentCount());
-		        lightPathTable.insertElemAtSelection(availableFilter.get(popupMenu.getComponentZOrder(menuItem)));
-		        MonitorAndDebug.printConsole("# LightPathEditor:: \n dataChanged=true");
-		        dataChanged=true;
-		    }catch(Exception ex){
-		        ex.printStackTrace();
-		    }
+		JMenuItem source = (JMenuItem)(e.getSource());
+		try{
+			JMenuItem menuItem = (JMenuItem) e.getSource(); 
+			JPopupMenu popupMenu = (JPopupMenu) menuItem.getParent(); 
+			Component invoker = popupMenu.getInvoker();  
+			lightPathTable.insertElemAtSelection(availableFilter.get(popupMenu.getComponentZOrder(menuItem)));
+			MonitorAndDebug.printConsole("# LightPathEditor:: \n dataChanged=true");
+			dataChanged=true;
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
 	}
 
-	
+
 	class AvailableFilterTable extends JTable
 	{
 		public AvailableFilterTable()
@@ -436,46 +424,46 @@ public class LightPathEditor extends JDialog implements ActionListener
 			setModel(new AvailableFilterTableModel());
 		}
 		public boolean isCellEditable(int row,int column){  
-	        return false;  
-	      }
-		
+			return false;  
+		}
+
 		public void appendElem(Object f)
 		{
 			((AvailableFilterTableModel) getModel()).addRow(f);
 		}
-		
+
 	}
-	
+
 	class AvailableFilterTableModel extends DefaultTableModel
 	{
 		Class[] columnTypes = new Class[] {
 				String.class, String.class, String.class
 		};
-		
+
 		private ArrayList<TableColumn> tableColumns;
-		
+
 		public AvailableFilterTableModel()
 		{
 			super(new Object[][] {},
 					new String[] {"ID","Model", "Type"}	); 
 		}
-		
+
 		public Class getColumnClass(int columnIndex) {
 			return columnTypes[columnIndex];
 		}
-		
+
 		public void addRow(Object f)
 		{
 			Object[] o=parseFromFilterShort(f);
 			super.addRow(o);
 		}
-		
+
 		public void insertRow(int index, Object f)
 		{
 			Object[] o=parseFromFilterShort(f);
 			super.insertRow(index, o);
 		}
-		
+
 		private Object[] parseFromFilterShort(Object e)
 		{
 			Object[] o=new Object[3];
@@ -497,14 +485,14 @@ public class LightPathEditor extends JDialog implements ActionListener
 					o[2]="FilterSet";
 				}
 			}
-			
+
 			//empty element?
 			if(o[0].equals("") && o[1].equals("") && o[2].equals(""))
 				return null;
-			
+
 			return o;
 		}
-		
+
 	}
 
 	public boolean hasDataChanged() {
@@ -512,7 +500,7 @@ public class LightPathEditor extends JDialog implements ActionListener
 		MonitorAndDebug.printConsole("# LightPathEditor::hasDataChanged(): "+result+": "+dataChanged+", "+lightPathTable.hasDataChanged());
 		return result;
 	}
-	
+
 	/*
 	 *  This class listens for changes made to the data in the table via the
 	 *  TableCellEditor. When editing is started, the value of the cell is saved
@@ -611,9 +599,9 @@ public class LightPathEditor extends JDialog implements ActionListener
 		{
 			return table;
 		}
-	//
-	//  Implement the PropertyChangeListener interface
-	//
+		//
+		//  Implement the PropertyChangeListener interface
+		//
 		@Override
 		public void propertyChange(PropertyChangeEvent e)
 		{
@@ -667,17 +655,17 @@ public class LightPathEditor extends JDialog implements ActionListener
 				//  while processing this change
 
 				TableCellListener tcl = new TableCellListener(
-					getTable(), getRow(), getColumn(), getOldValue(), getNewValue());
+						getTable(), getRow(), getColumn(), getOldValue(), getNewValue());
 
 				ActionEvent event = new ActionEvent(
-					tcl,
-					ActionEvent.ACTION_PERFORMED,
-					"");
+						tcl,
+						ActionEvent.ACTION_PERFORMED,
+						"");
 				action.actionPerformed(event);
 			}
 		}
 	}
 
-	
+
 }
 

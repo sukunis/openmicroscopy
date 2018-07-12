@@ -93,14 +93,12 @@ public class DetectorViewer extends ModuleViewer{
 			boolean showPreValues,List<Detector> availableElemsImgData,MicroscopeProperties mic)
 	{
 		MonitorAndDebug.printConsole("# DetectorViewer::newInstance("+(model!=null?"model":"null")+") "+index);
-		
-//		model.printValues();
-		
+
 		this.data=model;
 		this.index=index;
 		this.availableElems=availableElemsImgData;
 		this.mic=mic;
-		
+
 		initComponents(conf);
 		initTagList();
 		buildGUI();
@@ -109,7 +107,7 @@ public class DetectorViewer extends ModuleViewer{
 		resetAttributesForType();
 		setGUIData();
 		setSettingsGUIData();
-		
+
 		showPredefinitions(conf.getTagList(), showPreValues);
 		showPredefinitions(conf.getSettingList(), showPreValues);
 	}
@@ -174,7 +172,7 @@ public class DetectorViewer extends ModuleViewer{
 		box.add(Box.createVerticalStrut(20));
 		box.add(settingsPane);
 
-		
+
 		dataChanged=false;
 	}
 
@@ -241,12 +239,12 @@ public class DetectorViewer extends ModuleViewer{
 	 * */
 	private void noticeEditorInput() 
 	{
-	 model.dataHasChanged(true);
-		 manufact.dataHasChanged(true);
-		 type.dataHasChanged(true);
-		 zoom.dataHasChanged(true);
-		 amplGain.dataHasChanged(true);
-		 gain.dataHasChanged(true);
+		model.dataHasChanged(true);
+		manufact.dataHasChanged(true);
+		type.dataHasChanged(true);
+		zoom.dataHasChanged(true);
+		amplGain.dataHasChanged(true);
+		gain.dataHasChanged(true);
 		voltage.dataHasChanged(true);
 	}
 
@@ -256,7 +254,7 @@ public class DetectorViewer extends ModuleViewer{
 	 */
 	protected void initTag(TagConfiguration t) 
 	{
-		
+
 		String name=t.getName();
 		Boolean prop=t.getProperty();
 		Boolean vis=t.isVisible();
@@ -310,7 +308,7 @@ public class DetectorViewer extends ModuleViewer{
 		default: LOGGER.warn("[CONF] unknown tag: "+name );break;
 		}
 	}
-	
+
 	/**
 	 * set predefined tag value.
 	 * @param t
@@ -319,12 +317,12 @@ public class DetectorViewer extends ModuleViewer{
 	{
 		if(t.getValue()==null || t.getValue().equals(""))
 			return;
-		
+
 		predefinitionValLoaded=predefinitionValLoaded || (!t.getValue().equals(""));
 		String name=t.getName();
-		
-//		MonitorAndDebug.printConsole("# DetectorViewer::setPredefinedTag(): "+name);
-		
+
+		//		MonitorAndDebug.printConsole("# DetectorViewer::setPredefinedTag(): "+name);
+
 		Boolean prop=t.getProperty();
 		switch (name) {
 		case TagNames.MODEL: 
@@ -343,7 +341,7 @@ public class DetectorViewer extends ModuleViewer{
 			if(type!=null && !type.getTagValue().equals("")){
 				return;
 			}
-				
+
 			DetectorType d=parseDetectorType(t.getValue());
 			if(d==null)
 				type.setTagInfo(ERROR_PREVALUE+t.getValue());
@@ -354,8 +352,8 @@ public class DetectorViewer extends ModuleViewer{
 			if(zoom!=null && !zoom.getTagValue().equals(""))
 				return;
 			try{
-			setZoom(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
-			zoom.dataHasChanged(true);
+				setZoom(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
+				zoom.dataHasChanged(true);
 			}catch(NumberFormatException e){
 				zoom.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -364,8 +362,8 @@ public class DetectorViewer extends ModuleViewer{
 			if(amplGain!=null && !amplGain.getTagValue().equals(""))
 				return;
 			try{
-			setAmplGain(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
-			amplGain.dataHasChanged(true);
+				setAmplGain(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
+				amplGain.dataHasChanged(true);
 			}catch(NumberFormatException e){
 				amplGain.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -374,8 +372,8 @@ public class DetectorViewer extends ModuleViewer{
 			if(gain!=null && !gain.getTagValue().equals(""))
 				return;
 			try{
-			setGain(ModuleViewer.parseToDouble(t.getValue()),OPTIONAL);
-			gain.dataHasChanged(true);
+				setGain(ModuleViewer.parseToDouble(t.getValue()),OPTIONAL);
+				gain.dataHasChanged(true);
 			}catch(NumberFormatException e){
 				gain.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -384,8 +382,8 @@ public class DetectorViewer extends ModuleViewer{
 			if(voltage!=null && !voltage.getTagValue().equals(""))
 				return;
 			try{
-			setVoltage(parseElectricPotential(t.getValue(),t.getUnit()), OPTIONAL);
-			voltage.dataHasChanged(true);
+				setVoltage(parseElectricPotential(t.getValue(),t.getUnit()), OPTIONAL);
+				voltage.dataHasChanged(true);
 			}catch(Exception e){
 				voltage.setTagInfo(ERROR_PREVALUE+t.getValue()+" ["+t.getUnit()+"]");
 			}
@@ -394,8 +392,8 @@ public class DetectorViewer extends ModuleViewer{
 			if(offset!=null && !offset.getTagValue().equals(""))
 				return;
 			try{
-			setOffset(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
-			offset.dataHasChanged(true);
+				setOffset(ModuleViewer.parseToDouble(t.getValue()), OPTIONAL);
+				offset.dataHasChanged(true);
 			}catch(NumberFormatException e){
 				offset.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -404,8 +402,8 @@ public class DetectorViewer extends ModuleViewer{
 			if(confocalZoom!=null && !confocalZoom.getTagValue().equals(""))
 				return;
 			try{
-			setConfocalZoom(ModuleViewer.parseToDouble(t.getValue()), prop);
-			confocalZoom.dataHasChanged(true);
+				setConfocalZoom(ModuleViewer.parseToDouble(t.getValue()), prop);
+				confocalZoom.dataHasChanged(true);
 			}catch(NumberFormatException e){
 				confocalZoom.setTagInfo(ERROR_PREVALUE+t.getValue());
 			}
@@ -454,7 +452,7 @@ public class DetectorViewer extends ModuleViewer{
 			} catch (NullPointerException e) { }
 			try{setAmplGain(detector.getAmplificationGain(),  REQUIRED);
 			} catch (NullPointerException e) { }
-			
+
 			try{setVoltage(detector.getVoltage(), REQUIRED);
 			} catch (NullPointerException e) { }
 			try{ setOffset(detector.getOffset(), REQUIRED);
@@ -462,7 +460,7 @@ public class DetectorViewer extends ModuleViewer{
 		}
 	}
 
-	
+
 
 	private void setSettingsGUIData()
 	{
@@ -485,11 +483,11 @@ public class DetectorViewer extends ModuleViewer{
 			try{ setBinning(settings.getBinning(), REQUIRED);
 			} catch (NullPointerException e) { }
 			try{
-				
+
 				setSubarray(settings.getSubarray(), REQUIRED);
 			} catch (NullPointerException e) { }
 		}
-		
+
 
 	}
 
@@ -525,7 +523,7 @@ public class DetectorViewer extends ModuleViewer{
 			subarray.setEnable(true);
 		}
 	}
-	
+
 	private void resetAttributesForType()
 	{
 		if(voltage != null) voltage.setEnable(true);
@@ -596,7 +594,7 @@ public class DetectorViewer extends ModuleViewer{
 
 
 
-	
+
 
 	/*------------------------------------------------------
 	 * Set methods settings Values
@@ -653,8 +651,8 @@ public class DetectorViewer extends ModuleViewer{
 		else 
 			subarray.setTagValue(value,prop);
 	}
-	
-	
+
+
 
 	public String getGain()
 	{
@@ -671,7 +669,7 @@ public class DetectorViewer extends ModuleViewer{
 	{
 		if(data==null)
 			data=new DetectorModel();
-		
+
 		if(data.getDetector(index)==null)
 			try {
 				data.addData(new Detector(), true, index);
@@ -679,7 +677,7 @@ public class DetectorViewer extends ModuleViewer{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		
+
 		Detector detector =data.getDetector(index);
 
 		try{
@@ -758,7 +756,6 @@ public class DetectorViewer extends ModuleViewer{
 			LOGGER.error("[DATA] can't read DETECTOR SETT subarray input");
 		}
 
-//		data.printValues();
 		dataChanged=false;
 	}
 	public static DetectorType parseDetectorType(String c) 
@@ -771,7 +768,7 @@ public class DetectorViewer extends ModuleViewer{
 			m=DetectorType.fromString(c);
 		}catch(EnumerationException e){
 			LOGGER.warn("DetectorType: "+c+" is not supported");
-//			m=DetectorType.OTHER;
+			//			m=DetectorType.OTHER;
 		}
 		return m;
 	}
@@ -791,7 +788,7 @@ public class DetectorViewer extends ModuleViewer{
 
 		return Binning.fromString(c);
 	}
-	
+
 	public List<TagData> getChangedTags()
 	{
 		List<TagData> list = new ArrayList<TagData>();
@@ -800,7 +797,7 @@ public class DetectorViewer extends ModuleViewer{
 		if(inputAt(type)) list.add(type);
 		if(inputAt(zoom)) list.add(zoom);
 		if(inputAt(amplGain)) list.add(amplGain);
-		
+
 		// settings
 		if(inputAt(gain))list.add(gain);
 		if(inputAt(voltage))list.add(voltage);
@@ -810,7 +807,7 @@ public class DetectorViewer extends ModuleViewer{
 		if(inputAt(subarray))list.add(subarray);
 		return list;
 	}
-	
+
 	/**
 	 * MetaDataEditor input will save as mapannotation
 	 * @param map
@@ -821,33 +818,32 @@ public class DetectorViewer extends ModuleViewer{
 	{
 		if(map==null)
 			map=new HashMap<String, String>();
-		
+
 		Detector d=data.getDetector(index);
 		String id="";
-		
+
 		if(inputAt(model)) map.put(id+TagNames.MODEL,model.getTagValue());
 		if(inputAt(manufact)) map.put(id+TagNames.MANUFAC,manufact.getTagValue());
 		if(inputAt(type)) map.put(id+TagNames.D_TYPE,type.getTagValue());
 		if(inputAt(zoom)) map.put(id+TagNames.ZOOM,zoom.getTagValue());
 		if(inputAt(amplGain)) map.put(id+TagNames.AMPLGAIN,amplGain.getTagValue());
-		
+
 		// settings
-//		id=id+"[Settings]:";
 		if(inputAt(gain))map.put(id+TagNames.GAIN,gain.getTagValue());
 		if(inputAt(voltage))map.put(id+TagNames.VOLTAGE,voltage.getTagValue()+" "+voltage.getTagUnit().getSymbol());
 		if(inputAt(offset))map.put(id+TagNames.OFFSET,offset.getTagValue());
 		if(inputAt(confocalZoom))map.put(id+TagNames.CONFZOOM,confocalZoom.getTagValue());
 		if(inputAt(binning))map.put(id+TagNames.BINNING,binning.getTagValue());
 		if(inputAt(subarray))map.put(id+TagNames.SUBARRAY,subarray.getTagValue());
-		
+
 		return map;
 	}
-	
+
 	public HashMap<String,String> getMapValueOfExtendedData(){
 		String id="";
 		HashMap map = new HashMap<String, String>();
-		 map.put(id+TagNames.SUBARRAY,subarray.getTagValue());
-		
+		map.put(id+TagNames.SUBARRAY,subarray.getTagValue());
+
 		return map;
 	}
 
@@ -856,7 +852,7 @@ public class DetectorViewer extends ModuleViewer{
 		return index;
 	}
 
-	
-	
+
+
 }
 

@@ -28,7 +28,6 @@ public class LS_GESViewer extends LightSourceSubViewer
 		buildGUI();
 		resetInputEvent();
 		initTagList();
-//		showPredefinitions(conf.getTagList(), showPreValues);
 	}
 
 	@Override
@@ -69,8 +68,8 @@ public class LS_GESViewer extends LightSourceSubViewer
 	{
 		if(data==null)
 			data=new LightSourceModel();
-		
-		
+
+
 		if(data.getLightSource(index)==null){
 			try {
 				data.addData(new GenericExcitationSource(), true, index);
@@ -94,7 +93,7 @@ public class LS_GESViewer extends LightSourceSubViewer
 			lightSrc=(GenericExcitationSource) data.getLightSource(index);
 			MonitorAndDebug.printConsole("\t...replace "+oldClass+" by "+data.getLightSource(index).getClass().getSimpleName());
 		}
-		
+
 		try{
 			((GenericExcitationSource)lightSrc).setManufacturer(manufact.getTagValue().equals("")? 
 					null : manufact.getTagValue());
@@ -112,12 +111,9 @@ public class LS_GESViewer extends LightSourceSubViewer
 		}catch(Exception e){
 			LOGGER.error("[DATA] can't read LIGHTSRC ges power input");
 		}
-		//TODO set Map
-		//		((GenericExcitationSource)lightSrc).setMap(map.getTagValue().equals("") ? 
-		//				null : );
 
 	}
-	
+
 	@Override
 	protected void noticeEditorInput()
 	{

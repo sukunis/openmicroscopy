@@ -47,18 +47,18 @@ public class LightSourceEditor extends JDialog
 {
 	/** Logger for this class. */
 	private static final org.slf4j.Logger LOGGER =
-    	    LoggerFactory.getLogger(LightSourceEditor.class);
-	
+			LoggerFactory.getLogger(LightSourceEditor.class);
+
 	private LightSource lightSrc;
-	
+
 	private List<LightSource> availableLightSrc;
-	
+
 	private JTable lightSrcTable;
-	
+
 	private List<LightSource> hardwareLightSrcList;
 
 	private List<LightSource> imgDataLightSrcList;
-	
+
 	public LightSourceEditor(JFrame parent,String title,
 			List<LightSource> _availableLightSrc,List<LightSource> linkHardwareList)
 	{
@@ -91,35 +91,25 @@ public class LightSourceEditor extends JDialog
 		//Bottom
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		
-//		JButton loadBtn= new JButton("Load Workstation List");
-//		loadBtn.setActionCommand("Load");
-//		loadBtn.setEnabled(false);
-//		buttonPane.add(loadBtn);
-//		buttonPane.add(Box.createHorizontalGlue());
 
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-					try {
-						int idx=lightSrcTable.getSelectedRow();
-						if(idx!=-1){
-							lightSrc=availableLightSrc.get(idx);
-						}else
-							lightSrc=null;
-					} catch (Exception e1) {
-						LOGGER.error("can't read LIGHTPATH from table");
-						e1.printStackTrace();
-					}
-				
+
+				try {
+					int idx=lightSrcTable.getSelectedRow();
+					if(idx!=-1){
+						lightSrc=availableLightSrc.get(idx);
+					}else
+						lightSrc=null;
+				} catch (Exception e1) {
+					LOGGER.error("can't read LIGHTPATH from table");
+					e1.printStackTrace();
+				}
+
 				setVisible(false);
 				dispose();
 			}
-
-			
-
-			
 		});
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
@@ -148,37 +138,35 @@ public class LightSourceEditor extends JDialog
 	{
 		JLabel label = new JLabel("Available Elements:");
 		label.setFont(new Font("Tahoma", Font.BOLD, 11));
-		
+
 		JScrollPane scrollPane = new JScrollPane();
-		
+
 
 		lightSrcTable = new JTable(){  
-		       public boolean isCellEditable(int row,int column){  
-		           return false;  
-		         }  };
-		         
-		scrollPane.setViewportView(lightSrcTable);
-//		lightSrcTable.setPreferredScrollableViewportSize(lightSrcTable.getPreferredSize());
-//		lightSrcTable.setFillsViewportHeight(true);
-		lightSrcTable.setModel(new LightSrcTableModel());
-		lightSrcTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
-		//fill table
-		if(availableLightSrc!=null)
-		{
-			for(LightSource o: availableLightSrc){
-				((LightSrcTableModel)lightSrcTable.getModel()).addRow(o);
+			public boolean isCellEditable(int row,int column){  
+				return false;  
+			}  };
+
+			scrollPane.setViewportView(lightSrcTable);
+			lightSrcTable.setModel(new LightSrcTableModel());
+			lightSrcTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+			//fill table
+			if(availableLightSrc!=null)
+			{
+				for(LightSource o: availableLightSrc){
+					((LightSrcTableModel)lightSrcTable.getModel()).addRow(o);
+				}
 			}
-		}
-		
-		JPanel panel=new JPanel();
-		panel.setLayout(new BorderLayout(0, 0));
-		panel.setBorder(new EmptyBorder(5,5,5,5));
-		panel.add(label,BorderLayout.NORTH);
-		panel.add(scrollPane,BorderLayout.CENTER);
-		return panel;
+
+			JPanel panel=new JPanel();
+			panel.setLayout(new BorderLayout(0, 0));
+			panel.setBorder(new EmptyBorder(5,5,5,5));
+			panel.add(label,BorderLayout.NORTH);
+			panel.add(scrollPane,BorderLayout.CENTER);
+			return panel;
 	}
-	
+
 	public LightSource getSelectedLightSource()
 	{
 		LightSource result=null;
@@ -205,24 +193,24 @@ public class LightSourceEditor extends JDialog
 		}
 		return result;
 	}
-	
-	
-	
+
+
+
 	class LightSrcTableModel extends DefaultTableModel
 	{
 		Class[] columnTypes = new Class[] {
 				String.class,String.class, String.class, String.class, String.class, String.class};
-		
+
 		public LightSrcTableModel()
 		{
 			super(new Object[][] {},
 					new String[] {"ID","Model", "Type","Wavelength","Power","Repititation Rate"});
 		}
-		
+
 		public Class getColumnClass(int columnIndex) {
 			return columnTypes[columnIndex];
 		}
-		
+
 		public void addRow(LightSource o)
 		{
 			super.addRow(parseFromLightSrc(o));
@@ -238,25 +226,25 @@ public class LightSourceEditor extends JDialog
 				if(l instanceof Laser){
 					o[3]=((Laser)l).getWavelength()!=null ? 
 							((Laser)l).getWavelength().value()+((Laser)l).getWavelength().unit().getSymbol() : "";
-					o[4]=((Laser)l).getPower()!=null ? 
-							((Laser)l).getPower().value()+((Laser)l).getPower().unit().getSymbol() : ""; 
-					o[5]=((Laser)l).getRepetitionRate()!=null ? 
-							((Laser)l).getRepetitionRate().value()+((Laser)l).getRepetitionRate().unit().getSymbol() : ""; 
+							o[4]=((Laser)l).getPower()!=null ? 
+									((Laser)l).getPower().value()+((Laser)l).getPower().unit().getSymbol() : ""; 
+									o[5]=((Laser)l).getRepetitionRate()!=null ? 
+											((Laser)l).getRepetitionRate().value()+((Laser)l).getRepetitionRate().unit().getSymbol() : ""; 
 				}else if(l instanceof Arc){
 					o[3]="";
 					o[4]=((Arc)l).getPower()!=null ? 
 							((Arc)l).getPower().value()+((Arc)l).getPower().unit().getSymbol() : ""; 
-					o[5]="";
+							o[5]="";
 				}	else if(l instanceof Filament){
 					o[3]="";
 					o[4]=((Filament)l).getPower()!=null ? 
 							((Filament)l).getPower().value()+((Filament)l).getPower().unit().getSymbol() : ""; 
-					o[5]="";
+							o[5]="";
 				}else if(l instanceof GenericExcitationSource){
 					o[3]="";
 					o[4]=((GenericExcitationSource)l).getPower()!=null ? 
 							((GenericExcitationSource)l).getPower().value()+((GenericExcitationSource)l).getPower().unit().getSymbol() : ""; 
-					o[5]="";
+							o[5]="";
 				}
 				else if(l instanceof LightEmittingDiode){
 					o[3]="";

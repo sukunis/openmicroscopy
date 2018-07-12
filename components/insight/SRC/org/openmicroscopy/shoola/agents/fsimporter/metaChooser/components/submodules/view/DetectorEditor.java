@@ -26,35 +26,35 @@ public class DetectorEditor extends JDialog implements ActionListener
 {
 	/** Logger for this class. */
 	private static final org.slf4j.Logger LOGGER =
-    	    LoggerFactory.getLogger(DetectorEditor.class);
-    
-    private List<Detector> availableDetectors;
-    private List<Detector> imgDataDetectorList;
-    private List<Detector> hardwareDetectorList;
-    private DetectorTable detectorTable;
-    private Detector selectDetector;
-    
+			LoggerFactory.getLogger(DetectorEditor.class);
+
+	private List<Detector> availableDetectors;
+	private List<Detector> imgDataDetectorList;
+	private List<Detector> hardwareDetectorList;
+	private DetectorTable detectorTable;
+	private Detector selectDetector;
+
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	public DetectorEditor(JFrame parent, String title, 
 			List<Detector> availableDetectors, List<Detector> linkHardwareList)
 	{
 		super(parent,title);
 		this.imgDataDetectorList=availableDetectors;
 		this.hardwareDetectorList=linkHardwareList;
-		
+
 		createDetectorList();
-		
+
 		selectDetector=null;
 		initGUI();
 	}
-	
-	
-	
+
+
+
 	private void createDetectorList() {
 		availableDetectors=new ArrayList<>();
 		if(hardwareDetectorList!=null && hardwareDetectorList.size()>0){
@@ -77,25 +77,25 @@ public class DetectorEditor extends JDialog implements ActionListener
 		//Bottom
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		
+
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-					try {
-						int row=detectorTable.getSelectedRow();
-						if(row!=-1)
-							selectDetector=availableDetectors.get(row);
-					} catch (Exception e1) {
-						LOGGER.error("can't read detector from table");
-						e1.printStackTrace();
-					}
-				
+
+				try {
+					int row=detectorTable.getSelectedRow();
+					if(row!=-1)
+						selectDetector=availableDetectors.get(row);
+				} catch (Exception e1) {
+					LOGGER.error("can't read detector from table");
+					e1.printStackTrace();
+				}
+
 				setVisible(false);
 				dispose();
 			}
 
-			
+
 		});
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
@@ -120,7 +120,7 @@ public class DetectorEditor extends JDialog implements ActionListener
 		setVisible(true);
 	}
 
-	
+
 
 
 
@@ -132,16 +132,14 @@ public class DetectorEditor extends JDialog implements ActionListener
 
 		JLabel label = new JLabel("Available Elements:");
 		label.setFont(new Font("Tahoma", Font.BOLD, 11));
-		
+
 		JScrollPane scrollPane = new JScrollPane();
-		
+
 
 		detectorTable = new DetectorTable();
 		scrollPane.setViewportView(detectorTable);
-//		detectorTable.setPreferredScrollableViewportSize(detectorTable.getPreferredSize());
-//		detectorTable.setFillsViewportHeight(true);
 		detectorTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
+
 		if(availableDetectors!=null){
 			for(Detector o: availableDetectors){
 				detectorTable.appendElem(o);
@@ -158,42 +156,41 @@ public class DetectorEditor extends JDialog implements ActionListener
 		public DetectorTable()
 		{
 			setModel(new DetectorTableModel());
-//		
 		}
 		public boolean isCellEditable(int row,int column){  
-	        return false;  
-	      }
-		
+			return false;  
+		}
+
 		public void appendElem(Detector o)
 		{
 			((DetectorTableModel) getModel()).addRow(o);
 		}
-		
-		/**
-	     * Return a row from the table as a array of strings
-	     * @param rowIndex The index of the row you would like
-	     * @return Returns the row from the table as an array of strings or null if
-	     * the index is invalid
-	     */
-		public String[] getRowData(int rowIndex)
-	    {
-	        //test the index
-	        if ( (rowIndex  >  getRowCount()) || rowIndex  <  0)
-	            return null;
 
-	        ArrayList<String> data = new ArrayList<String>();
-	        for (int c = 0; c  <  getColumnCount(); c++)
-	        {
-	            data.add((String) getValueAt(rowIndex, c));
-	        }
-	        String[] retVal = new String[data.size()];
-	        for (int i = 0; i  <  retVal.length; i++)
-	        {
-	            retVal[i] = data.get(i);
-	        }
-	        return retVal;
-	    }
-		
+		/**
+		 * Return a row from the table as a array of strings
+		 * @param rowIndex The index of the row you would like
+		 * @return Returns the row from the table as an array of strings or null if
+		 * the index is invalid
+		 */
+		public String[] getRowData(int rowIndex)
+		{
+			//test the index
+			if ( (rowIndex  >  getRowCount()) || rowIndex  <  0)
+				return null;
+
+			ArrayList<String> data = new ArrayList<String>();
+			for (int c = 0; c  <  getColumnCount(); c++)
+			{
+				data.add((String) getValueAt(rowIndex, c));
+			}
+			String[] retVal = new String[data.size()];
+			for (int i = 0; i  <  retVal.length; i++)
+			{
+				retVal[i] = data.get(i);
+			}
+			return retVal;
+		}
+
 		public void clearData()
 		{
 			DetectorTableModel model = (DetectorTableModel)getModel();
@@ -202,7 +199,7 @@ public class DetectorEditor extends JDialog implements ActionListener
 			}
 		}
 	}
-	
+
 	class DetectorTableModel extends DefaultTableModel
 	{
 		Class[] columnTypes = new Class[] {
@@ -215,7 +212,7 @@ public class DetectorEditor extends JDialog implements ActionListener
 		{
 			super(new Object[][] {},
 					new String[] {"ID","Model", "Manufactur", "Type",
-					"Zoom", "Amplification Gain","Gain","Voltage"});
+							"Zoom", "Amplification Gain","Gain","Voltage"});
 
 		}
 
@@ -232,7 +229,7 @@ public class DetectorEditor extends JDialog implements ActionListener
 		{
 			super.insertRow(index, parseFromDetectorLong(o));
 		}
-		
+
 		private Object[] parseFromDetectorLong(Detector e)
 		{
 			Object[] o=new Object[8];
@@ -275,18 +272,18 @@ public class DetectorEditor extends JDialog implements ActionListener
 					LOGGER.error("[EDITOR] Can't parse Detector::voltage");
 					err.printStackTrace();
 				}
-				
+
 			}
 			return o;
 		}
-		
+
 	}
 
 	public Detector getDetector() 
 	{
 		if(selectDetector==null)
 			return null;
-		
+
 		return new Detector(selectDetector);
 	}
 
