@@ -150,19 +150,6 @@ public abstract class ElementsCompUI extends JPanel
 		}
 	}
 
-
-
-	
-
-
-
-
-
-
-	
-
-
-	
 }
 
 

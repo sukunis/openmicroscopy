@@ -371,22 +371,6 @@ public class Sample
 	}
 	
 	
-
-//	public void addGridBoxData(String nr, String type)
-//	{
-//		int size=0;
-//		if(gridBoxList!=null){
-//			size=gridBoxList.size();
-//		}else{
-//			gridBoxList=new ArrayList<GridBox>();
-//		}
-//		int gridBoxNr = (nr!=null && !nr.equals("")) ? Integer.valueOf(nr) : -1;
-//		
-//		GridBox box=new GridBox(String.valueOf(size),gridBoxNr,type);
-//		gridBoxList.add(box);
-//		
-//	}
-	
 	public void setGridBoxData(String nr, String type) 
 	{
 		if(gridBox==null)
@@ -396,8 +380,7 @@ public class Sample
 			gridBox.setType(type);
 		}		
 	}
-	
-	
+		
 	
 	/**
 	 * @param gridSizeX the gridSizeX to set
@@ -444,138 +427,8 @@ public class Sample
 	{
 		return obSample;
 	}
-	
-	
-	
-	//-- xml
-	
-//	public String toXMLAnnotation()
-//	{
-//		StringBuffer xml=new StringBuffer("<Sample namespace=\"uos/Schemas/Additions/2016-02\">");
-//		
-//		xml=appendPreparation(xml);
-//		appendRawMaterial(xml);
-//		
-//		xml.append(gridBox.toXMLAnnotation());
-//		
-//		for(int i=0; i<obSampleList.size(); i++){
-//			xml.append(obSampleList.get(i).toXMLAnnotation());
-//		}
-//		
-//		xml.append("</Sample>");
-//		
-//		return xml.toString();
-//	}
-	
-
-//	public MapAnnotation toMapAnnotation()
-//	{
-//		MapAnnotation ma = new MapAnnotation();
-////		ma.setNs(NAMESPACE);
-//		ma.setDescription("Sample");
-//		
-//		List<MapPair> valueList=new ArrayList<MapPair>();
-//		
-//		valueList.add(new MapPair(PREP_DATE_MAPLABEL,getDateAsString()));
-//		valueList.add(new MapPair(PREP_DESCRIPTION_MAPLABEL,getPrepDescription()));
-//		valueList.add(new MapPair(RAW_CODE_MAPLABEL,getRawMaterialCode()));
-//		valueList.add(new MapPair(RAW_DESC_MAPLABEL,getRawMaterialDesc()));
-//		GridBox gb=getGridBox();
-//		valueList.add(new MapPair(GridBox.GRID_NR_MAPLABEL,gb.getNr()));
-//		valueList.add(new MapPair(GridBox.GRID_TYPE_MAPLABEL,gb.getType()));
-//		List<ObservedSample> list =getObservedSampleList();
-//		for(ObservedSample o: list){
-//			valueList.add(new MapPair(o.GRID_MAPLABEL,o.getGridNumberX()+o.GRID_SEPARATOR+o.getGridNumberY()));
-//			valueList.add(new MapPair(o.OBJECT_TYPE_MAPLABEL,o.getObjectType()));
-//			valueList.add(new MapPair(o.OBJECT_NUMBER_MAPLABEL,o.getObjectNumber()));
-//		}
-//		
-//		ma.setValue(new MapPairs(valueList));
-//		
-//		return ma;
-//	}
-	
-//	public MapAnnotation appendToMapAnnotation(MapAnnotation ma)
-//	{
-//		List<MapPair> valueList;
-//		if(ma == null){
-//			 ma = new MapAnnotation();
-//			 ma.setNamespace(OMEStore.CELLNANOS_NS);
-//			 valueList=new ArrayList<MapPair>();
-//		}else{
-//			valueList=ma.getValue().getPairs();
-//		}
-//		
-//		OMEStore.addMapPair(valueList, PREP_DATE_MAPLABEL,getDateAsString());
-//		OMEStore.addMapPair(valueList,PREP_DESCRIPTION_MAPLABEL,getPrepDescription());
-//		OMEStore.addMapPair(valueList,RAW_CODE_MAPLABEL,getRawMaterialCode());
-//		OMEStore.addMapPair(valueList,RAW_DESC_MAPLABEL,getRawMaterialDesc());
-//		GridBox gb=getGridBox();
-//		OMEStore.addMapPair(valueList,GridBox.GRID_NR_MAPLABEL,gb.getNr());
-//		OMEStore.addMapPair(valueList,GridBox.GRID_TYPE_MAPLABEL,gb.getType());
-//		List<ObservedSample> list =getObservedSampleList();
-//		for(ObservedSample o: list){
-//			OMEStore.addMapPair(valueList,o.GRID_MAPLABEL,o.getGridNumberX()+o.GRID_SEPARATOR+o.getGridNumberY());
-//			OMEStore.addMapPair(valueList,o.OBJECT_TYPE_MAPLABEL,o.getObjectType());
-//			OMEStore.addMapPair(valueList,o.OBJECT_NUMBER_MAPLABEL,o.getObjectNumber());
-//		}
-//		
-//		ma.setValue(new MapPairs(valueList));
-//		return ma;
-//	}
-	
-//	private StringBuffer appendPreparation(StringBuffer xml)
-//	{
-//		boolean writePrep=false;
-//		if(preparationDate!=null || preparationDescription!=null){
-//			xml.append("<"+PREP);
-//			writePrep=true;
-//		}
-//			
-//		if(preparationDate!=null){
-//			xml.append(" "+PREP_DATE+"=\"");
-//			xml.append(preparationDate.getValue());
-//			xml.append("\"");
-//		}
-//		
-//		if(preparationDescription!=null){
-//			xml.append(" "+PREP_DESCRIPTION+"=\"");
-//			xml.append(preparationDescription);
-//			xml.append("\"");
-//		}
-//		
-//		if(writePrep)
-//			xml.append("/>");
-//		return xml;
-//	}
-	
-//	private StringBuffer appendRawMaterial(StringBuffer xml)
-//	{
-//		boolean writePrep=false;
-//		if(rawMaterialCode!=null || rawMaterialDesc!=null){
-//			xml.append("<"+PREP);
-//			writePrep=true;
-//		}
-//			
-//		if(rawMaterialCode!=null){
-//			xml.append(" "+RAW_CODE+"=\"");
-//			xml.append(rawMaterialCode);
-//			xml.append("\"");
-//		}
-//		
-//		if(rawMaterialDesc!=null){
-//			xml.append(" "+RAW_DESC+"=\"");
-//			xml.append(rawMaterialDesc);
-//			xml.append("\"");
-//		}
-//		
-//		if(writePrep)
-//			xml.append("/>");
-//		return xml;
-//	}
-	
-	
-	
+		
+		
 	public static class GridBox
 	{
 		private String id;
@@ -720,18 +573,4 @@ public class Sample
 	}
 
 
-
-	
-
-
-
-	
-
-
-
-	
-
-
-
-	
 }

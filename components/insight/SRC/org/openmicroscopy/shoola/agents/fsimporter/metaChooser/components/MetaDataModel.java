@@ -93,15 +93,7 @@ public class MetaDataModel
 	private List<TagData> changesImg;
 	//------------------------------------------------
 	
-	/** linked Channel for single filter, because there are more than one filter per channel
-	 and maybe two channel have the same kind of filter with differents settings**/
-//	private List<Integer> linkedChannelForFilter;
-
-//	private List<Integer> linkedChannelForDichroic;
 	
-	
-	//TODO
-//	private ElementsCompUI stage;
 	private Image imageOME;
 	private int imageIndex;
 	
@@ -184,62 +176,6 @@ public class MetaDataModel
 		imageOME=i;
 	}
 	
-	/**
-	 * Get image ome data merged with image modul input
-	 * @return
-	 */
-	public Image getImageOMEData()
-	{
-		//merge GUI and ome data
-		try {
-			Image in=getImageData();
-			mergeData(in,imageOME); 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
-		return imageOME;
-	}
-	
-	private void mergeData(Image in, Image imageOME) 
-	{
-		if(imageOME==null ){
-			if(in==null){
-				LOGGER.error("failed to merge IMAGE data");
-			}else{
-				imageOME=in;
-			}
-			return;
-		}else if(in==null){
-			return;
-		}
-		
-		if(in.getName()!=null && !in.getName().equals(""))
-			imageOME.setName(in.getName());
-		
-		imageOME.setAcquisitionDate(in.getAcquisitionDate());
-		
-		Pixels pOME=imageOME.getPixels();
-		Pixels pIN=in.getPixels();
-		
-		pOME.setSizeX(pIN.getSizeX());
-		pOME.setSizeY(pIN.getSizeY());
-		pOME.setType(pIN.getType());
-		pOME.setPhysicalSizeX(pIN.getPhysicalSizeX());
-		pOME.setPhysicalSizeY(pIN.getPhysicalSizeY());
-		pOME.setSizeZ(pIN.getSizeZ());
-		pOME.setSizeT(pIN.getSizeT());
-		pOME.setSizeC(pIN.getSizeC());
-		pOME.setTimeIncrement(pIN.getTimeIncrement());
-		
-		imageOME.setStageLabel(in.getStageLabel());
-		
-		//TODO: step size, well#
-		
-	}
-	
-	
 	
 	public int getPixelsDimZ()
 	{
@@ -306,18 +242,8 @@ public class MetaDataModel
 		if(overwrite){
 			expModel.setProjectPartner(e.getProjectPartnerName());
 		}else{
-					
-//			if(expModel.getGroupName()==null || expModel.getGroupName().equals("")){
-//					expModel.setGroupName(e.getGroupName());
-//					MonitorAndDebug.printConsole("\t...group name = "+e.getGroupName());
-//			}else{
-//				MonitorAndDebug.printConsole("\t...group name doesn't set");
-//			}
-//			if(expModel.getProjectName()==null || expModel.getProjectName().equals(""))
-//				expModel.setProjectName(e.getProjectName());
 			if(expModel.getProjectPartnerName()==null || expModel.getProjectPartnerName().equals(""))
 				expModel.setProjectPartner(e.getProjectPartnerName());
-			
 		}
 	}
 	/**
@@ -484,7 +410,6 @@ public class MetaDataModel
 					createAndLinkNewInstrument(ome);
 				}
 				linkDetector(dSett,res,imageIndex,imageOME.getLinkedInstrument().sizeOfDetectorList());
-				//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
 			}else{
 				LOGGER.info("[DEBUG] can't link detector. ");
 			}
@@ -556,21 +481,6 @@ public class MetaDataModel
 		lightPathModel.update(lp);
 	}
 
-//	public FilterSet getFilterSet(int index) throws Exception
-//	{
-//		if(lightPathModel==null || getNumberOfLightPath()==0){
-//			return null;
-//		}
-//		return lightPathModel.getFilterSet(index);
-//	}
-//
-//	public void addData(FilterSet filterSet, boolean b, int i) {
-//		if(lightPathModel==null)
-//			lightPathModel=new LightPathModel();
-//		
-//		lightPathModel.addData(filterSet, b, i);
-//	}
-
 
 	public LightPath getLightPath(int index) throws Exception
 	{
@@ -579,7 +489,6 @@ public class MetaDataModel
 			MonitorAndDebug.printConsole("No lightPath available for channel "+index);
 			return null;
 		}
-//		updateLightPathElems( lightPathObjectList, chIdx);
 		MonitorAndDebug.printConsole("MetaDataModel::getLightPath("+index+") - available");
 		return lightPathModel.getLightPath(index);
 	}
@@ -823,7 +732,6 @@ public class MetaDataModel
 					createAndLinkNewInstrument(ome);
 				}
 				linkObjective(oSett,obj,imageIndex,imageOME.getLinkedInstrument().sizeOfObjectiveList());
-				//					((ObjectiveCompUI)objectiveUI).addData(oSett,true);
 			}else{
 				LOGGER.info("[DEBUG] can't link objective. ");
 			}
@@ -868,13 +776,11 @@ public class MetaDataModel
 	public void setFilterList(List<Filter> list)
 	{
 		filterList=list;
-//		linkedChannelForFilter=new ArrayList<Integer>(Collections.nCopies(filterList.size(),-1));
 	}
 	
 	public void setDichroicList(List<Dichroic> list)
 	{
 		dichroicList=list;
-//		linkedChannelForDichroic=new ArrayList<Integer>(Collections.nCopies(dichroicList.size(), -1));
 	}
 	
 
@@ -882,135 +788,7 @@ public class MetaDataModel
 		filterSetList=list;
 	}
 	
-	/** TODO: if no primD exists convert first emF of type dichroic to primD
-	 *  Add elements of list to the list of filter and dichroics of this image.
-	 Note: set ID for new elements and return list completed by ID
-	 @return input list completed by id's
-	 **/
-	public LightPath updateLightPathElems(LightPath lP,int channelIdx)
-	{
-		if(filterList==null)
-			filterList=new ArrayList<Filter>();
-			
-		if(imageIndex!=-1){
-			int id1=imageIndex;
-			int id2=channelIdx;
-			boolean primDExists=true;
-
-			int idxList=0;
-			Dichroic d=lP.getLinkedDichroic();
-			
-			if(d!=null){
-				if(d.getID()==null || d.getID().equals("")){
-					String id=appendNewDichroic(d, id1, dichroicList.size(), channelIdx);
-					d.setID(id);
-				}else{
-					int listIndex=identifyDichroic(d, channelIdx);
-					if(listIndex!=-1){
-						dichroicList.set(listIndex, d);
-					}else{
-						String id=appendNewDichroic(d,id1,dichroicList.size(),channelIdx);
-						d.setID(id);
-					}
-				}
-				lP.linkDichroic(d);
-			}
-			
-			List<Filter> emF=lP.copyLinkedEmissionFilterList();
-			
-			for(int i=0; i<emF.size(); i++){
-				Filter f=emF.get(i);
-				if(f.getID()==null || f.getID().equals("")){
-					String id=appendNewFilter(f,id1,filterList.size(),channelIdx);
-					f.setID(id);
-				}else{
-					int listIndex=identifyFilter(f, channelIdx);
-					if(listIndex!=-1){
-						filterList.set(listIndex, f);
-					}else{
-						String id=appendNewFilter(f,id1,filterList.size(),channelIdx);
-						f.setID(id);
-					}
-				}
-				lP.setLinkedEmissionFilter(i, f);
-			}
-			
-			List<Filter> exF=lP.copyLinkedExcitationFilterList();
-			
-			for(int i=0; i<exF.size(); i++){
-				Filter f=exF.get(i);
-				if(f.getID()==null || f.getID().equals("")){
-					String id=appendNewFilter(f,id1,filterList.size(),channelIdx);
-					f.setID(id);
-				}else{
-					int listIndex=identifyFilter(f, channelIdx);
-					if(listIndex!=-1){
-						filterList.set(listIndex, f);
-					}else{
-						String id=appendNewFilter(f,id1,filterList.size(),channelIdx);
-						f.setID(id);
-					}
-				}
-				lP.setLinkedExcitationFilter(i, f);
-			}
-			
-		}
-		return lP;
-	}
-
 	
-	
-	
-	
-	private String appendNewFilter(Filter f, int id1, int id2, int chIdx)
-	{
-		f.setID(MetadataTools.createLSID("Filter", id1,	id2));
-		filterList.add(f);
-//		linkedChannelForFilter.add(chIdx);
-		
-		return f.getID();
-	}
-	
-	private String appendNewDichroic(Dichroic f, int id1, int id2, int chIdx)
-	{
-		f.setID(MetadataTools.createLSID("Dichroic", id1,	id2));
-		dichroicList.add(f);
-//		linkedChannelForDichroic.add(chIdx);
-		
-		return f.getID();
-	}
-	
-	private int identifyFilter(Filter f, int chIdx)
-	{
-		int listIndex=-1;
-		for(int i=0; i<filterList.size(); i++){
-			if(filterList.get(i).getID().equals(f.getID())){
-//				if(linkedChannelForFilter.get(i)==chIdx){
-					return i;
-//				}
-			}
-		}
-		
-		return listIndex;
-	}
-	
-	private int identifyDichroic(Dichroic f, int chIdx)
-	{
-		int listIndex=-1;
-		for(int i=0; i<dichroicList.size(); i++){
-			if(dichroicList.get(i).getID().equals(f.getID())){
-//				MonitorAndDebug.printConsole("identifyDich "+f.getID()+"("+chIdx+", "+linkedChannelForDichroic.get(i)+")");
-				return i;
-//				if(linkedChannelForDichroic.get(i)==chIdx){
-//					return i;
-//				}else{
-//					return -1;
-//				}
-			}
-		}
-		
-		return listIndex;
-	}
 	
 	private void printFilter(String s,Filter f)
 	{
@@ -1059,14 +837,7 @@ public class MetaDataModel
 		imageIndex=idx;
 	}
 
-	public void setPrimDichroic(int chIdx) 
-	{
 		
-	}
-	
-
-
-	
 	
 	public static final Dichroic convertFilterToDichroic(Filter f)
 	{
@@ -1094,26 +865,10 @@ public class MetaDataModel
 		f.setSerialNumber(d.getSerialNumber());
 		f.setInstrument(d.getInstrument());
 		f.setType(FilterType.DICHROIC);
-//		f.setLinkedAnnotation(index, o)
 		
 		return f;
 	}
 	
-
-	public class Pair<L,R> {
-	    private L l;
-	    private R r;
-	    public Pair(L l, R r){
-	        this.l = l;
-	        this.r = r;
-	    }
-	    public L getL(){ return l; }
-	    public R getR(){ return r; }
-	    public void setL(L l){ this.l = l; }
-	    public void setR(R r){ this.r = r; }
-	}
-
-
 
 	/**
 	 * Save list of new modified tags for image module in MetaDataModel
@@ -1219,7 +974,7 @@ public class MetaDataModel
 				for(int i=childNumberOfObjects;i<parentNumberOfObjects;i++){
 					this.addData(metaDataModel.getLightPath(i), true, i);
 					//this lightpath doesn't have to update, because it was added directly
-						metaDataModel.getChangesLightPath().set(i, null);
+					metaDataModel.getChangesLightPath().set(i, null);
 				}
 			}else if(childNumberOfObjects > parentNumberOfObjects){
 				//something deleted
@@ -1232,11 +987,7 @@ public class MetaDataModel
 			updateDir(metaDataModel,0);
 		}else{
 			MonitorAndDebug.printConsole("# MetaDataModel::updateData() -- FILE");
-//			if(getNumberOfChannels()>1){
-//				
-//			}else{
-				updateFile(metaDataModel,0);
-//			}
+			updateFile(metaDataModel,0);
 		}
 		
 		
@@ -1943,13 +1694,5 @@ public class MetaDataModel
 		}
 		return list;
 	}
-
-
-
-	
-
-
-
-	
 
 }
