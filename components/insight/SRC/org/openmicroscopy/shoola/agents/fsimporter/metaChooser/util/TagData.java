@@ -48,69 +48,67 @@ import org.slf4j.LoggerFactory;
 public class TagData 
 {
 	/** Logger for this class. */
-//	private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
 	private static final org.slf4j.Logger LOGGER =
-    	    LoggerFactory.getLogger(TagData.class);
+			LoggerFactory.getLogger(TagData.class);
 
 	Color fillInfo=new Color(240,240,240);//Color.LIGHT_GRAY;
-//	Color noInfo=new Color(217,229,220);//green;
 	Color noInfo=Color.white;
 	Color resetInfo=Color.white;
-	
-	  private final Border normalBorder = UIManager.getBorder("TextField.border");
-	    private final Border errorBorder = javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 51, 51));
-	
+
+	private final Border normalBorder = UIManager.getBorder("TextField.border");
+	private final Border errorBorder = javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 51, 51));
+
 	public static final String[] DATE_FORMATS_TAGS = {
-	    "yyyy:MM:dd HH:mm:ss",
-	    "dd/MM/yyyy HH:mm:ss",
-	    "MM/dd/yyyy hh:mm:ss aa",
-	    "yyyyMMdd HH:mm:ss",
-	    
-	    "yyyy/MM/dd",
-	    "yyyy/MM/dd HH:mm:ss",
-	    
-	    "yyyy-MM-dd HH:mm:ss",
-	    "yyyy-MM-dd HH:mm:ss:SSS",
-	    "yyyy-MM-dd'T'HH:mm:ssZ",
-	    "yyyy-MM-dd",
-	    
-	    "dd.MM.yyyy",
-	    "dd.MM.yyyy HH:mm:ss",
-	    "dd.MM.yyyy HH:mm:ss:SSS",
-	    
-	    "dd-MM-yyyy HH:mm:ss",
-	    "dd-MM-yyyy"
-	   
-	  };
-	
+			"yyyy:MM:dd HH:mm:ss",
+			"dd/MM/yyyy HH:mm:ss",
+			"MM/dd/yyyy hh:mm:ss aa",
+			"yyyyMMdd HH:mm:ss",
+
+			"yyyy/MM/dd",
+			"yyyy/MM/dd HH:mm:ss",
+
+			"yyyy-MM-dd HH:mm:ss",
+			"yyyy-MM-dd HH:mm:ss:SSS",
+			"yyyy-MM-dd'T'HH:mm:ssZ",
+			"yyyy-MM-dd",
+
+			"dd.MM.yyyy",
+			"dd.MM.yyyy HH:mm:ss",
+			"dd.MM.yyyy HH:mm:ss:SSS",
+
+			"dd-MM-yyyy HH:mm:ss",
+			"dd-MM-yyyy"
+
+	};
+
 	private static final Map<String, String> DATE_FORMAT_REGEXPS = new HashMap<String, String>() {{
-	    put("^\\d{8}$", "yyyyMMdd");
-	    put("^\\d{1,2}-\\d{1,2}-\\d{4}$", "dd-MM-yyyy");
-	    put("^\\d{1,2}.\\d{1,2}.\\d{4}$", "dd.MM.yyyy");
-	    put("^\\d{4}-\\d{1,2}-\\d{1,2}$", "yyyy-MM-dd");
-	    put("^\\d{1,2}/\\d{1,2}/\\d{4}$", "MM/dd/yyyy");
-	    put("^\\d{4}/\\d{1,2}/\\d{1,2}$", "yyyy/MM/dd");
-	    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}$", "dd MMM yyyy");
-	    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}$", "dd MMMM yyyy");
-	    put("^\\d{12}$", "yyyyMMddHHmm");
-	    put("^\\d{8}\\s\\d{4}$", "yyyyMMdd HHmm");
-	    put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}$", "dd-MM-yyyy HH:mm");
-	    put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy-MM-dd HH:mm");
-	    put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}$", "MM/dd/yyyy HH:mm");
-	    put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy/MM/dd HH:mm");
-	    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMM yyyy HH:mm");
-	    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMMM yyyy HH:mm");
-	    put("^\\d{14}$", "yyyyMMddHHmmss");
-	    put("^\\d{8}\\s\\d{6}$", "yyyyMMdd HHmmss");
-	    put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd-MM-yyyy HH:mm:ss");
-	    put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy-MM-dd HH:mm:ss");
-	    put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MM/dd/yyyy HH:mm:ss");
-	    put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy/MM/dd HH:mm:ss");
-	    put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMM yyyy HH:mm:ss");
-	    put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
-	    put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}:\\d{3}$", "yyyy-MM-dd HH:mm:ss:SSS");
+		put("^\\d{8}$", "yyyyMMdd");
+		put("^\\d{1,2}-\\d{1,2}-\\d{4}$", "dd-MM-yyyy");
+		put("^\\d{1,2}.\\d{1,2}.\\d{4}$", "dd.MM.yyyy");
+		put("^\\d{4}-\\d{1,2}-\\d{1,2}$", "yyyy-MM-dd");
+		put("^\\d{1,2}/\\d{1,2}/\\d{4}$", "MM/dd/yyyy");
+		put("^\\d{4}/\\d{1,2}/\\d{1,2}$", "yyyy/MM/dd");
+		put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}$", "dd MMM yyyy");
+		put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}$", "dd MMMM yyyy");
+		put("^\\d{12}$", "yyyyMMddHHmm");
+		put("^\\d{8}\\s\\d{4}$", "yyyyMMdd HHmm");
+		put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}$", "dd-MM-yyyy HH:mm");
+		put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy-MM-dd HH:mm");
+		put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}$", "MM/dd/yyyy HH:mm");
+		put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy/MM/dd HH:mm");
+		put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMM yyyy HH:mm");
+		put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMMM yyyy HH:mm");
+		put("^\\d{14}$", "yyyyMMddHHmmss");
+		put("^\\d{8}\\s\\d{6}$", "yyyyMMdd HHmmss");
+		put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd-MM-yyyy HH:mm:ss");
+		put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy-MM-dd HH:mm:ss");
+		put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MM/dd/yyyy HH:mm:ss");
+		put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy/MM/dd HH:mm:ss");
+		put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMM yyyy HH:mm:ss");
+		put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
+		put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}:\\d{3}$", "yyyy-MM-dd HH:mm:ss:SSS");
 	}};
-	
+
 	private final String datePattern = DateTools.TIMESTAMP_FORMAT;
 
 	//status of inputfield
@@ -140,10 +138,10 @@ public class TagData
 	private boolean valChanged;
 	//flag for data was saved after changing or not
 	private boolean valSaved;
-	
+
 	private String name;
 	private String tagInfo;
-	
+
 	private KeyListener fieldKeyListener;
 	private ActionListener fieldActionListener;
 
@@ -167,7 +165,7 @@ public class TagData
 		fieldActionListener=orig.fieldActionListener;
 		actionListenerActiv=orig.actionListenerActiv;
 	}
-	
+
 	/**
 	 * Constructor for TagData element for array fields
 	 * @param name label for tagdata element
@@ -201,7 +199,7 @@ public class TagData
 		visible=false;
 		actionListenerActiv=true;
 	}
-	
+
 	public TagData(String name, String[] val, Unit unit, boolean prop,
 			int type) {
 		if(val==null)
@@ -244,7 +242,7 @@ public class TagData
 		valSaved=true;
 		label = new JLabel(name+":");
 		tagInfo="";
-		
+
 		switch (type) {
 		case LIST:
 			initListField(expList);
@@ -264,7 +262,7 @@ public class TagData
 	{
 		this(name,val,prop,type,null);
 	}
-	
+
 	public TagData(String name, String val,Unit unit, boolean prop,int type) 
 	{
 		this(name,val,prop,type,null);
@@ -316,9 +314,6 @@ public class TagData
 		actionListenerActiv=true;
 	}
 
-	
-
-	
 	private void initTimeStampField() 
 	{
 		inputField = new JTextField(10);
@@ -326,7 +321,7 @@ public class TagData
 		inputField.addKeyListener(fieldKeyListener);
 
 	}
-	
+
 	private void initListField(List<Experimenter> expList)
 	{
 		inputField = new ExperimenterBox(expList);
@@ -344,12 +339,12 @@ public class TagData
 		inputField = new JTextPane();
 		inputField.addKeyListener(fieldKeyListener);
 	}
-	
+
 	private void initTextArea()
 	{
 		inputField = new ScrollableTextPane();
 	}
-	
+
 	public void setTextAreaRow(int r)
 	{
 		if(inputField instanceof ScrollableTextPane)
@@ -381,31 +376,8 @@ public class TagData
 		}else{
 			inputField = new JComboBox<String>();
 		}
-		
-//		 UIManager.put("ComboBox.background", new ColorUIResource(noInfo));
-//		  UIManager.put("JTextField.background", new ColorUIResource(noInfo));
-//		  ((JComboBox<String>) inputField).getEditor().getEditorComponent().setBackground(noInfo);
-//		((JTextField) ((JComboBox<String>) inputField).getEditor().getEditorComponent()).setBackground(noInfo);
-//		Color[] colors={noInfo};
-//		DefaultComboBoxModel model = new DefaultComboBoxModel(colors);
-//		((JComboBox<String>) inputField).setModel(model);
-//		((JComboBox<String>) inputField).setRenderer(new CBoxRenderer());
-		
+
 		addActionListener(fieldActionListener);
-//		((JComboBox<String>) inputField).addActionListener(fieldActionListener);
-		
-		//			((JComboBox<String>) inputField).addActionListener(new ActionListener(){
-		//				public void actionPerformed(ActionEvent evt) 
-		//				{
-		////					int commandId = Integer.parseInt(evt.getActionCommand());
-		////					switch (commandId) {
-		////					case SET_CB_VAL:
-		////						JComboBox<String> cb = (JComboBox<String>)evt.getSource();
-		////				        String chName = (String)cb.getSelectedItem();
-		////				         int ch=cb.getSelectedIndex();
-		////					}
-		//				}
-		//			});
 	}
 
 	private void initListener()
@@ -414,12 +386,12 @@ public class TagData
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-//				System.out.println("Field key typed action");
+				//				System.out.println("Field key typed action");
 				// TODO Auto-generated method stub
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {
-//				System.out.println("Field key released action");
+				//				System.out.println("Field key released action");
 				valChanged=true;	
 				valSaved=false;
 				if(inputField instanceof JTextField){
@@ -428,12 +400,11 @@ public class TagData
 							inputField.setForeground(Color.black);
 						}
 					}
-					
 				}
 			}
 			@Override
 			public void keyPressed(KeyEvent e) {
-//				System.out.println("Field key pressed action");
+				//				System.out.println("Field key pressed action");
 				// TODO Auto-generated method stub
 			}
 		};
@@ -444,20 +415,18 @@ public class TagData
 				if (actionListenerActiv){
 					valChanged=true;
 					valSaved=false;
-				
-				if(inputField.getBorder().equals(errorBorder)){
-					setTagInfo("");
-				}
+
+					if(inputField.getBorder().equals(errorBorder)){
+						setTagInfo("");
+					}
 				}
 			}
 		};
-
-
 	}
-	
+
 	public void setKeyListener(KeyListener l){
 		fieldKeyListener=l;
-	
+
 		inputField.addKeyListener(l);
 		if(type==ARRAYFIELDS){
 			for(int i=0; i<inputField.getComponentCount();i++){
@@ -465,47 +434,21 @@ public class TagData
 				comp.addKeyListener(l);
 			}
 		}
-		
-			
 	}
 
 	public void activateActionListener(boolean a)
 	{
 		actionListenerActiv=a;
 	}
-	
-			
+
+
 	/** Action Listener for tagData*/
 	public void addActionListener(ActionListener l)
 	{
 		if(type==COMBOBOX)
 			((JComboBox)inputField).addActionListener(l); 
-		
-//		switch (type) {
-//		case TEXTFIELD:
-//			((JTextField)inputField).addActionListener(l);
-//			break;
-//		case COMBOBOX:
-//			((JComboBox)inputField).addActionListener(l); 
-//			break;
-//		case TEXTPANE:
-//			break;
-//		case TEXTAREA:
-//			break;
-//		case CHECKBOX:
-//			((JCheckBox)inputField).addActionListener(l);
-//			break;
-//		case ARRAYFIELDS:
-//
-//			break;
-//		case TIMESTAMP:
-//			break;
-//		default:
-//			((JTextField)inputField).addActionListener(l);
-//			break;
-//		}
 	}
-	
+
 	public void addDocumentListener(DocumentListener l)
 	{
 		switch (type) {
@@ -548,27 +491,26 @@ public class TagData
 			((JComboBox<String>) inputField).setModel(model);
 			activateActionListener(true);
 			break;
-			
+
 		default:
 			break;
 		}
-
 	}
 
 	public JComponent getInputField()
 	{
-//		inputField.setToolTipText(tagInfo);
+		//		inputField.setToolTipText(tagInfo);
 		return inputField;
 	}
-	
+
 	public JLabel getTagLabel(){
 		return label;
 	}
-	
+
 	public String getTagName(){
 		return this.name;
 	}
-	
+
 	public String getTagValue() 
 	{
 		String val="";
@@ -599,16 +541,16 @@ public class TagData
 		}
 		return val!=null? val : "";
 	}
-	
+
 	public List<Experimenter> getListValues()
 	{
 		if(type == LIST){
-			
+
 			List<Experimenter> list = ((ExperimenterBox) inputField).getExperimenterList();
-			
+
 			return list;
 		}
-		
+
 		return null;
 	}
 
@@ -622,24 +564,24 @@ public class TagData
 		}
 		return res;
 	}
-	
+
 	private String listToString(List<String> list)
 	{
 		String res="";
-		
+
 		if(list==null || list.isEmpty())
 			return res;
-		
+
 		for(String s:list){
 			if(!s.equals(""))
 				res+=s+",";
 		}
 		if(res.endsWith(","))
 			res=res.substring(0, res.length()-1);
-		
+
 		return res;
 	}
-	
+
 
 	public String getTagValue(int index) 
 	{
@@ -678,7 +620,7 @@ public class TagData
 			label.setText(this.name+" ["+unitSymbol+"]:");
 		}
 	}
-	
+
 	public void setTagValue(Experimenter val)
 	{
 		activateActionListener(false);
@@ -687,13 +629,13 @@ public class TagData
 		}else{
 			inputField.setBackground(fillInfo);
 		}
-//		inputField.setBorder(normalBorder);
+		//		inputField.setBorder(normalBorder);
 		if(type==LIST){
 			((ExperimenterBox) inputField).addElement(val);
 		}
 		activateActionListener(true);
 	}
-	
+
 	public void setTagValue(List<Experimenter> val)
 	{
 		activateActionListener(false);
@@ -702,13 +644,13 @@ public class TagData
 		}else{
 			inputField.setBackground(fillInfo);
 		}
-//		inputField.setBorder(normalBorder);
+		//		inputField.setBorder(normalBorder);
 		if(type==LIST){
 			((ExperimenterBox) inputField).addExperimenterList(val);
 		}
 		activateActionListener(true);
 	}
-	
+
 	public void setTagValue(String val,Unit unit, boolean property)
 	{
 		activateActionListener(false);
@@ -738,7 +680,7 @@ public class TagData
 		setTagValue(val,index);
 		setTagProp(property);
 		valChanged=false;
-		
+
 		activateActionListener(true);
 	}
 
@@ -750,7 +692,7 @@ public class TagData
 		setTagValue(val);
 		setTagProp(property);
 		valChanged=false;
-		
+
 		activateActionListener(true);
 	}
 
@@ -758,12 +700,12 @@ public class TagData
 	{
 		if(val!=null && !val.equals(""))
 			valSaved=false;
-		
+
 		activateActionListener(false);
 		switch (type) {
 		case ARRAYFIELDS:
 			// split string
-//			inputField.setBorder(normalBorder);
+			//			inputField.setBorder(normalBorder);
 			setValArrayField(val, index);
 			break;
 		default:
@@ -779,7 +721,7 @@ public class TagData
 		activateActionListener(false);
 		switch (type) {
 		case ARRAYFIELDS:
-//			inputField.setBorder(normalBorder);
+			//			inputField.setBorder(normalBorder);
 			// split string 
 			for(int i=0; i<val.length; i++){
 				setValArrayField(val[i], i);
@@ -794,7 +736,7 @@ public class TagData
 	public void setTagValue(String val) 
 	{
 		activateActionListener(false);
-//		inputField.setBorder(normalBorder);
+		//		inputField.setBorder(normalBorder);
 		if(val==null || val.equals("")){
 			val="";
 			inputField.setBackground(noInfo);
@@ -832,22 +774,21 @@ public class TagData
 		}
 		setTagStatus( val.equals("") ? EMPTY : (status==EMPTY ? SET : OVERWRITE));
 		valChanged=false;
-		
+
 		activateActionListener(true);
 	}
-	
+
 	private String readTimestamp(String val) 
 	{
 		String creationDate = ((JTextField)inputField).getText();
 		try{
 			// parse to yyyy-MM-ddT00:00:00
 			String date = DateTools.formatDate(creationDate, DATE_FORMATS_TAGS);
-			
+
 			//parsing successfull?
 			if(creationDate!= null && !creationDate.equals("") && !creationDate.equals(datePattern) && date ==null){
 				date = parseDate(creationDate);
-				
-				
+
 				// show warn dialog
 				if(date==null){
 					String formats="";
@@ -861,7 +802,7 @@ public class TagData
 					ld.setVisible(true);
 				}
 			}
-			
+
 			val=date;//DateTools.formatDate(((JTextField)inputField).getText(), DateTools.TIMESTAMP_FORMAT);
 		}catch(Exception e){
 			LOGGER.error("Wrong string input format timestamp: "+label.getText()+": "+creationDate);
@@ -872,7 +813,7 @@ public class TagData
 		}
 		return val;
 	}
-	
+
 	//http://stackoverflow.com/questions/3389348/parse-any-date-in-java
 	/**
 	 * Determine SimpleDateFormat pattern matching with the given date string. Returns null if
@@ -882,16 +823,16 @@ public class TagData
 	 * @see SimpleDateFormat
 	 */
 	public static String determineDateFormat(String dateString) {
-	    for (String regexp : DATE_FORMAT_REGEXPS.keySet()) {
-	        if (dateString.toLowerCase().matches(regexp)) {
-	            return DATE_FORMAT_REGEXPS.get(regexp);
-	        }
-	    }
-	    LOGGER.warn("Can't parse date: "+dateString+". Unknown date format!");
-	   System.out.println("Can't parse date: "+dateString+". Unknown date format!");
-	    return null; // Unknown format.
+		for (String regexp : DATE_FORMAT_REGEXPS.keySet()) {
+			if (dateString.toLowerCase().matches(regexp)) {
+				return DATE_FORMAT_REGEXPS.get(regexp);
+			}
+		}
+		LOGGER.warn("Can't parse date: "+dateString+". Unknown date format!");
+		System.out.println("Can't parse date: "+dateString+". Unknown date format!");
+		return null; // Unknown format.
 	}
-	
+
 
 	private String parseDate(String val) throws Exception
 	{
@@ -900,29 +841,20 @@ public class TagData
 		if(s==null){
 			dateformat=DateTools.ISO8601_FORMAT;
 			s=DateTools.formatDate(val, dateformat);
-			
+
 		}
 		DateTimeFormatter formatter=DateTimeFormatter.ofPattern(dateformat);
 		DateFormat df=new SimpleDateFormat(dateformat);
-		
+
 		Date d=null;
-//		try {
-			d=df.parse(s);
-			SimpleDateFormat f=new SimpleDateFormat(DateTools.TIMESTAMP_FORMAT);
-			return f.format(d);
-//		} catch (ParseException | NullPointerException e1) {
-//			// TODO Auto-generated catch block
-//			LOGGER.error("Parse error date for format "+dateformat+"\n"+e1.toString());
-//			return null;
-//		}
+		//		try {
+		d=df.parse(s);
+		SimpleDateFormat f=new SimpleDateFormat(DateTools.TIMESTAMP_FORMAT);
+		return f.format(d);
 	}
 
 	private void setValTimestamp(String val) 
 	{
-//		if(val==null || val.equals("")){
-//			((JTextField) inputField).setText(datePattern.toLowerCase());
-//			((JTextField) inputField).setForeground(Color.gray);
-//		}else{
 		if(val!=null && !val.equals("")){
 			((JTextField) inputField).setForeground(Color.black);
 			String dateformat= DateTools.ISO8601_FORMAT_MS;
@@ -930,11 +862,11 @@ public class TagData
 			if(s==null){
 				dateformat=DateTools.ISO8601_FORMAT;
 				s=DateTools.formatDate(val, dateformat);
-				
+
 			}
 			DateTimeFormatter formatter=DateTimeFormatter.ofPattern(dateformat);
 			DateFormat df=new SimpleDateFormat(dateformat);
-			
+
 			Date d=null;
 			try {
 				d=df.parse(s);
@@ -943,30 +875,19 @@ public class TagData
 				LOGGER.error("Parse error date for format "+dateformat);
 				setTagInfo(ModuleViewer.ERROR_PREVALUE+val+". Invalid Date Format!");
 				((JTextField) inputField).setText("");
-//				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
-//						"Wrong timestamp format at input at "+label.getText(),e1,
-//						this.getClass().getSimpleName());
-//				ld.setVisible(true);
 				e1.printStackTrace();
 			}
-			
+
 			try {
-				//			((JTextField) inputField).setText( d.toString());
 				SimpleDateFormat f=new SimpleDateFormat(DateTools.TIMESTAMP_FORMAT);
 				((JTextField) inputField).setText( f.format(d));
 			} catch (Exception e) {
 				LOGGER.error("Parse error for timestamp");
 				((JTextField) inputField).setText("");
 				setTagInfo(ModuleViewer.ERROR_PREVALUE+val+". Invalid Date Format!");
-//				ExceptionDialog ld = new ExceptionDialog("Timestamp Format Error!", 
-//						"Wrong timestamp format at input at "+label.getText(),e,
-//						this.getClass().getSimpleName());
-//				ld.setVisible(true);
 				e.printStackTrace();
 			}
-			
 		}
-				
 	}
 
 	private void setValArrayField(String val) 
@@ -1009,7 +930,7 @@ public class TagData
 	private void setValTextPane(String val) {
 		((JTextPane) inputField).setText(val);
 	}
-	
+
 	private void setValTextArea(String val){
 		((ScrollableTextPane)inputField).setText(val);
 	}
@@ -1019,9 +940,6 @@ public class TagData
 		{
 			if(((JComboBox<String>) inputField).getItemAt(c).equals(val)){
 				((JComboBox<String>) inputField).setSelectedIndex(c);
-//				  UIManager.put("ComboBox.background", new ColorUIResource(fillInfo));
-//				  UIManager.put("JTextField.background", new ColorUIResource(fillInfo));
-//				((JTextField) ((JComboBox<String>) inputField).getEditor().getEditorComponent()).setBackground(fillInfo); 
 			}
 		}
 	}
@@ -1029,8 +947,6 @@ public class TagData
 	private void setValTextField(String val) {
 		((JTextField) inputField).setText(val);
 	}
-
-
 
 
 	public int getTagStatus() {
@@ -1054,13 +970,13 @@ public class TagData
 			status=INACTIVE;
 	}
 
-	
+
 
 	public boolean valueHasChanged()
 	{
 		if(type==LIST)
 			return ((ExperimenterBox)inputField).valueChanged();
-	
+
 		return valChanged;
 	}
 	public boolean isDataSaved(){
@@ -1069,7 +985,7 @@ public class TagData
 	public void dataSaved(boolean b){
 		valSaved=b;
 	}
-	
+
 	public void dataHasChanged(boolean b){
 		valChanged=b;
 		if(b)
@@ -1091,52 +1007,21 @@ public class TagData
 	public void setTagInfo(String tagInfo) 
 	{
 		this.tagInfo = tagInfo;
-		
+
 		if(!tagInfo.equals("")){
 			inputField.setBorder(errorBorder);
-			
+
 			inputField.setToolTipText(tagInfo);
 		}else{
 			inputField.setToolTipText(null);
 			inputField.setBorder(normalBorder);
 		}
-		
-		
 	}
 
-//	class MyStringConverter extends StringConverter<LocalDate>
-//	{
-////		
-////		 String creationDate = getImageCreationDate();
-////		    String date = DateTools.formatDate(creationDate, DATE_FORMATS, ".");
-////		    if (creationDate != null && date == null) {
-////		      LOGGER.warn("unknown creation date format: {}", creationDate);
-////		    }
-////		    creationDate = date;
-//		DateTimeFormatter dateFormatter = 
-//                DateTimeFormatter.ofPattern(datePattern);
-//            @Override
-//            public String toString(LocalDate date) {
-//                if (date != null) {
-//                    return dateFormatter.format(date);
-//                } else {
-//                    return "";
-//                }
-//            }
-//            @Override
-//            public LocalDate fromString(String string) {
-//                if (string != null && !string.isEmpty()) {
-//                    return LocalDate.parse(string, dateFormatter);
-//                } else {
-//                    return null;
-//                }
-//            }	
-//	}
-//	
 	class ScrollableTextPane extends JScrollPane
 	{
 		JTextArea area;
-		
+
 		public ScrollableTextPane()
 		{
 			area=new JTextArea();
@@ -1145,18 +1030,17 @@ public class TagData
 			area.setWrapStyleWord(true);
 			area.addKeyListener(fieldKeyListener);
 			setViewportView(area);
-			
 		}
 		public void setTextAreaRows(int r)
 		{
 			area.setRows(r);
 		}
-		
+
 		public void setText(String val)
 		{
 			area.setText(val);
 		}
-		
+
 		public String getText()
 		{
 			return area.getText();
@@ -1169,36 +1053,5 @@ public class TagData
 			if(area!=null)
 				area.setBackground(bg);
 		}
-		
-
 	}
-	
-//	class CBoxRenderer extends JButton implements ListCellRenderer
-//	{
-//		boolean b=false;
-//		
-//		public CBoxRenderer() {  
-//			setOpaque(true); 
-//		}
-//	
-//
-//		@Override
-//		public void setBackground(Color bg) {
-//			// TODO Auto-generated method stub
-//			if(!b)
-//				return;
-//
-//			super.setBackground(bg);
-//		}
-//
-//		 @Override
-//		 public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)  
-//		 {  
-//		     b=true;
-//		     setBackground((Color)value);        
-//		     b=false;
-//		     return this;  
-//		 }  
-//	}
-
 }

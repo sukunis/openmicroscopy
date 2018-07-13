@@ -285,7 +285,7 @@ private boolean disableTreeListener;
         
         if(f.isDirectory()){
 
-            dir=new FNode(new File(f.getAbsolutePath()),data,null);
+            dir=new FNode(new File(f.getAbsolutePath()),data);
             parent.add(dir);
             LOGGER.info("[TREE] Append Dir "+f.getAbsolutePath());
             File[] files=(new File(f.getAbsolutePath()).listFiles((java.io.FileFilter)fileFilter));

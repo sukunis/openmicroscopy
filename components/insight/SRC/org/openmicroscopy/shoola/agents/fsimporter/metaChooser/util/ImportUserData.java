@@ -16,7 +16,7 @@ public class ImportUserData
 	/** name of project or screen */
 	private String name;
 	private ExperimenterData experimenter;
-	
+
 	public ImportUserData(GroupData group,DataObject parent,ExperimenterData experimenter)
 	{
 		this.group=group;
@@ -25,20 +25,18 @@ public class ImportUserData
 		else if(parent instanceof ScreenData)
 			this.name=parent.asScreen().getName().getValue();
 		this.experimenter=experimenter;
-		
 	}
-	
+
 	public String getGroup()
 	{
 		return group.getName();
 	}
-	
+
 	public String getProject()
 	{
 		return name;
-		
 	}
-	
+
 
 	public Experimenter getUser()
 	{
@@ -51,7 +49,7 @@ public class ImportUserData
 	{
 		return experimenter.getLastName();
 	}
-	
+
 	public String[] getUserFullName()
 	{
 		String[] name={experimenter.getFirstName(),experimenter.getLastName()};

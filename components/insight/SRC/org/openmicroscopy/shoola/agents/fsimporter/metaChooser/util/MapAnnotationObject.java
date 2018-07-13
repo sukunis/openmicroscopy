@@ -22,13 +22,13 @@ public class MapAnnotationObject {
 		this.mapAnnotation=new ArrayList<>();
 		this.mapAnnotation.add(map);
 	}
-	
+
 	public MapAnnotationObject(String fileName, List<MapAnnotationData> maps)
 	{
 		this.fileName=fileName;
 		this.mapAnnotation=maps;
 	}
-	
+
 	public MapAnnotationObject(MapAnnotationObject orig)
 	{
 		this.fileName=orig.fileName;
@@ -47,12 +47,12 @@ public class MapAnnotationObject {
 			this.mapAnnotation.add(new MapAnnotationData(ma));
 		}
 	}
-	
-	
+
+
 	public String getFileName() {
 		return fileName;
 	}
-	
+
 	public void setFileName(String name){
 		fileName=name;
 	}
@@ -60,7 +60,7 @@ public class MapAnnotationObject {
 	public MapAnnotationData getMapAnnotation(int i) {
 		return mapAnnotation.get(i);
 	}
-	
+
 	public List<MapAnnotationData> getMapAnnotationList() {
 		return mapAnnotation;
 	}
@@ -68,13 +68,13 @@ public class MapAnnotationObject {
 	static public void printMapAnnotation(MapAnnotationData map)
 	{
 		System.out.println("\t mapAnnotation: ");
-		
+
 		List<NamedValue> values=(List<NamedValue>) map.getContent();
 		for(NamedValue val:values){
 			System.out.println("\t\t"+ val.name+": "+val.value);
 		}
 	}
-	
+
 	static public void printMapAnnotations(Map<String,MapAnnotationObject> map)
 	{
 		for (Iterator i = map.entrySet().iterator(); i.hasNext(); ) {
@@ -83,7 +83,7 @@ public class MapAnnotationObject {
 			printObject((MapAnnotationObject) next.getValue());
 		}
 	}
-	
+
 	static public void printObject(MapAnnotationObject o)
 	{
 		if(o==null)
@@ -99,37 +99,7 @@ public class MapAnnotationObject {
 
 	public void printObject() {
 		printObject(this);
-		
-	}
-	
-//	/**
-//	 * Merge o1 and o2. If key exists in o1 and o2 with different values, overwrite o2.
-//	 * @param o1
-//	 * @param o2
-//	 * @return o2 with all values of o1
-//	 */
-//	static public MapAnnotationObject merge(MapAnnotationObject o1, MapAnnotationObject o2)
-//	{
-//		if(o1==null)
-//			return o2;
-//		if(o2==null)
-//			return o1;
-//		   
-//		List<MapAnnotationData> listData1 = o1.getMapAnnotationList();
-//		List<MapAnnotationData> listData2 = o2.getMapAnnotationList();
-//		
-//		//singleData
-//		if(listData1.size()==listData2.size()){
-//			for(int i=0; i<listData1.size();i++){
-//				List<NamedValue> list1=(List<NamedValue>) listData1.get(i).getContent();
-//				List<NamedValue> list2=(List<NamedValue>) listData2.get(i).getContent();
-//				for(NamedValue value:list1){
-//					
-//				}
-//			}
-//		}
-//		   
-//		return null;
-//	}
 
-	    }
+	}
+
+}

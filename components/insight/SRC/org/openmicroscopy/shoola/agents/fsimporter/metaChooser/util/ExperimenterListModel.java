@@ -16,29 +16,27 @@ import ome.xml.model.Objective;
 public class ExperimenterListModel extends DefaultListModel<String>
 {
 	private List<Experimenter> exp;
-	
+
 	public ExperimenterListModel()
 	{
 		super();
 		exp= new ArrayList<Experimenter>();
-		
 	}
-	
 
 	public Experimenter getExperimenterAt(int index){
 		Experimenter e = null;
 		if(exp!=null && exp.size()>0)
 			e=exp.get(index);
-		
+
 		return e;
 	}
-	
+
 	public void addElement(Experimenter e)
 	{
 		if(exp==null){
 			exp=new ArrayList<Experimenter>();
 		}
-		
+
 		if(e!=null){
 			String name=getExperimenterName(e);
 			if(name!=null && !name.equals("") && elementExists(name)==-1){
@@ -53,15 +51,15 @@ public class ExperimenterListModel extends DefaultListModel<String>
 			String name=getExperimenterName(e);
 			if(name!=null && !name.equals("")&& elementExists(name)==-1){
 				exp.set(index, e);
-			
+
 				set(index,name);
 			}
 		}
 	}
-	
+
 	public static String getExperimenterName(Experimenter e)
 	{
-		
+
 		String res=null;
 		if(e!=null){
 			String fName= (e.getFirstName()!=null && !e.getFirstName().equals("")) ? e.getFirstName():"";
@@ -74,19 +72,19 @@ public class ExperimenterListModel extends DefaultListModel<String>
 		}
 		return res;
 	}
-	
 
-	
+
+
 	public List<Experimenter> getList()
 	{
 		List<Experimenter> list=new ArrayList<Experimenter>();
 		for(int i=0; i<getSize(); i++){
 			list.add(getExperimenterAt(i));
 		}
-		
+
 		return list;
 	}
-	
+
 	public void setList(List<Experimenter> list)
 	{
 		if(list!=null)
@@ -106,19 +104,17 @@ public class ExperimenterListModel extends DefaultListModel<String>
 			remove(index);
 		}
 	}
-	
+
 	public int elementExists(String item)
 	{
 		// test if element still exists
-    	for (int i = 0; i < getSize(); i++) {
-    		Experimenter e=getExperimenterAt(i);
-    		String data=getExperimenterName(e);
-    		if (data!=null && data.toLowerCase().equals(item.toLowerCase())) {
-    			return i;
-    		}
-    	}
-    	return -1;
+		for (int i = 0; i < getSize(); i++) {
+			Experimenter e=getExperimenterAt(i);
+			String data=getExperimenterName(e);
+			if (data!=null && data.toLowerCase().equals(item.toLowerCase())) {
+				return i;
+			}
+		}
+		return -1;
 	}
-
-
 }

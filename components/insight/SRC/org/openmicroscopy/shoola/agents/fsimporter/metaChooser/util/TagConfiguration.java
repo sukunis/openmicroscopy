@@ -12,7 +12,7 @@ public class TagConfiguration
 	private boolean visible;
 	private String[] possibleUnits;
 	private String[] possibleValues;
-	
+
 	public TagConfiguration(String name, String value, Unit unit,Boolean property, 
 			boolean visible,String[] possUnits,String[] possValues)
 	{
@@ -24,7 +24,7 @@ public class TagConfiguration
 		this.possibleUnits=possUnits;
 		this.possibleValues=possValues;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -47,15 +47,15 @@ public class TagConfiguration
 	public String getUnitSymbol() {
 		return unit==null ? "" :unit.getSymbol();
 	}
-	
+
 	public Unit getUnit() {
 		return unit;
 	}
-	
+
 	public String[] getPossibleUnits(){
 		return possibleUnits;
 	}
-	
+
 	public void setPossibleUnits(String[] units){
 		possibleUnits=units;
 	}
@@ -71,15 +71,15 @@ public class TagConfiguration
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
-	
+
 	public void printf()
 	{
 		System.out.println("TAG "+name+" = "+value+" "+getUnitSymbol());
 	}
 
 	public String[] getPossibleValues() {
-		
+
 		return possibleValues;
 	}
-	
+
 }
