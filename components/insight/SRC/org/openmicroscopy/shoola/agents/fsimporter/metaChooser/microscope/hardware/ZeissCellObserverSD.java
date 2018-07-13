@@ -30,14 +30,14 @@ import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
 
 public class ZeissCellObserverSD extends MicroscopeProperties
 {
-	
+
 	public ZeissCellObserverSD(){
 		detectors=this.getMicDetectorList();
 		objectives=this.getMicObjectiveList();
 		lightSources=this.getMicLightSrcList();
 		lightPathObjects=this.getMicLightPathFilterList();
 	}
-	
+
 	@Override
 	protected void initCustomView(){
 		view = new CustomViewProperties();
@@ -45,7 +45,7 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		view.setMicName(ZEISSSD);
 		view.setMicDesc(" ");
 		view.setImageConf(getImageConf());
-    	
+
 		view.setObjConf(getObjectiveConf());
 		view.setDetectorConf(getDetectorConf());
 		view.setLightSrcConf(getLightSrcConf());
@@ -59,7 +59,7 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 	@Override
 	protected List<LightSource> getMicLightSrcList() {
 		List<LightSource> list=new ArrayList<>();
-		
+
 		Laser l=new Laser();
 		l.setModel("Diode laser 405nm");
 		l.setManufacturer("Zeiss");
@@ -70,19 +70,19 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		l.setWavelength(new Length(405, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPower(new Power(50, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		l=new Laser();
 		l.setModel("DPSS laser 488nm");
 		l.setManufacturer("Zeiss");
-//		l.setType(LaserType.DPSS);
-//		l.setLaserMedium(LaserMedium.SOLIDSTATE);
+		//		l.setType(LaserType.DPSS);
+		//		l.setLaserMedium(LaserMedium.SOLIDSTATE);
 		l.setTuneable(false);
 		l.setPockelCell(false);
 		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPower(new Power(100, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
-		 l=new Laser();
+
+		l=new Laser();
 		l.setModel("Diode laser 561nm");
 		l.setManufacturer("Zeiss");
 		l.setType(LaserType.SEMICONDUCTOR);
@@ -92,7 +92,7 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		l.setWavelength(new Length(561, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPower(new Power(40, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		l=new Laser();
 		l.setModel("Diode laser 635nm");
 		l.setManufacturer("Zeiss");
@@ -103,19 +103,19 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		l.setWavelength(new Length(635, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		Arc a=new Arc();
 		a.setModel("HXP 120 C");
 		a.setManufacturer("Zeiss");
-//		a.setType(ArcType.GAS);
+		//		a.setType(ArcType.GAS);
 		a.setPower(new Power(120,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.WATT)));
 		list.add(a);
-		
+
 		LightEmittingDiode d=new LightEmittingDiode();
 		d.setModel("Vis-LED");
 		d.setManufacturer("Zeiss");
 		list.add(d);
-		
+
 		return list;
 	}
 
@@ -128,7 +128,7 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 	@Override
 	protected List<Detector> getMicDetectorList() {
 		List<Detector> list=new ArrayList<Detector>();
-		
+
 		Detector d=new Detector();
 		d.setModel("Evolve 512");
 		d.setManufacturer("Photometrics");
@@ -136,22 +136,22 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		d.setZoom(1.0);
 		d.setAmplificationGain(1.0);
 		list.add(d);
-		
-		 d=new Detector();
-			d.setModel("Evolve 512");
-			d.setManufacturer("Photometrics");
-			d.setType(DetectorType.EMCCD);
-			d.setZoom(1.0);
-			d.setAmplificationGain(1.0);
-			list.add(d);
-		
+
+		d=new Detector();
+		d.setModel("Evolve 512");
+		d.setManufacturer("Photometrics");
+		d.setType(DetectorType.EMCCD);
+		d.setZoom(1.0);
+		d.setAmplificationGain(1.0);
+		list.add(d);
+
 		return list;
 	}
 
 	@Override
 	protected List<Objective> getMicObjectiveList() {
 		List<Objective> list=new ArrayList<>();
-		
+
 		Objective o=new Objective();
 		o.setModel("Plan-Apochromat 40x");
 		o.setManufacturer("Zeiss");
@@ -162,7 +162,7 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		o.setCorrection(Correction.PLANAPO);
 		o.setWorkingDistance(new Length(0.13, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
-		
+
 		o=new Objective();
 		o.setModel("LCI Plan-Neofluor 63x");
 		o.setManufacturer("Zeiss");
@@ -173,7 +173,7 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		o.setCorrection(Correction.PLANNEOFLUAR);
 		o.setWorkingDistance(new Length(0.17, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
-		
+
 		o=new Objective();
 		o.setModel("alpha Plan-Apochromat");
 		o.setManufacturer("Zeiss");
@@ -184,10 +184,10 @@ public class ZeissCellObserverSD extends MicroscopeProperties
 		o.setCorrection(Correction.PLANAPO);
 		o.setWorkingDistance(new Length(0.1, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
-		
+
 		return list;
 	}
 
-	
+
 
 }

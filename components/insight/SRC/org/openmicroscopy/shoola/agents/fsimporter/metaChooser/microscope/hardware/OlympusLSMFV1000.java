@@ -38,16 +38,16 @@ import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
 
 public class OlympusLSMFV1000 extends MicroscopeProperties
 {
-		
+
 	public OlympusLSMFV1000()
 	{
 		detectors=this.getMicDetectorList();
 		objectives=this.getMicObjectiveList();
 		lightSources=this.getMicLightSrcList();
 		lightPathObjects=this.getMicLightPathFilterList();
-		
+
 	}
-	
+
 	@Override
 	protected void initCustomView(){
 		view = new CustomViewProperties();
@@ -55,7 +55,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		view.setMicName(FLUOVIEW1000);
 		view.setMicDesc(" ");
 		view.setImageConf(getImageConf());
-    	
+
 		view.setObjConf(getObjectiveConf());
 		view.setDetectorConf(getDetectorConf());
 		view.setLightSrcConf(getLightSrcConf());
@@ -71,67 +71,67 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 	@Override
 	public List<LightSource> getMicLightSrcList() {
 		List<LightSource> list=new ArrayList<>();
-		
+
 		Laser l=new Laser();
 		l.setModel("LD 405");
-//		l.setManufacturer("");
+		//		l.setManufacturer("");
 		l.setType(LaserType.SEMICONDUCTOR);
 		l.setLaserMedium(LaserMedium.OTHER);
 		l.setWavelength(new Length(405, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
 		l.setPower(new Power(50, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		l=new Laser();
 		l.setModel("Multiline Argon");
-//		l.setManufacturer("");
+		//		l.setManufacturer("");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.AR);
 		l.setWavelength(new Length(457, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
 		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		l=new Laser();
 		l.setModel("Multiline Argon");
-//		l.setManufacturer("");
+		//		l.setManufacturer("");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.OTHER);
 		l.setWavelength(new Length(488, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
 		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		l=new Laser();
 		l.setModel("Multiline Argon");
-//		l.setManufacturer("");
+		//		l.setManufacturer("");
 		l.setType(LaserType.GAS);
 		l.setLaserMedium(LaserMedium.AR);
 		l.setWavelength(new Length(514, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
 		l.setPower(new Power(30, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		l=new Laser();
 		l.setModel("LD 559");
-//		l.setManufacturer("");
+		//		l.setManufacturer("");
 		l.setType(LaserType.SEMICONDUCTOR);
 		l.setLaserMedium(LaserMedium.OTHER);
 		l.setWavelength(new Length(559, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
 		l.setPower(new Power(15, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		l=new Laser();
 		l.setModel("LD 635");
-//		l.setManufacturer("");
+		//		l.setManufacturer("");
 		l.setType(LaserType.SEMICONDUCTOR);
 		l.setLaserMedium(LaserMedium.OTHER);
 		l.setWavelength(new Length(635, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.NANOMETER)));
 		l.setPulse(Pulse.CW);
 		l.setPower(new Power(20, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		l=new Laser();
 		l.setModel("LDH-P-C-440B");
 		l.setManufacturer("PicoQuant");
@@ -142,7 +142,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		l.setRepetitionRate(new Frequency(40, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MEGAHERTZ)));
 		l.setPower(new Power(5.0, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		l=new Laser();
 		l.setModel("LDH-P-C-485");
 		l.setManufacturer("PicoQuant");
@@ -153,7 +153,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		l.setRepetitionRate(new Frequency(40, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MEGAHERTZ)));
 		l.setPower(new Power(2.0, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		l=new Laser();
 		l.setModel("D-TA-560");
 		l.setManufacturer("PicoQuant");
@@ -164,7 +164,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		l.setRepetitionRate(new Frequency(80, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MEGAHERTZ)));
 		l.setPower(new Power(0.5, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		l=new Laser();
 		l.setModel("LDH-D-C-635");
 		l.setManufacturer("PicoQuant");
@@ -175,21 +175,21 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		l.setRepetitionRate(new Frequency(80, UnitsFrequencyEnumHandler.getBaseUnit(UnitsFrequency.MEGAHERTZ)));
 		l.setPower(new Power(2.5, UnitsPowerEnumHandler.getBaseUnit(UnitsPower.MEGAWATT)));
 		list.add(l);
-		
+
 		Arc a=new Arc();
 		a.setModel("U-LH100HG");
 		a.setManufacturer("Olympus");
-//		a.setType(ArcType.GAS);
+		//		a.setType(ArcType.GAS);
 		a.setPower(new Power(100,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.WATT)));
 		list.add(a);
-		
+
 		Filament f=new Filament();
 		f.setModel("Halogen");
 		f.setManufacturer("Olympus");
 		f.setType(FilamentType.OTHER);
 		f.setPower(new Power(100,UnitsPowerEnumHandler.getBaseUnit(UnitsPower.WATT)));
-		
-		
+
+
 		return list;
 	}
 
@@ -197,8 +197,6 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 
 	@Override
 	public List<Object> getMicLightPathFilterList() {
-		
-		
 		return null;
 	}
 
@@ -206,29 +204,29 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 
 	@Override
 	protected List<Detector> getMicDetectorList() {
-		
+
 		List<Detector> list=new ArrayList<Detector>();
-		
+
 		Detector d=new Detector();
 		d.setModel("ChS1");
 		d.setType(DetectorType.PMT);
 		list.add(d);
-		
+
 		d=new Detector();
 		d.setModel("ChS2");
 		d.setType(DetectorType.PMT);
 		list.add(d);
-		
+
 		d=new Detector();
 		d.setModel("Ch3");
 		d.setType(DetectorType.PMT);
 		list.add(d);
-		
+
 		d=new Detector();
 		d.setModel("ChT");
 		d.setType(DetectorType.PMT);
 		list.add(d);
-		
+
 		return list;
 	}
 
@@ -237,7 +235,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 	@Override
 	protected List<Objective> getMicObjectiveList() {
 		List<Objective> list=new ArrayList<>();
-		
+
 		Objective o=new Objective();
 		o.setModel("UPLSAPO 20x");
 		o.setManufacturer("Olympus");
@@ -270,7 +268,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		o.setCorrection(Correction.PLANAPO);
 		o.setWorkingDistance(new Length(280, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
-		
+
 		o=new Objective();
 		o.setModel("UPLSAPO 60x");
 		o.setManufacturer("Olympus");
@@ -281,7 +279,7 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		o.setCorrection(Correction.PLANAPO);
 		o.setWorkingDistance(new Length(150, UnitsLengthEnumHandler.getBaseUnit(UnitsLength.MICROMETER)));
 		list.add(o);
-		
+
 		o=new Objective();
 		o.setModel("UPLSAPO 100x");
 		o.setManufacturer("Olympus");
@@ -296,6 +294,6 @@ public class OlympusLSMFV1000 extends MicroscopeProperties
 		return list;
 	}
 
-	
-	
+
+
 }
