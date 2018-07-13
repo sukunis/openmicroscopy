@@ -322,12 +322,6 @@ public class MetaDataUI extends JPanel
 				LOGGER.info("[GUI] -- init IMAGEENV modul");
 				initImageEnvUI=true;
 			}
-			if(customSett.getPlaneConf()!=null && customSett.getPlaneConf().isVisible()){
-				LOGGER.info("[GUI] -- init PLANE modul");
-//				PlaneCompUI pUI=new PlaneCompUI(null);
-//				model.addPlaneModul(pUI);
-				initPlanesUI=true;
-			}
 			if(customSett.getExpConf()!=null && customSett.getExpConf().isVisible()){
 				LOGGER.info("[GUI] -- init EXPERIMENT modul");
 				initExperimentUI=true;

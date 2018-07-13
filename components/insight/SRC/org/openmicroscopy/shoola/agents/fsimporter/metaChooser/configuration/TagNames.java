@@ -45,12 +45,12 @@ import ome.xml.model.primitives.PercentFraction;
 public class TagNames 
 {
 	public static final String[] BOOLEAN_COMBO = {"true","false"};
-	
+
 	public static final String MODEL="Model";
 	public static final String MANUFAC="Manufacturer";
-//	public static final String TYPE="Type";
+	//	public static final String TYPE="Type";
 	public static final String DESC="Description";
-	
+
 	//--------------------------
 	//	OBJECTIVE
 	//--------------------------
@@ -62,19 +62,19 @@ public class TagNames
 	public static final String IMMERSION="Immersion";
 	public static final String CORRECTION="Correction";
 	public static final String WORKDIST="Working Distance";
-	
+
 	public static final Unit<Length> WORKDIST_UNIT=UNITS.MICROM;
-	
+
 	//Objective Settings
 	public static final String CORCOLLAR="Correction Collar";
 	public static final String OBJ_MEDIUM="Medium";
 	public static final String REFINDEX="Refraction Index";
-	
+
 	private static PreTagData[] objectiveTags={new PreTagData(MODEL,null, ""),new PreTagData(MANUFAC,null, ""),new PreTagData(NOMMAGN,null, ""),
 			new PreTagData(CALMAGN,null, ""),new PreTagData(LENSNA,null, ""),new PreTagData(IMMERSION,null, ""),new PreTagData(CORRECTION,null, ""),
 			new PreTagData(WORKDIST,WORKDIST_UNIT, ""),new PreTagData(CORCOLLAR,null, "S"),new PreTagData(OBJ_MEDIUM,null, "S"),
 			new PreTagData(REFINDEX,null, "S")};
-	
+
 	//--------------------------
 	//	CHANNEL
 	//--------------------------
@@ -90,22 +90,22 @@ public class TagNames
 	public static final String CONTRASTMETHOD="Contrast Method";
 	public static final String NDFILTER="ND Filter";
 	public static final String PINHOLESIZE="Pinhole Size";
-	
+
 	public static final Unit<Length> PINHOLESIZE_UNIT=UNITS.MICROM;
 	public static final Unit<Length> EXCITATIONWL_UNIT=UNITS.NM;
 	public static final Unit<Length> EMISSIONWL_UNIT=UNITS.NM;
 	public static final Unit<Time> EXPOSURETIME_UNIT=UNITS.S;
-	
+
 	private static PreTagData[] channelTags={
-		new PreTagData(CH_NAME,null, ""),new PreTagData(COLOR,null, ""),new PreTagData(FLUOROPHORE,null, ""),
-		new PreTagData(ILLUMTYPE,null, ""),new PreTagData(EXPOSURETIME,EXPOSURETIME_UNIT, ""),new PreTagData(EXCITWAVELENGTH,null, ""),
-		new PreTagData(EMISSIONWAVELENGTH,EXCITATIONWL_UNIT, ""),
-		new PreTagData(IMAGINGMODE,null, ""),new PreTagData(CONTRASTMETHOD,null, ""),
-		new PreTagData(NDFILTER,null, ""),new PreTagData(PINHOLESIZE,PINHOLESIZE_UNIT, "")};
-	
-	
-	
-	
+			new PreTagData(CH_NAME,null, ""),new PreTagData(COLOR,null, ""),new PreTagData(FLUOROPHORE,null, ""),
+			new PreTagData(ILLUMTYPE,null, ""),new PreTagData(EXPOSURETIME,EXPOSURETIME_UNIT, ""),new PreTagData(EXCITWAVELENGTH,null, ""),
+			new PreTagData(EMISSIONWAVELENGTH,EXCITATIONWL_UNIT, ""),
+			new PreTagData(IMAGINGMODE,null, ""),new PreTagData(CONTRASTMETHOD,null, ""),
+			new PreTagData(NDFILTER,null, ""),new PreTagData(PINHOLESIZE,PINHOLESIZE_UNIT, "")};
+
+
+
+
 	//--------------------------
 	//	Detector
 	//--------------------------
@@ -114,7 +114,7 @@ public class TagNames
 	public static final String D_TYPE="DetectorType";
 	public static final String ZOOM="Zoom";
 	public static final String AMPLGAIN="AmplificationGain";
-	
+
 	//DetectorSettings
 	public static final String GAIN="Set Gain";
 	public static final String VOLTAGE="Set Voltage";
@@ -122,29 +122,29 @@ public class TagNames
 	public static final String CONFZOOM="Confocal Zoom";
 	public static final String BINNING="Binning";
 	public static final String SUBARRAY="Subarray";
-	
+
 	public static final Unit<ElectricPotential> VOLTAGE_UNIT=UNITS.V;
-	
+
 	private static PreTagData[] detectorTags={new PreTagData(MODEL,null, ""),new PreTagData(MANUFAC,null, ""),new PreTagData(D_TYPE,null, ""),
-		new PreTagData(ZOOM,null, ""),new PreTagData(AMPLGAIN,null, ""),new PreTagData(GAIN,null, "S"),new PreTagData(VOLTAGE,VOLTAGE_UNIT, "S"),
-		new PreTagData(OFFSET,null, "S"),new PreTagData(CONFZOOM,null, "S"),new PreTagData(BINNING,null, "S"),
-		new PreTagData(SUBARRAY,null, "S")};
-	
+			new PreTagData(ZOOM,null, ""),new PreTagData(AMPLGAIN,null, ""),new PreTagData(GAIN,null, "S"),new PreTagData(VOLTAGE,VOLTAGE_UNIT, "S"),
+			new PreTagData(OFFSET,null, "S"),new PreTagData(CONFZOOM,null, "S"),new PreTagData(BINNING,null, "S"),
+			new PreTagData(SUBARRAY,null, "S")};
+
 	//--------------------------
 	//	Experiment
 	//--------------------------
 	//	DESC="Description";
 	public static final String E_TYPE="ExperimentType";
 	public static final String EXPNAME="Experimenter Name";
-	
+
 	public static final String PROJECTNAME="Project Name";
 	public static final String GROUP="Group";
 	public static final String PROJECTPARTNER="Project Partner";
-	
+
 	private static PreTagData[] experimentTags={new PreTagData(E_TYPE,null, ""),new PreTagData(DESC,null, ""),new PreTagData(EXPNAME,null, ""),
-		new PreTagData(PROJECTNAME,null, ""),new PreTagData(GROUP,null, ""),new PreTagData(PROJECTPARTNER,null, "")};
-	
-	
+			new PreTagData(PROJECTNAME,null, ""),new PreTagData(GROUP,null, ""),new PreTagData(PROJECTPARTNER,null, "")};
+
+
 	//--------------------------
 	//	Image
 	//--------------------------
@@ -160,15 +160,15 @@ public class TagNames
 	public static final String STEPSIZE="Step Size";
 	public static final String TIMEINC="Time Increment";
 	public static final String WELLNR="Well #";
-	
+
 	public static final Unit<Length> STAGEPOS_UNIT=UNITS.REFERENCEFRAME;
 	public static final Unit<Length> PIXELSIZE_UNIT=UNITS.MICROM;
 	public static final Unit<Time> TIMEINC_UNIT=UNITS.S;
-	
+
 	private static PreTagData[] imageTags={new PreTagData(IMG_NAME,null, ""),new PreTagData(IMG_DESC,null, ""),new PreTagData(ACQTIME,null, ""),new PreTagData(DIMXY,null, ""),
-		new PreTagData(PIXELTYPE,null, ""),new PreTagData(PIXELSIZE,PIXELSIZE_UNIT, ""),new PreTagData(DIMZTC,null, ""),new PreTagData(STAGELABEL,STAGEPOS_UNIT, ""),
-		new PreTagData(STEPSIZE,null, ""),new PreTagData(TIMEINC,TIMEINC_UNIT, ""),new PreTagData(WELLNR,null, "")};
-	
+			new PreTagData(PIXELTYPE,null, ""),new PreTagData(PIXELSIZE,PIXELSIZE_UNIT, ""),new PreTagData(DIMZTC,null, ""),new PreTagData(STAGELABEL,STAGEPOS_UNIT, ""),
+			new PreTagData(STEPSIZE,null, ""),new PreTagData(TIMEINC,TIMEINC_UNIT, ""),new PreTagData(WELLNR,null, "")};
+
 	//--------------------------
 	//	ImageEnv
 	//--------------------------
@@ -176,12 +176,12 @@ public class TagNames
 	public static final String AIRPRESS="Air Pressure";
 	public static final String HUMIDITY="Humidity";
 	public static final String CO2="CO2 Percent";
-	
+
 	public static final Unit<Temperature> TEMPERATURE_UNIT=UNITS.DEGREEC;
 	public static final Unit<Pressure> PRESSURE_UNIT=UNITS.MBAR;
 	public static final Unit PERCENT_UNIT=ome.units.unit.Unit.CreateBaseUnit("SI.PERCENT", "%");
-	
-	
+
+
 	//--------------------------
 	//	LightSrc
 	//--------------------------
@@ -191,7 +191,7 @@ public class TagNames
 	public static final String L_TYPE="L_Type"; //only for profile/hardware xml
 	public static final String A_TYPE="A_Type"; //only for profile/hardware xml
 	public static final String F_TYPE="F_Type"; //only for profile/hardware xml
-	
+
 	public static final String POWER="Power";
 	public static final String MEDIUM="Laser Medium";
 	public static final String FREQMUL="Frequency Multiplication";
@@ -201,26 +201,26 @@ public class TagNames
 	public static final String REPRATE="Repititation Rate";
 	public static final String PUMP="Pump";
 	public static final String WAVELENGTH="Wavelength";
-	
-//	private final String L_DESC="Description";
+
+	//	private final String L_DESC="Description";
 	public static final String MAP="Map";
-	
+
 	public static final Unit<Frequency> REPRATE_UNIT_HZ= UNITS.HZ;
 	public static final Unit<Frequency> REPRATE_UNIT_MHZ= UNITS.MHZ;
 	public static final Unit<Length> WAVELENGTH_UNIT=UNITS.NM;
 	public static final Unit<Power> POWER_UNIT=UNITS.MW;
-	
-	
+
+
 	//LightSrcSettings
 	public static final String SET_WAVELENGTH="Set Wavelength";
 	public static final String ATTENUATION="Attenuation";
-	
+
 	private static PreTagData[] lightSrcTags={new PreTagData(MODEL,null, ""),new PreTagData(MANUFAC,null, ""),new PreTagData(POWER,POWER_UNIT, ""),
 			new PreTagData(L_TYPE,null, ""),new PreTagData(A_TYPE,null, ""),new PreTagData(F_TYPE,null, ""),new PreTagData(MEDIUM,null, ""),
 			new PreTagData(FREQMUL,null, ""),new PreTagData(TUNABLE,null, ""),new PreTagData(PULSE,null, ""),new PreTagData(POCKELCELL,null, ""),
 			new PreTagData(REPRATE,REPRATE_UNIT_HZ, ""),new PreTagData(PUMP,null, ""),new PreTagData(WAVELENGTH,WAVELENGTH_UNIT, ""),new PreTagData(MAP,null, ""),
 			new PreTagData(SET_WAVELENGTH,WAVELENGTH_UNIT, "S"),new PreTagData(ATTENUATION,null, "S")};
-	
+
 	//--------------------------
 	//	Sample
 	//--------------------------
@@ -233,11 +233,11 @@ public class TagNames
 	public static final String EXPGRID="Grid (XY)";
 	public static final String EXPOBJNR="Observed Object Nr";
 	public static final String EXPOBJTYPE="Observed Object Type";
-	
+
 	private static PreTagData[] sampleTags={new PreTagData(PREPDATE,null, ""),new PreTagData(PREPDESC,null, ""),new PreTagData(RAWCODE,null, ""),
-		new PreTagData(RAWDESC,null, ""),new PreTagData(GRIDBOXNR,null, ""),new PreTagData(GRIDBOXTYPE,null, ""),new PreTagData(EXPGRID,null, ""),
-		new PreTagData(EXPOBJNR,null, ""),new PreTagData(EXPOBJTYPE,null, "")};
-	
+			new PreTagData(RAWDESC,null, ""),new PreTagData(GRIDBOXNR,null, ""),new PreTagData(GRIDBOXTYPE,null, ""),new PreTagData(EXPGRID,null, ""),
+			new PreTagData(EXPOBJNR,null, ""),new PreTagData(EXPOBJTYPE,null, "")};
+
 	//--------------------------
 	//	LightPath
 	//--------------------------
@@ -246,12 +246,12 @@ public class TagNames
 	public static final String FILTER_CLASS_EM="Emission Filter";
 	public static final String FILTER_CLASS_EX="Exitation Filter";
 	public static final String FILTER_CLASS_D="Dichroic";
-	
-//	public static final String MODEL="Model";
-//	public static final String MANUFAC="Manufacturer";
+
+	//	public static final String MODEL="Model";
+	//	public static final String MANUFAC="Manufacturer";
 	public static final String LP_TYPE="FilterType";
 	public static final String FILTERWHEEL="Filterwheel";
-	
+
 	//--------------------------
 	//	Plane
 	//--------------------------
@@ -259,23 +259,23 @@ public class TagNames
 	public static final String STAGE_POS_X="Stage Pos X";
 	public static final String STAGE_POS_Y="Stage Pos Y";
 	public static final String STAGE_POS_Z="Stage Pos Z";
-	
+
 	public static final Unit<Time> DELTA_T_UNIT=UNITS.S;
 	public static final Unit<Length> STAGE_POS_X_UNIT=UNITS.REFERENCEFRAME;
 	public static final Unit<Length> STAGE_POS_Y_UNIT=UNITS.REFERENCEFRAME;
 	public static final Unit<Length> STAGE_POS_Z_UNIT=UNITS.REFERENCEFRAME;
-	
-	
+
+
 	public static PreTagData[] getDetectorTags()
 	{
 		return detectorTags;
 	}
-	
+
 	public static PreTagData[] getSampleTags() {
 		return sampleTags;
 	}
 
-	
+
 
 	public static PreTagData[] getLightSrcTags()
 	{
@@ -302,43 +302,43 @@ public class TagNames
 	}
 
 	public static String[] getUnits(String name) 
-		{
-			String[] units=null;
-			switch (name) {
-			case AIRPRESS:
-				units=ModuleViewer.getNames(UnitsPressure.class);
-				break;
-			case TEMP:
-				units=ModuleViewer.getNames(UnitsTemperature.class);
-				break;
-			case REPRATE:
-				units=ModuleViewer.getNames(UnitsFrequency.class);
-				break;
-			case POWER:
-				units=ModuleViewer.getNames(UnitsPower.class);
-				break;
-			case WAVELENGTH:
-				units =ModuleViewer.getNames(UnitsLength.class);
-				break;
-			case SET_WAVELENGTH:
-				units =ModuleViewer.getNames(UnitsLength.class);
-				break;
-			case WORKDIST:
-				units =ModuleViewer.getNames( UnitsLength.class);
-				break;
-			case VOLTAGE:
-				units=ModuleViewer.getNames(UnitsElectricPotential.class);
-			default:
-	//			LOGGER.warn("[HARDWARE] no unit available for tag "+name);
-				break;
-			}
-			return units;
+	{
+		String[] units=null;
+		switch (name) {
+		case AIRPRESS:
+			units=ModuleViewer.getNames(UnitsPressure.class);
+			break;
+		case TEMP:
+			units=ModuleViewer.getNames(UnitsTemperature.class);
+			break;
+		case REPRATE:
+			units=ModuleViewer.getNames(UnitsFrequency.class);
+			break;
+		case POWER:
+			units=ModuleViewer.getNames(UnitsPower.class);
+			break;
+		case WAVELENGTH:
+			units =ModuleViewer.getNames(UnitsLength.class);
+			break;
+		case SET_WAVELENGTH:
+			units =ModuleViewer.getNames(UnitsLength.class);
+			break;
+		case WORKDIST:
+			units =ModuleViewer.getNames( UnitsLength.class);
+			break;
+		case VOLTAGE:
+			units=ModuleViewer.getNames(UnitsElectricPotential.class);
+		default:
+			//			LOGGER.warn("[HARDWARE] no unit available for tag "+name);
+			break;
 		}
+		return units;
+	}
 
 	public static Unit parseUnit(String unitSymbol, String name) 
 	{
 		Unit unit=null;
-		
+
 		if(unitSymbol!=null && !unitSymbol.equals("") ){
 			switch (name) {
 			case AIRPRESS:
@@ -368,7 +368,7 @@ public class TagNames
 					System.out.println("ERROR: Can't parse Repititation Rate Unit "+unitSymbol);
 					//					e.printStackTrace();
 				}
-			
+
 				break;
 			case POWER:
 				UnitsPower uP;
@@ -378,7 +378,7 @@ public class TagNames
 				} catch (EnumerationException e) {
 					System.out.println("ERROR: Can't parse Power Unit "+unitSymbol);
 				}
-				
+
 				break;
 			case SET_WAVELENGTH:
 			case WAVELENGTH:
@@ -389,7 +389,7 @@ public class TagNames
 				} catch (EnumerationException e) {
 					System.out.println("ERROR: Can't parse Wavelength Unit "+unitSymbol);
 				}
-				
+
 				break;
 			case WORKDIST:
 				UnitsLength uL2;
@@ -399,7 +399,7 @@ public class TagNames
 				} catch (EnumerationException e) {
 					System.out.println("ERROR: Can't parse Working Distanz Unit "+unitSymbol);
 				}
-				
+
 				break;
 			case VOLTAGE:
 				UnitsElectricPotential uV;
@@ -409,48 +409,17 @@ public class TagNames
 				} catch (EnumerationException e) {
 					System.out.println("ERROR: Can't parse Voltage Unit "+unitSymbol);
 				}
-				
+
 			default:
 				break;
 			}
-				
-			
+
+
 		}
 		return unit;
 	}
 
-	public static Object[] getUnitList(String name) 
-	{
-		Object[] units=null;
-		switch (name) {
-		case AIRPRESS:
-			units=UnitsPressure.values();
-			break;
-		case TEMP:
-			units=UnitsTemperature.values();
-			break;
-		case REPRATE:
-			units=UnitsFrequency.values();
-			break;
-		case POWER:
-			units=UnitsPower.values();
-			break;
-		case WAVELENGTH:
-			units = UnitsLength.values();
-			break;
-		case SET_WAVELENGTH:
-			units = UnitsLength.values();
-			break;
-		case WORKDIST:
-			units = UnitsLength.values();
-			break;
-		case VOLTAGE:
-			units=UnitsElectricPotential.values();
-		default:
-			break;
-		}
-		return units;
-	}
+
 
 	public static String[] getEnumerationVal(String name) 
 	{
@@ -501,12 +470,12 @@ public class TagNames
 		default:
 			break;
 		}
-		
+
 		if(values!=null)
 			values=ObjectArrays.concat(new String[]{""}, values, String.class);
-		
+
 		return values;
 	}
 
-	
+
 }

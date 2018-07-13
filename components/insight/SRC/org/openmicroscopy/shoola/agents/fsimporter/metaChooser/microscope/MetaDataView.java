@@ -47,55 +47,54 @@ import org.slf4j.LoggerFactory;
  */
 public class MetaDataView extends JPanel
 {
-	 /** Logger for this class. */
-//    private static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-	 private static final org.slf4j.Logger LOGGER =
-	    	    LoggerFactory.getLogger(MetaDataUI.class);
-    
-    private OME ome;
-    Hashtable<String, Object> series;
-    private File srcFile;
-    
-    // MetaDataUI
-    private MetaDataUI singleView;
-    private CardLayout seriesCard; 
-    
-    private DefaultListModel seriesListModel;
-    private JPanel cardPane; 
-   
-    private List<String> cardNames;
-    private int currentCardIndex;
-    
-    private boolean seriesData;
-    
-    private boolean fileDataLoaded;
-    
-    private JPanel parent;
+	/** Logger for this class. */
+	private static final org.slf4j.Logger LOGGER =
+			LoggerFactory.getLogger(MetaDataUI.class);
+
+	private OME ome;
+	Hashtable<String, Object> series;
+	private File srcFile;
+
+	// MetaDataUI
+	private MetaDataUI singleView;
+	private CardLayout seriesCard; 
+
+	private DefaultListModel seriesListModel;
+	private JPanel cardPane; 
+
+	private List<String> cardNames;
+	private int currentCardIndex;
+
+	private boolean seriesData;
+
+	private boolean fileDataLoaded;
+
+	private JPanel parent;
 
 	private boolean parentDataLoaded;
-	
-    
-    
-    /**
-     * Constructor for place holder / dummy component
-     */
-    public MetaDataView() 
-    {
-    	super(new BorderLayout());
+
+
+
+	/**
+	 * Constructor for place holder / dummy component
+	 */
+	public MetaDataView() 
+	{
+		super(new BorderLayout());
 		this.setBorder(BorderFactory.createEmptyBorder());
 		parentDataLoaded=false;
 		fileDataLoaded=false;
 	}
-    
-    /**
-     * Metadata GUI for file.
-     * @param fName file name
-     * @param importData given import information for this data.
-     * @param parentData given parent information for this data.
-     * @param parentPanel parent JPanel of this component.
-     * @param showFileData TODO
-     * @param showPreValues TODO
-     */
+
+	/**
+	 * Metadata GUI for file.
+	 * @param fName file name
+	 * @param importData given import information for this data.
+	 * @param parentData given parent information for this data.
+	 * @param parentPanel parent JPanel of this component.
+	 * @param showFileData TODO
+	 * @param showPreValues TODO
+	 */
 	public MetaDataView(String fName,ImportUserData importData,
 			MetaDataModel parentData, MetaDataDialog parentPanel, boolean showFileData, boolean showPreValues) throws Exception
 	{
@@ -107,21 +106,21 @@ public class MetaDataView extends JPanel
 
 		ImageReader reader = new ImageReader();
 		IMetadata data=null;
-		
+
 		Cursor cursor=parentPanel.getCursor();
 		parentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		
+
 		data = readMetadataFromFile(fName, reader);
 		fileDataLoaded=true;
-		
-		
+
+
 		parentPanel.setCursor(cursor);
 		if(data==null || !showFileData){ 
 			MonitorAndDebug.printConsole("\t...no file data loaded");
 			fileDataLoaded=false;
 			seriesData=false;
 			singleView=new MetaDataUI(parentPanel,false, showPreValues); 
-			
+
 			//load parent data
 			loadParentData(parentData, singleView);
 			// load importData
@@ -145,9 +144,7 @@ public class MetaDataView extends JPanel
 
 			//load parent data
 			loadParentData(parentData, singleView);
-			
-			
-			
+
 			//load data from file
 			try{
 				loadFileData(fName, ome, series,0, singleView);
@@ -157,13 +154,13 @@ public class MetaDataView extends JPanel
 						"Can't read given metadata  from "+fName,e,this.getClass().getSimpleName());
 				ld.setVisible(true);
 			}
-			
+
 			add(singleView,BorderLayout.CENTER);
-			
+
 		}else{
 			seriesData=true;
 			currentCardIndex=-1;
-			
+
 			seriesListModel=new DefaultListModel();
 			seriesCard = new CardLayout();
 			cardPane=new JPanel(seriesCard);
@@ -182,19 +179,19 @@ public class MetaDataView extends JPanel
 
 				//load data from file
 				loadFileData(fName, ome,series, j, metaUI);
-			
+
 
 				// add series to cardPane
 				seriesListModel.addElement(data.getImageName(j));
-				
-				
+
+
 				cardPane.add(metaUI,data.getImageName(j));
 			}
 			add(cardPane,BorderLayout.CENTER);
 		}
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @return listModel with names of series of given ome model
@@ -216,14 +213,14 @@ public class MetaDataView extends JPanel
 	private void loadFileData(String fName, OME o,Hashtable<String, Object> series,int j,
 			MetaDataUI metaUI) throws Exception 
 	{
-		
+
 		LOGGER.info("[DATA] -- read file data "+fName);
 		metaUI.linkToFile(new File(fName));
 		metaUI.readData(o,series, j);
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Metadata GUI for directory.
 	 * @param name directory name
@@ -240,34 +237,32 @@ public class MetaDataView extends JPanel
 		super(new BorderLayout());
 		LOGGER.info("[GUI] -- select directory");
 		this.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		srcFile=null;
 		seriesData=false;
-		
+
 		if(dirData==null){
 			singleView= new MetaDataUI(parent,true, showPreValues);
 		}else{
 			singleView = new MetaDataUI(parent,true,dirData, showPreValues);
 		}
-		
+
 		//set importData
 		singleView.setImportData(importData);
-		
-		//set parentData
-		//	if model for this directory exists- load parent data not necessary, 
-		// because all child directories with model will be updated if parent change
+
+		/**set parentData
+		if model for this directory exists- load parent data not necessary, 
+		because all child directories with model will be updated if parent change*/
 		if(dirData==null){
 			loadParentData(parentData,singleView);
 		}
-		
-
 
 		add(singleView,BorderLayout.CENTER);
 		revalidate();
 		repaint();
 	}
 
-	
+
 
 	/**
 	 * Add parent metadata to given metaData GUI.
@@ -295,12 +290,7 @@ public class MetaDataView extends JPanel
 		}
 		MonitorAndDebug.printConsole("... end loadParentData()");
 	}
-	
 
-	
-	
-	
-	
 	/**
 	 * Read meta data from given file into OMEXMLMetadata format and set it as the MetadataStore 
 	 * for given reader. Set global ome as MetadataRetrieve OMEXMLRoot. 
@@ -316,31 +306,28 @@ public class MetaDataView extends JPanel
 		//record metadata to ome-xml format
 		ServiceFactory factory=new ServiceFactory();
 		OMEXMLService service = factory.getInstance(OMEXMLService.class);
-//		IMetadata omeMetaData= MetadataTools.createOMEXMLMetadata();
 		IMetadata metadata =  service.createOMEXMLMetadata();
 		reader.setMetadataStore((MetadataStore) metadata);
-	
-		
-		
+
 		try{
 			reader.setId(file);
 		}catch(FormatException | IOException e){
-//			WarningDialog ld=new WarningDialog("Not supported file format for MetaData Editor!", 
-//					"Can't read metadata of "+file+"! Format is not supported.","MetaDataView");
-//			ld.setVisible(true);
+			//			WarningDialog ld=new WarningDialog("Not supported file format for MetaData Editor!", 
+			//					"Can't read metadata of "+file+"! Format is not supported.","MetaDataView");
+			//			ld.setVisible(true);
 			e.printStackTrace();
 			return null;
 		}
-		
+
 		LOGGER.info("[DATA] -- use READER: "+reader.getReader().getClass().getName());
 		System.out.println("Use Reader: "+reader.getReader().getClass().getSimpleName());
 		series = reader.getSeriesMetadata();
 		String xml = service.getOMEXML((MetadataRetrieve) metadata);
 		ome = (OME) service.createOMEXMLRoot(xml);
-		
+
 		return metadata;
 	}
-	
+
 	/**
 	 * 
 	 * @return metaData model that holds a list of all series data models of current img data.
@@ -351,11 +338,9 @@ public class MetaDataView extends JPanel
 			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
 			if(seriesData){
 				for(Component comp:cardPane.getComponents()){
-//					((MetaDataUI) comp).save();
 					list.add(((MetaDataUI) comp).getModel());
 				}
 			}else{
-//				singleView.save();
 				list.add(singleView.getModel());
 			}
 			MetaDataModelObject obj=new MetaDataModelObject(seriesData,list);
@@ -366,31 +351,9 @@ public class MetaDataView extends JPanel
 			return null;
 		}
 	}
-	
-	/**
-	 * 
-	 * @return metaData model that holds a list of all series data models of current img data.
-	 */
-//	public MetaDataModelObject getSavedModelObject() 
-//	{
-//		try{
-//			List<MetaDataModel> list=new ArrayList<MetaDataModel>();
-//			if(seriesData){
-//				for(Component comp:cardPane.getComponents()){
-//					list.add(((MetaDataUI) comp).getSavedModel());
-//				}
-//			}else{
-//				list.add(singleView.getSavedModel());
-//			}
-//			MetaDataModelObject obj=new MetaDataModelObject(seriesData,list);
-//
-//			return obj;
-//		}catch(Exception e){
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
-	
+
+
+
 	/**
 	 * Save data from GUI to file.
 	 */
@@ -398,7 +361,7 @@ public class MetaDataView extends JPanel
 	{
 		savePreValues();
 		if(ome!=null){
-			
+
 			//file
 			if(seriesData){
 				updateGlobalSeriesData();
@@ -421,7 +384,7 @@ public class MetaDataView extends JPanel
 			}
 		}
 	}
-	
+
 	public void saveExtendedMetaData() {
 		if(seriesData){
 			int index=0;
@@ -433,19 +396,19 @@ public class MetaDataView extends JPanel
 			singleView.saveExtendedMetaData();
 		}
 	}
-	
-	
+
+
 	private void savePreValues()
 	{
-			if(seriesData){
-				for(Component comp : cardPane.getComponents()){
-						((MetaDataUI) comp).savePreValues();
-				}
-			}else{
-				singleView.savePreValues();
+		if(seriesData){
+			for(Component comp : cardPane.getComponents()){
+				((MetaDataUI) comp).savePreValues();
 			}
+		}else{
+			singleView.savePreValues();
+		}
 	}
-	
+
 	/**
 	 * Shows all GUI data.
 	 */
@@ -479,7 +442,7 @@ public class MetaDataView extends JPanel
 		revalidate();
 		repaint();
 	}
-	
+
 	/**
 	 * Shows card pane of given name on the top. Holds Sample and ExperimentCompUI
 	 * as global informnations.
@@ -490,7 +453,7 @@ public class MetaDataView extends JPanel
 		seriesCard.show(cardPane,name);
 		currentCardIndex = seriesListModel.indexOf(name);
 	}
-	
+
 	/**
 	 * Update global data for all series, if data has changed in current selection. 
 	 * Global data are sample, experiment data.
@@ -524,18 +487,18 @@ public class MetaDataView extends JPanel
 		int index = -1;
 
 		int i=0;
-	    for (Component comp : cardPane.getComponents() ) {
-	        if (comp.isVisible() == true) {
-	            try {
+		for (Component comp : cardPane.getComponents() ) {
+			if (comp.isVisible() == true) {
+				try {
 					index=i;
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-	        }
-	        i++;
-	    }
-	    return index;
+			}
+			i++;
+		}
+		return index;
 	}
 
 	public boolean isLoaded() {
@@ -557,25 +520,23 @@ public class MetaDataView extends JPanel
 		}
 		return true;
 	}
-	
+
 	public boolean hasDataToSave()
 	{
 		if(seriesData){
 			boolean result=false;
 			for(Component comp:cardPane.getComponents()){
 				result=result ||((MetaDataUI) comp).hasDataToSave();
-//				result=result ||((MetaDataUI) comp).userInput();
 			}
 			return result;
 		}else{
 			if(singleView!=null){
 				return singleView.hasDataToSave(); 
-//				return singleView.userInput();
 			}
 		}
 		return false;
 	}
-	
+
 	public String getDataToSave_Desc()
 	{
 		String result="";
@@ -594,33 +555,33 @@ public class MetaDataView extends JPanel
 		}
 		return result;
 	}
-	
+
 	public boolean hasUserInput()
 	{
 		if(seriesData){
 			boolean result=false;
 			for(Component comp:cardPane.getComponents()){
-							result=result ||((MetaDataUI) comp).userInput();
+				result=result ||((MetaDataUI) comp).userInput();
 			}
 			return result;
 		}else{
 			if(singleView!=null){
-							return singleView.userInput();
+				return singleView.userInput();
 			}
 		}
 		return false;
 	}
-	
+
 	public boolean fileDataAreLoaded()
 	{
 		return fileDataLoaded;
 	}
-	
+
 	public boolean parentDataAreLoaded()
 	{
 		return parentDataLoaded;
 	}
-	
+
 	public boolean predefineDataLoaded()
 	{
 		if(seriesData){
@@ -641,15 +602,15 @@ public class MetaDataView extends JPanel
 		parentDataLoaded=b;		
 	}
 
-	
-	
+
+
 	/** return mapAnnotationData for singleView and List<MapAnnotationData> for seriesData*/ 
 	public MapAnnotationObject getMapAnnotation() 
 	{
 		String name="";
 		if(srcFile!=null)
 			name=srcFile.getAbsolutePath();
-		
+
 		if(seriesData){
 			List<MapAnnotationData> result=new ArrayList<>();
 			for(Component comp:cardPane.getComponents()){

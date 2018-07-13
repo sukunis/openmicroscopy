@@ -37,11 +37,11 @@ public abstract class MicroscopeProperties
 	protected final static String TIRF4LINE_STORM="Olympus TIRF 4-LINE STORM";
 	protected final static String ZEISSLSM="Zeiss LSM 510 META NLO";
 	protected final static String DELTAVISION="DeltaVision Elite";
-	
-	
+
+
 	public static final String[] availableMics={"",FLUOVIEW1000,LEICASP5,ZEISSSD,TIRF3LINE,
 			TIRF4LINE_SMT,TIRF4LINE_STORM};
-	
+
 	protected ModuleConfiguration imageConfiguration;
 	protected ModuleConfiguration lightPathConfiguration;
 	protected ModuleConfiguration sampleConfiguration;
@@ -51,49 +51,49 @@ public abstract class MicroscopeProperties
 	protected ModuleConfiguration expConfiguration;
 	protected ModuleConfiguration detectorConfiguration;
 	protected ModuleConfiguration oConfiguration;
-	
+
 	protected List<Detector> detectors;
 	protected List<LightSource> lightSources;
 	protected List<Objective> objectives;
 	protected List<Object> lightPathObjects;
-	
+
 	protected CustomViewProperties view;
 	/** Logger for this class. */
 	protected static final org.slf4j.Logger LOGGER =
-	    	    LoggerFactory.getLogger(CustomViewProperties.class);
-	
+			LoggerFactory.getLogger(CustomViewProperties.class);
+
 	public CustomViewProperties getViewProperties()
 	{
 		if(view==null)
 			initCustomView();
 		return view;
 	}
-	
+
 	public List<Detector> getDetectorList()
 	{
 		return detectors;
 	}
-	
+
 	public List<Objective> getObjectiveList()
 	{
 		return objectives;
 	}
-	
+
 	public List<LightSource> getLightSourceList()
 	{
 		return lightSources;
 	}
-	
+
 	public List<Object> getLightPathList()
 	{
 		return lightPathObjects;
 	}
-	
+
 	protected abstract List<LightSource> getMicLightSrcList();
 	protected abstract List<Object> getMicLightPathFilterList();
 	protected abstract List<Detector> getMicDetectorList();
 	protected abstract List<Objective> getMicObjectiveList();
-	
+
 	/**
 	 * Return class for hardware specification, if available.
 	 * @param micName
@@ -117,34 +117,27 @@ public abstract class MicroscopeProperties
 		default:
 			return new StandardMic();
 		}	
-		
+
 	}
-	
+
 	protected void initCustomView(){
 		view=new CustomViewProperties();
 		view.init();
 	}
-	
+
 	public HashMap getMapr(){
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @param microscope name
 	 * @return index of given microscope in array availableMics
 	 */
 	public static int getMicIndex(String microscope) {
-//		int result=-1;
 		return Arrays.asList(availableMics).indexOf(microscope);
-//		for(int index=0; index>availableMics.length; index++){
-//			if(availableMics[index].equals(microscope)){
-//				return index;
-//			}
-//		}
-//		return result;
 	}
-	
+
 	/**
 	 * Override this configuration in hardware specification file if you want to change this
 	 * default view (for hiding tags or something
@@ -167,10 +160,10 @@ public abstract class MicroscopeProperties
 		imageConf.setTag(TagNames.STEPSIZE,null,null,true, null, true);
 		imageConf.setTag(TagNames.TIMEINC,null,null,true, null, true);
 		imageConf.setTag(TagNames.WELLNR,null,null,true, null, true);
-		
+
 		return imageConf;
 	}
-	
+
 	/**
 	 * No predefinitions possible
 	 * @param active
@@ -188,7 +181,7 @@ public abstract class MicroscopeProperties
 		lightPathConf.setTag(TagNames.MANUFAC, null, null, true, index);
 		lightPathConf.setTag(TagNames.LP_TYPE, null, null, true, index);
 		lightPathConf.setTag(TagNames.FILTERWHEEL, null, null, true, index);
-		
+
 		return lightPathConf;
 	}
 
@@ -209,7 +202,7 @@ public abstract class MicroscopeProperties
 		sampleConf.setTag(TagNames.EXPOBJTYPE,null,null,true, null, true);
 		return sampleConf;
 	}
-	
+
 
 	/**
 	 * Override this configuration in hardware specification file if you want to change this
@@ -235,7 +228,7 @@ public abstract class MicroscopeProperties
 		return lightSrcConf;
 	}	
 
-		
+
 
 	/**
 	 * Override this configuration in hardware specification file if you want to change this
@@ -299,7 +292,7 @@ public abstract class MicroscopeProperties
 		oConf.setTag(TagNames.IMMERSION,null,null,true, null, true);
 		oConf.setTag(TagNames.CORRECTION,null,null,true, null, true);
 		oConf.setTag(TagNames.WORKDIST,null,TagNames.WORKDIST_UNIT.getSymbol(),true, null, true);
-		
+
 		oConf.setSettingTag(TagNames.CORCOLLAR,null,null,true, null, true);
 		oConf.setSettingTag(TagNames.OBJ_MEDIUM,null,null,true, null, true);
 		oConf.setSettingTag(TagNames.REFINDEX,null,null,true, null, true);
@@ -325,7 +318,7 @@ public abstract class MicroscopeProperties
 		return channelConf;
 	}
 
-	
+
 	protected Filter getFilter(String model,FilterType type,int transRangeIn,int transRangeOut,UnitsLength unit, String manufac){
 		TransmittanceRange t=new TransmittanceRange();
 		if(transRangeIn!=-1){
@@ -334,8 +327,8 @@ public abstract class MicroscopeProperties
 		if(transRangeOut!=-1){
 			t.setCutOut(new Length(transRangeOut, UnitsLengthEnumHandler.getBaseUnit(unit)));
 		}
-	
-		
+
+
 		Filter f= new Filter();
 		f.setModel(model);
 		if(manufac != null)
@@ -343,9 +336,9 @@ public abstract class MicroscopeProperties
 		f.setType(type);
 		f.setTransmittanceRange(t);
 		return f;
-		
+
 	}
-	
+
 	public ModuleConfiguration getImageConf(){
 		return loadImageConf(true, GUIPlaceholder.Pos_A, "1");
 	}
@@ -373,6 +366,6 @@ public abstract class MicroscopeProperties
 	public ModuleConfiguration getLightPathConf(){
 		return loadLightPathConf(true, GUIPlaceholder.Pos_F, "1");
 	}
-	
-	
+
+
 }

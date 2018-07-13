@@ -28,16 +28,16 @@ import org.w3c.dom.NodeList;
 public class ModuleConfiguration 
 {
 	/** Logger for this class. */
-//    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
-	 private static final org.slf4j.Logger LOGGER =
-	    	    LoggerFactory.getLogger(ModuleConfiguration.class);
-	
+	//    protected static Logger LOGGER = Logger.getLogger(UOSMetadataLogger.class.getName());
+	private static final org.slf4j.Logger LOGGER =
+			LoggerFactory.getLogger(ModuleConfiguration.class);
+
 	public static final String TAG_NAME="Name";
 	public static final String TAG_VALUE="Value";
 	public static final String TAG_UNIT="Unit";
 	public static final String TAG_PROP="Optional";
 	public static final String TAG_VISIBLE="Visible";
-	
+
 	private List<TagConfiguration> tagConfList; 
 	private List<TagConfiguration> settingsTagConfList;
 	private boolean visible;
@@ -45,7 +45,7 @@ public class ModuleConfiguration
 	private String width;
 
 	private List<LightPathElement> elementList;
-	
+
 	public ModuleConfiguration(boolean visible,GUIPlaceholder pos,String width) 
 	{
 		this.position=pos;
@@ -54,7 +54,7 @@ public class ModuleConfiguration
 		tagConfList=new ArrayList<TagConfiguration>();
 		settingsTagConfList=new ArrayList<TagConfiguration>();
 	}
-	
+
 	/** 
 	 * 
 	 * @return list of tags
@@ -67,7 +67,7 @@ public class ModuleConfiguration
 	{
 		tagConfList=list;
 	}
-	
+
 	/**
 	 * 
 	 * @return list of settings tags
@@ -80,7 +80,7 @@ public class ModuleConfiguration
 	{
 		settingsTagConfList=list;
 	}
-	
+
 	private void setTag(String name, String val,String unit, Boolean prop, List<TagConfiguration> thisList, boolean visible, String[] enums) 
 	{
 		Unit u=null;
@@ -99,142 +99,41 @@ public class ModuleConfiguration
 			LOGGER.warn("[HARDWARE] can't parse unit of tag "+name+" ("+unit+")");
 			e.printStackTrace();
 		}
-	
-		
+
+
 	}
-	
+
 	public void setTag(String name, String val,String unit, Boolean prop,int elemIndex) 
 	{
 		List<TagConfiguration> list=elementList.get(elemIndex).getTagList();
 		if(list!=null)
 			setTag(name, val, unit,prop,list , true, null) ;
 	}
-	
+
 	public void setTag(String name, String val,String unit, Boolean prop, String[] enums, Boolean visible) 
 	{
 		setTag(name, val, unit,prop, tagConfList, visible, enums) ;
 	}
-	
+
 	public void setSettingTag(String name, String val,String unit, Boolean prop, String[] enums, Boolean visible) 
 	{
 		setTag(name, val, unit, prop, settingsTagConfList, visible, enums);
 	}
-	
-
-	
-	
-	
-	
-	private Element tagToXML(Document doc,TagConfiguration tag)
-	{
-		Element modTag = doc.createElement("Tag");
-		modTag.setAttribute(TAG_NAME, tag.getName());
-		modTag.setAttribute(TAG_PROP, String.valueOf(tag.getProperty()));
-		modTag.setAttribute(TAG_VISIBLE, String.valueOf(tag.isVisible()));
-		modTag.setAttribute(TAG_VALUE, tag.getValue());
-		if(!tag.getUnitSymbol().equals(""))
-			modTag.setAttribute(TAG_UNIT, tag.getUnitSymbol());
-		
-		return modTag;
-	}
-	
-	public void loadTags(Element node)
-	{
-//		NodeList tagList=node.getChildNodes();
-		NodeList tagList=node.getElementsByTagName("Tag");
-		
-		if(tagList!=null && tagList.getLength()>0){
-			for(int i=0; i<tagList.getLength(); i++){
-				NamedNodeMap attr=tagList.item(i).getAttributes();
-				if(tagList.item(i).getParentNode().getNodeName().equals("Settings")){
-					parseTagFromXML(attr,settingsTagConfList,"settings");
-				}else{
-					parseTagFromXML(attr,tagConfList,"");
-				}
-			}
-		}	
-	}
-	
-	/**
-	 * read lightPath elements from xml like
-	 * <clazz>
-	 * 	<tag name="" value="" />
-	 * </clazz>
-	 * @param node
-	 */
-	public void loadElements(Element node) 
-	{
-		NodeList clazzList=node.getChildNodes();
-		if(clazzList!=null && clazzList.getLength()>0){
-			MonitorAndDebug.printConsole("LightPath has childs: "+clazzList.getLength());
-			for(int i=0;i<clazzList.getLength();i++){	
-				if(clazzList.item(i).getNodeType() == Node.ELEMENT_NODE){
-					List<TagConfiguration> list=new ArrayList<TagConfiguration>();
-					String clazz=clazzList.item(i).getNodeName();
-					MonitorAndDebug.printConsole("\tLightPath has childs: "+clazz);
-					NodeList tagList=clazzList.item(i).getChildNodes();
-					if(tagList!=null && tagList.getLength()>0){
-						for(int j=0; j<tagList.getLength(); j++){
-							NamedNodeMap attr=tagList.item(j).getAttributes();
-							parseTagFromXML(attr, list, "");
-						}
-					}
-					addNewElement(clazz, list);
-				}
-			}
-		}
-	}
 
 
-
-	/**
-	 * Parse tag: <Tag Name="" Optional="" Unit="" Value=""	Visible="" /> from given nodemap and add to list.
-	 * @param attr
-	 * @param list
-	 * @param sett
-	 */
-	private void parseTagFromXML(NamedNodeMap attr,List<TagConfiguration> list,String sett) 
-	{
-		
-		String name="";String value=null; boolean prop=false;String unitStr=null;
-		boolean visible=false;
-
-		if(attr!=null && attr.getLength()>0)
-		{
-			if(attr.getNamedItem(TAG_NAME)!=null){
-				name=attr.getNamedItem(TAG_NAME).getNodeValue();
-			}
-			if(attr.getNamedItem(TAG_VALUE)!=null){
-				value=attr.getNamedItem(TAG_VALUE).getNodeValue();
-			}
-			if(attr.getNamedItem(TAG_UNIT)!=null){
-				unitStr=attr.getNamedItem(TAG_UNIT).getNodeValue();
-			}
-			if(attr.getNamedItem(TAG_PROP)!=null){
-				prop=stringToBool(attr.getNamedItem(TAG_PROP).getNodeValue());
-			}
-			if(attr.getNamedItem(TAG_VISIBLE)!=null){
-				visible=BooleanUtils.toBoolean(attr.getNamedItem(TAG_VISIBLE).getNodeValue());
-			}
-		}
-//		if(visible)
-			setTag(name,value,unitStr,prop,list, visible, null);
-	}
-	
-	
 	public static boolean stringToBool(String s) {
-        s = s.toLowerCase();
-        Set<String> trueSet = new HashSet<String>(Arrays.asList("1", "true", "yes"));
-        Set<String> falseSet = new HashSet<String>(Arrays.asList("0", "false", "no"));
+		s = s.toLowerCase();
+		Set<String> trueSet = new HashSet<String>(Arrays.asList("1", "true", "yes"));
+		Set<String> falseSet = new HashSet<String>(Arrays.asList("0", "false", "no"));
 
-        if (trueSet.contains(s))
-            return true;
-        if (falseSet.contains(s))
-            return false;
+		if (trueSet.contains(s))
+			return true;
+		if (falseSet.contains(s))
+			return false;
 
-        throw new IllegalArgumentException(s + " is not a boolean.");
-    }
-	
+		throw new IllegalArgumentException(s + " is not a boolean.");
+	}
+
 
 	public boolean isVisible() {
 		return visible;
@@ -248,17 +147,17 @@ public class ModuleConfiguration
 	public GUIPlaceholder getPosition() {
 		return position;
 	}
-	
+
 	public void setPosition(GUIPlaceholder pos)
 	{
 		position=pos;
 	}
-	
+
 	public int getWidth()
 	{
 		return Integer.valueOf(width);
 	}
-	
+
 	public void printConfig()
 	{
 		for(int i=0; i<tagConfList.size();i++){
@@ -290,7 +189,7 @@ public class ModuleConfiguration
 	{
 		if(elementList==null)
 			elementList=new ArrayList<LightPathElement>();
-		
+
 		LightPathElement newElem=new LightPathElement(clazz, list);
 		if(!newElem.isEmpty()){
 			elementList.add(newElem);
@@ -298,6 +197,6 @@ public class ModuleConfiguration
 		return elementList.size()-1;
 	}
 
-	
-	
+
+
 }
