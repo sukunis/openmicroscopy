@@ -14,6 +14,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardwa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusTIRF3Line;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusTIRF4Line_SMT;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.OlympusTIRF4Line_STORM;
+import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.StandardMic;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.hardware.ZeissCellObserverSD;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +38,10 @@ public abstract class MicroscopeProperties
 	protected final static String TIRF4LINE_STORM="Olympus TIRF 4-LINE STORM";
 	protected final static String ZEISSLSM="Zeiss LSM 510 META NLO";
 	protected final static String DELTAVISION="DeltaVision Elite";
+	protected final static String UNIVERSAL="Universal";
 
 
-	public static final String[] availableMics={"",FLUOVIEW1000,LEICASP5,ZEISSSD,TIRF3LINE,
+	public static final String[] availableMics={UNIVERSAL,FLUOVIEW1000,LEICASP5,ZEISSSD,TIRF3LINE,
 			TIRF4LINE_SMT,TIRF4LINE_STORM};
 
 	protected ModuleConfiguration imageConfiguration;
