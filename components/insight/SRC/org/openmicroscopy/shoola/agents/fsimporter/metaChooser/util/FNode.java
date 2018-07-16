@@ -20,7 +20,6 @@ public class FNode extends DefaultMutableTreeNode
 
 	public FNode(File file){
 		this.importData=null;
-		iFile=null;
 		setUserObject(file);
 	}
 	public FNode(Object object)
