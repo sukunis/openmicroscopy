@@ -13,7 +13,10 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.Tag
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI.GUIPlaceholder;
 import org.slf4j.LoggerFactory;
 
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class CustomViewProperties
 {
 

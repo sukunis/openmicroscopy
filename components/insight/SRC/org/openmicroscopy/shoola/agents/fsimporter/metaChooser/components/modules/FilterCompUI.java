@@ -27,7 +27,10 @@ import ome.xml.model.enums.FilterType;
 
 
 import loci.formats.meta.IMetadata;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class FilterCompUI extends LightPathElem 
 {
 	private TagData model;

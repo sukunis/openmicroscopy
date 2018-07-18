@@ -10,7 +10,10 @@ import omero.gateway.model.MapAnnotationData;
 import omero.model.MapAnnotation;
 import omero.model.MapAnnotationI;
 import omero.model.NamedValue;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class MapAnnotationObject {
 
 	private String fileName;

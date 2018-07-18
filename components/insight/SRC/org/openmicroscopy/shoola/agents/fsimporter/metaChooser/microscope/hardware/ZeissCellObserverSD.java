@@ -27,7 +27,10 @@ import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.enums.UnitsPower;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class ZeissCellObserverSD extends MicroscopeProperties
 {
 

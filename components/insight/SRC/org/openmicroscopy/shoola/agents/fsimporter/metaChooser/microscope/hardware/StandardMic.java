@@ -9,7 +9,10 @@ import ome.xml.model.Detector;
 import ome.xml.model.Filter;
 import ome.xml.model.LightSource;
 import ome.xml.model.Objective;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class StandardMic extends MicroscopeProperties {
 
 	public StandardMic() {

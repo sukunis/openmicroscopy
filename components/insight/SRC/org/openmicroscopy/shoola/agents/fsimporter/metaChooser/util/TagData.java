@@ -44,7 +44,10 @@ import ome.xml.model.Experimenter;
 import org.apache.commons.lang.BooleanUtils;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.view.ModuleViewer;
 import org.slf4j.LoggerFactory;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class TagData 
 {
 	/** Logger for this class. */

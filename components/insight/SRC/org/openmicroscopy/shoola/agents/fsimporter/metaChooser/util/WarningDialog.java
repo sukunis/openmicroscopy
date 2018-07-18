@@ -21,7 +21,10 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import org.slf4j.LoggerFactory;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class WarningDialog extends JDialog
 {
 	private static final org.slf4j.Logger LOGGER =

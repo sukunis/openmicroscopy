@@ -31,10 +31,9 @@ import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
 
 
 /**
- * SFB-Olympus-TIRF-4-LINE
- * @author Kunis
- *
- */
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class OlympusTIRF4Line_SMT extends MicroscopeProperties{
 
 	//filter and dichroics , define here because of reusing object in mapr function

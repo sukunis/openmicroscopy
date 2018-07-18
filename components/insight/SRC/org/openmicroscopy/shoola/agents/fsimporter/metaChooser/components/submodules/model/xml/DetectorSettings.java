@@ -1,7 +1,10 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.submodules.model.xml;
 
 
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class DetectorSettings extends ome.xml.model.DetectorSettings {
 	private String subarray;
 

@@ -16,7 +16,11 @@ import javax.swing.plaf.LayerUI;
 
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.modules.ElementsCompUI;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataUI;
-
+/**
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+ *         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+ *
+ */
 public class MetaDataControl implements PropertyChangeListener
 {
 	private MetaDataModel model;

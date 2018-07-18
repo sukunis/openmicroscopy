@@ -3,7 +3,10 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.ut
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.configuration.TagNames;
 
 import ome.units.unit.Unit;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class PreTagData {
 
 	String name;

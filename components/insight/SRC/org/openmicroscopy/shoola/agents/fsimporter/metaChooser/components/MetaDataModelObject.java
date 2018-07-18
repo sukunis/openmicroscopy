@@ -7,7 +7,8 @@ import org.openmicroscopy.shoola.util.MonitorAndDebug;
 
 /**
  * Model for a image could be a single model or (for series data) a list of models
- * @author Kunis
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+ *         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
  *
  */
 public class MetaDataModelObject 

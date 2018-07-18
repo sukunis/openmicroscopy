@@ -9,7 +9,10 @@ import omero.gateway.model.GroupData;
 import omero.gateway.model.ProjectData;
 import omero.gateway.model.ScreenData;
 import omero.model.Project;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class ImportUserData 
 {
 	private GroupData group;

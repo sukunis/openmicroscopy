@@ -76,6 +76,7 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.FNode;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
+import org.openmicroscopy.shoola.agents.metadata.editor.JXTaskPane;
 import org.openmicroscopy.shoola.env.data.model.FileObject;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.util.MonitorAndDebug;
@@ -85,9 +86,13 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
- * Dialog used to control and specify metadata for files to import
- * @author kunis
+ * 
+ *  A {@link ClosableTabbedPaneComponent} Dialog used to control and specify metadata 
+ *  for files at import queue.
+ *  Designed based on xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ *
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+ *         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
  * @version 1.0
  */
 public class MetaDataDialog extends ClosableTabbedPaneComponent

@@ -39,7 +39,10 @@ import ome.xml.model.enums.UnitsPower;
 import ome.xml.model.enums.handlers.UnitsFrequencyEnumHandler;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class OlympusTIRF4Line_STORM extends MicroscopeProperties
 {
 	public OlympusTIRF4Line_STORM()

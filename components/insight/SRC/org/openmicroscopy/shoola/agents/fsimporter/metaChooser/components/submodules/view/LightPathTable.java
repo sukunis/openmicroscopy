@@ -23,7 +23,12 @@ import org.slf4j.LoggerFactory;
 import ome.xml.model.Dichroic;
 import ome.xml.model.Filter;
 import ome.xml.model.enums.FilterType;
-
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+ *         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+ *
+ */
 public class LightPathTable extends JTable
 {
 

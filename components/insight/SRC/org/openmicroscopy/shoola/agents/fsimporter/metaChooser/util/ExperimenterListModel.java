@@ -12,7 +12,10 @@ import org.apache.commons.lang.SerializationUtils;
 
 import ome.xml.model.Experimenter;
 import ome.xml.model.Objective;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class ExperimenterListModel extends DefaultListModel<String>
 {
 	private List<Experimenter> exp;

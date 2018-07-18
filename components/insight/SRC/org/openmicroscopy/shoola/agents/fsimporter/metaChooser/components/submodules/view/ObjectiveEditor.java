@@ -23,7 +23,12 @@ import javax.swing.table.TableColumn;
 
 import ome.xml.model.Objective;
 import org.slf4j.LoggerFactory;
-
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+ *         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+ *
+ */
 public class ObjectiveEditor extends JDialog implements ActionListener 
 {
 	/** Logger for this class. */

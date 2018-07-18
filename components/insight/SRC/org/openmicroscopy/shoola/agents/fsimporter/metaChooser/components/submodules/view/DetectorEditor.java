@@ -21,7 +21,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import ome.xml.model.Detector;
 import org.slf4j.LoggerFactory;
-
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+ *
+ */
 public class DetectorEditor extends JDialog implements ActionListener 
 {
 	/** Logger for this class. */

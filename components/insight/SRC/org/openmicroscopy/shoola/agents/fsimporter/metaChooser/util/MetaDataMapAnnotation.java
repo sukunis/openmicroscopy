@@ -1,7 +1,10 @@
 package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
 import java.util.HashMap;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class MetaDataMapAnnotation 
 {
 	private HashMap<String,String> map;

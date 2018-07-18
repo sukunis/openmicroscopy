@@ -23,7 +23,8 @@ import ome.xml.model.enums.handlers.ExperimentTypeEnumHandler;
 
 /**
  * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
- * @author Kunis
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
  *
  */
 public class ExperimentModel {

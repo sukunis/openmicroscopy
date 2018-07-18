@@ -30,7 +30,8 @@ import omero.model.NamedValue;
  * 		<Observed Sample>
  * 		</Observed Sample>
  * </Sample>
- * @author kunis
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
  *
  */
 public class Sample 

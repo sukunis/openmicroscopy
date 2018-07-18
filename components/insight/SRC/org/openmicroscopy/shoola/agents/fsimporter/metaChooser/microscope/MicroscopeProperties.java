@@ -27,7 +27,10 @@ import ome.xml.model.TransmittanceRange;
 import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public abstract class MicroscopeProperties 
 {
 	protected final static String FLUOVIEW1000="Olympus LSM FV1000";

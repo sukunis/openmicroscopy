@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Table in LightPath module
  * 
- * @author Kunis
- *
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+ *         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
  */
 public class LightPathTableSmall extends JTable
 {

@@ -14,7 +14,8 @@ import org.w3c.dom.NodeList;
  * 		<Grid GridBoxRef="" Number=""/ oder PosX="" PosY="">
  * 		<Object Type="" Number="">
  * </ObservedObject>
- * @author kunis
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
  *
  */
 public class ObservedSample 

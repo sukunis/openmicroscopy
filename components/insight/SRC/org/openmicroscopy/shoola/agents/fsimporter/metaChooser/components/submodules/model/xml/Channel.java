@@ -4,7 +4,10 @@ import ome.units.quantity.Time;
 import ome.xml.model.OMEModel;
 import ome.xml.model.enums.EnumerationException;
 import org.w3c.dom.Element;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class Channel extends ome.xml.model.Channel{
 	
 	private String illuminationTypeString;

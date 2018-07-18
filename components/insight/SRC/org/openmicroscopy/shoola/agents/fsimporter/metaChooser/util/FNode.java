@@ -9,7 +9,10 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.components.MetaDa
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.microscope.MetaDataView;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.util.MonitorAndDebug;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class FNode extends DefaultMutableTreeNode
 {
 	private ImportUserData importData;

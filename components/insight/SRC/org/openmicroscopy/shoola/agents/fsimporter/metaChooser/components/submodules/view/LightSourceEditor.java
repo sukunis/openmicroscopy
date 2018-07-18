@@ -42,7 +42,12 @@ import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.Laser;
 import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.LightSource;
-
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+ *         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+ *
+ */
 public class LightSourceEditor extends JDialog
 {
 	/** Logger for this class. */

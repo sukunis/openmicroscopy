@@ -2,7 +2,10 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util;
 
 
 import ome.units.unit.Unit;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class TagConfiguration 
 {
 	private String name;

@@ -48,7 +48,12 @@ import ome.xml.model.LightPath;
 import ome.xml.model.enums.FilterType;
 
 import java.awt.Font;
-
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+ *         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+ *
+ */
 public class LightPathEditor extends JDialog implements ActionListener 
 {
 

@@ -22,7 +22,8 @@ import org.w3c.dom.NodeList;
 
 /**
  * Holds a list of visible tags and their configuration
- * @author Kunis
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
  *
  */
 public class ModuleConfiguration 

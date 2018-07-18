@@ -41,7 +41,10 @@ import ome.xml.model.enums.handlers.UnitsPowerEnumHandler;
 import ome.xml.model.enums.handlers.UnitsPressureEnumHandler;
 import ome.xml.model.enums.handlers.UnitsTemperatureEnumHandler;
 import ome.xml.model.primitives.PercentFraction;
-
+/**
+* @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+*         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+*/
 public class TagNames 
 {
 	public static final String[] BOOLEAN_COMBO = {"true","false"};

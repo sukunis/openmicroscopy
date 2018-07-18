@@ -48,8 +48,12 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.TagData;
 import org.openmicroscopy.shoola.util.MonitorAndDebug;
 import org.slf4j.LoggerFactory;
 
-//see also ome.xml.model.OME
-//TODO use OME
+/**
+ * Works for xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01 
+ * @author Susanne Kunis &nbsp;&nbsp;&nbsp;&nbsp; <a
+ *         href="mailto:susannekunis@gmail.com">susannekunis@gmail.com</a>
+ *
+ */
 public class MetaDataModel 
 {
 	
