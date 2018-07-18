@@ -39,6 +39,6 @@ into a dataset -->
 <entry name="/options/Debug" type="boolean">false</entry>
 <!-- limit the number of files to import at once -->
 <entry name="/options/ImportFileLimit" type="integer">2000</entry>
-<entry name="/services/ADMIN/microscope">Olympus TIRF 4-LINE SMT</entry>
+<entry name="/services/ADMIN/microscope">Universal</entry>
 </options>
 </agent>
