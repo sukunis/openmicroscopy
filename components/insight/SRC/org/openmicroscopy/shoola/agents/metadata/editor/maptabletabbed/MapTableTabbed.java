@@ -49,7 +49,7 @@ public class MapTableTabbed extends JTabbedPane
 	private MapTable detectorMapTable;
 	private MapTable lightSrcMapTable;
 	private MapTable channelMapTable;
-	private MapTable lightPathMapTable;
+	private MapTable filterMapTable;
 	private MapTable sampleMapTable;
 	private MapTable experimentMapTable;
 	private MapTable imageEnvMapTable;
@@ -59,7 +59,7 @@ public class MapTableTabbed extends JTabbedPane
 	private MapAnnotationData detectorMapData;
 	private MapAnnotationData lightSrcMapData;
 	private MapAnnotationData channelMapData;
-	private MapAnnotationData lightPathMapData;
+	private MapAnnotationData filterMapData;
 	private MapAnnotationData sampleMapData;
 	private MapAnnotationData experimentMapData;
 	private MapAnnotationData imageEnvMapData;
@@ -93,7 +93,7 @@ public class MapTableTabbed extends JTabbedPane
 		detectorMapTable = new MapTable(MapTable.PERMISSION_NONE);
 		lightSrcMapTable = new MapTable(MapTable.PERMISSION_NONE);
 		channelMapTable = new MapTable(MapTable.PERMISSION_NONE);
-		lightPathMapTable = new MapTable(MapTable.PERMISSION_NONE);
+		filterMapTable = new MapTable(MapTable.PERMISSION_NONE);
 		sampleMapTable = new MapTable(MapTable.PERMISSION_NONE);
 		experimentMapTable = new MapTable(MapTable.PERMISSION_NONE);
 		imageEnvMapTable = new MapTable(MapTable.PERMISSION_NONE);
@@ -172,8 +172,8 @@ public class MapTableTabbed extends JTabbedPane
 			tablePanelChannel.add(getPaneTable(channelMapTable,"Channel"));
 		if(detectorMapData!=null && !detectorMapTable.isEmpty())
 			tablePanelChannel.add(getPaneTable(detectorMapTable,"Detector"));
-		if(lightPathMapData!=null && !lightPathMapTable.isEmpty())
-			tablePanelChannel.add(getPaneTable(lightPathMapTable,"LightPath"));
+		if(filterMapData!=null && !filterMapTable.isEmpty())
+			tablePanelChannel.add(getPaneTable(filterMapTable,"Filter"));
 		if(lightSrcMapData!=null && !lightSrcMapTable.isEmpty())
 			tablePanelChannel.add(getPaneTable(lightSrcMapTable,"LightSrc"));
 		
@@ -216,8 +216,8 @@ public class MapTableTabbed extends JTabbedPane
 		if(channelMapData!=null){
 			((MapTableModel) channelMapTable.getModel()).setData(channelMapData);
 		}
-		if(lightPathMapData!=null){
-			((MapTableModel) lightPathMapTable.getModel()).setData(lightPathMapData);
+		if(filterMapData!=null){
+			((MapTableModel) filterMapTable.getModel()).setData(filterMapData);
 		}
 		if(sampleMapData!=null){
 			((MapTableModel) sampleMapTable.getModel()).setData(sampleMapData);
@@ -245,7 +245,7 @@ public class MapTableTabbed extends JTabbedPane
 		detectorMapData  = extractMapAnnotation(data,"[Detector]:");
 		lightSrcMapData  = extractMapAnnotation(data,"[LightSrc]:");
 		channelMapData  = extractMapAnnotation(data,"[Channel]:");
-		lightPathMapData = extractMapAnnotation(data,"[LightPath]:");
+		filterMapData = extractMapAnnotation(data,"[Filter]:");
 		sampleMapData  = extractMapAnnotation(data,"[Sample]:");
 		experimentMapData  = extractMapAnnotation(data,"[Experiment]:");
 		imageEnvMapData = extractMapAnnotation(data, "[ImageEnv]:");
@@ -280,7 +280,7 @@ public class MapTableTabbed extends JTabbedPane
 		objectiveMapTable.getSelectionModel().addListSelectionListener(l);
 		detectorMapTable.getSelectionModel().addListSelectionListener(l);
 		lightSrcMapTable.getSelectionModel().addListSelectionListener(l);
-		lightPathMapTable.getSelectionModel().addListSelectionListener(l);
+		filterMapTable.getSelectionModel().addListSelectionListener(l);
 		channelMapTable.getSelectionModel().addListSelectionListener(l);
 		sampleMapTable.getSelectionModel().addListSelectionListener(l);
 		experimentMapTable.getSelectionModel().addListSelectionListener(l);
@@ -292,7 +292,7 @@ public class MapTableTabbed extends JTabbedPane
 		imageMapTable.getModel().addTableModelListener(l);
 		objectiveMapTable.getModel().addTableModelListener(l);
 		detectorMapTable.getModel().addTableModelListener(l);
-		lightPathMapTable.getModel().addTableModelListener(l);
+		filterMapTable.getModel().addTableModelListener(l);
 		lightSrcMapTable.getModel().addTableModelListener(l);
 		channelMapTable.getModel().addTableModelListener(l);
 		sampleMapTable.getModel().addTableModelListener(l);
