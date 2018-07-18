@@ -32,11 +32,6 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 
-//Third-party libraries
-
-import omero.gateway.model.ExperimenterData;
-import omero.gateway.model.GroupData;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.openmicroscopy.shoola.agents.events.importer.LoadImporter;
 import org.openmicroscopy.shoola.agents.events.treeviewer.ActivitiesEvent;
@@ -60,6 +55,8 @@ import org.openmicroscopy.shoola.env.event.AgentEventListener;
 import org.openmicroscopy.shoola.env.event.EventBus;
 import org.openmicroscopy.shoola.env.ui.TaskBar;
 
+import omero.gateway.model.ExperimenterData;
+import omero.gateway.model.GroupData;
 
 /** 
  * This agent interacts is used to import images.

@@ -406,11 +406,9 @@ public class MapTaskPaneUI extends AnnotationTaskPaneUI implements
      */
     private MapTable findTable(MapAnnotationData data) {
         for (MapTable table : mapTables) {
-            if (table.getData().getId() == data.getId()){
-            	System.out.println("# MapTaskPaneUI::findTable() : ID: "+data.getId());
+            if (table.getData().getId() == data.getId())
                 return table;
             }
-        }
 
         // the user's MapAnnotation might not have an ID yet.
         if (isUsers(data)) {

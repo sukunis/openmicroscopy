@@ -164,7 +164,6 @@
     <entry name="/services/DEBUGGER/applicationNameComment">1</entry>
     <entry name="/services/DEBUGGER/postTimeout" type="integer">2000</entry>
     <entry name="/services/DEBUGGER/emailAddress">qa@openmicroscopy.org.uk</entry>
-
   </services>
 
   <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
