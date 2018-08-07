@@ -2,6 +2,8 @@ package org.openmicroscopy.shoola.agents.fsimporter.metaChooser;
 
 import info.clearthought.layout.TableLayout;
 
+import org.jdesktop.swingx.JXTaskPane;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -76,7 +78,6 @@ import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.FNode;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.ImportUserData;
 import org.openmicroscopy.shoola.agents.fsimporter.metaChooser.util.MapAnnotationObject;
 import org.openmicroscopy.shoola.agents.fsimporter.view.Importer;
-import org.openmicroscopy.shoola.agents.metadata.editor.JXTaskPane;
 import org.openmicroscopy.shoola.env.data.model.FileObject;
 import org.openmicroscopy.shoola.env.data.model.ImportableFile;
 import org.openmicroscopy.shoola.util.MonitorAndDebug;
